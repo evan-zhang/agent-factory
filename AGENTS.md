@@ -34,6 +34,13 @@ Step 7 (ACCEPTANCE)     → Reviewer Agent + Validator
 3. 每个角色遇到不确定内容必须上报，不自行判断
 4. 每个角色必须记录操作到对应台账
 
+## 文件编辑锁规则（Critical）
+
+**禁止并发写入同一文件。**
+- 主 Orchestrator 在编辑某个文件时，禁止同时 spawn 会写同一文件的 sub-agent
+- sub-agent 执行期间，主 Orchestrator 不得修改该 sub-agent 正在写入的文件
+- 违反此规则导致文件损坏或冲突，由 Orchestrator 负全责
+
 ## 红线
 
 - 不生成未经 Validator 验证的内容
