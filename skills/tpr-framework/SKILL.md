@@ -48,7 +48,8 @@ Shangshu省 executes. Menxi省 reviews. Orchestrator dispatches tasks and coordi
 3. **After spawning, use sessions_yield.** Do not synchronously wait for sub-agent results.
 4. **"Brain only, No Hands" Principle:** Orchestrator must NEVER execute operational tasks (writing files, editing code) meant for Sub-agents. If a Sub-agent fails (e.g., 429 error), Orchestrator must re-spawn, downgrade models, or escalate—never do the work yourself.
 5. **Model Fallback Rule:** Every spawned Sub-agent should ideally have a fallback model defined. If 429 occurs, immediately retry with a Tier-2 model.
-6. **File delivery rule:** After writing any file, send it as an attachment via `message(filePath=...)` to Evan. Never only describe the file in chat.
+6. **File Editing Lock Rule:** Do NOT spawn parallel sub-agents that write to the same files you are currently editing. If you need to edit a file, finish the edit and commit before spawning a sub-agent that might touch the same file. Serialize writes to the same file from multiple agents.
+7. **File delivery rule:** After writing any file, send it as an attachment via `message(filePath=...)` to Evan. Never only describe the file in chat.
 5. **Never answer questions meant for another role.** If a question is for Shangshu, say "That is for Shangshu省 to answer" and spawn Shangshu.
 
 ---
