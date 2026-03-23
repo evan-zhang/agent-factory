@@ -1,0 +1,14 @@
+# 配置文件（含 bot token）
+config/
+
+# 治理台账（运行时数据）
+governance/*.md
+
+# 项目工作区（运行时数据）
+projects/
+
+# 快照
+snapshots/
+
+# 系统文件
+.DS_Store

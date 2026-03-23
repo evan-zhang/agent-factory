@@ -7,24 +7,24 @@ factory:
 
 paths:
   # 业务项目工作区根目录
-  projects_root: "/Users/evan/.openclaw/workspace-factory/projects"
+  projects_root: "/Users/evan/.openclaw/workspace-agent-factory/projects"
   
   # governance 台账目录
-  governance_root: "/Users/evan/.openclaw/workspace-factory/governance"
+  governance_root: "/Users/evan/.openclaw/workspace-agent-factory/governance"
   
   # 台账文件
-  admission_log: "/Users/evan/.openclaw/workspace-factory/governance/admission-log.md"
-  override_log: "/Users/evan/.openclaw/workspace-factory/governance/override-log.md"
-  rollback_log: "/Users/evan/.openclaw/workspace-factory/governance/rollback-log.md"
+  admission_log: "/Users/evan/.openclaw/workspace-agent-factory/governance/admission-log.md"
+  override_log: "/Users/evan/.openclaw/workspace-agent-factory/governance/override-log.md"
+  rollback_log: "/Users/evan/.openclaw/workspace-agent-factory/governance/rollback-log.md"
   
   # 版本历史目录
-  version_history: "/Users/evan/.openclaw/workspace-factory/governance/version-history"
+  version_history: "/Users/evan/.openclaw/workspace-agent-factory/governance/version-history"
   
   # 模板目录
-  templates: "/Users/evan/.openclaw/workspace-factory/TEMPLATES"
+  templates: "/Users/evan/.openclaw/workspace-agent-factory/TEMPLATES"
   
   # 快照/备份路径前缀
-  snapshots_prefix: "/Users/evan/.openclaw/workspace-factory/snapshots"
+  snapshots_prefix: "/Users/evan/.openclaw/workspace-agent-factory/snapshots"
 
 # 流程配置
 workflow:
