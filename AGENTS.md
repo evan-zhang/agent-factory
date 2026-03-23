@@ -53,8 +53,8 @@ Step 7 (ACCEPTANCE)     → Reviewer Agent + Validator
 
 | Skill | 路径 | 用途 |
 |---|---|---|
-| tpr-framework | `~/.agents/skills/tpr-framework/` | TPR 流程管理 |
-| self-improving-proactive-agent | `~/.agents/skills/self-improving-proactive-agent/` | 自我改进 |
-| coding-agent | `~/.agents/skills/coding-agent/` | 代码任务 |
+| tpr-framework | `./skills/tpr-framework/` | TPR 流程管理 |
+| self-improving-proactive-agent | `./skills/self-improving-proactive-agent/` | 自我改进 |
+| coding-agent | `./skills/coding-agent/` | 代码任务 |
 
-> 注意：Skill 必须先安装在 `~/.agents/skills/` 才能被工厂 Agent 加载。新增 Skill 时，同步更新本文件。
+> 注意：技能安装在 `./skills/` 目录，工厂所有角色均可调用。新增技能时，同步更新本文件。

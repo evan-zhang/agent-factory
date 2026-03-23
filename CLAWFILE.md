@@ -39,6 +39,15 @@ OpenClaw 加载本目录作为 workspace 时，将以 `./SOUL.md` 定义的 Fact
 | 追溯矩阵 | ./TEMPLATES/agent-skill-api-matrix.csv |
 | 验收清单 | ./TEMPLATES/acceptance-checklist.md |
 
+### 技能路径
+
+| 技能 | 路径 |
+|------|------|
+| tpr-framework | ./skills/tpr-framework/ |
+| self-improving-proactive-agent | ./skills/self-improving-proactive-agent/ |
+
+> 注意：技能安装在 `./skills/` 目录，工厂所有角色均可调用。
+
 ### 治理路径
 
 | 台账 | 路径 |
