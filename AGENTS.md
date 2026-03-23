@@ -39,3 +39,15 @@ Step 7 (ACCEPTANCE)     → Reviewer Agent + Validator
 - 不生成未经 Validator 验证的内容
 - 不跳过任何步骤
 - 不修改其他角色的输出
+
+## 可用 Skill（全局安装）
+
+工厂 Agent 可调用以下全局 Skill：
+
+| Skill | 路径 | 用途 |
+|---|---|---|
+| tpr-framework | `~/.agents/skills/tpr-framework/` | TPR 流程管理 |
+| self-improving-proactive-agent | `~/.agents/skills/self-improving-proactive-agent/` | 自我改进 |
+| coding-agent | `~/.agents/skills/coding-agent/` | 代码任务 |
+
+> 注意：Skill 必须先安装在 `~/.agents/skills/` 才能被工厂 Agent 加载。新增 Skill 时，同步更新本文件。
