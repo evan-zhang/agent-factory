@@ -1,0 +1,44 @@
+# Factory Telegram Bot 配置模板 v1.0
+
+bot:
+  # TODO: 替换为实际的 Bot Token
+  token: "YOUR_BOT_TOKEN_HERE"
+  
+  # Bot 名称
+  name: "Agent Factory Bot"
+  
+  # Bot 用户名（@username）
+  username: "YourFactoryBot"
+
+# 工厂 Bot 配置
+factory:
+  # 允许的 Telegram 用户 ID 列表（空列表表示允许所有人）
+  allowed_users: []
+  
+  # 默认项目工作区
+  default_workspace: "/Users/evan/.openclaw/workspace-factory/projects"
+  
+  # 工厂入口 SOUL.md 路径
+  factory_soul: "/Users/evan/.openclaw/workspace-factory/SOUL.md"
+
+# 消息配置
+messages:
+  # 欢迎消息
+  welcome: |
+    🤖 *Agent Factory*
+    
+    您好！我是工厂调度 Bot。
+    请发送项目编号开始工作，或发送 /new 创建新项目。
+    
+  # 帮助消息
+  help: |
+    *可用命令：*
+    /new — 创建新项目
+    /list — 列出所有项目
+    /status — 查看当前项目状态
+    /export — 导出当前项目
+    /help — 显示此帮助
+    
+  # 步骤完成消息模板
+  step_complete: "✅ Step {n} 完成：{description}"
+  step_confirm: "请回复 *确认* 继续，或 *取消* 停止。"

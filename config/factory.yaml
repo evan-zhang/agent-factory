@@ -1,0 +1,52 @@
+# Agent Factory 全局配置 v1.0
+
+factory:
+  version: v1.0
+  name: "Agent Factory"
+  description: "OpenClaw 业务 Agent / Skill / API 一体化建设工厂"
+
+paths:
+  # 业务项目工作区根目录
+  projects_root: "/Users/evan/.openclaw/workspace-factory/projects"
+  
+  # governance 台账目录
+  governance_root: "/Users/evan/.openclaw/workspace-factory/governance"
+  
+  # 台账文件
+  admission_log: "/Users/evan/.openclaw/workspace-factory/governance/admission-log.md"
+  override_log: "/Users/evan/.openclaw/workspace-factory/governance/override-log.md"
+  rollback_log: "/Users/evan/.openclaw/workspace-factory/governance/rollback-log.md"
+  
+  # 版本历史目录
+  version_history: "/Users/evan/.openclaw/workspace-factory/governance/version-history"
+  
+  # 模板目录
+  templates: "/Users/evan/.openclaw/workspace-factory/TEMPLATES"
+  
+  # 快照/备份路径前缀
+  snapshots_prefix: "/Users/evan/.openclaw/workspace-factory/snapshots"
+
+# 流程配置
+workflow:
+  # 强制串行（不允许并行步骤）
+  enforce_sequential: true
+  
+  # Validator 门控（FAIL 即停止）
+  validator_gate: true
+  
+  # Override 需要记录
+  override_requires_logging: true
+
+# 项目命名规范
+naming:
+  project_prefix: "AF"
+  date_format: "%Y%m%d"
+  separator: "-"
+
+# 模板版本
+templates:
+  agent_definition: "v1.0"
+  skill_design: "v1.0"
+  api_contract: "v1.0"
+  matrix: "v1.0"
+  acceptance: "v1.0"
