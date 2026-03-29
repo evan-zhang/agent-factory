@@ -39,3 +39,15 @@ Notes:
 - Writes are append-only.
 - Concurrent writes are guarded by file lock.
 - Invalid filename characters are replaced with `_`.
+
+## 日复盘自动触发（可选）
+
+默认日复盘需手动执行。如需自动触发，可在 OpenClaw 中配置 cron 任务：
+
+```
+每晚 23:00 自动生成日复盘（示例）：
+schedule: { kind: "cron", expr: "0 23 * * *", tz: "Asia/Shanghai" }
+payload:  { kind: "agentTurn", message: "请生成今日 CAS 日复盘" }
+```
+
+或通过 OpenClaw 聊天发送：`请设置每晚11点自动生成CAS日复盘`

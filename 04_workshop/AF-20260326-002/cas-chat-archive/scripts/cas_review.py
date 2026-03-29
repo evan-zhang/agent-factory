@@ -101,6 +101,26 @@ def write_markdown(path: Path, text: str) -> None:
 
 
 def cmd_daily(args: argparse.Namespace) -> None:
+    # 读取当日归档日志摘要
+    def read_daily_log_summary(archive_root: str, gateway: str, day: str, max_entries: int = 10) -> list[str]:
+        """读取当日归档日志，返回前N条摘要行"""
+        import os
+        root = Path(archive_root).expanduser()
+        # 尝试多种可能的日志路径
+        candidates = [
+            root / gateway / "logs" / f"{day}.md",
+            root / "logs" / f"{day}.md",
+            root / gateway / f"{day}.md",
+        ]
+        for log_path in candidates:
+            if log_path.exists():
+                lines = log_path.read_text(encoding="utf-8", errors="replace").splitlines()
+                # 提取有内容的行（跳过空行和纯分隔线）
+                content_lines = [l for l in lines if l.strip() and not l.strip().startswith("---") and not l.strip() == "#"]
+                if content_lines:
+                    return content_lines[:max_entries]
+        return []
+
     day = args.day or today()
     script_dir = Path(__file__).parent
     report = cas_inspect_json(script_dir, args.archive_root, day, args.scope_mode, args.gateway, args.agent)
@@ -132,6 +152,19 @@ def cmd_daily(args: argparse.Namespace) -> None:
     ]
     for t in tips:
         lines.append(f"- {t}")
+
+    # 附录：今日归档日志摘要
+    log_summary = read_daily_log_summary(args.archive_root, args.gateway, day)
+    lines.extend([
+        "",
+        "## 附录：今日归档日志摘要",
+        "",
+    ])
+    if log_summary:
+        lines.extend([f"    {l}" for l in log_summary])
+        lines.extend(["", f"（以上为当日归档日志前 {len(log_summary)} 行，完整日志见归档目录）", ""])
+    else:
+        lines.extend(["（今日暂无归档日志，或日志路径未匹配）", ""])
 
     lines.extend([
         "",

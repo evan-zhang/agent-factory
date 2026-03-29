@@ -28,6 +28,9 @@ function isoFromEvent(event: any): string {
   return new Date().toISOString();
 }
 
+// 动态解析：相对于 handler.ts 所在目录（hooks/cas-chat-archive-auto/），
+// 向上两级到 Skill 根目录，再进入 scripts/cas_archive.py
+// 兼容任意 clawhub 安装路径，无需配置 CAS_ARCHIVE_SCRIPT 环境变量
 function defaultCasScriptPath(): string {
   const here = path.dirname(fileURLToPath(import.meta.url));
   return path.resolve(here, "..", "..", "scripts", "cas_archive.py");
