@@ -81,6 +81,36 @@ function agentIdFromEvent(event: any): string {
   return raw;
 }
 
+async function runCasSetupIfNeeded(archiveRoot: string, scriptPath: string): Promise<void> {
+  // 检查标志文件
+  const flagPath = path.join(
+    archiveRoot.replace(/^~/, os.homedir()),
+    ".cas_initialized"
+  );
+  try {
+    await fs.access(flagPath);
+    return; // 已初始化，跳过
+  } catch {
+    // 未初始化，继续
+  }
+
+  // 找 cas_setup.py（与 cas_archive.py 同目录）
+  const setupScript = path.join(path.dirname(scriptPath), "cas_setup.py");
+  try {
+    await fs.access(setupScript);
+  } catch {
+    return; // setup 脚本不存在，跳过
+  }
+
+  try {
+    await execFileAsync("python3", [setupScript, "--auto",
+      "--archive-root", archiveRoot]);
+    console.log("[cas-chat-archive] 首次运行：已自动初始化复盘体系");
+  } catch {
+    // 静默失败，不阻断主流程
+  }
+}
+
 async function runCasRecordBundle(payload: any, gateway: string, scopeMode: string, agentId: string): Promise<void> {
   const script = process.env.CAS_ARCHIVE_SCRIPT || defaultCasScriptPath();
   if (!(await fileExists(script))) {
@@ -187,6 +217,11 @@ export default async function handler(event: any): Promise<void> {
     };
 
     await runCasRecordBundle(payload, gateway, scopeMode, agentId);
+
+    // 首次运行自动初始化复盘体系
+    const casScript = process.env.CAS_ARCHIVE_SCRIPT || defaultCasScriptPath();
+    const casArchiveRoot = (process.env.CAS_ARCHIVE_ROOT || "~/.openclaw/chat-archive");
+    await runCasSetupIfNeeded(casArchiveRoot, casScript).catch(() => {});
 
     if (blocked.length > 0) {
       const msg = `[cas-chat-archive-auto] blocked attachments outside allowlist: ${blocked.join(", ")}`;

@@ -1,12 +1,22 @@
 ---
 name: cas-chat-archive
-version: 1.1.1
+version: 1.2.0
 description: Append-only chat archive operations for OpenClaw gateways with optional agent-isolated scope. Use when initializing archive folders, recording inbound/outbound messages, storing attachments with timestamped sanitized filenames, generating daily backup reports/search, and running manual daily/weekly/monthly review + share-dedup workflows under ~/.openclaw/chat-archive/<gateway>/.
 metadata:
   openclaw:
     requires:
       bins: [python3]
       python: ">=3.10"
+---
+
+## ⚡ 快速开始（安装后必做）
+
+安装完成后，向 AI 发送以下指令完成一键初始化：
+
+> 帮我初始化 CAS 成长体系
+
+AI 将自动创建三个复盘 cron 任务（每日日报/每周复盘/每月复盘），无需任何手工配置。
+
 ---
 
 # CAS Chat Archive
