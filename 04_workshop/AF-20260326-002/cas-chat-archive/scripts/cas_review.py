@@ -135,7 +135,7 @@ def cmd_daily(args: argparse.Namespace) -> None:
         f"- gateway: {args.gateway}",
         f"- agent: {args.agent}",
         "",
-        "## 1) 备份概览",
+        "## 1) 今日协作概览",
         f"- sessions: {report['summary']['sessions']}",
         f"- inbound: {report['summary']['inbound']}",
         f"- outbound: {report['summary']['outbound']}",
@@ -143,21 +143,42 @@ def cmd_daily(args: argparse.Namespace) -> None:
         f"- logBytes: {report['summary']['logBytes']}",
         f"- assetBytes: {report['summary']['assetBytes']}",
         "",
-        "## 2) 今日关键学习（最重要）",
-        "- 问题修复沉淀（Problem -> Rule）：",
-        "- 预期偏差校正（Mismatch -> Preference）：",
-        "- 用户模式更新（Pattern -> Twin）：",
+        "## 2) 今日经验沉淀",
+        "- ✅ 做对了什么（可复用的成功模式）：",
+        "- ❌ 做错了什么（需要修正的行为）：",
+        "- 📌 新增规则（Problem → Rule）：",
         "",
-        "## 3) AI能力改进建议（至少3条）",
+        "## 3) 今日主人洞察",
+        "- 决策风格（今天观察到的新线索）：",
+        "- 偏好/习惯更新：",
+        "- 知识背景/价值观补充：",
+        "",
+        "## 4) 数字分身逼近度",
+        "- 今日亮点（最像主人的一个时刻）：",
+        "- 今日差距（最不像主人的一个时刻）：",
+        "- 下一步改进方向：",
+        "",
+        "## 5) 明日待跟进",
+        "- （待填写）",
+        "",
+        "## 6) AI能力改进建议（至少3条）",
     ]
     for t in tips:
         lines.append(f"- {t}")
+
+    lines.extend([
+        "",
+        "## 7) 经验分享状态",
+        "- 是否已分享：待检查 SHARE-LOG.jsonl",
+        "- 默认策略：未分享优先；已分享则跳过，除非强制分享",
+        "",
+    ])
 
     # 附录：今日归档日志摘要
     log_summary = read_daily_log_summary(args.archive_root, args.gateway, day)
     lines.extend([
         "",
-        "## 附录：今日归档日志摘要",
+        "## 8) 附录：今日归档日志摘要",
         "",
     ])
     if log_summary:
@@ -165,14 +186,6 @@ def cmd_daily(args: argparse.Namespace) -> None:
         lines.extend(["", f"（以上为当日归档日志前 {len(log_summary)} 行，完整日志见归档目录）", ""])
     else:
         lines.extend(["（今日暂无归档日志，或日志路径未匹配）", ""])
-
-    lines.extend([
-        "",
-        "## 4) 经验分享状态",
-        "- 是否已分享：待检查 SHARE-LOG.jsonl",
-        "- 默认策略：未分享优先；已分享则跳过，除非强制分享",
-        "",
-    ])
 
     write_markdown(out_path, "\n".join(lines))
     print(f"daily review written: {out_path}")

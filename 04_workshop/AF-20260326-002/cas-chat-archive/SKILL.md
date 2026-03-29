@@ -40,14 +40,21 @@ Notes:
 - Concurrent writes are guarded by file lock.
 - Invalid filename characters are replaced with `_`.
 
-## 日复盘自动触发（可选）
+## 成长复盘体系
 
-默认日复盘需手动执行。如需自动触发，可在 OpenClaw 中配置 cron 任务：
+> 时时有记录、日日有汇报、周周有总结、月月有复盘
 
-```
-每晚 23:00 自动生成日复盘（示例）：
-schedule: { kind: "cron", expr: "0 23 * * *", tz: "Asia/Shanghai" }
-payload:  { kind: "agentTurn", message: "请生成今日 CAS 日复盘" }
-```
+cas-chat-archive 实现完整的四层成长闭环：
 
-或通过 OpenClaw 聊天发送：`请设置每晚11点自动生成CAS日复盘`
+| 层次 | 触发时间 | 核心价值 |
+|------|----------|----------|
+| 实时归档 | 每条消息 | 完整记录人机协作过程 |
+| 日报 Daily Growth Log | 每日 19:00（北京） | AI 经验沉淀 + 主人洞察 |
+| 周复盘 Weekly Joint Review | 每周六 10:00（北京） | 跨 Agent 知识同步 + 致同伴 |
+| 月复盘 Monthly Org Review | 每月最后周五 18:00（北京） | 组织治理 + 职能边界审查 |
+
+安装后激活方式：通过 OpenClaw 聊天发送以下指令配置 cron：
+
+- 日报：`请设置每天19点自动生成CAS日报`
+- 周复盘：`请设置每周六10点自动生成CAS周复盘`
+- 月复盘：`请设置每月最后一个周五18点自动生成CAS月复盘`
