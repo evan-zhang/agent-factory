@@ -1,0 +1,16 @@
+{
+  "projectId": "AF-20260329-003",
+  "name": "BP价值拆解与归因评分系统",
+  "status": "RUNNING",
+  "phase": "INTAKE",
+  "version": "0.1.0",
+  "createdAt": "2026-03-29T21:26:00+08:00",
+  "updatedAt": "2026-03-29T21:26:00+08:00",
+  "owner": "factory-orchestrator",
+  "sourceProject": "TPR-20260329-001",
+  "targetProduct": "bp-scorer",
+  "targetSkillSlug": "bp-scorer",
+  "targetVersion": "1.0.0",
+  "deliveryFrom": "三省工作台",
+  "notes": "三省已完成GRV v1.5（门下省通过），25个单元测试全部通过，进入工厂接收验收阶段"
+}

@@ -75,4 +75,14 @@
 | 自改进主动 Agent | `self-improving-proactive-agent` | v1.0.0 | 2026-03-12 | ✅ 活跃 |
 | CMS SOP Lite | `cms-soplite` | v1.0.6 | 2026-03-28 | ❌ 已废弃删除（被cms-sop取代）|
 
+---
+
+## 6. 在建项目（2026-03-29）
+
+| 项目ID | 名称 | 阶段 | 目标产品 |
+|---|---|---|---|
+| AF-20260329-001 | CWork草稿功能 | EXECUTION | cms-cwork v1.5.0 |
+| AF-20260329-002 | CAS成长复盘体系 | EXECUTION | cas-chat-archive v1.2.0 |
+| AF-20260329-003 | BP价值拆解与归因评分系统 | INTAKE | bp-scorer v1.0.0 |
+
 *最后更新：2026-03-29 | Zaowu*
