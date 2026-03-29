@@ -1,0 +1,90 @@
+{
+  "title": "【接口需求-加急】请尽快提供工作协同草稿箱相关 OpenAPI（存取/编辑/删除/清理）【重发修正版】",
+  "content": "成伟你好，为支持我们在 SeaWork/CWork Skill 中实现“先存草稿、再确认发送”的能力，请工作协同侧尽快提供（或确认）以下 OpenAPI：1) 草稿创建/保存（save draft）；2) 草稿读取（按ID读取、列表分页）；3) 草稿编辑更新（update draft）；4) 草稿删除（delete draft）；5) 草稿清理（按条件批量清理，如时间范围/状态）；6) 草稿与正式发送的状态流转（draft -> submit）；7) 权限模型与鉴权要求（个人草稿、可见范围）；8) 附件在草稿态处理方式（上传、替换、失效策略）；9) 并发与幂等约束（重复保存、重复提交）；10) 错误码与限流规则。若已有 Swagger/OpenAPI 文档，请直接提供链接与示例请求。请尽快反馈，谢谢。",
+  "to": [
+    {
+      "inputName": "成伟",
+      "resolvedName": "成伟",
+      "empId": 1514822118611259394,
+      "personId": 12106,
+      "dept": "技术部",
+      "matchType": "exact"
+    }
+  ],
+  "cc": [],
+  "advisors": [
+    {
+      "inputName": "成伟",
+      "resolvedName": "成伟",
+      "empId": 1514822118611259394,
+      "personId": 12106,
+      "dept": "技术部",
+      "matchType": "exact"
+    }
+  ],
+  "approvers": [
+    {
+      "inputName": "侯桐",
+      "resolvedName": "侯桐",
+      "empId": 1514822114043662337,
+      "personId": 12091,
+      "dept": "产品部",
+      "matchType": "exact"
+    },
+    {
+      "inputName": "屈军利",
+      "resolvedName": "屈军利",
+      "empId": 1514822127830339585,
+      "personId": 12139,
+      "dept": "开发组",
+      "matchType": "exact"
+    }
+  ],
+  "attachments": [],
+  "acceptEmpIdList": [
+    1514822118611259394
+  ],
+  "copyEmpIdList": [],
+  "advisorEmpIdList": [
+    1514822118611259394
+  ],
+  "approverEmpIdList": [
+    1514822114043662337,
+    1514822127830339585
+  ],
+  "reportLevelList": [
+    {
+      "level": 1,
+      "type": "suggest",
+      "nodeCode": "startNode",
+      "nodeName": "建议",
+      "levelUserList": [
+        {
+          "empId": 1514822118611259394,
+          "requirement": ""
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "type": "decide",
+      "nodeCode": "startNode",
+      "nodeName": "决策",
+      "levelUserList": [
+        {
+          "empId": 1514822114043662337,
+          "requirement": ""
+        },
+        {
+          "empId": 1514822127830339585,
+          "requirement": ""
+        }
+      ]
+    }
+  ],
+  "readyToSend": true,
+  "unresolved": [],
+  "missingAttachments": [],
+  "createdAt": "2026-03-27 22:43:49",
+  "sendPolicy": "必须人工确认后发送；发送时需 --confirm-token CONFIRM_SEND"
+}

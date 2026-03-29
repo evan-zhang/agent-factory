@@ -1,0 +1,29 @@
+# CAS Chat Archive - Gateway 配置示例（推荐：internal hook）
+#
+# 说明：当前主路径为 OpenClaw internal hook：cas-chat-archive-auto。
+# 旧的 postResponse + cas_hook.py 方式仅保留为兼容方案（deprecated）。
+
+env:
+  # 归档根目录
+  CAS_ARCHIVE_ROOT: "~/.openclaw/chat-archive"
+
+  # 作用域：gateway（默认，测试阶段推荐）| agent（按 agent 隔离）
+  CAS_SCOPE_MODE: "gateway"
+
+  # 归档稳态参数
+  CAS_DISK_WARN_MB: "500"
+  CAS_DISK_MIN_MB: "200"
+  CAS_MAX_ASSET_MB: "100"
+  CAS_STRICT_MODE: "false"
+
+hooks:
+  internal:
+    enabled: true
+    entries:
+      cas-chat-archive-auto:
+        enabled: true
+
+# 兼容（deprecated）
+# hooks:
+#   postResponse:
+#     command: "/path/to/cas-chat-archive/scripts/cas_hook.py"
