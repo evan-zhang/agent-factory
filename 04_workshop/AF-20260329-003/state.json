@@ -1,16 +1,34 @@
 {
   "projectId": "AF-20260329-003",
   "name": "BP价值拆解与归因评分系统",
-  "status": "RUNNING",
+  "status": "BLOCKED",
   "phase": "INTAKE",
   "version": "0.1.0",
   "createdAt": "2026-03-29T21:26:00+08:00",
-  "updatedAt": "2026-03-29T21:26:00+08:00",
+  "updatedAt": "2026-03-29T22:10:00+08:00",
   "owner": "factory-orchestrator",
   "sourceProject": "TPR-20260329-001",
   "targetProduct": "bp-scorer",
   "targetSkillSlug": "bp-scorer",
   "targetVersion": "1.0.0",
   "deliveryFrom": "三省工作台",
-  "notes": "三省已完成GRV v1.5（门下省通过），25个单元测试全部通过，进入工厂接收验收阶段"
+  "notes": "三省已完成GRV v1.5（门下省通过），25个单元测试全部通过。API权限问题阻塞：getSimpleTree/getGoalAndKeyResult返回401",
+  "blockers": [
+    {
+      "id": "BLK-001",
+      "type": "API_PERMISSION",
+      "description": "AppKey TsFhRR... 缺少 getSimpleTree 和 getGoalAndKeyResult 权限",
+      "reportedTo": "成伟",
+      "reportedAt": "2026-03-29T22:07:00+08:00",
+      "reportId": "2038256931126276098",
+      "status": "WAITING_RESPONSE"
+    }
+  ],
+  "completedSteps": [
+    "交付包接收",
+    "单元测试验证（25 passed）",
+    "API连通性验证",
+    "问题定位",
+    "向成伟发送工作汇报"
+  ]
 }
