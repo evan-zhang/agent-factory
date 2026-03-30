@@ -8,7 +8,7 @@ dependencies:
 
 # AI慧记
 
-**当前版本**: v1.10.4
+**当前版本**: v1.10.5
 
 > **AI慧记** 提供三类核心能力：
 > 1. **📋 查询列表** — 从「我的慧记」或「视频会议号」两个维度查询会议记录
@@ -536,6 +536,8 @@ python3 scripts/huiji/pull-meeting.py --auto --pick-index 2
 ```
 
 ### 目标命令（最小可用）
+
+- 支持两种入口：`meetingChatId` 与 `meetingNumber`（会议号会先解析为 meetingChatId）
 
 ```bash
 # 用法 1：自动发现 + 拉取（推荐）

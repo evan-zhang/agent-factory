@@ -56,6 +56,7 @@ URL_INCREMENTAL = f"{API_BASE}/open-api/ai-huiji/meetingChat/splitRecordListV2"
 URL_FULL = f"{API_BASE}/open-api/ai-huiji/meetingChat/splitRecordList"
 URL_SECOND_STT = f"{API_BASE}/open-api/ai-huiji/meetingChat/checkSecondSttV2"
 URL_CHAT_LIST = f"{API_BASE}/open-api/ai-huiji/meetingChat/chatListByPage"
+URL_BY_MEETING_NUMBER = f"{API_BASE}/open-api/ai-huiji/meetingChat/listHuiJiIdsByMeetingNumber"
 
 MAX_RETRIES = 3
 RETRY_DELAY = 1
@@ -575,6 +576,8 @@ def pull_ongoing(store: MeetingStore, manifest: dict, interval: int, timeout_sec
 def main():
     parser = argparse.ArgumentParser(description="会议素材镜像器：拉取指定 meetingChatId 的全部文本素材")
     parser.add_argument("meeting_chat_id", nargs="?", default=None, help="慧记会议 ID（可选；未提供时可配合 --auto）")
+    parser.add_argument("--meeting-number", default="", help="视频会议号（可选；可自动解析为 meetingChatId）")
+    parser.add_argument("--last-ts", type=int, default=None, help="按会议号解析时使用的 lastTs（毫秒，默认最近10天）")
     parser.add_argument("--auto", action="store_true", help="自动从我可访问会议中选择目标 meetingChatId")
     parser.add_argument("--pick-index", type=int, default=None, help="配合 --auto：按序号选择候选会议（1-based）")
     parser.add_argument("--prefer-state", type=int, choices=[0, 2], default=0,
@@ -588,8 +591,18 @@ def main():
 
     meeting_chat_id = args.meeting_chat_id
 
+    # 入口优先级：meeting_chat_id > --meeting-number > --auto
+    meeting_number_selected = None
+    if not meeting_chat_id and args.meeting_number:
+        try:
+            resolved = resolve_meeting_chat_id_by_number(args.meeting_number, args.last_ts)
+            meeting_chat_id = resolved["meetingChatId"]
+            meeting_number_selected = resolved
+        except Exception as e:
+            parser.error(str(e))
+
     if not meeting_chat_id and not args.auto:
-        parser.error("必须提供 meeting_chat_id，或使用 --auto 自动发现。")
+        parser.error("必须提供 meeting_chat_id，或使用 --meeting-number / --auto。")
 
     auto_selected = None
     if args.auto and not meeting_chat_id:
@@ -620,6 +633,12 @@ def main():
             f"--auto 自动选择: {auto_selected.get('meetingName') or '-'} | "
             f"{auto_selected.get('stateText')} | {auto_selected.get('updateTimeText')} "
             f"(meetingChatId={meeting_chat_id}, pick_index={auto_selected.get('index')})"
+        )
+
+    if meeting_number_selected:
+        store.log(
+            f"--meeting-number 解析成功: meetingNumber={meeting_number_selected.get('meetingNumber')} -> "
+            f"meetingChatId={meeting_chat_id} (open={meeting_number_selected.get('open')})"
         )
 
     store.log(f"=== pull-meeting 启动 | meetingChatId={meeting_chat_id} ===")
