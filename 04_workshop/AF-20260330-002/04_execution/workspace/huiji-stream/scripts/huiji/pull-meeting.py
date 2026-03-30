@@ -169,7 +169,7 @@ def extract_meetings(raw_data) -> list:
     if isinstance(raw_data, list):
         return raw_data
     if isinstance(raw_data, dict):
-        for key in ("records", "list", "rows", "items", "data"):
+        for key in ("pageContent", "records", "list", "rows", "items", "data"):
             val = raw_data.get(key)
             if isinstance(val, list):
                 return val
@@ -192,7 +192,7 @@ def list_accessible_meetings(page_num: int = 0, page_size: int = 20, state_filte
         update_time = item.get("updateTime")
         normalized.append({
             "meetingChatId": normalize_meeting_chat_id(item),
-            "meetingName": item.get("chatName") or item.get("meetingName") or "",
+            "meetingName": item.get("chatName") or item.get("meetingName") or item.get("name") or "",
             "state": state,
             "stateText": STATE_MAP.get(state, str(state)),
             "updateTime": _to_int_or_none(update_time) or 0,
