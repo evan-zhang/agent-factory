@@ -561,3 +561,41 @@ python3 -m py_compile 04_execution/workspace/huiji-stream/scripts/huiji/pull-mee
 
 结果：✅ 通过。
 
+
+## 十二、120秒调度护栏化改造（v1.10.6）
+
+**改造目标**：将进行中会议拉取改为“调度驱动短任务模式”，避免主会话阻塞，并支持用户提前触发一次。
+
+### 12.1 新增与改造文件
+
+- 新增 `scripts/huiji/pull_core.py`：抽离单次拉取核心逻辑（供 pull-once / pull-meeting 共用）
+- 新增 `scripts/huiji/pull-once.py`：单次增量拉取后退出
+- 新增 `scripts/huiji/trigger-pull.py`：用户提前触发一次
+- 改造 `scripts/huiji/pull-meeting.py`：兼容入口，内部循环调用 short-runner（默认 120s）
+- 改造 `scripts/huiji/meeting-status.py`：新增锁/停机/熔断/空跑计数输出
+- 更新 `SKILL.md`：版本升级到 v1.10.6，新增“调度驱动模式（120s）+ trigger”章节
+
+### 12.2 三大护栏实现
+
+1. **互斥锁**：同会议粒度 `{gateway}:{meetingChatId}` lockfile（TTL=150s）；获取失败返回 `skipped_locked=true`
+2. **自动停机**：
+   - 明确结束（`status=completed`）
+   - 连续 3 次无增量且非 active
+   - 运行超过 10 小时 TTL
+3. **退避 + 熔断**：
+   - 429/5xx/网络类 → 30→60→120→300 秒指数退避 + 抖动
+   - 连续失败 ≥5 → 熔断 15 分钟（返回 `skipped_circuit_open`）
+   - 4xx 参数类错误 → terminal fail，不重试
+
+### 12.3 manifest 新增字段
+
+- `started_at`
+- `stopped_at`
+- `stopped_reason`
+- `consecutive_empty_polls`
+- `consecutive_failures`
+- `circuit_open_until`
+- `last_error`
+- `next_retry_after`
+- `lock`（锁元数据）
+

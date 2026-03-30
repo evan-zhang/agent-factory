@@ -8,7 +8,7 @@ dependencies:
 
 # AI慧记
 
-**当前版本**: v1.10.5
+**当前版本**: v1.10.6
 
 > **AI慧记** 提供三类核心能力：
 > 1. **📋 查询列表** — 从「我的慧记」或「视频会议号」两个维度查询会议记录
@@ -540,14 +540,17 @@ python3 scripts/huiji/pull-meeting.py --auto --pick-index 2
 - 支持两种入口：`meetingChatId` 与 `meetingNumber`（会议号会先解析为 meetingChatId）
 
 ```bash
-# 用法 1：自动发现 + 拉取（推荐）
-python3 scripts/huiji/pull-meeting.py --auto [--pick-index <n>] [--prefer-state <0|2>] [--force]
+# 兼容入口：调度驱动（默认 120s，可选 60/120/180）
+python3 scripts/huiji/pull-meeting.py <meetingChatId> [--interval 120] [--timeout 3600]
 
-# 用法 2：已知 meetingChatId 直接拉取（兼容保留）
-python3 scripts/huiji/pull-meeting.py <meetingChatId> [--name "会议名"] [--force]
+# 短任务入口：单次增量拉取后退出（推荐给调度器）
+python3 scripts/huiji/pull-once.py --meeting-chat-id <meetingChatId>
 
-python3 scripts/huiji/meeting-status.py <meetingChatId>
-python3 scripts/huiji/stop-pull.py <meetingChatId>
+# 用户提前触发一次
+python3 scripts/huiji/trigger-pull.py <meetingChatId>
+
+# 查看本地状态（含锁/熔断/空跑计数）
+python3 scripts/huiji/meeting-status.py <meetingChatId> --json
 ```
 
 ### 落盘结构（固定）
@@ -578,6 +581,16 @@ cms-meeting-materials/{gateway}/{meetingChatId}/
 
 - `meeting-status.py`：只读本地 cms-meeting-materials 状态，可用于离线检查
 - `stop-pull.py`：写入 `.stop` 标记，请求 `pull-meeting.py` 在下一轮安全退出
+
+### 调度驱动模式（120s）+ trigger（v1.10.6）
+
+1. `pull-once.py` 是短任务入口：每次仅执行一轮增量拉取并退出，适配外部调度器。
+2. `pull-meeting.py` 保留兼容：内部按 interval（默认 120s）循环调用短任务。
+3. 护栏三件套：
+   - **锁**：同会议 `{gateway}:{meetingChatId}` 互斥，锁占用时返回 `skipped_locked=true`
+   - **停机**：`completed` / `连续3次无增量且非active` / `超过10小时TTL` 自动停止
+   - **退避与熔断**：429/5xx/网络错误走指数退避（30→60→120→300 + 抖动），连续失败>=5 熔断 15 分钟
+4. `trigger-pull.py` 支持用户提前触发一次；若已有任务在跑，返回 `running`（`running_skip`）。
 
 ## 约束
 
@@ -631,6 +644,9 @@ ai-huiji/
         ├── README.md                        # 脚本清单 + 使用示例
         ├── get-transcript.py                # 🌟 统一入口（自动处理全量/增量/改写/缓存）
         ├── list-my-meetings.py             # AppKey 可访问会议列表（meetingChatId 自动发现入口）
+        ├── pull_core.py                    # 短任务共享核心（锁/停机/退避/熔断）
+        ├── pull-once.py                    # 单次增量拉取并退出（调度器入口）
+        ├── trigger-pull.py                 # 提前触发一次 pull-once
         ├── chat-list-by-page.py            # 4.1 分页查询
         ├── list-by-meeting-number.py       # 4.11 按会议号查询
         ├── split-record-list.py            # 4.4 全量分片转写（内部使用）
