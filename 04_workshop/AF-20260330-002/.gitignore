@@ -1,0 +1,6 @@
+# Runtime artifacts
+04_execution/workspace/huiji-stream/materials/
+04_execution/workspace/huiji-stream/scripts/huiji/__pycache__/
+
+# Machine-level shared data
+cms-meeting-materials/

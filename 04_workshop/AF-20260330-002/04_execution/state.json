@@ -1,0 +1,25 @@
+{
+  "projectId": "AF-20260330-002",
+  "status": "DONE",
+  "phase": "B",
+  "deliveredAt": "2026-03-30T09:10:00+08:00",
+  "workspace": "04_execution/workspace/huiji-stream/",
+  "deliveredBy": "assembler",
+  "note": "Phase B 交付：summarizer.py（新建）+ event-processor.py + poll-scheduler.py（修改）+ SKILL.md（v1.10.2）",
+  "phase_a": "done",
+  "phase_b": "done",
+  "scope_mode": "meeting-id-transcript-only",
+  "materials_pipeline": "done",
+  "scope_lock": {
+    "mode": "meeting-id-transcript-only",
+    "description": "当前只聚焦：基于已知/提供 meetingChatId，从服务器读取该会议全部文本信息。",
+    "deferred": [
+      "行动项抽取增强",
+      "会后一键纪要导出",
+      "主题阈值自适应",
+      "摘要触发冗余收敛",
+      "其他扩展能力"
+    ],
+    "updatedAt": "2026-03-30T09:20:00+08:00"
+  }
+}

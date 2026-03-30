@@ -1,0 +1,9 @@
+# Local runtime artifacts
+materials/
+**/__pycache__/
+*.pyc
+*.pyo
+
+# Local notes / temp
+.DS_Store
+*.log

@@ -1,0 +1,6 @@
+# huiji-stream / requirements.txt
+# Pure Python dependencies — only stdlib + requests + sqlite3
+# No Redis, MySQL, or other external middleware required.
+
+requests>=2.28.0
+urllib3>=1.26.0
