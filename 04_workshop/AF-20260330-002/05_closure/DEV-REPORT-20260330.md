@@ -599,3 +599,69 @@ python3 -m py_compile 04_execution/workspace/huiji-stream/scripts/huiji/pull-mee
 - `next_retry_after`
 - `lock`（锁元数据）
 
+
+## 十三、Issue #4 修复（v1.10.7）
+
+**修复日期**: 2026-03-30  
+**交付角色**: Assembler（交付总管）  
+**目标**: 修复依赖文档、缺失脚本、子代理通知、_id 透明化四项问题，形成可发布补丁。
+
+### 13.1 高优先：依赖与文档
+
+- 已移除 `SKILL.md` frontmatter 中 `dependencies: cms-auth-skills`。
+- 鉴权章节明确：仅需 `XG_BIZ_API_KEY`，无需 `cms-auth-skills`。
+- 新增「快速开始（1分钟）」：
+  1) 设置 `XG_BIZ_API_KEY`
+  2) `list-my-meetings.py --json` 验证
+  3) `list-by-meeting-number.py --json` 验证会议号查询
+
+### 13.2 高优先：新增 list-by-meeting-number.py
+
+新增文件：`scripts/huiji/list-by-meeting-number.py`
+
+- 必填参数：`meetingNumber`
+- 可选参数：`--last-ts`、`--json`
+- 接口：`/open-api/ai-huiji/meetingChat/listHuiJiIdsByMeetingNumber`
+- 输出字段：`chatId/open/isDoneRecordingFile/start/stop`
+- 错误处理：业务错误与网络错误均输出清晰失败原因
+- 鉴权风格：与 `pull-meeting.py` 同源（复用 `pull_core` 的 header/API 调用风格）
+
+### 13.3 中优先：子代理主动通知（notify-file）
+
+已为下列脚本新增 `--notify-file <path>`：
+
+- `scripts/huiji/pull-once.py`
+- `scripts/huiji/trigger-pull.py`
+
+行为：执行结束后追加写入 JSONL 单行事件，至少包含：
+- `meetingChatId`
+- `status`
+- `new_fragments`
+- `timestamp`
+
+### 13.4 中优先：_id 后缀透明化
+
+修改文件：`scripts/huiji/list-my-meetings.py`
+
+- `--json` 输出新增：
+  - `rawId`
+  - `originChatId`
+  - `normalizedMeetingChatId`
+  - `idNormalizationApplied`
+- 文本模式新增归一化提示（仅后缀截断时显示）：
+  - `ID 归一化: <rawId> -> <meetingChatId>`
+- 同步更新 `SKILL.md` 的「_id 透明处理（对 AI 可见）」说明。
+
+### 13.5 版本与兼容性
+
+- `SKILL.md` 版本：`v1.10.6 -> v1.10.7`
+- 现有命令参数保持兼容；新增参数均为可选，不影响旧调用。
+
+### 13.6 验证
+
+```bash
+python3 -m py_compile scripts/huiji/*.py
+```
+
+结果：✅ 通过。
+

@@ -2,13 +2,11 @@
 name: cms-meeting-materials
 description: CMS 会议素材镜像能力（会记/慧记/会议纪要）：基于 appKey 自动发现可访问会议或使用已知 meetingChatId，拉取并持续同步会议转写文本到本机共享目录（~/.openclaw/cms-meeting-materials/{gateway}/{meetingChatId}）。用于为后续总结/问答/纪要技能提供标准化原始素材。
 skillcode: cms-meeting-materials
-dependencies:
-  - cms-auth-skills
 ---
 
 # AI慧记
 
-**当前版本**: v1.10.6
+**当前版本**: v1.10.7
 
 > **AI慧记** 提供三类核心能力：
 > 1. **📋 查询列表** — 从「我的慧记」或「视频会议号」两个维度查询会议记录
@@ -32,9 +30,24 @@ dependencies:
 
 ## 鉴权
 
-所有接口只需 `appKey`（环境变量 `XG_BIZ_API_KEY`），无需用户登录态。
+所有接口只需 `appKey`（环境变量 `XG_BIZ_API_KEY`），无需用户登录态，也**不依赖 cms-auth-skills**。
 
-详见 `cms-auth-skills/common/auth.md`。
+---
+
+## 快速开始（1分钟）
+
+```bash
+# 1) 设置 API Key（当前 shell 生效）
+export XG_BIZ_API_KEY='你的 appKey'
+
+# 2) 验证可访问会议（成功返回列表即鉴权可用）
+python3 scripts/huiji/list-my-meetings.py 0 5 --json
+
+# 3) 已知会议号时，直接查询会议维度记录
+python3 scripts/huiji/list-by-meeting-number.py <meetingNumber> --json
+```
+
+> 若返回“请设置环境变量 XG_BIZ_API_KEY”，说明当前进程尚未加载环境变量。
 
 ---
 
@@ -355,14 +368,23 @@ created: 2026-03-29 18:45:00
 
 ---
 
-## _id 字段处理（重要）
+## _id 透明处理（对 AI 可见）
 
-4.1 返回的 `_id` 可能有 `__数字` 后缀（如 `abc123__45678`），不能直接用作 `meetingChatId`：
+4.1 返回的 `_id` 可能有 `__数字` 后缀（如 `abc123__45678`），不能直接用作 `meetingChatId`。
 
-- **处理方式一**：截取双下划线前的部分 → `abc123`
-- **处理方式二**：使用 `originChatId` 字段的值
+标准处理：
+- 优先使用 `originChatId`；
+- 若无 `originChatId` 且 `_id` 含 `__`，截取前缀作为 `meetingChatId`；
+- 若均无特殊情况，直接使用 `_id`。
 
-脚本和 AI 在将 4.1 列表项传给 4.4 / 4.8 / 4.10 时，必须做此处理。
+`list-my-meetings.py --json` 已透明输出：
+- `rawId`：原始 `_id`
+- `originChatId`
+- `normalizedMeetingChatId`
+- `idNormalizationApplied`（是否发生归一化）
+
+文本模式下，仅当发生 `__` 后缀截断时，会额外显示：
+`ID 归一化: <rawId> -> <meetingChatId>`
 
 ---
 
@@ -591,6 +613,9 @@ cms-meeting-materials/{gateway}/{meetingChatId}/
    - **停机**：`completed` / `连续3次无增量且非active` / `超过10小时TTL` 自动停止
    - **退避与熔断**：429/5xx/网络错误走指数退避（30→60→120→300 + 抖动），连续失败>=5 熔断 15 分钟
 4. `trigger-pull.py` 支持用户提前触发一次；若已有任务在跑，返回 `running`（`running_skip`）。
+5. 子代理模式可加 `--notify-file <path>`：
+   - `pull-once.py --notify-file`：任务结束后向 JSONL 追加一条结构化事件（`meetingChatId/status/new_fragments/timestamp`）
+   - `trigger-pull.py --notify-file`：同样在触发流程结束后追加一条事件，便于主 agent 异步感知子任务结果
 
 ## 约束
 
@@ -602,7 +627,7 @@ cms-meeting-materials/{gateway}/{meetingChatId}/
 5. **_id 后缀处理**：4.1 返回的 `_id` 可能有 `__数字` 后缀，用作 `meetingChatId` 时需截取或用 `originChatId`
 6. **重试策略**：脚本内置最多重试 3 次，间隔 1 秒
 7. **分页从 0 开始**：4.1 的 `pageNum` 从 0 开始
-8. **依赖声明**：鉴权依赖 `cms-auth-skills`
+8. **依赖声明**：仅需环境变量 `XG_BIZ_API_KEY`，无需 `cms-auth-skills`
 9. **增量优先**：有缓存时优先用 4.10 增量拉取，减少重复传输
 10. **时间戳必须转换**：所有时间戳字段（createTime、startTime、realTime、meetingLength 等）向用户展示时必须转换为可读格式，禁止直接展示原始数字。详见上方「时间戳处理规范」
 11. **防幻觉与术语准确性**：总结/待办/专题分析时，禁止虚构时间、人物、数据、决策；专业术语结合上下文智能纠错但不确定时保持原文；AI 归纳需诚实标注来源。详见上方「严格约束：防幻觉与术语准确性」

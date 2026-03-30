@@ -54,14 +54,28 @@ def _call_api(url: str, body: dict, timeout: int = 30) -> dict:
     raise RuntimeError(f"API 请求失败（重试{MAX_RETRIES}次）: {last_err}")
 
 
-def normalize_meeting_chat_id(item: dict) -> str:
-    origin = item.get("originChatId")
-    if origin:
-        return str(origin)
+def normalize_id_fields(item: dict) -> dict:
     raw_id = str(item.get("_id") or "")
-    if "__" in raw_id:
-        return raw_id.split("__", 1)[0]
-    return raw_id
+    origin_chat_id = item.get("originChatId")
+    has_suffix = "__" in raw_id
+
+    if origin_chat_id not in (None, ""):
+        normalized = str(origin_chat_id)
+        applied = normalized != raw_id
+    elif has_suffix:
+        normalized = raw_id.split("__", 1)[0]
+        applied = True
+    else:
+        normalized = raw_id
+        applied = False
+
+    return {
+        "rawId": raw_id or None,
+        "originChatId": str(origin_chat_id) if origin_chat_id not in (None, "") else None,
+        "normalizedMeetingChatId": normalized,
+        "idNormalizationApplied": bool(applied),
+        "suffixTruncated": has_suffix,
+    }
 
 
 def format_ts(ts_ms):
@@ -118,8 +132,6 @@ def pick_first(item: dict, keys, default=None):
 
 def build_sort_key(state_filter, state, update_time):
     update_num = _to_int_or_none(update_time) or 0
-    # 默认：进行中优先，再按更新时间倒序
-    # 指定 state 过滤：仅按更新时间倒序
     if state_filter is not None:
         return (0, -update_num)
     ongoing_rank = 0 if state == 0 else 1
@@ -133,9 +145,15 @@ def normalize_item(item: dict, state_filter=None) -> dict:
     owner_name = pick_first(item, ["creatorName", "ownerName", "userName", "createUserName", "nickname"])
     meeting_number = pick_first(item, ["meetingNumber", "meetingNo", "conferenceNo", "confNo"])
     meeting_length_ms = pick_first(item, ["meetingLength", "duration", "meetingDuration", "durationMs"])
+    id_info = normalize_id_fields(item)
 
     return {
-        "meetingChatId": normalize_meeting_chat_id(item),
+        "meetingChatId": id_info["normalizedMeetingChatId"],
+        "rawId": id_info["rawId"],
+        "originChatId": id_info["originChatId"],
+        "normalizedMeetingChatId": id_info["normalizedMeetingChatId"],
+        "idNormalizationApplied": id_info["idNormalizationApplied"],
+        "suffixTruncated": id_info["suffixTruncated"],
         "meetingName": item.get("chatName") or item.get("meetingName") or item.get("name") or "",
         "state": state_code,
         "stateText": STATE_MAP.get(state_code, str(state_code)),
@@ -206,6 +224,10 @@ def main():
                     "index": m.get("index"),
                     "meetingName": m.get("meetingName"),
                     "meetingChatId": m.get("meetingChatId"),
+                    "rawId": m.get("rawId"),
+                    "originChatId": m.get("originChatId"),
+                    "normalizedMeetingChatId": m.get("normalizedMeetingChatId"),
+                    "idNormalizationApplied": m.get("idNormalizationApplied"),
                     "state": m.get("state"),
                     "stateText": m.get("stateText"),
                     "updateTime": m.get("updateTime"),
@@ -250,6 +272,8 @@ def main():
         for m in normalized:
             print(f"  {m['index']:>2}. {m['meetingName'] or '-'}")
             print(f"      meetingChatId: {m['meetingChatId'] or '-'}")
+            if m.get("suffixTruncated") and m.get("rawId") and m.get("meetingChatId"):
+                print(f"      ID 归一化     : {m['rawId']} -> {m['meetingChatId']}")
             print(f"      状态         : {m['stateText']}")
             print(f"      更新时间     : {m['updateTimeText']}")
             print(f"      创建时间     : {m['createTimeText']}")
