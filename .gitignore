@@ -16,8 +16,10 @@ snapshots/
 # Node 依赖
 node_modules/
 package-lock.json
+package.json
 
-# Python 缓存
+# Python 虚拟环境和缓存
+.venv/
 __pycache__/
 *.pyc
 *.pyo
@@ -29,7 +31,16 @@ dist/
 # 测试输出
 output-test/
 
-# 其他
-*.zip
+# 运行时数据
+06_memory/runtime-data/
+cms-meeting-materials/
+
+# 备份存档
+07_assets/archives/
+08_infra/backups/
+
+# 幽灵目录防护
 ${LIFE_WORKSPACE}/
+
+# 工具目录
 .spec-workflow/
