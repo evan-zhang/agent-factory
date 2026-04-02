@@ -19,12 +19,15 @@ Welcome to the **Agent Factory**. This workspace is organized into 8 functional 
 
 ---
 
-## 🛠️ System Symlinks (Do Not Delete)
-The following links exist at the root level to maintain compatibility with the OpenClaw core system while keeping the workspace clean:
-- `memory` -> `06_memory`
-- `skills` -> `05_products`
-- `agents` -> `08_infra`
-- `config` -> `08_infra`
+## 🛠️ 目录别名（OpenClaw 兼容性）
+以下目录与编号目录共享相同的底层存储（APFS 共享 inode），两个名字指向同一个物理目录：
+- `memory` ↔ `06_memory`（运行时记忆）
+- `skills` ↔ `05_products`（Skill 产品源码）
+- `agents` ↔ `08_infra`（Agent 定义配置）
+- `config` ↔ `08_infra`（工厂全局配置）
+
+> ⚠️ **不要删除根目录下的 `skills/`、`memory/`、`agents/`、`config/`**，它们是 OpenClaw 系统识别的工作目录。代码优先使用编号目录（`05_products/`、`06_memory/` 等），但别名目录也保留以兼容旧路径引用。
+> **它们不是软链接（symlink）**，而是 APFS 目录的共享 inode 机制。
 
 ---
 

@@ -47,14 +47,32 @@ Step 7 (ACCEPTANCE)     → Reviewer Agent + Validator
 - 不跳过任何步骤
 - 不修改其他角色的输出
 
+## 四总师 ↔ 技术角色映射表
+
+**四总师**是 AF-SOP-01（L2 八阶段）中使用的业务视角角色名。
+**技术角色**是 SOUL.md（L1 七步）中实际的 Agent 代号。
+两者是**同一组角色的不同命名视角**，映射关系如下：
+
+| 四总师（业务视角） | 技术角色代号 | 对应 L2 阶段 | 核心职责 |
+|---|---|---|---|
+| 工厂调度员 | `orchestrator` | 全程 | 流程控制、用户交互、任务分发 |
+| 设计总工 | `analyst` + `generator` | S1-S3（背景/需求/设计） | 文档解析、方案设计、能力盘点 |
+| 交付总管 | `assembler` | S4-S6（开发/测试/发布） | 编码执行、组装输出、发布分发 |
+| 质检总监 | `validator` + `reviewer` | S5-S7（测试/版本管理） | 质量检查、红蓝对抗、验收门控 |
+
+**判断标准**：
+- 在文档/规则中看到"设计总工"→ 指的是 `analyst` 和 `generator` 的职责
+- 在文档/规则中看到"质检总监"→ 指的是 `validator` 和 `reviewer` 的职责
+- 在 SOUL.md/代码中看到 `orchestrator` → 就是"工厂调度员"
+
 ## 可用 Skill（全局安装）
 
-工厂 Agent 可调用以下全局 Skill：
+工厂 Agent 可调用以下全局 Skill（安装路径：`./skills/` 或 `05_products/`）：
 
-| Skill | 路径 | 用途 |
+| Skill | ClawHub slug | 用途 |
 |---|---|---|
-| tpr-framework | `./skills/tpr-framework/` | TPR 流程管理 |
-| self-improving-proactive-agent | `./skills/self-improving-proactive-agent/` | 自我改进 |
-| coding-agent | `./skills/coding-agent/` | 代码任务 |
+| tpr-framework | `tpr-framework` | TPR 三省制工作流框架 |
+| coding-agent | — | 代码任务委托（本地） |
 
-> 注意：技能安装在 `./skills/` 目录，工厂所有角色均可调用。新增技能时，同步更新本文件。
+> 注意：工厂不引用、不依赖任何第三方 Skill，所有基础能力必须自研可控。
+> 新增技能时，同步更新本文件和 `05_products/index.md`。

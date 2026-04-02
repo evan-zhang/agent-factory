@@ -1,7 +1,7 @@
 # AF-SOP-01_Agent工厂 2.0 核心工作流规范 (Standard Operating Procedure)
 
 - 版本：v4.6
-- 状态：DRAFT (等待 Evan 审阅)
+- 状态：STABLE（2026-04-02 确认，v4.3-v4.6 变更记录已完整）
 - 适用范围：**Agent Factory 作为 Skill 产品工厂的整体运营规范**
 - 核心定位：**工业化生产线模式 (含四重发布分发体系)**
 

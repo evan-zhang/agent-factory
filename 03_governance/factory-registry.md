@@ -1,12 +1,16 @@
 # 工厂总台账 (Factory Product Registry)
 
-本文档记录 Agent Factory 生产的所有 Skill 产品及其生命周期状态。
+> ⚠️ **产品索引的权威来源已迁移至 `05_products/index.md`**。
+> 本文档仅作为**治理操作记录**（admission / override / rollback），记录工厂的历史操作轨迹。
+> 产品状态、版本号、关联信息以 `05_products/index.md` 为准，本文档中的产品数据可能滞后。
 
 ---
 
-## 1. 活跃产品线 (Active Products)
+## 1. 历史产品线记录 (Historical Product Records)
 
-| 产品编号 | 产品名称 | 最新版本 | ClawHub slug | 当前阶段 | 负责调度员 | 最近更新 | 状态 |
+> ⚠️ 以下信息仅供参考历史，请以 `05_products/index.md` 为准。
+
+| 产品编号 | 产品名称 | 记录版本 | ClawHub slug | 当前阶段 | 负责调度员 | 最近更新 | 状态 |
 |---|---|---|---|---|---|---|---|
 | **AF-20260328-002** | cms-sop 统一SOP执行框架（Lite+Full）| v1.0.0 | `cms-sop` | S8（观察期）| Zaowu | 2026-03-29 | ✅ RELEASED |
 | **AF-20260327-001** | bp-reporting-templates 复刻项目 | v0.4.3 | `bp-reporting-templates` | S6（RELEASED） | Zaowu | 2026-03-28 | ✅ RELEASED |
