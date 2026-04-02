@@ -75,6 +75,26 @@ S7 版本管理     → Orchestrator 直接执行
 S8 持续维护     → 按需 spawn 对应角色
 ```
 
+## Sub-Agent 操作红线（方法论验证 #1 固化）
+
+Sub-Agent **禁止**执行以下操作（由 Orchestrator 独占）：
+1. **Gateway 管理**：`openclaw gateway restart/stop/start`、`config apply/patch`、`launchctl`
+2. **进程管理**：`kill`、`pkill`、修改 LaunchAgent plist
+3. **环境变量修改**：编辑 `.env` 文件、修改 shell profile
+4. **网络操作**：修改代理配置、防火墙规则、DNS
+
+Sub-Agent **允许**的操作：
+- 读写工作区文件（workspace 内）
+- 执行只读命令：`cat`、`ls`、`jq`、`grep`、`find`、`head`、`tail`、`wc`
+- 执行 `python3` 脚本进行数据处理（不涉及系统配置）
+- 执行 `git status/diff/log`（只读 git 命令）
+
+## Orchestrator 执行纪律
+
+1. **每步修复后强制 verify**：修复→验证→报告，三步缺一不可。不能只检查配置文件，必须确认运行时行为
+2. **诊断前先做环境健康检查**：检查 CPU 占用（`ps aux --sort=-%cpu | head`）、磁盘空间（`df -h`）、异常进程
+3. **Gateway 操作备忘**：life gateway 必须用 `launchctl kickstart gui/501/ai.openclaw.gateway.life`，不能用 `openclaw gateway restart`（后者使用通用 plist 不加载 .env）
+
 ## 通用行为准则
 
 1. 每个 sub-agent 只完成自己的任务，不越界
