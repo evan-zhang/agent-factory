@@ -1,49 +1,130 @@
-# Agent Factory 全局配置 v1.0
+# Agent Factory 全局配置 v2.0
 
 factory:
-  version: v1.0
+  version: v2.0
   name: "Agent Factory"
-  description: "OpenClaw 业务 Agent / Skill / API 一体化建设工厂"
+  description: "OpenClaw 业务 Skill 产品工厂"
 
+# ============================
+# 路径配置
+# ============================
 paths:
-  # 业务项目工作区根目录
-  projects_root: "/Users/evan/.openclaw/workspace-agent-factory/projects"
-  
-  # governance 台账目录
-  governance_root: "/Users/evan/.openclaw/workspace-agent-factory/governance"
-  
+  # 项目工作区（S1-S8 阶段产出目录）
+  projects_root: "/Users/evan/.openclaw/workspace-agent-factory/04_workshop"
+  # 产品目录（S6 发布目标地）
+  products_root: "/Users/evan/.openclaw/workspace-agent-factory/05_products"
+  # 产品索引（SSOT）
+  product_index: "/Users/evan/.openclaw/workspace-agent-factory/05_products/index.md"
+  # 治理台账目录
+  governance_root: "/Users/evan/.openclaw/workspace-agent-factory/03_governance"
   # 台账文件
-  admission_log: "/Users/evan/.openclaw/workspace-agent-factory/governance/admission-log.md"
-  override_log: "/Users/evan/.openclaw/workspace-agent-factory/governance/override-log.md"
-  rollback_log: "/Users/evan/.openclaw/workspace-agent-factory/governance/rollback-log.md"
-  
-  # 版本历史目录
-  version_history: "/Users/evan/.openclaw/workspace-agent-factory/governance/version-history"
-  
+  admission_log: "/Users/evan/.openclaw/workspace-agent-factory/03_governance/admission-log.md"
+  override_log: "/Users/evan/.openclaw/workspace-agent-factory/03_governance/override-log.md"
+  rollback_log: "/Users/evan/.openclaw/workspace-agent-factory/03_governance/rollback-log.md"
   # 模板目录
   templates: "/Users/evan/.openclaw/workspace-agent-factory/TEMPLATES"
-  
+  # Sub-Agent 模板库
+  agent_templates: "/Users/evan/.openclaw/workspace-agent-factory/08_infra"
   # 快照/备份路径前缀
   snapshots_prefix: "/Users/evan/.openclaw/workspace-agent-factory/snapshots"
+  # 存储/记忆
+  memory_root: "/Users/evan/.openclaw/workspace-agent-factory/06_memory"
 
+# ============================
 # 流程配置
+# ============================
 workflow:
   # 强制串行（不允许并行步骤）
   enforce_sequential: true
-  
   # Validator 门控（FAIL 即停止）
   validator_gate: true
-  
   # Override 需要记录
   override_requires_logging: true
 
-# 项目命名规范
+# ============================
+# L2 八阶段生命周期定义
+# ============================
+stages:
+  S1:
+    name: 背景了解
+    display_name: "S1 背景了解 (Context)"
+    sub_agent: interview
+    input: "用户原始描述/文档"
+    output: "business-summary.md"
+    description: "理解业务系统、API 文档、用户痛点"
+  S2:
+    name: 需求确认
+    display_name: "S2 需求确认 (Requirements)"
+    sub_agent: interview
+    input: "S1 business-summary.md + 用户补充"
+    output: "requirements.md"
+    description: "访谈用户，固化需求边界与验收标准"
+  S3:
+    name: 方案设计
+    display_name: "S3 方案设计 (Design)"
+    sub_agent: analyst + generator + validator
+    input: "S2 requirements.md + API 文档"
+    output: "DESIGN.md + references/"
+    description: "制定技术方案、数据流、接口规范"
+  S4:
+    name: 开发
+    display_name: "S4 开发 (Development)"
+    sub_agent: coding-agent（或 Orchestrator 直接执行）
+    input: "S3 DESIGN.md + 参考代码"
+    output: "SKILL.md + scripts/ + 实现代码"
+    description: "编写代码、脚本、配置文件"
+  S5:
+    name: 测试
+    display_name: "S5 测试 (Testing)"
+    sub_agent: validator + reviewer
+    input: "S4 产出物"
+    output: "测试报告 + 修复清单"
+    description: "功能测试、边界测试、真实数据验证"
+  S6:
+    name: 发布
+    display_name: "S6 发布 (Release)"
+    sub_agent: assembler
+    input: "S5 通过验收的产出物"
+    output: "ClawHub 发布 + 05_products/ 入驻"
+    description: "执行发布，迁移至 05_products/"
+  S7:
+    name: 版本管理
+    display_name: "S7 版本管理 (Versioning)"
+    sub_agent: Orchestrator 直接执行
+    input: "S6 发布记录"
+    output: "CHANGELOG.md + index.md 更新"
+    description: "维护版本号、变更日志"
+  S8:
+    name: 持续维护
+    display_name: "S8 持续维护 (Maintenance)"
+    sub_agent: 按需 spawn
+    input: "用户反馈/Bug 报告"
+    output: "修复代码 + 版本更新"
+    description: "Bug 修复、功能增强、用户反馈响应"
+
+# ============================
+# 项目目录结构模板（S1-S8 阶段产出目录）
+# ============================
+project_structure:
+  - "00_intake/"        # 入场材料
+  - "01_discovery/"     # S1 背景了解
+  - "02_requirements/"  # S2 需求确认
+  - "03_design/"        # S3 方案设计
+  - "04_execution/"     # S4 开发
+  - "05_closure/"       # S5-S8 测试/发布/维护
+  - "state.json"        # 项目状态文件
+
+# ============================
+# 命名规范
+# ============================
 naming:
   project_prefix: "AF"
   date_format: "%Y%m%d"
   separator: "-"
 
+# ============================
 # 模板版本
+# ============================
 templates:
   agent_definition: "v1.0"
   skill_design: "v1.0"
