@@ -32,6 +32,23 @@ sessions_spawn(
 
 Orchestrator 将模板内容 + 项目上下文拼接为完整的 `task` 参数。
 
+### Spawn 规则
+
+**task 参数精简标准**：
+- 每个 sub-agent 的 task 参数不超过 500 字
+- 只包含：目标、输入路径（绝对路径）、输出格式
+- 详细上下文通过文件传递（写入临时文件后引用路径），不塞进 task 字符串
+- 必须指定 `cwd`（工作目录）
+
+**Sub-Agent 失败 fallback 规则**：
+- 第一次失败 → 重试一次（精简 task 参数，检查 cwd）
+- 第二次失败 → Orchestrator 降级执行，但必须记录到方法论验证日志
+- 降级执行后需告知用户 sub-agent 失败原因
+
+**S8 持续维护**：
+- 不再细分子阶段，Orchestrator 按需灵活处理
+- 按需 spawn 对应角色的 sub-agent（诊断→修复→验证→发布）
+
 ## 流程阶段 → Sub-Agent 映射
 
 ### L1 七步流程（构建完整 Agent）
