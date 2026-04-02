@@ -81,13 +81,14 @@ Sub-Agent **禁止**执行以下操作（由 Orchestrator 独占）：
 1. **Gateway 管理**：`openclaw gateway restart/stop/start`、`config apply/patch`、`launchctl`
 2. **进程管理**：`kill`、`pkill`、修改 LaunchAgent plist
 3. **环境变量修改**：编辑 `.env` 文件、修改 shell profile
-4. **网络操作**：修改代理配置、防火墙规则、DNS
+4. **网络配置修改**：修改代理设置、防火墙规则、DNS、路由
 
 Sub-Agent **允许**的操作：
 - 读写工作区文件（workspace 内）
 - 执行只读命令：`cat`、`ls`、`jq`、`grep`、`find`、`head`、`tail`、`wc`
 - 执行 `python3` 脚本进行数据处理（不涉及系统配置）
 - 执行 `git status/diff/log`（只读 git 命令）
+- 联网访问：`web_search`、`web_fetch`、`curl`（只读网络请求）
 
 ## Orchestrator 执行纪律
 
