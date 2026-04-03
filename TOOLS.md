@@ -38,3 +38,15 @@ Skills are shared. Your setup is yours. Keeping them apart means you can update 
 ---
 
 Add whatever helps you do your job. This is your cheat sheet.
+
+---
+
+### 外部平台文档（API 唯一来源）
+
+提到"玄关"/"开放平台"/"CWork API"/"工作协同接口"/"AI慧记接口"时，从这里获取最新接口文档：
+
+| 平台 | GitHub 地址 | 覆盖业务模块 |
+|------|-------------|-------------|
+| 玄关开放平台 | https://github.com/xgjk/dev-guide/ | CWork(工作协同) / AI慧记 / BP / 所有 CMS 业务模块 |
+
+使用方式：`web_fetch` 抓取对应目录下的 API 文档，与本地 `references/api-endpoints.md` 对比差异。
