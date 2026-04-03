@@ -1,171 +1,407 @@
 ---
-name: cwork
-description: 工作协同 Skill 包，提供汇报、任务、决策、闭环、分析、LLM 六大能力域，共 64 个 Skill
+name: cms-cwork
+description: "工作协同 (CWork) Agent-First Skill — 8 个独立可执行的 Python 编排脚本，覆盖汇报发送/查询/审阅、任务创建/查询、催办闭环、待办管理、模板查询"
+version: 3.0.0
 ---
 
-## 能力域概览
+# cms-cwork — Agent-First Architecture
 
-| 能力域 | 目录 | 说明 |
-|--------|------|------|
-| **shared** | `./shared/` | 数据获取层，9个基础查询 Skill，无需 LLM |
-| **reports** | `./reports/` | 汇报能力域，19个 Skill（发送、回复、查询、未读、提醒、AI问答、事项管理等） |
-| **tasks** | `./tasks/` | 任务能力域，12个 Skill（创建、查询、管理者仪表盘、反馈列表等） |
-| **decisions** | `./decisions/` | 决策能力域，6个 Skill（结论提炼、摘要生成等） |
-| **closure** | `./closure/` | 闭环能力域，5个 Skill（状态判断、催办提示等） |
-| **analysis** | `./analysis/` | 分析能力域，6个 Skill（重点提炼、趋势分析等） |
-| **contacts** | `./contacts/` | 联系人分组能力域，4个 Skill（列出/创建/重命名/成员管理） |
-| **llm** | `./llm/` | LLM 能力域，1个 Skill（多源汇总） |
+## 概述
 
-## Skill 数量统计
+本 Skill 将 CWork（工作协同平台）的完整 API 能力封装为 **6 个意图级编排脚本**，每个脚本独立可执行，Agent 通过 `exec python3 scripts/<name>.py` 调用，JSON 输出到 stdout、错误到 stderr。
 
-- **L1 数据获取**：9 个（无需 LLM）
-- **L2 核心业务**：28 个（部分需要 LLM）
-- **L3 辅助支持**：14 个（部分需要 LLM）
-- **总计**：68 个
+**设计原则**：
+- **Agent-First**：脚本负责 API 编排，Agent 负责 LLM 推理和用户交互
+- **幂等安全**：所有写操作支持 `--dry-run` / `--preview-only`
+- **零 TypeScript 依赖**：纯 Python 3.10+，仅需标准库
+- **TypeScript 参考**保留在 `references/` 目录
 
-## 核心原则
+## 环境变量
 
-**Skill 不带 LLM 凭证，由调用方注入。**
+| 变量 | 必填 | 默认值 | 说明 |
+|------|------|--------|------|
+| `CWORK_APP_KEY` | ✅ | — | CWork API 认证密钥 |
+| `CWORK_BASE_URL` | ❌ | `https://sg-al-cwork-web.mediportal.com.cn` | API 基础地址 |
 
-所有需要 LLM 的 Skill 函数签名为：
-```typescript
-async function skillName(input, { llmClient }) { ... }
-```
+## 8 个编排命令
 
-调用方负责创建和传入 `llmClient`，Skill 内部不创建 LLM 实例。
+### 1. 发送汇报 — `cwork-send-report.py`
 
-## 安装方式
+**意图**：搜索接收人 → 校验 → 保存草稿 → 预览 → 发送 → 清理草稿
 
 ```bash
-# 复制到 OpenClaw skills 目录
-cp -r workspace-cwork ~/.openclaw/skills/cwork
+python3 scripts/cwork-send-report.py \
+  --title "周报标题" \
+  --content-html "<p>汇报内容</p>" \
+  --receivers "张三,李四" \
+  --grade "一般"
 ```
 
-或通过 ClawHub 安装：
+| 参数 | 必填 | 说明 |
+|------|------|------|
+| `--title` / `-t` | ✅ | 汇报标题 |
+| `--content-html` / `-c` | ✅ | 正文 HTML |
+| `--receivers` / `-r` | ❌ | 接收人姓名（逗号分隔，自动解析 empId） |
+| `--cc` | ❌ | 抄送人姓名 |
+| `--grade` | ❌ | 优先级：`一般`（默认）/ `紧急` |
+| `--type-id` | ❌ | 汇报类型 ID（默认 9999） |
+| `--file-paths` | ❌ | 本地附件路径（最多 10 个） |
+| `--file-names` | ❌ | 附件显示名称 |
+| `--plan-id` | ❌ | 关联的任务 ID |
+| `--preview-only` | ❌ | 仅保存草稿+预览，不发送 |
+| `--draft-id` | ❌ | 已有草稿 ID（更新模式） |
+
+**流程步骤**：
+1. **Resolve** — 按姓名搜索员工，精确匹配返回 empId
+2. **Validate** — 未找到或多于一个匹配时报错终止
+3. **Upload** — 上传本地文件（如有）
+4. **Draft** — 调草稿 API 保存，返回 draftId
+5. **Preview** — 输出结构化预览 JSON（含 confirmPrompt 供 Agent 展示）
+6. **Submit** — 确认后发送汇报
+7. **Cleanup** — 发送成功后删除草稿
+
+---
+
+### 2. 查询汇报 — `cwork-query-report.py`
+
+**意图**：收件箱 / 发件箱 / 未读 / 汇报详情
+
 ```bash
-clawhub install cwork
+# 收件箱（默认）
+python3 scripts/cwork-query-report.py inbox --page-size 20
+
+# 未读汇报
+python3 scripts/cwork-query-report.py unread --page-size 20
+
+# 发件箱
+python3 scripts/cwork-query-report.py outbox
+
+# 单条汇报详情（含回复链）
+python3 scripts/cwork-query-report.py detail --report-id <id>
 ```
 
-## 环境变量配置
+| 参数 | 说明 |
+|------|------|
+| `scope` | `inbox`（默认）/ `outbox` / `unread` / `detail` |
+| `--page-size` | 分页大小（默认 20） |
+| `--page-index` | 页码（默认 1） |
+| `--report-id` | 汇报 ID（detail 必填） |
+| `--grade` | 按优先级筛选 |
+| `--begin-time` / `--end-time` | Unix ms 时间范围 |
+| `--read-status` | 已读状态：0=未读 / 1=已读 |
+| `--output-raw` | 输出原始 API 响应 |
 
-```bash
-# CWork API 配置（必须）
-export CWORK_APP_KEY="your-app-key"
-export CWORK_BASE_URL="https://your-cwork-api.example.com"
-
-# SSE 超时（可选）
-export SSE_TIMEOUT=60000
-export SSE_MAX_REPORTS=20
-
-# 分页配置（可选）
-export PAGINATION_DEFAULT=20
-export PAGINATION_MAX=50
-```
-
-## 快速开始
-
-```typescript
-import { empSearch } from './shared/emp-search.js';
-import { draftGen } from './reports/draft-gen.js';
-import { reportSubmit } from './reports/report-submit.js';
-import { fileUpload } from './reports/file-upload.js';
-import { reportSubmitWithAttachments } from './reports/report-submit-with-attachments.js';
-import { reportPrepare } from './reports/report-prepare.js';
-import { reportValidateReceivers } from './reports/report-validate-receivers.js';
-import { taskListQuery } from './shared/task-list-query.js';
-import { taskChainGet } from './shared/task-chain-get.js';
-import { taskMyAssigned } from './tasks/task-my-assigned.js';
-import { taskMyCreated } from './tasks/task-my-created.js';
-import { taskManagerDashboard } from './tasks/task-manager-dashboard.js';
-import { reportRemind } from './reports/report-remind.js';
-import { todoComplete } from './decisions/todo-complete.js';
-import { reportReply } from './reports/report-reply.js';
-import { templateList } from './reports/template-list.js';
-import { reportReadMark } from './reports/report-read-mark.js';
-import { unreadReportList } from './reports/unread-report-list.js';
-import { reportIsRead } from './reports/report-is-read.js';
-import { aiReportChat } from './reports/ai-report-chat.js';
-import { templateInfoBatch } from './reports/template-info-batch.js';
-import { myFeedbackList } from './tasks/my-feedback-list.js';
-
-// 1. 搜索员工（不需要 LLM）
-const emp = await empSearch({ name: '张三' });
-
-// 2. 生成汇报草稿（需要 LLM client）
-const draft = await draftGen({
-  rawContent: '完成了登录功能开发',
-  reportType: '日报',
-}, { llmClient });
-
-// 3. 提交汇报（不需要 LLM，可带附件）
-await reportSubmit({
-  main: draft.data.title,
-  contentHtml: '<p>...</p>',
-  fileVOList: [
-    { fileId: upload.data.fileId, name: '产品需求文档.md', type: 'file', fsize: upload.data.fileSize },
+**输出格式**（非 raw 模式）：
+```json
+{
+  "success": true,
+  "scope": "inbox",
+  "total": 42,
+  "items": [
+    {"id": "...", "title": "...", "grade": "一般", "preview": "...", "time": "..."}
   ]
-});
-
-// 4. 上传文件（不需要 LLM）
-const upload = await fileUpload({ file: myFile });
-
-// 5. 一站式发送多附件汇报（推荐，自动处理上传+提交，建议不超过10个附件）
-const result = await reportSubmitWithAttachments({
-  main: '项目完整汇报',
-  contentHtml: '<p>详见附件</p>',
-  acceptEmpIdList: ['1512393035869810690'],
-  filePaths: ['/path/附件1.pdf', '/path/附件2.xlsx'],
-  fileNames: ['附件1.pdf', '附件2.xlsx'],
-});
+}
 ```
 
-## 子域 SKILL.md
+---
 
-每个子域目录下都有独立的 `SKILL.md`，包含：
-- 该子域的所有 Skill 列表
-- 触发条件说明
-- 使用示例
-- LLM 依赖标记
+### 3. 创建任务 — `cwork-create-task.py`
 
-请查阅各子域的 `SKILL.md` 获取详细信息：
-- `./shared/SKILL.md`
-- `./reports/SKILL.md`
-- `./tasks/SKILL.md`
-- `./decisions/SKILL.md`
-- `./closure/SKILL.md`
-- `./analysis/SKILL.md`
-- `./llm/SKILL.md`
+**意图**：解析人员姓名 → 创建工作计划/任务
+
+```bash
+python3 scripts/cwork-create-task.py \
+  --title "完成XXX功能" \
+  --content "详细描述" \
+  --assignee "张三" \
+  --deadline 1743657600000 \
+  --grade "一般"
+```
+
+| 参数 | 必填 | 说明 |
+|------|------|------|
+| `--title` / `-t` | ✅ | 任务标题 |
+| `--content` / `-c` | ✅ | 任务描述（needful） |
+| `--target` | ❌ | 预期目标（默认 = content） |
+| `--assignee` | ❌ | 责任人姓名（自动解析 empId） |
+| `--reporters` | ❌ | 汇报人姓名（默认 = assignee） |
+| `--assist` | ❌ | 协办人姓名 |
+| `--supervisors` | ❌ | 监督人姓名 |
+| `--cc` | ❌ | 抄送人姓名 |
+| `--observers` | ❌ | 观察员姓名 |
+| `--deadline` / `-d` | ✅ | 截止时间（Unix ms 时间戳） |
+| `--grade` | ❌ | `一般` / `紧急` |
+| `--dry-run` | ❌ | 仅验证+解析，不创建 |
+
+**流程步骤**：
+1. 解析所有人员姓名 → empId
+2. 校验必填项（title、content、deadline）
+3. 汇总所有未匹配姓名 → 报错
+4. `--dry-run` 时输出解析结果，不调用创建 API
+5. 调用 `createPlan` API 创建任务
+
+---
+
+### 4. 审阅汇报 — `cwork-review-report.py`
+
+**意图**：回复汇报 / 标记已读 / 获取回复链
+
+```bash
+# 标记已读
+python3 scripts/cwork-review-report.py --action mark-read --report-id <id>
+
+# 回复
+python3 scripts/cwork-review-report.py --action reply \
+  --report-id <id> --content-html "<p>回复内容</p>"
+
+# 查看回复链
+python3 scripts/cwork-review-report.py --action replies --report-id <id>
+```
+
+| 参数 | 说明 |
+|------|------|
+| `--action` / `-a` | `reply` / `mark-read` / `replies` |
+| `--report-id` | 汇报记录 ID（必填） |
+| `--content-html` | 回复内容（reply 必填） |
+| `--add-emp-ids` | 回复中 @的人（逗号分隔 empId） |
+| `--no-send-msg` | 禁止回复通知推送 |
+
+---
+
+### 5. 查询任务 — `cwork-query-tasks.py`
+
+**意图**：我的任务 / 我创建的 / 团队任务 / 任务详情（含汇报链）
+
+```bash
+# 分配给我的任务
+python3 scripts/cwork-query-tasks.py my --user-id <empId> --status 1
+
+# 我创建的任务
+python3 scripts/cwork-query-tasks.py created --user-id <empId>
+
+# 团队/下属任务
+python3 scripts/cwork-query-tasks.py team --subordinate-ids "id1,id2"
+
+# 任务详情（含汇报历史链路）
+python3 scripts/cwork-query-tasks.py detail --task-id <planId> --max-reports 10
+```
+
+| 参数 | 说明 |
+|------|------|
+| `scope` | `my` / `created` / `team` / `detail` |
+| `--user-id` | 当前用户 empId（my/created 用） |
+| `--subordinate-ids` | 下属 empId 列表（team 用） |
+| `--task-id` | 任务/计划 ID（detail 必填） |
+| `--status` | 任务状态：0=关闭 / 1=进行中 / 2=未启动 |
+| `--report-status` | 汇报状态：0=关闭 / 1=待汇报 / 2=已汇报 / 3=逾期 |
+| `--max-reports` | 详情模式下最多拉取汇报数（默认 20） |
+| `--output-raw` | 输出原始 API 响应 |
+
+---
+
+### 6. 催办闭环 — `cwork-nudge-report.py`
+
+**意图**：识别未闭环事项 → 生成催办文案 → 发送催办
+
+```bash
+# 第1步：识别未闭环任务
+python3 scripts/cwork-nudge-report.py identify \
+  --item-type task --days-threshold 7 --user-id <empId>
+
+# 第2步：生成催办文案（规则模板，不依赖 LLM）
+python3 scripts/cwork-nudge-report.py reminder \
+  --item-id <id> --recipient "张三" \
+  --days-unresolved 14 --original "完成XXX" --style polite
+
+# 第3步：发送催办（通过回复触发通知）
+python3 scripts/cwork-nudge-report.py nudge \
+  --report-id <id> --content-html "<p>催办内容</p>"
+```
+
+| 参数 | 说明 |
+|------|------|
+| `action` | `identify` / `reminder` / `nudge` |
+| `--item-type` | `task` / `decision` / `feedback` |
+| `--days-threshold` | 超期天数阈值（默认 7） |
+| `--user-id` | 检查指定用户的任务 |
+| `--item-id` | 事项 ID（reminder 用） |
+| `--recipient` | 催办接收人姓名 |
+| `--days-unresolved` | 未解决天数 |
+| `--original` | 原始任务/决策描述 |
+| `--style` | 催办风格：`polite` / `urgent` / `formal` |
+| `--report-id` | 催办回复的汇报 ID（nudge 用） |
+| `--content-html` | 催办内容 HTML（nudge 用） |
+
+**识别逻辑**：
+- 查询活跃任务（status ≠ 0）
+- 计算 `now - lastReportTime` 的天数差
+- 超过阈值 → 标记为未闭环，附带建议行动
+
+**催办文案**（规则模板）：
+- 三种风格：礼貌 / 紧急 / 正式
+- 包含：标题、问候、事项描述、紧迫度、结束语
+- Agent 可在此基础上调用 LLM 进一步优化
+
+---
+
+### 7. 待办管理 — `cwork-todo.py`
+
+**意图**：查询待办列表 / 完成待办
+
+```bash
+# 查询待办列表
+python3 scripts/cwork-todo.py list --page-size 20 --status pending
+
+# 完成待办
+python3 scripts/cwork-todo.py complete --todo-id <id> --content "已完成"
+```
+
+| 参数 | 说明 |
+|------|------|
+| `action` | `list` / `complete` |
+| `--page-index` | 页码（默认 1） |
+| `--page-size` | 每页数量（默认 20） |
+| `--status` | 状态筛选 |
+| `--todo-id` | 待办 ID（complete 必填） |
+| `--content` | 完成说明（complete 必填） |
+| `--operate` | 操作类型（默认 complete） |
+| `--dry-run` | 仅预览（complete 可用） |
+
+---
+
+### 8. 模板管理 — `cwork-templates.py`
+
+**意图**：查询汇报模板列表
+
+```bash
+# 查询模板列表
+python3 scripts/cwork-templates.py list --limit 50
+
+# 带时间范围
+python3 scripts/cwork-templates.py list --begin-time 1710000000000 --end-time 1712000000000
+```
+
+| 参数 | 说明 |
+|------|------|
+| `action` | `list` |
+| `--limit` | 返回数量限制（默认 50） |
+| `--begin-time` | 开始时间戳（毫秒） |
+| `--end-time` | 结束时间戳（毫秒） |
+| `--output-raw` | 输出原始 API 响应 |
+
+**输出字段**：
+- `id` — 模板 ID
+- `name` — 模板名称
+- `type` — 类型 ID
+- `typeName` — 类型名称
+- `grade` — 优先级
+
+---
+
+## 共享 API 模块 — `cwork_api.py`
+
+所有脚本共用 `scripts/cwork_api.py` 中的 `CWorkClient` 类。该模块封装了：
+
+| API 端点 | 方法 |
+|----------|------|
+| `/open-api/cwork-user/searchEmpByName` | `search_emp_by_name()` |
+| `/open-api/work-report/report/record/inbox` | `get_inbox_list()` |
+| `/open-api/work-report/report/record/outbox` | `get_outbox_list()` |
+| `/open-api/work-report/report/info` | `get_report_info()` |
+| `/open-api/work-report/report/record/submit` | `submit_report()` |
+| `/open-api/work-report/report/record/reply` | `reply_report()` |
+| `/open-api/work-report/reportInfoOpenQuery/unreadList` | `get_unread_list()` |
+| `/open-api/work-report/open-platform/report/readReport` | `mark_report_read()` |
+| `/open-api/work-report/report/plan/searchPage` | `search_task_page()` |
+| `/open-api/work-report/report/plan/getSimplePlanAndReportInfo` | `get_simple_plan_and_report_info()` |
+| `/open-api/work-report/open-platform/report/plan/create` | `create_plan()` |
+| `/open-api/work-report/draftBox/saveOrUpdate` | `save_draft()` |
+| `/open-api/work-report/draftBox/listByPage` | `list_drafts()` |
+| `/open-api/work-report/draftBox/detail/{id}` | `get_draft_detail()` |
+| `/open-api/work-report/draftBox/delete/{id}` | `delete_draft()` |
+| `/open-api/cwork-file/uploadWholeFile` | `upload_file()` |
+| `/open-api/work-report/template/listTemplates` | `list_templates()` |
+| `/open-api/work-report/reportInfoOpenQuery/todoList` | `get_todo_list()` |
+| `/open-api/work-report/open-platform/todo/completeTodo` | `complete_todo()` |
 
 ## 目录结构
 
 ```
-workspace-cwork/
-├── SKILL.md                    ← 主包入口
-├── config/
-│   └── index.ts              ← CWork API 配置（无 LLM 凭证）
-├── shared/
-│   ├── SKILL.md
-│   ├── types.ts              ← 通用类型定义
-│   ├── cwork-client.ts       ← CWork API 客户端
-│   ├── sse-client.ts          ← SSE 客户端
-│   ├── emp-search.ts
-│   ├── inbox-query.ts
-│   ├── outbox-query.ts
-│   ├── report-get-by-id.ts
-│   ├── task-list-query.ts
-│   ├── todo-list-query.ts
-│   ├── task-chain-get.ts
-│   └── sse-client.ts          ← SSE Skill
-├── reports/
-│   └── SKILL.md
-├── tasks/
-│   └── SKILL.md
-├── decisions/
-│   └── SKILL.md
-├── closure/
-│   └── SKILL.md
-├── analysis/
-│   └── SKILL.md
-└── llm/
-    └── SKILL.md
+cms-cwork/
+├── SKILL.md                          ← 本文件（意图级接口文档）
+├── scripts/
+│   ├── cwork_api.py                  ← 共享 API 客户端模块
+│   ├── cwork_client.py               ← 低层 HTTP 客户端
+│   ├── cwork-send-report.py          ← 1. 发送汇报
+│   ├── cwork-query-report.py         ← 2. 查询汇报
+│   ├── cwork-create-task.py          ← 3. 创建任务
+│   ├── cwork-review-report.py        ← 4. 审阅汇报
+│   ├── cwork-query-tasks.py          ← 5. 查询任务
+│   ├── cwork-nudge-report.py         ← 6. 催办闭环
+│   ├── cwork-todo.py                 ← 7. 待办管理
+│   └── cwork-templates.py            ← 8. 模板管理
+└── references/                       ← TypeScript 源码参考（保留）
+    ├── api-client.md
+    ├── api-endpoints.md
+    └── api-reference.md
 ```
+
+## Agent 调用模式
+
+### 模式 A：简单查询（单次 exec）
+
+```
+用户：「帮我看看今天有没有未读汇报」
+Agent → exec: python3 scripts/cwork-query-report.py unread --page-size 10
+Agent ← JSON → 摘要呈现给用户
+```
+
+### 模式 B：多步编排（Agent 协调多次 exec）
+
+```
+用户：「给张三发一份周报，内容是XXX」
+Agent → exec: python3 scripts/cwork-send-report.py --preview-only \
+          --title "周报" --content-html "..." --receivers "张三"
+Agent ← JSON（含 confirmPrompt）
+Agent → 展示预览给用户
+用户：「确认」
+Agent → exec: python3 scripts/cwork-send-report.py \
+          --title "周报" --content-html "..." --receivers "张三"
+Agent ← JSON（含 reportId）
+Agent → 告知发送成功
+```
+
+### 模式 C：催办闭环（3步分离）
+
+```
+Agent → exec: python3 scripts/cwork-nudge-report.py identify --days-threshold 7
+Agent ← JSON（未闭环列表）
+Agent → （LLM 推理）筛选需要催办的事项
+Agent → exec: python3 scripts/cwork-nudge-report.py reminder \
+          --item-id <id> --recipient "张三" --days-unresolved 14 --style polite
+Agent ← JSON（催办文案）
+Agent → （可选 LLM 优化文案）
+Agent → exec: python3 scripts/cwork-nudge-report.py nudge \
+          --report-id <id> --content-html "..."
+```
+
+## 错误处理
+
+所有脚本遵循统一错误约定：
+- **成功**：JSON 到 stdout，含 `"success": true`
+- **失败**：JSON 到 stderr，含 `"success": false` 和 `"error"` 字段，exit code ≠ 0
+- **Agent 应同时检查 stdout 和 stderr**
+
+## 从 v1 迁移
+
+| v1（TypeScript 64 个 Skill） | v3（Python 8 个脚本） |
+|---|---|
+| `emp-search` + `report-validate-receivers` + `report-submit` + `draft.ts` | `cwork-send-report.py` |
+| `inbox-query` + `outbox-query` + `unread-report-list` + `report-get-by-id` | `cwork-query-report.py` |
+| `task-structure` + `task-create` + `emp-search` | `cwork-create-task.py` |
+| `report-reply` + `report-read-mark` + `report-is-read` | `cwork-review-report.py` |
+| `task-my-assigned` + `task-my-created` + `task-manager-dashboard` + `task-chain-get` | `cwork-query-tasks.py` |
+| `identify-unclosed-items` + `reminder-tip` + `report-remind` | `cwork-nudge-report.py` |
+| `todo-list` + `todo-complete` | `cwork-todo.py` |
+| `template-list` | `cwork-templates.py` |
+| LLM 依赖 Skill（`draft-gen`、`outline-gen`、`ai-*` 等） | 由 Agent 的 LLM 能力直接处理 |

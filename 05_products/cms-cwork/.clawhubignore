@@ -1,7 +1,0 @@
-node_modules/
-dist/
-**/__pycache__/
-*.pyc
-*.pyo
-.env
-*.log
