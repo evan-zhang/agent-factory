@@ -1,7 +1,7 @@
 ---
 name: cms-cwork
-description: "工作协同 (CWork) Agent-First Skill — 8 个独立可执行的 Python 编排脚本，覆盖汇报发送/查询/审阅、任务创建/查询、催办闭环、待办管理、模板查询"
-version: 3.0.0
+description: "工作协同 (CWork) Agent-First Skill — 8 个独立可执行的 Python 编排脚本，覆盖汇报发送/查询/审阅、任务创建/查询、催办闭环、待办管理（支持决策/建议/反馈三种类型）、模板查询"
+version: 3.1.0
 ---
 
 # cms-cwork — Agent-First Architecture
@@ -64,42 +64,65 @@ python3 scripts/cwork-send-report.py \
 
 ### 2. 查询汇报 — `cwork-query-report.py`
 
-**意图**：收件箱 / 发件箱 / 未读 / 汇报详情
+**意图**：收件箱 / 发件箱 / 未读 / 汇报详情 / 节点详情（含处理意见）
 
 ```bash
 # 收件箱（默认）
-python3 scripts/cwork-query-report.py inbox --page-size 20
+python3 scripts/cwork-query-report.py --mode inbox --page-size 20
 
 # 未读汇报
-python3 scripts/cwork-query-report.py unread --page-size 20
+python3 scripts/cwork-query-report.py --mode unread --page-size 20
 
 # 发件箱
-python3 scripts/cwork-query-report.py outbox
+python3 scripts/cwork-query-report.py --mode outbox
 
 # 单条汇报详情（含回复链）
-python3 scripts/cwork-query-report.py detail --report-id <id>
+python3 scripts/cwork-query-report.py --mode detail --report-id <id>
+
+# 节点详情（含审批/建议/反馈状态与处理意见）✨ 新增
+python3 scripts/cwork-query-report.py --mode node-detail --report-id <id>
 ```
 
 | 参数 | 说明 |
 |------|------|
-| `scope` | `inbox`（默认）/ `outbox` / `unread` / `detail` |
+| `--mode` | `inbox` / `outbox` / `unread` / `detail` / `node-detail` / `pending` / `my-sent` |
 | `--page-size` | 分页大小（默认 20） |
 | `--page-index` | 页码（默认 1） |
-| `--report-id` | 汇报 ID（detail 必填） |
-| `--grade` | 按优先级筛选 |
-| `--begin-time` / `--end-time` | Unix ms 时间范围 |
-| `--read-status` | 已读状态：0=未读 / 1=已读 |
-| `--output-raw` | 输出原始 API 响应 |
+| `--report-id` | 汇报 ID（detail / node-detail 必填） |
+| `--report-type` | 汇报类型：1-工作交流 / 2-工作指引 / 3-文件签批 / 4-AI汇报 / 5-工作汇报 |
+| `--status` | 已读状态：0=未读 / 1=已读 |
+| `--keyword` | 关键词筛选 |
+| `--start-date` / `--end-date` | 时间范围（YYYY-MM-DD） |
 
-**输出格式**（非 raw 模式）：
+**输出格式**（node-detail）：
 ```json
 {
   "success": true,
-  "scope": "inbox",
-  "total": 42,
-  "items": [
-    {"id": "...", "title": "...", "grade": "一般", "preview": "...", "time": "..."}
-  ]
+  "data": {
+    "id": 汇报ID,
+    "main": "汇报标题",
+    "content": "汇报正文",
+    "writeEmpName": "汇报人",
+    "createTime": "发起时间",
+    "nodeList": [
+      {
+        "nodeName": "建议人",
+        "type": "建议",
+        "status": "已完成",
+        "level": 1,
+        "userList": [
+          {
+            "empId": 员工ID,
+            "name": "张三",
+            "status": "已处理",
+            "operate": "建议",
+            "content": "建议增加异常处理",
+            "finishTime": "2026-04-03 11:00:00"
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
@@ -246,14 +269,37 @@ python3 scripts/cwork-nudge-report.py nudge \
 
 ### 7. 待办管理 — `cwork-todo.py`
 
-**意图**：查询待办列表 / 完成待办
+**意图**：查询待办列表 / 完成待办（支持决策/建议/反馈三种类型）
+
+**支持的三种待办类型**：
+| 类型 | 英文标识 | 必填参数 | 说明 |
+|------|---------|---------|------|
+| **决策** | `decide` | `--operate agree/disagree` | 决策人必须明确同意或不同意 |
+| **建议** | `suggest` | `--content` | 建议人提供意见或建议 |
+| **反馈** | `feedback` | `--content` | 反馈人回复评论或补充信息 |
 
 ```bash
 # 查询待办列表
 python3 scripts/cwork-todo.py list --page-size 20 --status pending
 
-# 完成待办
-python3 scripts/cwork-todo.py complete --todo-id <id> --content "已完成"
+# 完成决策待办（必须指定 operate）
+python3 scripts/cwork-todo.py complete \
+  --todo-id <id> \
+  --content "同意该方案，建议增加异常处理" \
+  --operate agree
+
+# 完成建议待办
+python3 scripts/cwork-todo.py complete \
+  --todo-id <id> \
+  --content "从技术角度看，建议采用微服务架构"
+
+# 完成反馈待办
+python3 scripts/cwork-todo.py complete \
+  --todo-id <id> \
+  --content "已补充相关数据，详见附件"
+
+# 查看汇报详情（含节点与处理意见）
+python3 scripts/cwork-query-report.py node-detail --report-id <id>
 ```
 
 | 参数 | 说明 |
@@ -263,9 +309,21 @@ python3 scripts/cwork-todo.py complete --todo-id <id> --content "已完成"
 | `--page-size` | 每页数量（默认 20） |
 | `--status` | 状态筛选 |
 | `--todo-id` | 待办 ID（complete 必填） |
-| `--content` | 完成说明（complete 必填） |
-| `--operate` | 操作类型（默认 complete） |
+| `--content` | 完成说明（建议/反馈必填，决策可选） |
+| `--operate` | 决策操作：`agree`（同意）/ `disagree`（不同意）。**仅决策类型必填** |
 | `--dry-run` | 仅预览（complete 可用） |
+
+**输出格式**（complete）：
+```json
+{
+  "success": true,
+  "todoId": "12345",
+  "todoType": "decide",
+  "operate": "agree",
+  "content": "同意该方案",
+  "message": "决策已完成"
+}
+```
 
 ---
 
@@ -323,6 +381,7 @@ python3 scripts/cwork-templates.py list --begin-time 1710000000000 --end-time 17
 | `/open-api/work-report/template/listTemplates` | `list_templates()` |
 | `/open-api/work-report/reportInfoOpenQuery/todoList` | `get_todo_list()` |
 | `/open-api/work-report/open-platform/todo/completeTodo` | `complete_todo()` |
+| `/open-api/work-report/report/getReportNodeDetail` | `get_report_node_detail()` |
 
 ## 目录结构
 

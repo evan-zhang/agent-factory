@@ -134,15 +134,25 @@ Agent → exec: python3 cwork-nudge-report.py identify --days-threshold 7
 
 ---
 
-## 实现状态 (v3.0.0)
+## 实现状态 (v3.1.0)
 
 ### ✅ 已完成
 - [x] 8个编排脚本完整实现
-- [x] 共享客户端封装
+- [x] 共享客户端封装（含 23 个 API 方法）
 - [x] JSON 输出规范
 - [x] 参数校验和错误处理
 - [x] Agent-First 架构设计
 - [x] 文档体系完善
+- [x] **决策/建议/反馈待办完整支持**（v3.1.0 新增）
+- [x] **汇报节点详情查询**（`get_report_node_detail()`）
+
+### 🆕 v3.1.0 新增功能（2026-04-03）
+| 功能 | 说明 | API 接口 |
+|------|------|----------|
+| **决策待办** | 支持同意/不同意操作 | `complete_todo(operate="agree/disagree")` |
+| **建议待办** | 支持建议内容提交 | `complete_todo(content="...")` |
+| **反馈待办** | 支持反馈回复 | `complete_todo(content="...")` |
+| **节点详情** | 查询汇报的审批节点与处理意见 | `get_report_node_detail()` |
 
 ### 🔄 进行中
 - [ ] 单元测试覆盖

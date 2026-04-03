@@ -154,6 +154,41 @@ class CWorkClient:
         """ReportDetail"""
         return self._get("/open-api/work-report/report/info", {"reportId": report_id})
 
+    def get_report_node_detail(self, report_id: str | int) -> dict:
+        """
+        获取汇报详情（含节点与处理意见）
+        API: 5.33 /work-report/report/getReportNodeDetail
+
+        Returns:
+          {
+            "id": 汇报ID,
+            "main": 标题,
+            "content": 正文,
+            "writeEmpId": 汇报人ID,
+            "writeEmpName": 汇报人姓名,
+            "createTime": 发起时间,
+            "nodeList": [
+              {
+                "nodeName": "建议人",
+                "type": "建议/决策/传阅",
+                "status": "未开始/已完成/进行中/已取消",
+                "level": 1,
+                "userList": [
+                  {
+                    "empId": 员工ID,
+                    "name": 姓名,
+                    "status": "待处理/已处理",
+                    "operate": "同意/不同意/建议",
+                    "content": "处理意见",
+                    "finishTime": "完成时间"
+                  }
+                ]
+              }
+            ]
+          }
+        """
+        return self._get("/open-api/work-report/report/getReportNodeDetail", {"reportId": report_id})
+
     def get_unread_list(self, page_index: int, page_size: int) -> dict:
         return self._post("/open-api/work-report/reportInfoOpenQuery/unreadList", {
             "pageIndex": page_index,
