@@ -52,6 +52,31 @@
 
 ---
 
+## v3.1.1 功能新增（2026-04-04 08:15）
+
+### 新增功能
+1. ✅ **`get_sender_history()`** - 按发件人查询历史汇报（审批决策上下文支持）
+2. ✅ **`search_reports_by_keyword()`** - 客户端关键字过滤（临时方案）
+3. ✅ **CLI 命令**：`--mode sender-history` / `--mode keyword-search`
+
+### 文档更新
+- ✅ SKILL.md v3.1.1：新增历史上下文检索章节
+- ✅ API 列表：补充新增方法
+- ✅ 参数说明：新增 `--sender-emp-id` / `--keyword` / `--days`
+
+### 提交记录
+- Commit: `1c916bd` - feat(cms-cwork): v3.1.1 新增历史上下文检索功能
+
+### 改进来源
+- 用户反馈：审批待办时缺少历史上下文
+- 问题记录：`05_products/cms-cwork/design/USAGE-ISSUES-LOG.md`
+
+### 待办事项
+- [ ] 向开放平台提交关键字搜索 API 需求（草稿已准备）
+- [ ] 待平台提供 API 后，重新实现检索功能
+
+---
+
 ## 后续改进计划
 
 ### 待办功能增强（优先级排序）
