@@ -453,6 +453,94 @@ class CWorkClient:
             "limit": limit,
         })
 
+    # -------------------------------------------------------------------------
+    # History context retrieval (for approval decision support)
+    # -------------------------------------------------------------------------
+
+    def get_sender_history(
+        self,
+        sender_emp_id: str | int,
+        days: int = 90,
+        max_count: int = 20
+    ) -> dict:
+        """
+        Get sender's historical reports (for approval context)
+        
+        Args:
+            sender_emp_id: Sender employee ID
+            days: Days to look back (default 90)
+            max_count: Max results (default 20)
+        
+        Returns:
+            {
+              "senderEmpId": "xxx",
+              "totalReports": 15,
+              "recentReports": [...]
+            }
+        """
+        import time
+        end_time = int(time.time() * 1000)
+        begin_time = end_time - (days * 24 * 60 * 60 * 1000)
+        
+        # Query inbox for sender's reports
+        inbox = self.get_inbox_list(
+            page_size=max_count,
+            emp_id_list=[str(sender_emp_id)],
+            begin_time=begin_time,
+            end_time=end_time
+        )
+        
+        return {
+            "senderEmpId": str(sender_emp_id),
+            "totalReports": inbox.get("total", 0),
+            "recentReports": inbox.get("list", [])[:max_count]
+        }
+
+    def search_reports_by_keyword(
+        self,
+        keyword: str,
+        days: int = 90,
+        max_count: int = 100
+    ) -> dict:
+        """
+        Search reports by keyword (client-side filtering)
+        
+        Args:
+            keyword: Search keyword
+            days: Days to look back (default 90)
+            max_count: Max results to fetch (default 100)
+        
+        Returns:
+            {
+              "keyword": "公章",
+              "total": 5,
+              "reports": [...]
+            }
+        """
+        import time
+        end_time = int(time.time() * 1000)
+        begin_time = end_time - (days * 24 * 60 * 60 * 1000)
+        
+        # Fetch inbox
+        inbox = self.get_inbox_list(
+            page_size=max_count,
+            begin_time=begin_time,
+            end_time=end_time
+        )
+        
+        # Client-side filtering
+        all_reports = inbox.get("list", [])
+        matched = [
+            r for r in all_reports
+            if keyword in r.get("main", "") or keyword in r.get("content", "")
+        ]
+        
+        return {
+            "keyword": keyword,
+            "total": len(matched),
+            "reports": matched[:20]  # Return top 20
+        }
+
 
 # ---------------------------------------------------------------------------
 # Convenience factory

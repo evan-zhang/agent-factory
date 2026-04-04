@@ -1,19 +1,124 @@
 ---
 name: cms-cwork
-description: "工作协同 (CWork) Agent-First Skill — 8 个独立可执行的 Python 编排脚本，覆盖汇报发送/查询/审阅、任务创建/查询、催办闭环、待办管理（支持决策/建议/反馈三种类型）、模板查询"
-version: 3.1.0
+description: "使用 CWork API 搜索员工（支持模糊查询）、发送/查询汇报、管理待办（决策/建议/反馈）、创建/查询任务。触发：用户搜索员工/发周报/查收件箱/处理待办/创建任务/催办/审阅汇报。输入：员工姓名/汇报内容/待办 ID，输出：员工列表/汇报 ID/待办列表/任务列表"
+version: 3.2.0
 ---
 
 # cms-cwork — Agent-First Architecture
 
+## ⚠️ 强制规则（MUST READ）
+
+**所有 CWork API 调用必须使用本 Skill 提供的 Python 脚本，禁止直接使用 curl/HTTP 调用。**
+
+### 为什么必须使用脚本？
+
+#### 1. URL 编码自动处理
+**问题**：API 要求中文参数 URL 编码（UTF-8）
+
+```bash
+# ❌ 错误：中文未编码 → 400 Bad Request
+curl "https://.../searchEmpByName?searchKey=张"
+
+# ✅ 正确：脚本自动编码
+python3 scripts/cwork_api.py search-emp --name "张"
+```
+
+#### 2. 参数验证完整
+**问题**：API 有复杂的参数要求
+
+```bash
+# ❌ 手动调用：缺少参数 → 400/500 错误
+curl -X POST "https://.../submit" -d '{"title":"周报"}'
+
+# ✅ 脚本自动验证：提前报错
+python3 scripts/cwork-send-report.py --title "周报"
+# Error: --content-html is required
+```
+
+#### 3. 错误处理统一
+**问题**：API 错误信息不明确
+
+```bash
+# ❌ 手动调用：看不出具体错误
+curl "https://.../submit"
+# {"resultCode":0,"resultMsg":null}
+
+# ✅ 脚本提供清晰错误
+python3 scripts/cwork-send-report.py --title "周报"
+# {"success":false,"error":"缺少必填项 --content-html","suggestion":"请提供汇报正文"}
+```
+
+#### 4. 重试机制
+**问题**：网络异常导致失败
+
+```bash
+# ❌ 手动调用：网络抖动直接失败
+curl "https://.../api"  # timeout
+
+# ✅ 脚本自动重试：提升成功率
+python3 scripts/cwork_api.py ...  # 自动重试 3 次
+```
+
+### 违规示例（❌ 禁止）
+
+```bash
+# ❌ 禁止：未使用脚本，中文未编码
+curl "https://.../searchEmpByName?searchKey=张"
+
+# ❌ 禁止：未使用脚本，缺少参数验证
+curl -X POST "https://.../submit" -d '{"title":"..."}'
+
+# ❌ 禁止：未使用脚本，类型错误
+curl -d '{"empId":"1514822118611259394"}' ...  # 应该是数字不是字符串
+```
+
+### 正确示例（✅ 必须）
+
+```bash
+# ✅ 正确：使用搜索脚本
+python3 scripts/cwork-query-report.py --mode inbox --page-size 20
+
+# ✅ 正确：使用发送脚本
+python3 scripts/cwork-send-report.py \
+  --title "周报" \
+  --content-html "<p>内容</p>" \
+  --receivers "张三"
+
+# ✅ 正确：使用待办脚本
+python3 scripts/cwork-todo.py list --page-size 20
+```
+
+### 例外情况
+
+**仅当 Python 脚本不可用时**，才可使用 curl，但**必须**：
+1. 参考 `cwork_client.py` 中的编码逻辑
+2. 对中文参数进行 URL 编码（UTF-8）
+3. 手动验证所有必填参数
+4. 处理可能的错误响应
+
+### 调试技巧
+
+如果需要查看脚本的实际请求：
+
+```bash
+# 使用 --debug 参数（如果脚本支持）
+python3 scripts/cwork_api.py search-emp --name "张" --debug
+
+# 查看脚本源码中的编码逻辑
+cat scripts/cwork_client.py | grep urlencode
+```
+
+---
+
 ## 概述
 
-本 Skill 将 CWork（工作协同平台）的完整 API 能力封装为 **6 个意图级编排脚本**，每个脚本独立可执行，Agent 通过 `exec python3 scripts/<name>.py` 调用，JSON 输出到 stdout、错误到 stderr。
+本 Skill 将 CWork（工作协同平台）的完整 API 能力封装为 **9 个意图级编排脚本**，每个脚本独立可执行，Agent 通过 `exec python3 scripts/<name>.py` 调用，JSON 输出到 stdout、错误到 stderr。
 
 **设计原则**：
 - **Agent-First**：脚本负责 API 编排，Agent 负责 LLM 推理和用户交互
 - **幂等安全**：所有写操作支持 `--dry-run` / `--preview-only`
 - **零 TypeScript 依赖**：纯 Python 3.10+，仅需标准库
+- **强制封装**：所有 API 调用必须通过脚本，禁止直接 HTTP 调用
 - **TypeScript 参考**保留在 `references/` 目录
 
 ## 环境变量
@@ -23,7 +128,79 @@ version: 3.1.0
 | `CWORK_APP_KEY` | ✅ | — | CWork API 认证密钥 |
 | `CWORK_BASE_URL` | ❌ | `https://sg-al-cwork-web.mediportal.com.cn` | API 基础地址 |
 
-## 8 个编排命令
+## 9 个编排命令
+
+### 0. 搜索员工 — `cwork-search-emp.py` ✨ 新增
+
+**意图**：根据姓名/关键词搜索员工 ID 和详细信息
+
+**使用场景**：
+1. ✅ **发送汇报前确认接收人** - 确保姓名和 empId 准确
+2. ✅ **处理待办时确认发件人** - 查看发件人部门/职位
+3. ✅ **创建任务时确认责任人** - 避免姓名错误（重名/错别字）
+4. ✅ **催办时确认责任人信息** - 获取完整的员工信息
+
+```bash
+# 基础搜索（模糊匹配）
+python3 scripts/cwork-search-emp.py --name "张"
+
+# 精确搜索
+python3 scripts/cwork-search-emp.py --name "成伟"
+
+# 详细模式（包含 personId、dingUserId 等）
+python3 scripts/cwork-search-emp.py --name "刘丽华" --verbose
+
+# 更多结果
+python3 scripts/cwork-search-emp.py --name "刘" --max-results 10
+
+# 原始 API 响应（调试用）
+python3 scripts/cwork-search-emp.py --name "张" --output-raw
+```
+
+| 参数 | 必填 | 说明 |
+|------|------|------|
+| `--name` / `-n` | ✅ | 员工姓名或关键词（支持模糊匹配） |
+| `--max-results` / `-m` | ❌ | 每个类别最多返回数量（默认 5） |
+| `--verbose` / `-v` | ❌ | 包含额外信息（personId、dingUserId、corpId） |
+| `--output-raw` | ❌ | 输出原始 API 响应（调试用） |
+
+**输出格式**：
+```json
+{
+  "success": true,
+  "searchKey": "成伟",
+  "inside": [
+    {
+      "empId": "1514822118611259394",
+      "name": "成伟",
+      "title": "首席架构师",
+      "mainDept": "技术部",
+      "status": "在职"
+    }
+  ],
+  "outside": [
+    {
+      "empId": "1897870576398327809",
+      "name": "成伟",
+      "title": "",
+      "mainDept": "其他",
+      "status": "在职",
+      "company": "德镁医药"
+    }
+  ],
+  "totalInside": 1,
+  "totalOutside": 1
+}
+```
+
+**注意事项**：
+- ✅ **URL 编码已自动处理**（支持中文参数）
+- ✅ **模糊匹配**：搜索"刘"会返回所有姓刘的员工
+- ✅ **内外部区分**：`inside`（玄关健康员工）+ `outside`（外部联系人/其他公司）
+- ⚠️ **重名问题**：可能返回多个同名员工，需要根据部门/职位区分
+- 💡 **推荐用法**：发送汇报前先搜索确认 empId
+
+---
 
 ### 1. 发送汇报 — `cwork-send-report.py`
 
@@ -64,7 +241,7 @@ python3 scripts/cwork-send-report.py \
 
 ### 2. 查询汇报 — `cwork-query-report.py`
 
-**意图**：收件箱 / 发件箱 / 未读 / 汇报详情 / 节点详情（含处理意见）
+**意图**：收件箱 / 发件箱 / 未读 / 汇报详情 / 节点详情 / **历史上下文检索** ✨ 新增
 
 ```bash
 # 收件箱（默认）
@@ -79,20 +256,72 @@ python3 scripts/cwork-query-report.py --mode outbox
 # 单条汇报详情（含回复链）
 python3 scripts/cwork-query-report.py --mode detail --report-id <id>
 
-# 节点详情（含审批/建议/反馈状态与处理意见）✨ 新增
+# 节点详情（含审批/建议/反馈状态与处理意见）✨ v3.1.0 新增
 python3 scripts/cwork-query-report.py --mode node-detail --report-id <id>
+
+# 历史上下文检索（审批决策支持）✨ v3.1.1 新增
+# 查询发件人历史汇报
+python3 scripts/cwork-query-report.py --mode sender-history \
+  --sender-emp-id <empId> \
+  --days 90
+
+# 关键字搜索汇报（客户端过滤）
+python3 scripts/cwork-query-report.py --mode keyword-search \
+  --keyword "公章" \
+  --days 90
 ```
 
 | 参数 | 说明 |
 |------|------|
-| `--mode` | `inbox` / `outbox` / `unread` / `detail` / `node-detail` / `pending` / `my-sent` |
+| `--mode` | `inbox` / `outbox` / `unread` / `detail` / `node-detail` / `sender-history` / `keyword-search` / `pending` / `my-sent` |
 | `--page-size` | 分页大小（默认 20） |
 | `--page-index` | 页码（默认 1） |
 | `--report-id` | 汇报 ID（detail / node-detail 必填） |
+| `--sender-emp-id` | 发件人员工 ID（sender-history 必填） |
+| `--keyword` | 搜索关键词（keyword-search 必填） |
+| `--days` | 回溯天数（sender-history / keyword-search，默认 90） |
 | `--report-type` | 汇报类型：1-工作交流 / 2-工作指引 / 3-文件签批 / 4-AI汇报 / 5-工作汇报 |
 | `--status` | 已读状态：0=未读 / 1=已读 |
-| `--keyword` | 关键词筛选 |
 | `--start-date` / `--end-date` | 时间范围（YYYY-MM-DD） |
+
+**输出格式**（sender-history）：
+```json
+{
+  "success": true,
+  "data": {
+    "senderEmpId": "1514822194347806721",
+    "totalReports": 15,
+    "recentReports": [
+      {
+        "id": "2039993163862765570",
+        "main": "互联网公司公章借出申请",
+        "createTime": "2026-04-03 17:11:48",
+        "reportRecordType": 5
+      }
+    ]
+  }
+}
+```
+
+**输出格式**（keyword-search）：
+```json
+{
+  "success": true,
+  "data": {
+    "keyword": "公章",
+    "total": 5,
+    "reports": [
+      {
+        "id": "2039993163862765570",
+        "main": "互联网公司公章借出申请",
+        "content": "用于办理工商变更...",
+        "createTime": "2026-04-03 17:11:48",
+        "sendEmpName": "刘丽华"
+      }
+    ]
+  }
+}
+```
 
 **输出格式**（node-detail）：
 ```json
@@ -382,6 +611,8 @@ python3 scripts/cwork-templates.py list --begin-time 1710000000000 --end-time 17
 | `/open-api/work-report/reportInfoOpenQuery/todoList` | `get_todo_list()` |
 | `/open-api/work-report/open-platform/todo/completeTodo` | `complete_todo()` |
 | `/open-api/work-report/report/getReportNodeDetail` | `get_report_node_detail()` |
+| — | `get_sender_history()` ✨ v3.1.1 新增 |
+| — | `search_reports_by_keyword()` ✨ v3.1.1 新增 |
 
 ## 目录结构
 
@@ -391,6 +622,7 @@ cms-cwork/
 ├── scripts/
 │   ├── cwork_api.py                  ← 共享 API 客户端模块
 │   ├── cwork_client.py               ← 低层 HTTP 客户端
+│   ├── cwork-search-emp.py           ← 0. 搜索员工 ✨ v3.2.0 新增
 │   ├── cwork-send-report.py          ← 1. 发送汇报
 │   ├── cwork-query-report.py         ← 2. 查询汇报
 │   ├── cwork-create-task.py          ← 3. 创建任务
@@ -453,7 +685,7 @@ Agent → exec: python3 scripts/cwork-nudge-report.py nudge \
 
 ## 从 v1 迁移
 
-| v1（TypeScript 64 个 Skill） | v3（Python 8 个脚本） |
+| v1（TypeScript 64 个 Skill） | v3（Python 9 个脚本） |
 |---|---|
 | `emp-search` + `report-validate-receivers` + `report-submit` + `draft.ts` | `cwork-send-report.py` |
 | `inbox-query` + `outbox-query` + `unread-report-list` + `report-get-by-id` | `cwork-query-report.py` |

@@ -88,8 +88,17 @@ def resolve_receivers(client, names: list[str]) -> dict:
             results[name] = {"status": "error", "message": str(e)}
             continue
 
-        inside = data.get("inside", {}).get("empList", [])
-        outside = data.get("outside", {}).get("empList", [])
+        inside_list = data.get("inside", {})
+        inside = inside_list.get("empList", []) if isinstance(inside_list, dict) else []
+        
+        outside_raw = data.get("outside")
+        if isinstance(outside_raw, list) and len(outside_raw) > 0:
+            outside = outside_raw[0].get("empList", []) if isinstance(outside_raw[0], dict) else []
+        elif isinstance(outside_raw, dict):
+            outside = outside_raw.get("empList", [])
+        else:
+            outside = []
+        
         all_emps = inside + outside
 
         if len(all_emps) == 0:
@@ -172,14 +181,14 @@ def save_draft(client, args, accept_emp_ids: list[str], copy_emp_ids: list[str],
     """Save or update draft; return draft ID."""
     params = {
         "main": args.title,
-        "contentHtml": args.content_html,
-        "contentType": "html",
-        "typeId": args.type_id,
+        "content_html": args.content_html,
+        "content_type": "html",
+        "type_id": args.type_id,
         "grade": args.grade,
-        "acceptEmpIdList": accept_emp_ids or None,
-        "copyEmpIdList": copy_emp_ids or None,
-        "fileVOList": file_vos or None,
-        "planId": args.plan_id,
+        "accept_emp_id_list": accept_emp_ids or None,
+        "copy_emp_id_list": copy_emp_ids or None,
+        "file_vo_list": file_vos or None,
+        "plan_id": args.plan_id,
     }
     if args.draft_id:
         params["id"] = args.draft_id
@@ -206,8 +215,8 @@ def build_preview(args, confirmed: list[dict], cc_confirmed: list[dict],
         "report": {
             "title": args.title,
             "grade": args.grade,
-            "typeId": args.type_id,
-            "planId": args.plan_id,
+            "type_id": args.type_id,
+            "plan_id": args.plan_id,
         },
         "receivers": {
             "count": len(accept_names),
@@ -244,14 +253,14 @@ def submit_report(client, args, accept_emp_ids: list[str], copy_emp_ids: list[st
                   file_vos: list[dict]) -> str | None:
     params = {
         "main": args.title,
-        "contentHtml": args.content_html,
-        "contentType": "html",
-        "typeId": args.type_id,
+        "content_html": args.content_html,
+        "content_type": "html",
+        "type_id": args.type_id,
         "grade": args.grade,
-        "acceptEmpIdList": accept_emp_ids or None,
-        "copyEmpIdList": copy_emp_ids or None,
-        "fileVOList": file_vos or None,
-        "planId": args.plan_id,
+        "accept_emp_id_list": accept_emp_ids or None,
+        "copy_emp_id_list": copy_emp_ids or None,
+        "file_vo_list": file_vos or None,
+        "plan_id": args.plan_id,
     }
     try:
         result = client.submit_report(**{k: v for k, v in params.items() if v is not None})
