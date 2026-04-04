@@ -5,7 +5,7 @@ metadata:
   requires:
     env: [BP_APP_KEY]
   homepage: https://github.com/xgjk/dev-guide/tree/main/02.产品业务AI文档/BP
-  version: v1.0.2
+  version: v1.0.3
   status: DRAFT
 tools_provided:
   - name: bp_client
