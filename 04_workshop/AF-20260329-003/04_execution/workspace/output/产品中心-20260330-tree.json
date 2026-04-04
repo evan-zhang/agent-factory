@@ -1,0 +1,1692 @@
+{
+  "org_name": "产品中心",
+  "period_name": "2026年度计划BP",
+  "period_id": "1994002024299085826",
+  "group_id": "1994002335135023106",
+  "score_tree": [
+    {
+      "id": "2009505807426932738",
+      "name": "确保产品稳定输出，实现年度上市得分7分，为集团贡献优质现金流",
+      "type": "bp",
+      "score": 18,
+      "score_source": "ai_original",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "战略核心目标，直接贡献集团现金流，KR明确量化（上市得分≥7分）",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009505807426932738-林刚",
+          "name": "林刚",
+          "type": "person",
+          "score": 1.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(4个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.07407407407407407,
+          "org_path": "产品中心 → 林刚",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        },
+        {
+          "id": "2009505807426932738-史哲",
+          "name": "史哲",
+          "type": "person",
+          "score": 7.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(22个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.4074074074074074,
+          "org_path": "产品中心 → 史哲",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        },
+        {
+          "id": "2009505807426932738-袁超",
+          "name": "袁超",
+          "type": "person",
+          "score": 1.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(4个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.07407407407407407,
+          "org_path": "产品中心 → 袁超",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        },
+        {
+          "id": "2009505807426932738-康璐琪",
+          "name": "康璐琪",
+          "type": "person",
+          "score": 2.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(6个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 康璐琪",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        },
+        {
+          "id": "2009505807426932738-伊慧",
+          "name": "伊慧",
+          "type": "person",
+          "score": 0.7,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.037037037037037035,
+          "org_path": "产品中心 → 伊慧",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        },
+        {
+          "id": "2009505807426932738-王敏",
+          "name": "王敏",
+          "type": "person",
+          "score": 3.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(10个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.18518518518518517,
+          "org_path": "产品中心 → 王敏",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        },
+        {
+          "id": "2009505807426932738-吴三燕",
+          "name": "吴三燕",
+          "type": "person",
+          "score": 0.7,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.037037037037037035,
+          "org_path": "产品中心 → 吴三燕",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        },
+        {
+          "id": "2009505807426932738-彭怀政",
+          "name": "彭怀政",
+          "type": "person",
+          "score": 1.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(4个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.07407407407407407,
+          "org_path": "产品中心 → 彭怀政",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        }
+      ],
+      "parent_ratio": 0.18,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009505807426932738"
+      ],
+      "key_results": [
+        "完成签约管线产品上市目标，确保得分≥3.5分",
+        "完成管线产品上市目标，争取得分≥3.5分",
+        "完成引进产品输出目标，实现得分≥3.5分"
+      ]
+    },
+    {
+      "id": "2009505812216827906",
+      "name": "强化中期管线厚度，完成合作引进得分≥9分",
+      "type": "bp",
+      "score": 12,
+      "score_source": "ai_original",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "管线战略重点，合作引进决定中期竞争力，KR量化（≥9分）",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009505812216827906-林刚",
+          "name": "林刚",
+          "type": "person",
+          "score": 1.7,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 林刚",
+          "source_bp_ids": [
+            "2009505812216827906"
+          ]
+        },
+        {
+          "id": "2009505812216827906-史哲",
+          "name": "史哲",
+          "type": "person",
+          "score": 3.4,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(4个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.2857142857142857,
+          "org_path": "产品中心 → 史哲",
+          "source_bp_ids": [
+            "2009505812216827906"
+          ]
+        },
+        {
+          "id": "2009505812216827906-王敏",
+          "name": "王敏",
+          "type": "person",
+          "score": 3.4,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(4个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.2857142857142857,
+          "org_path": "产品中心 → 王敏",
+          "source_bp_ids": [
+            "2009505812216827906"
+          ]
+        },
+        {
+          "id": "2009505812216827906-康璐琪",
+          "name": "康璐琪",
+          "type": "person",
+          "score": 3.4,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(4个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.2857142857142857,
+          "org_path": "产品中心 → 康璐琪",
+          "source_bp_ids": [
+            "2009505812216827906"
+          ]
+        }
+      ],
+      "parent_ratio": 0.12,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009505812216827906"
+      ],
+      "key_results": [
+        "深康引进项目得分≥4分",
+        "德镁引进项目得分≥3分",
+        "维盛引进项目得分≥2分",
+        "院外引进项目得分≥1分",
+        "天康引进项目得分达0分"
+      ]
+    },
+    {
+      "id": "2009505818076270593",
+      "name": "启动自主研发4.0模式，实现管线输入得分≥15分",
+      "type": "bp",
+      "score": 16,
+      "score_source": "ai_original",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "自主研发4.0是核心战略，决定长期管线厚度，KR量化（≥15分）",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009505818076270593-林刚",
+          "name": "林刚",
+          "type": "person",
+          "score": 0.5,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.03076923076923077,
+          "org_path": "产品中心 → 林刚",
+          "source_bp_ids": [
+            "2009505818076270593"
+          ]
+        },
+        {
+          "id": "2009505818076270593-陆融",
+          "name": "陆融",
+          "type": "person",
+          "score": 7.4,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(30个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.46153846153846156,
+          "org_path": "产品中心 → 陆融",
+          "source_bp_ids": [
+            "2009505818076270593"
+          ]
+        },
+        {
+          "id": "2009505818076270593-史哲",
+          "name": "史哲",
+          "type": "person",
+          "score": 2.7,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(11个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.16923076923076924,
+          "org_path": "产品中心 → 史哲",
+          "source_bp_ids": [
+            "2009505818076270593"
+          ]
+        },
+        {
+          "id": "2009505818076270593-袁超",
+          "name": "袁超",
+          "type": "person",
+          "score": 2.7,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(11个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.16923076923076924,
+          "org_path": "产品中心 → 袁超",
+          "source_bp_ids": [
+            "2009505818076270593"
+          ]
+        },
+        {
+          "id": "2009505818076270593-康璐琪",
+          "name": "康璐琪",
+          "type": "person",
+          "score": 2.7,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(11个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.16923076923076924,
+          "org_path": "产品中心 → 康璐琪",
+          "source_bp_ids": [
+            "2009505818076270593"
+          ]
+        }
+      ],
+      "parent_ratio": 0.16,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009505818076270593"
+      ],
+      "key_results": [
+        "完成自主研发管线输入得分≥15分",
+        "在≥3个优势病种完成产品矩阵部署",
+        "推动≥5个项目进入临床阶段"
+      ]
+    },
+    {
+      "id": "2009509007789936641",
+      "name": "建立精益管控体系，确保关键节点达成率≥80%",
+      "type": "bp",
+      "score": 10,
+      "score_source": "ai_original",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "精益管控是运营基础，支撑战略落地，KR量化（达成率≥80%）",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009509007789936641-林刚",
+          "name": "林刚",
+          "type": "person",
+          "score": 0.4,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(5个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.04065040650406504,
+          "org_path": "产品中心 → 林刚",
+          "source_bp_ids": [
+            "2009509007789936641"
+          ]
+        },
+        {
+          "id": "2009509007789936641-史哲",
+          "name": "史哲",
+          "type": "person",
+          "score": 2.6,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(32个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.2601626016260163,
+          "org_path": "产品中心 → 史哲",
+          "source_bp_ids": [
+            "2009509007789936641"
+          ]
+        },
+        {
+          "id": "2009509007789936641-袁超",
+          "name": "袁超",
+          "type": "person",
+          "score": 2.8,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(34个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.2764227642276423,
+          "org_path": "产品中心 → 袁超",
+          "source_bp_ids": [
+            "2009509007789936641"
+          ]
+        },
+        {
+          "id": "2009509007789936641-康璐琪",
+          "name": "康璐琪",
+          "type": "person",
+          "score": 3.6,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(44个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.35772357723577236,
+          "org_path": "产品中心 → 康璐琪",
+          "source_bp_ids": [
+            "2009509007789936641"
+          ]
+        },
+        {
+          "id": "2009509007789936641-陆融",
+          "name": "陆融",
+          "type": "person",
+          "score": 0.7,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(8个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.06504065040650407,
+          "org_path": "产品中心 → 陆融",
+          "source_bp_ids": [
+            "2009509007789936641"
+          ]
+        }
+      ],
+      "parent_ratio": 0.1,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009509007789936641"
+      ],
+      "key_results": [
+        "NDA申报≥60%按计划完成",
+        "IND申报≥60%按计划完成",
+        "临床试验里程碑达成率≥95%",
+        "CMC技术转移关键节点达成率≥90%"
+      ]
+    },
+    {
+      "id": "2009515298255818754",
+      "name": "实现投资价值闭环，战略投资收益≥20亿元",
+      "type": "bp",
+      "score": 13,
+      "score_source": "ai_original",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "投资战略直接贡献财务指标（≥20亿），7个承接方覆盖关键部门",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009515298255818754-林刚",
+          "name": "林刚",
+          "type": "person",
+          "score": 1.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(3个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.075,
+          "org_path": "产品中心 → 林刚",
+          "source_bp_ids": [
+            "2009515298255818754"
+          ]
+        },
+        {
+          "id": "2009515298255818754-姜非",
+          "name": "姜非",
+          "type": "person",
+          "score": 4.9,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(15个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.375,
+          "org_path": "产品中心 → 姜非",
+          "source_bp_ids": [
+            "2009515298255818754"
+          ]
+        },
+        {
+          "id": "2009515298255818754-吴三燕",
+          "name": "吴三燕",
+          "type": "person",
+          "score": 2.9,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(9个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.225,
+          "org_path": "产品中心 → 吴三燕",
+          "source_bp_ids": [
+            "2009515298255818754"
+          ]
+        },
+        {
+          "id": "2009515298255818754-伊慧",
+          "name": "伊慧",
+          "type": "person",
+          "score": 1.6,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(5个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.125,
+          "org_path": "产品中心 → 伊慧",
+          "source_bp_ids": [
+            "2009515298255818754"
+          ]
+        },
+        {
+          "id": "2009515298255818754-史哲",
+          "name": "史哲",
+          "type": "person",
+          "score": 0.7,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.05,
+          "org_path": "产品中心 → 史哲",
+          "source_bp_ids": [
+            "2009515298255818754"
+          ]
+        },
+        {
+          "id": "2009515298255818754-袁超",
+          "name": "袁超",
+          "type": "person",
+          "score": 0.7,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.05,
+          "org_path": "产品中心 → 袁超",
+          "source_bp_ids": [
+            "2009515298255818754"
+          ]
+        },
+        {
+          "id": "2009515298255818754-陆融",
+          "name": "陆融",
+          "type": "person",
+          "score": 0.7,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.05,
+          "org_path": "产品中心 → 陆融",
+          "source_bp_ids": [
+            "2009515298255818754"
+          ]
+        },
+        {
+          "id": "2009515298255818754-康璐琪",
+          "name": "康璐琪",
+          "type": "person",
+          "score": 0.7,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.05,
+          "org_path": "产品中心 → 康璐琪",
+          "source_bp_ids": [
+            "2009515298255818754"
+          ]
+        }
+      ],
+      "parent_ratio": 0.13,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009515298255818754"
+      ],
+      "key_results": [
+        "达成年度战略投资收益目标，覆盖研发与运营支出",
+        "建立并运行“产投研”协同闭环机制",
+        "建立研发资产动态评估与主动退出机制，实现价值回收"
+      ]
+    },
+    {
+      "id": "2009515301166665729",
+      "name": "完成组织架构重构，打造敏捷高效团队",
+      "type": "bp",
+      "score": 8,
+      "score_source": "ai_original",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "组织架构重构是长期能力建设，效果偏长期，KR定性偏多",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009515301166665729-林刚",
+          "name": "林刚",
+          "type": "person",
+          "score": 1.5,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(12个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1875,
+          "org_path": "产品中心 → 林刚",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-陆融",
+          "name": "陆融",
+          "type": "person",
+          "score": 0.8,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(6个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.09375,
+          "org_path": "产品中心 → 陆融",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-袁超",
+          "name": "袁超",
+          "type": "person",
+          "score": 0.8,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(6个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.09375,
+          "org_path": "产品中心 → 袁超",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-史哲",
+          "name": "史哲",
+          "type": "person",
+          "score": 0.8,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(6个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.09375,
+          "org_path": "产品中心 → 史哲",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-姜非",
+          "name": "姜非",
+          "type": "person",
+          "score": 0.5,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(4个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.0625,
+          "org_path": "产品中心 → 姜非",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-王敏",
+          "name": "王敏",
+          "type": "person",
+          "score": 0.2,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.03125,
+          "org_path": "产品中心 → 王敏",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-彭怀政",
+          "name": "彭怀政",
+          "type": "person",
+          "score": 0.2,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.03125,
+          "org_path": "产品中心 → 彭怀政",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-伊慧",
+          "name": "伊慧",
+          "type": "person",
+          "score": 0.8,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(6个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.09375,
+          "org_path": "产品中心 → 伊慧",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-吴三燕",
+          "name": "吴三燕",
+          "type": "person",
+          "score": 0.8,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(6个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.09375,
+          "org_path": "产品中心 → 吴三燕",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-付忠明",
+          "name": "付忠明",
+          "type": "person",
+          "score": 1.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(8个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.125,
+          "org_path": "产品中心 → 付忠明",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-康璐琪",
+          "name": "康璐琪",
+          "type": "person",
+          "score": 0.8,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(6个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.09375,
+          "org_path": "产品中心 → 康璐琪",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        }
+      ],
+      "parent_ratio": 0.08,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009515301166665729"
+      ],
+      "key_results": [
+        "完成产品中心组织架构重构与岗位设置【架构先行】",
+        "关键岗位人才密度达标【人才支撑】",
+        "建立研发全价值链SOP体系【流程固化】"
+      ]
+    },
+    {
+      "id": "2009515305449050113",
+      "name": "革新价值分配体系，全面激发组织活力",
+      "type": "bp",
+      "score": 7,
+      "score_source": "ai_original",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "价值分配体系影响人才激励，效果难以短期量化，偏支撑性",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009515305449050113-林刚",
+          "name": "林刚",
+          "type": "person",
+          "score": 2.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(14个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.32558139534883723,
+          "org_path": "产品中心 → 林刚",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-伊慧",
+          "name": "伊慧",
+          "type": "person",
+          "score": 0.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.046511627906976744,
+          "org_path": "产品中心 → 伊慧",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-史哲",
+          "name": "史哲",
+          "type": "person",
+          "score": 0.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.046511627906976744,
+          "org_path": "产品中心 → 史哲",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-袁超",
+          "name": "袁超",
+          "type": "person",
+          "score": 0.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.046511627906976744,
+          "org_path": "产品中心 → 袁超",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-姜非",
+          "name": "姜非",
+          "type": "person",
+          "score": 0.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.046511627906976744,
+          "org_path": "产品中心 → 姜非",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-王敏",
+          "name": "王敏",
+          "type": "person",
+          "score": 0.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.046511627906976744,
+          "org_path": "产品中心 → 王敏",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-陆融",
+          "name": "陆融",
+          "type": "person",
+          "score": 0.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.046511627906976744,
+          "org_path": "产品中心 → 陆融",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-吴三燕",
+          "name": "吴三燕",
+          "type": "person",
+          "score": 0.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.046511627906976744,
+          "org_path": "产品中心 → 吴三燕",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-康璐琪",
+          "name": "康璐琪",
+          "type": "person",
+          "score": 0.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.046511627906976744,
+          "org_path": "产品中心 → 康璐琪",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-彭怀政",
+          "name": "彭怀政",
+          "type": "person",
+          "score": 0.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.046511627906976744,
+          "org_path": "产品中心 → 彭怀政",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-付忠明",
+          "name": "付忠明",
+          "type": "person",
+          "score": 1.8,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(11个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.2558139534883721,
+          "org_path": "产品中心 → 付忠明",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        }
+      ],
+      "parent_ratio": 0.07,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009515305449050113"
+      ],
+      "key_results": [
+        "完成价值创造标准与评价体系升级，实现激励精准导向",
+        "落地具有市场竞争力的薪酬与长期激励方案，实现核心人才绑定",
+        "建立并运行系统化的价值分配管理制度，确保过程公平公正"
+      ]
+    },
+    {
+      "id": "2009516961779961858",
+      "name": "搭建数字化管理平台，全面赋能精益运营",
+      "type": "bp",
+      "score": 8,
+      "score_source": "ai_original",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "数字化平台是效率工具，支撑精益运营但非战略核心",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009516961779961858-林刚",
+          "name": "林刚",
+          "type": "person",
+          "score": 0.9,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(4个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.11764705882352941,
+          "org_path": "产品中心 → 林刚",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-史哲",
+          "name": "史哲",
+          "type": "person",
+          "score": 0.9,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(4个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.11764705882352941,
+          "org_path": "产品中心 → 史哲",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-袁超",
+          "name": "袁超",
+          "type": "person",
+          "score": 0.9,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(4个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.11764705882352941,
+          "org_path": "产品中心 → 袁超",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-陆融",
+          "name": "陆融",
+          "type": "person",
+          "score": 0.9,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(4个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.11764705882352941,
+          "org_path": "产品中心 → 陆融",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-康璐琪",
+          "name": "康璐琪",
+          "type": "person",
+          "score": 1.9,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(8个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.23529411764705882,
+          "org_path": "产品中心 → 康璐琪",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-伊慧",
+          "name": "伊慧",
+          "type": "person",
+          "score": 0.5,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.058823529411764705,
+          "org_path": "产品中心 → 伊慧",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-姜非",
+          "name": "姜非",
+          "type": "person",
+          "score": 0.5,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.058823529411764705,
+          "org_path": "产品中心 → 姜非",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-王敏",
+          "name": "王敏",
+          "type": "person",
+          "score": 0.5,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.058823529411764705,
+          "org_path": "产品中心 → 王敏",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-吴三燕",
+          "name": "吴三燕",
+          "type": "person",
+          "score": 0.5,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.058823529411764705,
+          "org_path": "产品中心 → 吴三燕",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-彭怀政",
+          "name": "彭怀政",
+          "type": "person",
+          "score": 0.5,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.058823529411764705,
+          "org_path": "产品中心 → 彭怀政",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        }
+      ],
+      "parent_ratio": 0.08,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009516961779961858"
+      ],
+      "key_results": [
+        "实现“引进-开发”核心业务流程线上化与标准化",
+        "建立数据驱动的管理机制，实现主动预警与智能运营",
+        "拉通投前-投后-商业流程，确保研发与商业无缝衔接"
+      ]
+    },
+    {
+      "id": "2009520567245361154",
+      "name": "夯实全球化基础，在人才、授权与IP管理上取得关键突破",
+      "type": "bp",
+      "score": 6,
+      "score_source": "ai_original",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "全球化基础建设，人才/IP/授权是长期能力，短期效果有限",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009520567245361154-林刚",
+          "name": "林刚",
+          "type": "person",
+          "score": 0.6,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(3个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1,
+          "org_path": "产品中心 → 林刚",
+          "source_bp_ids": [
+            "2009520567245361154"
+          ]
+        },
+        {
+          "id": "2009520567245361154-付忠明",
+          "name": "付忠明",
+          "type": "person",
+          "score": 0.6,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(3个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1,
+          "org_path": "产品中心 → 付忠明",
+          "source_bp_ids": [
+            "2009520567245361154"
+          ]
+        },
+        {
+          "id": "2009520567245361154-史哲",
+          "name": "史哲",
+          "type": "person",
+          "score": 0.4,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.06666666666666667,
+          "org_path": "产品中心 → 史哲",
+          "source_bp_ids": [
+            "2009520567245361154"
+          ]
+        },
+        {
+          "id": "2009520567245361154-袁超",
+          "name": "袁超",
+          "type": "person",
+          "score": 0.8,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(4个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.13333333333333333,
+          "org_path": "产品中心 → 袁超",
+          "source_bp_ids": [
+            "2009520567245361154"
+          ]
+        },
+        {
+          "id": "2009520567245361154-陆融",
+          "name": "陆融",
+          "type": "person",
+          "score": 2.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(10个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.3333333333333333,
+          "org_path": "产品中心 → 陆融",
+          "source_bp_ids": [
+            "2009520567245361154"
+          ]
+        },
+        {
+          "id": "2009520567245361154-康璐琪",
+          "name": "康璐琪",
+          "type": "person",
+          "score": 0.8,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(4个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.13333333333333333,
+          "org_path": "产品中心 → 康璐琪",
+          "source_bp_ids": [
+            "2009520567245361154"
+          ]
+        },
+        {
+          "id": "2009520567245361154-吴三燕",
+          "name": "吴三燕",
+          "type": "person",
+          "score": 0.8,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(4个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.13333333333333333,
+          "org_path": "产品中心 → 吴三燕",
+          "source_bp_ids": [
+            "2009520567245361154"
+          ]
+        }
+      ],
+      "parent_ratio": 0.06,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009520567245361154"
+      ],
+      "key_results": [
+        "组建具备国际视野的核心人才梯队，构建协作网络",
+        "实现自研产品海外授权实质进展",
+        "建立全球化IP管理体系"
+      ]
+    },
+    {
+      "id": "2011795076392534017",
+      "name": "构建精准高效的研发投入管理体系，保障战略资源有效配置",
+      "type": "bp",
+      "score": 2,
+      "score_source": "ai_original",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "资源配置属于基础支撑工作，战略直接贡献度低",
+      "tags": [],
+      "children": [
+        {
+          "id": "2011795076392534017-林刚",
+          "name": "林刚",
+          "type": "person",
+          "score": 0.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(1个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 林刚",
+          "source_bp_ids": [
+            "2011795076392534017"
+          ]
+        },
+        {
+          "id": "2011795076392534017-伊慧",
+          "name": "伊慧",
+          "type": "person",
+          "score": 0.6,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.2857142857142857,
+          "org_path": "产品中心 → 伊慧",
+          "source_bp_ids": [
+            "2011795076392534017"
+          ]
+        },
+        {
+          "id": "2011795076392534017-陆融",
+          "name": "陆融",
+          "type": "person",
+          "score": 0.6,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(2个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.2857142857142857,
+          "org_path": "产品中心 → 陆融",
+          "source_bp_ids": [
+            "2011795076392534017"
+          ]
+        },
+        {
+          "id": "2011795076392534017-吴三燕",
+          "name": "吴三燕",
+          "type": "person",
+          "score": 0.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(1个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 吴三燕",
+          "source_bp_ids": [
+            "2011795076392534017"
+          ]
+        },
+        {
+          "id": "2011795076392534017-康璐琪",
+          "name": "康璐琪",
+          "type": "person",
+          "score": 0.3,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《...》(1个action)",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 康璐琪",
+          "source_bp_ids": [
+            "2011795076392534017"
+          ]
+        }
+      ],
+      "parent_ratio": 0.02,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2011795076392534017"
+      ],
+      "key_results": [
+        "确立并执行年度研发投入预算，确保总投入占比处于18%-23%区间，且结构符合战略要求（自研≥25%，国内合作~35%，海外引进~40%）",
+        "建立研发投入全流程闭环管理系统，实现从预算编制到效果评估的线上化、透明化管理",
+        "完成年度核心研发项目的投入产出后评估，输出分析报告指导下一年度资源分配"
+      ]
+    }
+  ],
+  "original_ratios_session": {
+    "root": {
+      "2009505807426932738": 0.18,
+      "2009505812216827906": 0.12,
+      "2009505818076270593": 0.16,
+      "2009509007789936641": 0.1,
+      "2009515298255818754": 0.13,
+      "2009515301166665729": 0.08,
+      "2009515305449050113": 0.07,
+      "2009516961779961858": 0.08,
+      "2009520567245361154": 0.06,
+      "2011795076392534017": 0.02
+    },
+    "2009505807426932738": {
+      "2009505807426932738-林刚": 0.07262569832402235,
+      "2009505807426932738-史哲": 0.40782122905027934,
+      "2009505807426932738-袁超": 0.07262569832402235,
+      "2009505807426932738-康璐琪": 0.111731843575419,
+      "2009505807426932738-伊慧": 0.03910614525139665,
+      "2009505807426932738-王敏": 0.18435754189944134,
+      "2009505807426932738-吴三燕": 0.03910614525139665,
+      "2009505807426932738-彭怀政": 0.07262569832402235
+    },
+    "2009505812216827906": {
+      "2009505812216827906-林刚": 0.14285714285714285,
+      "2009505812216827906-史哲": 0.2857142857142857,
+      "2009505812216827906-王敏": 0.2857142857142857,
+      "2009505812216827906-康璐琪": 0.2857142857142857
+    },
+    "2009505818076270593": {
+      "2009505818076270593-林刚": 0.03125,
+      "2009505818076270593-陆融": 0.4625,
+      "2009505818076270593-史哲": 0.16875,
+      "2009505818076270593-袁超": 0.16875,
+      "2009505818076270593-康璐琪": 0.16875
+    },
+    "2009509007789936641": {
+      "2009509007789936641-林刚": 0.039603960396039604,
+      "2009509007789936641-史哲": 0.25742574257425743,
+      "2009509007789936641-袁超": 0.2772277227722772,
+      "2009509007789936641-康璐琪": 0.3564356435643565,
+      "2009509007789936641-陆融": 0.0693069306930693
+    },
+    "2009515298255818754": {
+      "2009515298255818754-林刚": 0.07575757575757576,
+      "2009515298255818754-姜非": 0.37121212121212127,
+      "2009515298255818754-吴三燕": 0.2196969696969697,
+      "2009515298255818754-伊慧": 0.12121212121212123,
+      "2009515298255818754-史哲": 0.05303030303030303,
+      "2009515298255818754-袁超": 0.05303030303030303,
+      "2009515298255818754-陆融": 0.05303030303030303,
+      "2009515298255818754-康璐琪": 0.05303030303030303
+    },
+    "2009515301166665729": {
+      "2009515301166665729-林刚": 0.18292682926829265,
+      "2009515301166665729-陆融": 0.09756097560975609,
+      "2009515301166665729-袁超": 0.09756097560975609,
+      "2009515301166665729-史哲": 0.09756097560975609,
+      "2009515301166665729-姜非": 0.06097560975609755,
+      "2009515301166665729-王敏": 0.024390243902439022,
+      "2009515301166665729-彭怀政": 0.024390243902439022,
+      "2009515301166665729-伊慧": 0.09756097560975609,
+      "2009515301166665729-吴三燕": 0.09756097560975609,
+      "2009515301166665729-付忠明": 0.1219512195121951,
+      "2009515301166665729-康璐琪": 0.09756097560975609
+    },
+    "2009515305449050113": {
+      "2009515305449050113-林刚": 0.338235294117647,
+      "2009515305449050113-伊慧": 0.04411764705882353,
+      "2009515305449050113-史哲": 0.04411764705882353,
+      "2009515305449050113-袁超": 0.04411764705882353,
+      "2009515305449050113-姜非": 0.04411764705882353,
+      "2009515305449050113-王敏": 0.04411764705882353,
+      "2009515305449050113-陆融": 0.04411764705882353,
+      "2009515305449050113-吴三燕": 0.04411764705882353,
+      "2009515305449050113-康璐琪": 0.04411764705882353,
+      "2009515305449050113-彭怀政": 0.04411764705882353,
+      "2009515305449050113-付忠明": 0.2647058823529412
+    },
+    "2009516961779961858": {
+      "2009516961779961858-林刚": 0.1125,
+      "2009516961779961858-史哲": 0.1125,
+      "2009516961779961858-袁超": 0.1125,
+      "2009516961779961858-陆融": 0.1125,
+      "2009516961779961858-康璐琪": 0.2375,
+      "2009516961779961858-伊慧": 0.0625,
+      "2009516961779961858-姜非": 0.0625,
+      "2009516961779961858-王敏": 0.0625,
+      "2009516961779961858-吴三燕": 0.0625,
+      "2009516961779961858-彭怀政": 0.0625
+    },
+    "2009520567245361154": {
+      "2009520567245361154-林刚": 0.09999999999999999,
+      "2009520567245361154-付忠明": 0.09999999999999999,
+      "2009520567245361154-史哲": 0.06666666666666667,
+      "2009520567245361154-袁超": 0.13333333333333333,
+      "2009520567245361154-陆融": 0.3333333333333333,
+      "2009520567245361154-康璐琪": 0.13333333333333333,
+      "2009520567245361154-吴三燕": 0.13333333333333333
+    },
+    "2011795076392534017": {
+      "2011795076392534017-林刚": 0.14285714285714285,
+      "2011795076392534017-伊慧": 0.2857142857142857,
+      "2011795076392534017-陆融": 0.2857142857142857,
+      "2011795076392534017-吴三燕": 0.14285714285714285,
+      "2011795076392534017-康璐琪": 0.14285714285714285
+    }
+  },
+  "generated_at": "2026-03-30T05:50:32.168570"
+}

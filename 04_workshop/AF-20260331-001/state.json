@@ -1,0 +1,18 @@
+{
+  "project_id": "AF-20260331-001",
+  "name": "玄关内部 Skill 市场与 ClawHub 规范对齐",
+  "status": "RUNNING",
+  "phase": "S1-S2",
+  "created_at": "2026-03-31T10:33:00+08:00",
+  "created_by": "evan",
+  "description": "让玄关健康内部 TE Skill 市场严格遵循 ClawHub 国际规范，实现 ClawHub 可上架即玄关可上架的一键无缝迁移。不生产新 Skill，只做平台对齐与发布工具链适配。",
+  "scope": "非 Skill 产品类项目（发布工具链 / 规范对齐 / 适配脚本）",
+  "key_files": {
+    "srs": "03_governance/SRS-XGJK-SKILL-MARKET-COMPAT-v1.0.md",
+    "intake": "00_intake/INTAKE.md",
+    "design": "03_design/DESIGN-01.md"
+  },
+  "next_action": "S2 需求确认 — 等待 Evan 审阅 SRS v1.1（已纳入质检总监全部10条审核意见）",
+  "srs_version": "v1.1",
+  "review_status": "CONDITIONAL_PASS → v1.1 全部修复完成"
+}

@@ -11,7 +11,7 @@
 
 | 目录名 | 产品名称 | 版本 | ClawHub slug | 项目编号 | 发布日期 | 状态 |
 |---|---|---|---|---|---|---|
-| cms-cwork | CWork 工作协同 | v2.1.2 | `cms-cwork` | AF-20260323-001 | 2026-03-31 | ✅ 维护中 |
+| cms-cwork | CWork 工作协同 | v3.0.0 | `cms-cwork` | AF-20260323-001 | 2026-04-03 | ✅ Agent-First 重构 |
 | cms-meeting-materials | CMS 会议素材镜像 | v1.10.10 | `cms-meeting-materials` | — | 2026-04-01 | ✅ 维护中 |
 | cms-sop | 统一SOP执行框架 | v1.0.3 | `cms-sop` | AF-20260328-002 | 2026-03-29 | ✅ 观察期 |
 | cas-chat-archive | CAS 聊天记录归档 | v1.2.3 | `cas-chat-archive` | AF-20260326-002 | 2026-03-31 | ✅ 观察期 |
@@ -20,7 +20,7 @@
 
 | tpr-framework | TPR 三省制工作流框架 | v1.0.2 | `tpr-framework` | — | 2026-04-01 | ✅ 活跃 |
 | xgjk-skill-auditor | 工厂 Skill 质检工具 | v1.0.1 | `xgjk-skill-auditor` | AF-20260331-002 | 2026-03-31 | ✅ 新发布 |
-| xgjk-agent-core | 工厂 Agent 行为基础包 | v1.0.1 | `xgjk-agent-core` | AF-20260401-001 | 2026-04-01 | ✅ 新发布 |
+| xgjk-agent-core | 工厂 Agent 行为基础包（仅内部使用） | v1.0.1 | — | AF-20260401-001 | 2026-04-01 | 🔒 内部（2026-04-03 从 ClawHub 下架） |
 
 ---
 
@@ -75,9 +75,9 @@
 ## 产品详情
 
 ### cms-cwork — CWork 工作协同
-- 定位：企业级任务与汇报协同引擎，64 个原子能力，覆盖汇报/任务/决策/闭环/分析/LLM 六大能力域
+- 定位：企业级任务与汇报协同引擎，6个Python编排脚本覆盖汇报/任务/审阅/催办/创建五大能力域
 - 对应平台模块：工作协同（`https://github.com/xgjk/dev-guide`）
-- 当前版本：v1.4.0，v1.5.0 迭代中（AF-20260329-001）
+- 当前版本：v3.0.0，Agent-First 架构重构（AF-20260323-001）
 
 ### cms-sop — 统一SOP执行框架
 - 定位：Lite/Full 双模式 SOP 执行框架，按任务复杂度自动路由

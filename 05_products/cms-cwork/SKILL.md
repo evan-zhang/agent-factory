@@ -1,7 +1,7 @@
 ---
 name: cms-cwork
-description: "工作协同 (CWork) Agent-First Skill — 8 个独立可执行的 Python 编排脚本，覆盖汇报发送/查询/审阅、任务创建/查询、催办闭环、待办管理（支持决策/建议/反馈三种类型）、模板查询"
-version: 3.1.0
+description: "工作协同 (CWork) Agent-First Skill — 8 个独立可执行的 Python 编排脚本，覆盖汇报发送/查询/审阅、任务创建/查询、催办闭环、待办管理（支持决策/建议/反馈三种类型）、历史上下文检索"
+version: 3.1.1
 ---
 
 # cms-cwork — Agent-First Architecture
@@ -64,7 +64,7 @@ python3 scripts/cwork-send-report.py \
 
 ### 2. 查询汇报 — `cwork-query-report.py`
 
-**意图**：收件箱 / 发件箱 / 未读 / 汇报详情 / 节点详情（含处理意见）
+**意图**：收件箱 / 发件箱 / 未读 / 汇报详情 / 节点详情 / **历史上下文检索** ✨ 新增
 
 ```bash
 # 收件箱（默认）
@@ -79,20 +79,72 @@ python3 scripts/cwork-query-report.py --mode outbox
 # 单条汇报详情（含回复链）
 python3 scripts/cwork-query-report.py --mode detail --report-id <id>
 
-# 节点详情（含审批/建议/反馈状态与处理意见）✨ 新增
+# 节点详情（含审批/建议/反馈状态与处理意见）✨ v3.1.0 新增
 python3 scripts/cwork-query-report.py --mode node-detail --report-id <id>
+
+# 历史上下文检索（审批决策支持）✨ v3.1.1 新增
+# 查询发件人历史汇报
+python3 scripts/cwork-query-report.py --mode sender-history \
+  --sender-emp-id <empId> \
+  --days 90
+
+# 关键字搜索汇报（客户端过滤）
+python3 scripts/cwork-query-report.py --mode keyword-search \
+  --keyword "公章" \
+  --days 90
 ```
 
 | 参数 | 说明 |
 |------|------|
-| `--mode` | `inbox` / `outbox` / `unread` / `detail` / `node-detail` / `pending` / `my-sent` |
+| `--mode` | `inbox` / `outbox` / `unread` / `detail` / `node-detail` / `sender-history` / `keyword-search` / `pending` / `my-sent` |
 | `--page-size` | 分页大小（默认 20） |
 | `--page-index` | 页码（默认 1） |
 | `--report-id` | 汇报 ID（detail / node-detail 必填） |
+| `--sender-emp-id` | 发件人员工 ID（sender-history 必填） |
+| `--keyword` | 搜索关键词（keyword-search 必填） |
+| `--days` | 回溯天数（sender-history / keyword-search，默认 90） |
 | `--report-type` | 汇报类型：1-工作交流 / 2-工作指引 / 3-文件签批 / 4-AI汇报 / 5-工作汇报 |
 | `--status` | 已读状态：0=未读 / 1=已读 |
-| `--keyword` | 关键词筛选 |
 | `--start-date` / `--end-date` | 时间范围（YYYY-MM-DD） |
+
+**输出格式**（sender-history）：
+```json
+{
+  "success": true,
+  "data": {
+    "senderEmpId": "1514822194347806721",
+    "totalReports": 15,
+    "recentReports": [
+      {
+        "id": "2039993163862765570",
+        "main": "互联网公司公章借出申请",
+        "createTime": "2026-04-03 17:11:48",
+        "reportRecordType": 5
+      }
+    ]
+  }
+}
+```
+
+**输出格式**（keyword-search）：
+```json
+{
+  "success": true,
+  "data": {
+    "keyword": "公章",
+    "total": 5,
+    "reports": [
+      {
+        "id": "2039993163862765570",
+        "main": "互联网公司公章借出申请",
+        "content": "用于办理工商变更...",
+        "createTime": "2026-04-03 17:11:48",
+        "sendEmpName": "刘丽华"
+      }
+    ]
+  }
+}
+```
 
 **输出格式**（node-detail）：
 ```json
@@ -382,6 +434,8 @@ python3 scripts/cwork-templates.py list --begin-time 1710000000000 --end-time 17
 | `/open-api/work-report/reportInfoOpenQuery/todoList` | `get_todo_list()` |
 | `/open-api/work-report/open-platform/todo/completeTodo` | `complete_todo()` |
 | `/open-api/work-report/report/getReportNodeDetail` | `get_report_node_detail()` |
+| — | `get_sender_history()` ✨ v3.1.1 新增 |
+| — | `search_reports_by_keyword()` ✨ v3.1.1 新增 |
 
 ## 目录结构
 

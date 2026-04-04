@@ -1,0 +1,1418 @@
+{
+  "org_name": "产品中心",
+  "period_name": "2026年度计划BP",
+  "period_id": "1994002024299085826",
+  "group_id": "1994002335135023106",
+  "score_tree": [
+    {
+      "id": "2009505807426932738",
+      "name": "确保产品稳定输出，实现年度上市得分7分，为集团贡献优质现金流",
+      "type": "bp",
+      "score": 0.0,
+      "score_source": "ai_failed",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009505807426932738-注册管理部",
+          "name": "注册管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 注册管理部",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        },
+        {
+          "id": "2009505807426932738-医学部",
+          "name": "医学部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 医学部",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        },
+        {
+          "id": "2009505807426932738-项目管理部",
+          "name": "项目管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 项目管理部",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        },
+        {
+          "id": "2009505807426932738-业务发展部",
+          "name": "业务发展部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 业务发展部",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        },
+        {
+          "id": "2009505807426932738-引进与投资法务部",
+          "name": "引进与投资法务部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 引进与投资法务部",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        },
+        {
+          "id": "2009505807426932738-财经岗",
+          "name": "财经岗",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 财经岗",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        },
+        {
+          "id": "2009505807426932738-战略投资部一部",
+          "name": "战略投资部一部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 战略投资部一部",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        },
+        {
+          "id": "2009505807426932738-创新研发部",
+          "name": "创新研发部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 创新研发部",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        },
+        {
+          "id": "2009505807426932738-战略投资部二部",
+          "name": "战略投资部二部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 战略投资部二部",
+          "source_bp_ids": [
+            "2009505807426932738"
+          ]
+        }
+      ],
+      "parent_ratio": 0.0,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009505807426932738"
+      ]
+    },
+    {
+      "id": "2009505812216827906",
+      "name": "强化中期管线厚度，完成合作引进得分≥9分",
+      "type": "bp",
+      "score": 0.0,
+      "score_source": "ai_failed",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009505812216827906-业务发展部",
+          "name": "业务发展部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.3333333333333333,
+          "org_path": "产品中心 → 业务发展部",
+          "source_bp_ids": [
+            "2009505812216827906"
+          ]
+        },
+        {
+          "id": "2009505812216827906-项目管理部",
+          "name": "项目管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.3333333333333333,
+          "org_path": "产品中心 → 项目管理部",
+          "source_bp_ids": [
+            "2009505812216827906"
+          ]
+        },
+        {
+          "id": "2009505812216827906-注册管理部",
+          "name": "注册管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.3333333333333333,
+          "org_path": "产品中心 → 注册管理部",
+          "source_bp_ids": [
+            "2009505812216827906"
+          ]
+        }
+      ],
+      "parent_ratio": 0.0,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009505812216827906"
+      ]
+    },
+    {
+      "id": "2009505818076270593",
+      "name": "启动自主研发4.0模式，实现管线输入得分≥15分",
+      "type": "bp",
+      "score": 0.0,
+      "score_source": "ai_failed",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009505818076270593-创新研发部",
+          "name": "创新研发部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.25,
+          "org_path": "产品中心 → 创新研发部",
+          "source_bp_ids": [
+            "2009505818076270593"
+          ]
+        },
+        {
+          "id": "2009505818076270593-项目管理部",
+          "name": "项目管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.25,
+          "org_path": "产品中心 → 项目管理部",
+          "source_bp_ids": [
+            "2009505818076270593"
+          ]
+        },
+        {
+          "id": "2009505818076270593-注册管理部",
+          "name": "注册管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.25,
+          "org_path": "产品中心 → 注册管理部",
+          "source_bp_ids": [
+            "2009505818076270593"
+          ]
+        },
+        {
+          "id": "2009505818076270593-医学部",
+          "name": "医学部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.25,
+          "org_path": "产品中心 → 医学部",
+          "source_bp_ids": [
+            "2009505818076270593"
+          ]
+        }
+      ],
+      "parent_ratio": 0.0,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009505818076270593"
+      ]
+    },
+    {
+      "id": "2009509007789936641",
+      "name": "建立精益管控体系，确保关键节点达成率≥80%",
+      "type": "bp",
+      "score": 0.0,
+      "score_source": "ai_failed",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009509007789936641-项目管理部",
+          "name": "项目管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.25,
+          "org_path": "产品中心 → 项目管理部",
+          "source_bp_ids": [
+            "2009509007789936641"
+          ]
+        },
+        {
+          "id": "2009509007789936641-注册管理部",
+          "name": "注册管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.25,
+          "org_path": "产品中心 → 注册管理部",
+          "source_bp_ids": [
+            "2009509007789936641"
+          ]
+        },
+        {
+          "id": "2009509007789936641-医学部",
+          "name": "医学部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.25,
+          "org_path": "产品中心 → 医学部",
+          "source_bp_ids": [
+            "2009509007789936641"
+          ]
+        },
+        {
+          "id": "2009509007789936641-创新研发部",
+          "name": "创新研发部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.25,
+          "org_path": "产品中心 → 创新研发部",
+          "source_bp_ids": [
+            "2009509007789936641"
+          ]
+        }
+      ],
+      "parent_ratio": 0.0,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009509007789936641"
+      ]
+    },
+    {
+      "id": "2009515298255818754",
+      "name": "实现投资价值闭环，战略投资收益≥20亿元",
+      "type": "bp",
+      "score": 0.0,
+      "score_source": "ai_failed",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009515298255818754-引进与投资法务部",
+          "name": "引进与投资法务部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 引进与投资法务部",
+          "source_bp_ids": [
+            "2009515298255818754"
+          ]
+        },
+        {
+          "id": "2009515298255818754-战略投资部二部",
+          "name": "战略投资部二部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 战略投资部二部",
+          "source_bp_ids": [
+            "2009515298255818754"
+          ]
+        },
+        {
+          "id": "2009515298255818754-项目管理部",
+          "name": "项目管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 项目管理部",
+          "source_bp_ids": [
+            "2009515298255818754"
+          ]
+        },
+        {
+          "id": "2009515298255818754-创新研发部",
+          "name": "创新研发部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 创新研发部",
+          "source_bp_ids": [
+            "2009515298255818754"
+          ]
+        },
+        {
+          "id": "2009515298255818754-财经岗",
+          "name": "财经岗",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 财经岗",
+          "source_bp_ids": [
+            "2009515298255818754"
+          ]
+        },
+        {
+          "id": "2009515298255818754-注册管理部",
+          "name": "注册管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 注册管理部",
+          "source_bp_ids": [
+            "2009515298255818754"
+          ]
+        },
+        {
+          "id": "2009515298255818754-医学部",
+          "name": "医学部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 医学部",
+          "source_bp_ids": [
+            "2009515298255818754"
+          ]
+        }
+      ],
+      "parent_ratio": 0.0,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009515298255818754"
+      ]
+    },
+    {
+      "id": "2009515301166665729",
+      "name": "完成组织架构重构，打造敏捷高效团队",
+      "type": "bp",
+      "score": 0.0,
+      "score_source": "ai_failed",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009515301166665729-创新研发部",
+          "name": "创新研发部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 创新研发部",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-医学部",
+          "name": "医学部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 医学部",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-注册管理部",
+          "name": "注册管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 注册管理部",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-业务发展部",
+          "name": "业务发展部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 业务发展部",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-战略投资部一部",
+          "name": "战略投资部一部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 战略投资部一部",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-战略投资部二部",
+          "name": "战略投资部二部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 战略投资部二部",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-引进与投资法务部",
+          "name": "引进与投资法务部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 引进与投资法务部",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-财经岗",
+          "name": "财经岗",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 财经岗",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-组织发展部",
+          "name": "组织发展部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 组织发展部",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-招聘调配部",
+          "name": "招聘调配部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 招聘调配部",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-人才发展部",
+          "name": "人才发展部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 人才发展部",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        },
+        {
+          "id": "2009515301166665729-项目管理部",
+          "name": "项目管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 项目管理部",
+          "source_bp_ids": [
+            "2009515301166665729"
+          ]
+        }
+      ],
+      "parent_ratio": 0.0,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009515301166665729"
+      ]
+    },
+    {
+      "id": "2009515305449050113",
+      "name": "革新价值分配体系，全面激发组织活力",
+      "type": "bp",
+      "score": 0.0,
+      "score_source": "ai_failed",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009515305449050113-业务发展部",
+          "name": "业务发展部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 业务发展部",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-项目管理部",
+          "name": "项目管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 项目管理部",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-创新研发部",
+          "name": "创新研发部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 创新研发部",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-引进与投资法务部",
+          "name": "引进与投资法务部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 引进与投资法务部",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-财经岗",
+          "name": "财经岗",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 财经岗",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-注册管理部",
+          "name": "注册管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 注册管理部",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-战略投资部一部",
+          "name": "战略投资部一部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 战略投资部一部",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-战略投资部二部",
+          "name": "战略投资部二部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 战略投资部二部",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-医学部",
+          "name": "医学部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 医学部",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-薪酬绩效部",
+          "name": "薪酬绩效部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 薪酬绩效部",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-组织发展部",
+          "name": "组织发展部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 组织发展部",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        },
+        {
+          "id": "2009515305449050113-招聘调配部",
+          "name": "招聘调配部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.08333333333333333,
+          "org_path": "产品中心 → 招聘调配部",
+          "source_bp_ids": [
+            "2009515305449050113"
+          ]
+        }
+      ],
+      "parent_ratio": 0.0,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009515305449050113"
+      ]
+    },
+    {
+      "id": "2009516961779961858",
+      "name": "搭建数字化管理平台，全面赋能精益运营",
+      "type": "bp",
+      "score": 0.0,
+      "score_source": "ai_failed",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009516961779961858-项目管理部",
+          "name": "项目管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 项目管理部",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-创新研发部",
+          "name": "创新研发部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 创新研发部",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-注册管理部",
+          "name": "注册管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 注册管理部",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-医学部",
+          "name": "医学部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 医学部",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-业务发展部",
+          "name": "业务发展部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 业务发展部",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-引进与投资法务部",
+          "name": "引进与投资法务部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 引进与投资法务部",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-财经岗",
+          "name": "财经岗",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 财经岗",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-战略投资部一部",
+          "name": "战略投资部一部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 战略投资部一部",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        },
+        {
+          "id": "2009516961779961858-战略投资部二部",
+          "name": "战略投资部二部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.1111111111111111,
+          "org_path": "产品中心 → 战略投资部二部",
+          "source_bp_ids": [
+            "2009516961779961858"
+          ]
+        }
+      ],
+      "parent_ratio": 0.0,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009516961779961858"
+      ]
+    },
+    {
+      "id": "2009520567245361154",
+      "name": "夯实全球化基础，在人才、授权与IP管理上取得关键突破",
+      "type": "bp",
+      "score": 0.0,
+      "score_source": "ai_failed",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "",
+      "tags": [],
+      "children": [
+        {
+          "id": "2009520567245361154-招聘调配部",
+          "name": "招聘调配部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 招聘调配部",
+          "source_bp_ids": [
+            "2009520567245361154"
+          ]
+        },
+        {
+          "id": "2009520567245361154-创新研发部",
+          "name": "创新研发部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 创新研发部",
+          "source_bp_ids": [
+            "2009520567245361154"
+          ]
+        },
+        {
+          "id": "2009520567245361154-注册管理部",
+          "name": "注册管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 注册管理部",
+          "source_bp_ids": [
+            "2009520567245361154"
+          ]
+        },
+        {
+          "id": "2009520567245361154-医学部",
+          "name": "医学部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 医学部",
+          "source_bp_ids": [
+            "2009520567245361154"
+          ]
+        },
+        {
+          "id": "2009520567245361154-CMS R&D",
+          "name": "CMS R&D",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → CMS R&D",
+          "source_bp_ids": [
+            "2009520567245361154"
+          ]
+        },
+        {
+          "id": "2009520567245361154-项目管理部",
+          "name": "项目管理部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 项目管理部",
+          "source_bp_ids": [
+            "2009520567245361154"
+          ]
+        },
+        {
+          "id": "2009520567245361154-引进与投资法务部",
+          "name": "引进与投资法务部",
+          "type": "bp",
+          "score": 0.0,
+          "score_source": "cascade_updated",
+          "adjusted_from": null,
+          "adjust_reason": null,
+          "confidence": null,
+          "reason": "承接《》",
+          "tags": [],
+          "children": [],
+          "parent_ratio": 0.14285714285714285,
+          "org_path": "产品中心 → 引进与投资法务部",
+          "source_bp_ids": [
+            "2009520567245361154"
+          ]
+        }
+      ],
+      "parent_ratio": 0.0,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2009520567245361154"
+      ]
+    },
+    {
+      "id": "2011795076392534017",
+      "name": "构建精准高效的研发投入管理体系，保障战略资源有效配置",
+      "type": "bp",
+      "score": 0.0,
+      "score_source": "no_undertaker",
+      "adjusted_from": null,
+      "adjust_reason": null,
+      "confidence": null,
+      "reason": "",
+      "tags": [
+        "无承接"
+      ],
+      "children": [],
+      "parent_ratio": 0.0,
+      "org_path": "产品中心",
+      "source_bp_ids": [
+        "2011795076392534017"
+      ]
+    }
+  ],
+  "original_ratios_session": {
+    "root": {},
+    "2009505807426932738": {},
+    "2009505812216827906": {},
+    "2009505818076270593": {},
+    "2009509007789936641": {},
+    "2009515298255818754": {},
+    "2009515301166665729": {},
+    "2009515305449050113": {},
+    "2009516961779961858": {},
+    "2009520567245361154": {}
+  },
+  "generated_at": "2026-03-29T23:54:11.878309"
+}
