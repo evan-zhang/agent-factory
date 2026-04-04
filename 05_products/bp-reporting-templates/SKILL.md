@@ -4,7 +4,45 @@ description: Generate BP monthly/quarterly/half-year/year report filling templat
 metadata:
   requires:
     env: [BP_APP_KEY]
-homepage: https://github.com/evan-zhang/agent-factory/issues
+  homepage: https://github.com/evan-zhang/agent-factory/issues
+  version: v1.0.1
+tools_provided:
+  - name: main
+    category: exec
+    risk_level: medium
+    permission: exec
+    description: BP报告模板生成主入口，支持列出周期、模板类型、执行生成
+    status: active
+  - name: api_client
+    category: exec
+    risk_level: medium
+    permission: read
+    description: BP系统API客户端，获取实时数据
+    status: active
+  - name: filler
+    category: exec
+    risk_level: medium
+    permission: write
+    description: 模板填充器，将数据填入模板
+    status: active
+  - name: parser
+    category: exec
+    risk_level: low
+    permission: read
+    description: 解析器和数据预处理器
+    status: active
+  - name: reviewer
+    category: exec
+    risk_level: medium
+    permission: read
+    description: 审核器，校验锚点、数据追溯、告警规则
+    status: active
+  - name: template_manager
+    category: exec
+    risk_level: medium
+    permission: write
+    description: 模板管理器，处理模板存储和读取
+    status: active
 ---
 
 # bp-reporting-templates

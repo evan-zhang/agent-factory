@@ -1,6 +1,15 @@
 ---
 name: xgjk-skill
 description: 玄关 Skill — 三位一体的 Skill 全生命周期工具：发现平台已有 Skill、按 XGJK 协议创建新 Skill、发布/更新/下架 Skill
+metadata:
+  version: v1.0.8
+tools_provided:
+  - name: fetch_api_doc
+    category: exec
+    risk_level: low
+    permission: read
+    description: 从玄关开放平台获取API文档和业务说明
+    status: active
 ---
 
 # 玄关 Skill — Skill 全生命周期工具

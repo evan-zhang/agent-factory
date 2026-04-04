@@ -2,6 +2,14 @@
 name: openclaw-model-rankings
 description: 本地化 OpenRouter 模型目录与问答筛选 Skill。用于"openrouter 模型选型/openrouter 价格对比/openrouter 模型排行/openrouter 模型推荐"等问题；触发词包括：openrouter 模型、模型预算选型、最便宜模型、支持 tool_use、支持 function calling、支持 JSON mode、128k 上下文、模型延迟、模型对比。当用户提到 openrouter 模型相关问题时触发。
 homepage: https://github.com/evan-zhang/agent-factory/issues
+version: v1.0.1
+tools_provided:
+  - name: fetch-rankings
+    category: exec
+    risk_level: low
+    permission: read
+    description: 从 OpenRouter 获取模型排行和价格数据
+    status: active
 ---
 
 # openclaw-model-rankings (v1.0.0)

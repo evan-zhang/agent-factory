@@ -3,8 +3,15 @@ name: bp-prototype
 description: BP原型模板制造 Skill。通过对话交互，从 BP规范（GitHub）+ BP系统接口（实时数据）自动推理生成四套空白母版模板（年报/半年报/季报/月报）。支持查询历史模板并发送给用户。触发词：生成BP模板/更新BP模板/制造模板/查询模板/获取模板。
 metadata:
   homepage: https://github.com/evan-zhang/agent-factory
-  version: v0.5.0
+  version: v0.5.1
   status: DRAFT
+tools_provided:
+  - name: generate
+    category: exec
+    risk_level: medium
+    permission: exec
+    description: 从BP规范和API数据推理生成四套空白母版模板
+    status: active
 ---
 
 # bp-prototype
