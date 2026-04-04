@@ -1,11 +1,11 @@
 ---
 name: bp-manager
-description: BP管理助手 — 查看/管理自己与下级的BP（目标/关键成果/关键举措）、AI质量检查、延期提醒。触发词：查看BP/我的BP/下属BP/BP检查/延期提醒/新增成果/新增举措。
+description: BP管理助手 — 查看/管理自己与下级的BP（目标/关键成果/关键举措）、AI质量检查。触发词：bp/BP/BP管理/BP目标/BP成果/BP举措/衡量标准/对齐/关键任务/关键成果/上级BP/下级BP/承接/目标管理/OKR/KR/我的目标/我的成果/新增目标/新增成果/新增举措/查看BP/查看目标。
 metadata:
   requires:
     env: [BP_APP_KEY]
   homepage: https://github.com/xgjk/dev-guide/tree/main/02.产品业务AI文档/BP
-  version: v1.0.0
+  version: v1.0.1
   status: DRAFT
 ---
 
