@@ -5,8 +5,21 @@ metadata:
   requires:
     env: [BP_APP_KEY]
   homepage: https://github.com/xgjk/dev-guide/tree/main/02.产品业务AI文档/BP
-  version: v1.0.1
+  version: v1.0.2
   status: DRAFT
+tools_provided:
+  - name: bp_client
+    category: exec
+    risk_level: medium
+    permission: exec
+    description: BP系统API客户端，封装所有BP相关接口调用
+    status: active
+  - name: commands
+    category: exec
+    risk_level: medium
+    permission: exec
+    description: BP管理命令集合（查看/新增/搜索BP任务）
+    status: active
 ---
 
 # BP Manager
