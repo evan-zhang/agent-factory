@@ -151,6 +151,8 @@ When escalating, provide:
 ### Menxi省（审查方）
 ```
 runtime: subagent
+maxConcurrent: 4
+runTimeoutSeconds: 180
 task: You are Menxi省 (门下省), the critical reviewer in a TPR Battle.
 Review the GRV document at {grv_path} and raise 3-5 substantive objections.
 Be specific: cite the GRV section, explain why it is problematic, propose a concrete fix.
@@ -160,7 +162,9 @@ After presenting objections, report your verdict: APPROVE / REJECT / CONDITIONAL
 ### Shangshu省（应答方）
 ```
 runtime: subagent
-task: You are Shangshu省 (尚书省), the implementer and defender in a TPR Battle.
+maxConcurrent: 4
+runTimeoutSeconds: 180
+task: You are Shangshu省 (尚书省), the implementor and defender in a TPR Battle.
 The GRV is at {grv_path}. Menxi省 has raised these objections: {objections}
 Respond to each objection. Give clear accept/reject with rationale.
 After responding, confirm what the final GRV changes will be.
@@ -187,6 +191,26 @@ After each phase completion:
 1. Update `proactivity/session-state.md` with current phase and blocker
 2. Log key decisions in `self-improving/memory.md`
 3. If a mistake was made, log it in `self-improving/corrections.md`
+
+## Sub-Agent Status Monitoring
+
+### How to Check
+- `sessions_list` — list all running sub-agents and their status
+- `/tasks` (Telegram) — show current session task panel
+- `openclaw tasks list` — show all background tasks across sessions
+
+### When to Check
+- After spawning a sub-agent, trust the announce mechanism — do NOT poll in a loop
+- If no result arrives after the expected time, check with sessions_list
+- If user asks about progress, use sessions_list to report actual state
+
+### If a Sub-Agent is Stuck
+- Cancel the task: `openclaw tasks cancel <id>`
+- Re-spawn with a shorter timeout or simpler task
+- If it keeps happening, the task is too heavy — split it into smaller steps
+
+### Concurrency Limit
+Configured max: 4 concurrent sub-agents. If limit is hit, wait for one to complete before spawning the next.
 
 ---
 
