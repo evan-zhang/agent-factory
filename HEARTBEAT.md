@@ -27,7 +27,7 @@
 如果发现异常，发送给用户：
 ```
 ⚠️ 自我改进文档异常：
-- task-tracker.md 最后更新：[时间]
+- self-improving/task-tracker.md 最后更新：[时间]
 - corrections.md 最后更新：[时间]
 - patterns.md 最后更新：[时间]
 建议：请 Orchestrator 检查是否需要补充记录。

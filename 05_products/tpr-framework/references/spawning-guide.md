@@ -53,5 +53,5 @@ projects/{PROJECT-ID}/
 
 每个阶段完成后：
 1. 更新 `proactivity/session-state.md`（当前阶段 + 阻塞项）
-2. 关键决策记录到 `self-improving/memory.md`
+2. 关键决策记录到 `self-improving/patterns.md`
 3. 出错时记录到 `self-improving/corrections.md`
