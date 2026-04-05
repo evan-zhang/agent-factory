@@ -20,11 +20,9 @@
 | D3 内容质量 | 20% | 20% | 30% | 20% |
 | D4 安全合规 | 35% | 15% | 5%  | 20% |
 | D5 发布合规 | 15% | 15% | 10% | 15% |
-| D6 Orchestrator & Multi-Agent | 0%  | 15% | 15% | 10% |
 
 > D4 对 API 集成类权重最高（35%），因为凭证处理是最大风险。
 > D3 对纯文档类权重最高（30%），因为内容质量是唯一核心价值。
-> D6 对工作流类权重最高（15%），因为 orchestrator 类 Skill 的核心价值在于协调机制。
 
 ## 工厂已知 Skill 类型对照
 
@@ -37,7 +35,6 @@
 | xgjk-skill-auditor | 工作流类 |
 | cas-chat-archive | API 集成类 |
 | tpr-framework | 纯文档类 |
-| self-improving-proactive-agent | 纯文档类 |
 
 ## 混合类处理
 
