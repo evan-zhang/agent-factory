@@ -1,6 +1,6 @@
 ---
 name: xgjk-skill-auditor
-description: Audit and score Agent Factory skills across 5 dimensions before publishing. Use when reviewing a skill before ClawHub release, checking skill quality, running security scan, generating PASS/REVISE verdict, or auditing cms-cwork / cms-sop / bp-reporting-templates and other factory skills.
+description: Audit and score Agent Factory skills across 6 dimensions before publishing. Use when reviewing a skill before ClawHub release, checking skill quality, running security scan, generating PASS/REVISE verdict, auditing orchestrator/multi-agent discipline, or auditing cms-cwork / cms-sop / tpr-framework and other factory skills.
 homepage: https://github.com/evan-zhang/agent-factory
 issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=xgjk-skill-auditor
 metadata:
@@ -80,6 +80,7 @@ PASS：总分 ≥ 7.5 AND D4 ≥ 6；否则 REVISE
 ## References
 
 - `references/maintenance.md` — 维护信息（版本/GitHub/Issue 入口）
-- `references/factory-weights.md` — Skill 类型分类 + 5 维度权重矩阵
-- `references/scoring-rubric.md` — D1-D5 详细 checklist + 评分规则
+- `references/factory-weights.md` — Skill 类型分类 + 6 维度权重矩阵
+- `references/scoring-rubric.md` — D1-D6 详细 checklist + 评分规则
 - `references/security-patterns.md` — CRITICAL/严重/轻微 grep pattern + 误报白名单
+- `references/best-practices.md` — Orchestrator & Multi-Agent 最佳实践（2026-04-05 新增）
