@@ -192,6 +192,13 @@ After each phase completion:
 2. Log key decisions in `self-improving/memory.md`
 3. If a mistake was made, log it in `self-improving/corrections.md`
 
+### 持续检查清单（每次 spawn 前）
+
+- [ ] 这个任务是 Orchestrator 的职责还是 Sub-Agent 的职责？
+- [ ] 上下文会不会太长？需要用文件传递吗？
+- [ ] 同时运行的 Sub-Agent 有多少？是否超过 4 个？
+- [ ] 这个 Sub-Agent 依赖其他任务吗？依赖的任务完成了吗？
+
 ## Sub-Agent Status Monitoring
 
 ### How to Check
@@ -211,6 +218,104 @@ After each phase completion:
 
 ### Concurrency Limit
 Configured max: 4 concurrent sub-agents. If limit is hit, wait for one to complete before spawning the next.
+
+---
+
+## Sub-Agent Context Management（上下文文件传递原则）
+
+### 问题
+通过 task 参数直接传递长上下文会导致：
+- Sub-Agent 上下文窗口被占满，性能下降
+- 上下文压缩后关键信息丢失
+- Token 成本飙升
+
+### 解决方案：文件传递 + 按需读取
+
+**不要这样做**：
+```
+task: You are Menxi. Here is the full GRV: [粘贴 200 行文档...]
+```
+
+**正确做法**：
+1. 将任务描述写入 `temp/task-{id}.md`
+2. 将相关上下文（如 GRV 文档）写入 `temp/context-{id}.md`
+3. 在 task 参数里只写文件路径和读取指令
+
+```
+task: You are Menxi. 
+Read the GRV document at {project}/temp/context-grv-001.md.
+Review it and raise your objections.
+Write your report to {project}/temp/menxi-report-001.md.
+```
+
+### 文件命名规范
+```
+temp/
+├── task-{id}.md          # 任务描述
+├── context-{id}.md        # 上下文（GRV、需求等）
+├── menxi-report-{id}.md   # Menxi 输出
+├── shangshu-report-{id}.md # Shangshu 输出
+└── task-tracker.md        # 任务追踪（Orchestrator 维护）
+```
+
+### Orchestrator 维护任务追踪
+在 `temp/task-tracker.md` 记录所有活跃任务：
+```markdown
+## 任务追踪
+
+| ID | 任务 | 负责人 | 状态 | 依赖 |
+|----|------|--------|------|------|
+| T1 | GRV 草稿 | Zhongshu | 完成 | - |
+| T2 | Menxi 审查 | Menxi | 进行中 | T1 |
+| T3 | 实现 | Shangshu | 等待 | T2 |
+```
+
+### Pitch File Reads
+在 task 描述里明确告诉 Sub-Agent 什么时候读哪个文件：
+- "Read `temp/context-grv-001.md` for the full GRV before starting"
+- "If you need to check the original requirements, read `temp/context-req-001.md`"
+
+---
+
+## Orchestrator 持续学习机制
+
+### 每次任务完成后的自我检查
+
+每次 Sub-Agent 完成任务后，回答：
+1. **任务是否符合"单一职责"？** 还是太重需要拆分？
+2. **上下文传递是否有效？** Sub-Agent 是否因为缺上下文而需要反复追问？
+3. **等待时间是否合理？** 有没有超时或卡住？
+
+### 每周复盘（TPR 项目）
+
+每个 TPR 项目结束后，回答：
+1. **任务分配**：哪些 sub-agent 分配方式效果好？哪些导致上下文占满？
+2. **瓶颈环节**：哪个 phase 最耗时/最易出问题？
+3. **协作模式**：成功的协作模式是什么？失败的模式是什么？
+
+### 管理经验沉淀
+
+将复盘结论写入 `self-improving/patterns.md`：
+```markdown
+## 成功的协作模式
+
+### 2026-04-05
+- Menxi 审查时，提前把 GRV 写入文件而不是塞进 task → 上下文使用量降 40%
+- 把大任务拆成"读文件 → 审查 → 写报告"三步 → 超时率从 30% 降到 5%
+
+## 应避免的模式
+
+### 2026-04-05
+- 把完整 GRV 塞进 task 参数 → Sub-Agent 上下文在 10 分钟内占满
+- 同时 spawn 3 个以上 Sub-Agent → 任务追踪混乱，无法确认谁在做啥
+```
+
+### 自我反省触发条件
+
+以下情况必须记录到 `self-improving/corrections.md`：
+- Orchestrator 自己干了 Sub-Agent 该干的事（越界）
+- 因为上下文问题导致 Sub-Agent 需要重新执行
+- 用户明确指出 Orchestrator 的任务管理有问题
 
 ---
 
