@@ -73,6 +73,63 @@ tools_provided:
 
 # cms-cwork — Agent-First Architecture
 
+## 🚀 快速开始
+
+### 发送汇报（推荐流程）
+
+```
+1. 搜索员工确认接收人
+python3 scripts/cwork-search-emp.py --name "张三"
+
+2. 保存草稿（预览）
+python3 scripts/cwork-send-report.py \
+  --title "周报" \
+  --content-html "<p>汇报内容</p>" \
+  --receivers "张三" \
+  --preview-only
+
+3. 确认发送
+python3 scripts/cwork-send-report.py \
+  --title "周报" \
+  --content-html "<p>汇报内容</p>" \
+  --receivers "张三"
+```
+
+### 查询待办
+
+```
+python3 scripts/cwork-todo.py --list
+```
+
+## 推荐工作流程
+
+### 汇报发送标准流程
+
+**推荐**：草稿 → 预览 → 发送（3步）
+
+```
+draft → preview → submit
+```
+
+| 步骤 | 命令 | 说明 |
+|------|------|------|
+| 1. 保存草稿 | `cwork-send-report.py` | 存入草稿箱 |
+| 2. 预览确认 | `cwork-query-report.py --inbox --type draft` | 查看草稿内容 |
+| 3. 确认发送 | `cwork-send-report.py --confirm` | 正式发送 |
+
+**注意**：`--preview-only` 参数只保存草稿不发送，适合需要用户确认的场景。
+
+### API 端点概览
+
+| 功能 | 端点 |
+|------|------|
+| 搜索员工 | `/open-api/employee/simpleList` |
+| 保存草稿 | `/open-api/work-report/draftBox/saveOrUpdate` |
+| 发送汇报 | `/open-api/work-report/report/record/submit` |
+| 查询汇报 | `/open-api/work-report/inbox/pageList` |
+| 创建任务 | `/open-api/work-task/task/createTask` |
+| 待办管理 | `/open-api/work-report/todo/v2/queryPageList` |
+
 ## ⚠️ 强制规则（MUST READ）
 
 **所有 CWork API 调用必须使用本 Skill 提供的 Python 脚本，禁止直接使用 curl/HTTP 调用。**
@@ -194,6 +251,12 @@ cat scripts/cwork_client.py | grep urlencode
 |------|------|--------|------|
 | `CWORK_APP_KEY` | ✅ | — | CWork API 认证密钥 |
 | `CWORK_BASE_URL` | ❌ | `https://sg-al-cwork-web.mediportal.com.cn` | API 基础地址 |
+
+### 如何获取 CWORK_APP_KEY
+
+1. 联系玄关平台管理员获取 `CWORK_APP_KEY`
+2. 或访问玄关开放平台（https://github.com/xgjk/dev-guide）查看申请流程
+3. 获取后在 Gateway 环境变量中配置
 
 ## 9 个编排命令
 
