@@ -192,12 +192,49 @@ After each phase completion:
 2. Log key decisions in `self-improving/memory.md`
 3. If a mistake was made, log it in `self-improving/corrections.md`
 
-### 持续检查清单（每次 spawn 前）
+### 强制检查清单（每次 spawn 前 — 必须执行）
 
-- [ ] 这个任务是 Orchestrator 的职责还是 Sub-Agent 的职责？
-- [ ] 上下文会不会太长？需要用文件传递吗？
-- [ ] 同时运行的 Sub-Agent 有多少？是否超过 4 个？
-- [ ] 这个 Sub-Agent 依赖其他任务吗？依赖的任务完成了吗？
+**Step 1：读取自我改进文档**
+```
+读取 self-improving/corrections.md 的最后 3 条记录。
+如果有最近 24 小时内的修正，必须在 spawn 消息中注明："已确认 [问题] 的教训，将 [预防措施]"。
+读取 self-improving/patterns.md 是否有相关成功模式。
+```
+
+**Step 2：检查任务追踪**
+```
+读取 self-improving/task-tracker.md。
+确认所有依赖任务的状态是否为"完成"。
+如果依赖未完成，等待或拆分任务。
+```
+
+**Step 3：更新任务追踪**
+```
+在 task-tracker.md 中新增一行：ID、任务、Sub-Agent、状态=进行中、创建时间。
+```
+
+**Step 4：Spawn 后通知**
+```
+发送通知："Started: [任务名]，Sub-Agent=[类型]。已记录到 task-tracker.md"
+```
+
+### 每次 Sub-Agent 完成后 — 必须执行
+
+**必须执行以下全部：**
+
+1. **更新 task-tracker.md**
+   - 将该任务状态改为"完成"
+   - 记录完成时间和结果摘要
+
+2. **如果 Orchestrator 有越界行为**
+   - 立即写入 `self-improving/corrections.md`
+   - 格式：时间、问题类型、情境、错误、修正、预防
+
+3. **如果发现有效的协作模式**
+   - 立即写入 `self-improving/patterns.md`
+   - 格式：时间、模式名称、何时使用、具体做法、效果
+
+---
 
 ## Sub-Agent Status Monitoring
 
