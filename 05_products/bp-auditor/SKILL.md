@@ -134,9 +134,28 @@ Sub-agent 完成后：
 Step 1: spawn 数据获取执行者 → fetch.py 获取根 BP 数据
 Step 2: spawn 分析执行者 → 对根 BP 执行 Level 1 评估（Goal + KR + 举措）
 Step 3: 识别下游 BP 列表
-Step 4: spawn 分析执行者 → 对每个下游 BP 执行 Level 2 评估（Goal + KR + 举措）
+Step 4: for each downstream BP（分批 spawn）→ 对每个下游 BP 执行 Level 2 评估（Goal + KR + 举措）
+        - 每批最多 3 个下游 BP
+        - 每批完成后汇报进度
+        - 避免单次 spawn 处理过多下游 BP 导致超时
 Step 5: 汇总所有 P0/P1/P2 问题
 Step 6: 生成报告 → 发给 Evan
+```
+
+### 下游 BP 处理原则
+
+**问题**：下游 BP 数量多时，单次 spawn 会超时。
+
+**解决方案**：分批处理，每批最多 3 个下游 BP。
+
+```
+# 伪代码
+downstream_list = [BP1, BP2, BP3, BP4, BP5, BP6]
+for batch in chunks(downstream_list, 3):
+    for bp in batch:
+        spawn audit_downstream(bp)
+    wait_for_batch_completion()
+    report_progress(len(completed), len(total))
 ```
 
 ---
