@@ -1,7 +1,7 @@
 ---
 name: cms-cwork
 description: "使用 CWork API 搜索员工（支持模糊查询）、发送/查询汇报、管理待办（决策/建议/反馈）、创建/查询任务。触发词：cwork/CWork/工作协同/发送汇报/发汇报/汇报/申请/周报/待办/任务/催办/搜索员工/查收件箱。输入：员工姓名/汇报内容/待办 ID，输出：员工列表/汇报 ID/待办列表/任务列表"
-version: 3.2.3
+version: 3.3.0
 tools_provided:
   - name: cwork_client
     category: exec
