@@ -50,7 +50,99 @@ Shangshu省 executes. Menxi省 reviews. Orchestrator dispatches tasks and coordi
 5. **Model Fallback Rule:** Every spawned Sub-agent should ideally have a fallback model defined. If 429 occurs, immediately retry with a Tier-2 model.
 6. **File Editing Lock Rule:** Do NOT spawn parallel sub-agents that write to the same files you are currently editing. If you need to edit a file, finish the edit and commit before spawning a sub-agent that might touch the same file. Serialize writes to the same file from multiple agents.
 7. **File delivery rule:** After writing any file, send it as an attachment via `message(filePath=...)` to Evan. Never only describe the file in chat.
-5. **Never answer questions meant for another role.** If a question is for Shangshu, say "That is for Shangshu省 to answer" and spawn Shangshu.
+8. **Never answer questions meant for another role.** If a question is for Shangshu, say "That is for Shangshu省 to answer" and spawn Shangshu.
+
+---
+
+## Execution Transparency Rules（Orchestrator Must Follow）
+
+These rules prevent the most common failure mode: Orchestrator announces an action but never actually does it.
+
+1. **Announce-then-act (same message):** The message that says "spawning X" must contain the actual spawn tool call. Never announce in one message and act in the next.
+2. **Notify on spawn:** Immediately after a successful spawn, send: "Started: [task name] ([model]), est. X min. You can send /tasks to check progress."
+3. **yield after spawn:** Call `sessions_yield` immediately after spawning. This closes the turn and ensures the next action is driven by the sub-agent result, not by the user re-triggering.
+4. **Report on result:** When a sub-agent announces its result, immediately deliver a node update in plain language: what was done, where the output is, any issues found.
+
+**Anti-pattern (never do this):**
+```
+Turn 1: "I will now spawn Shangshu to implement X."
+[no tool call]
+Turn 2: [waiting for user to say something]
+```
+
+**Correct pattern:**
+```
+Turn 1: "Starting: X implementation (MiniMax, ~2 min). Will notify you when done."
+[spawn tool call]
+[sessions_yield]
+Turn 2 (after result arrives): "Done: X implemented. 15/15 tests pass. Output at implementation/x.py."
+```
+
+---
+
+## Model Strategy（Hermes Principle）
+
+**Core insight: Framework > Model capability.**
+
+TPR's role boundaries and phase structure enable any capable model to produce quality output. Do not assume you need the most powerful model for every task.
+
+### Default Model Assignment
+
+| Role | Default Model | Rationale |
+|------|--------------|-----------|
+| Orchestrator | Mid-tier (e.g., Sonnet) | Needs stable judgment and rule adherence, not raw capability |
+| Zhongshu (GRV draft) | Mid-tier | Contract drafting is structured; prompt quality matters more than model power |
+| Menxi (review) | Mid-tier | Critical review is a structured task; clear criteria beat model power |
+| Shangshu (execution) | Any capable model, including low-cost | Code/doc generation; MiniMax, GLM, Gemini all work under good prompts |
+| Escalation (Battle) | Strongest available | Reserve for genuine conflicts and high-stakes decisions |
+
+### Upgrade Conditions
+
+Only upgrade a sub-agent's model when:
+- Output is clearly below minimum quality threshold after one retry
+- Task requires deep reasoning not achievable with current model
+- Conflict between Menxi and Shangshu cannot be resolved with current models
+
+Always log the reason for upgrade and the model switched to.
+
+### Why This Matters
+
+If your system only works with GPT-4 or Claude Opus, you have built a model-dependent pipeline, not a framework. The goal of TPR is that swapping models should not break the workflow—only degrade output quality at the margins.
+
+---
+
+## Battle Trigger Conditions
+
+Battle is not for every task. Use it only when:
+
+1. **Menxi and Shangshu conclusions conflict significantly** — one says PASS, the other says REVISE with fundamentally different reasoning
+2. **Major architecture fork** — multiple valid design paths that lead to meaningfully different implementations
+3. **High-risk implementation** — changes that affect multiple systems, are hard to reverse, or have significant cost implications
+4. **GRV cannot converge** — after two rounds of Menxi feedback, the document is still not stable
+5. **Scope or cost significantly increases** — what was scoped as small is revealed to be large
+
+**Do NOT trigger Battle for:**
+- Minor wording issues in GRV
+- Small bugs found during code review (just fix them)
+- Routine implementation tasks where Menxi gives CONDITIONAL PASS
+
+---
+
+## User Intervention Conditions
+
+The goal is full automation. Escalate to the user ONLY when:
+
+1. **Battle does not converge** after the agreed number of rounds
+2. **Irreversible or external actions** — publishing to a registry, sending emails, destructive operations
+3. **Scope or budget significantly expands** beyond what was originally agreed
+4. **New global principles or architecture changes** that affect all projects, not just the current one
+5. **Model conflict on a direction-level decision** — not a technical disagreement, but a strategic one
+
+When escalating, provide:
+- Current state (what phase, what the conflict is)
+- The two (or more) options being considered
+- Your recommendation with reasoning
+- What you need from the user (a decision, not just acknowledgment)
 
 ---
 
