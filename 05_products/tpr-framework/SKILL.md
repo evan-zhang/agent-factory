@@ -154,7 +154,7 @@ runtime: subagent
 maxConcurrent: 4
 runTimeoutSeconds: 180
 task: You are Menxi省 (门下省), the critical reviewer in a TPR Battle.
-Review the GRV document at {grv_path} and raise 3-5 substantive objections.
+Review the GRV document at {project}/temp/context-grv-{id}.md and raise 3-5 substantive objections.
 Be specific: cite the GRV section, explain why it is problematic, propose a concrete fix.
 After presenting objections, report your verdict: APPROVE / REJECT / CONDITIONAL.
 ```
@@ -165,7 +165,7 @@ runtime: subagent
 maxConcurrent: 4
 runTimeoutSeconds: 180
 task: You are Shangshu省 (尚书省), the implementor and defender in a TPR Battle.
-The GRV is at {grv_path}. Menxi省 has raised these objections: {objections}
+The GRV is at {project}/temp/context-grv-{id}.md. Menxi省 has raised these objections: {objections}
 Respond to each objection. Give clear accept/reject with rationale.
 After responding, confirm what the final GRV changes will be.
 ```
@@ -188,9 +188,9 @@ Every GRV must include:
 ## Session State Management
 
 After each phase completion:
-1. Update `proactivity/session-state.md` with current phase and blocker
-2. Log key decisions in `self-improving/patterns.md`
-3. If a mistake was made, log it in `self-improving/corrections.md`
+1. Log key decisions in `self-improving/patterns.md`
+2. If a mistake was made, log it in `self-improving/corrections.md`
+3. Sub-agent tracking is handled automatically by `subagents list`
 
 ### 强制检查清单（每次 spawn 前 — 必须执行）
 
@@ -201,31 +201,24 @@ After each phase completion:
 读取 self-improving/patterns.md 是否有相关成功模式。
 ```
 
-**Step 2：检查任务追踪**
+**Step 2：确认 spawn 标签**
 ```
-读取 self-improving/task-tracker.md（全局长期追踪）。
-确认所有依赖任务的状态是否为"完成"。
-如果依赖未完成，等待或拆分任务。
-```
-
-**Step 3：更新任务追踪**
-```
-在 self-improving/task-tracker.md 中新增一行：ID、任务、Sub-Agent、状态=进行中、创建时间。
-同时在 temp/task-tracker.md（当前项目临时追踪）中也新增一行。
+在 spawn 时，label 字段必须包含项目/阶段上下文，格式：[项目名] 阶段 - 任务描述
+例如：[TPR-X] DISCOVERY - 收集需求
 ```
 
-**Step 4：Spawn 后通知**
+**Step 3：Spawn 后通知**
 ```
-发送通知："Started: [任务名]，Sub-Agent=[类型]。已记录到 self-improving/task-tracker.md"
+发送通知："Started: [任务名]，Sub-Agent=[类型]。可用 subagents list 查看状态。"
 ```
 
 ### 每次 Sub-Agent 完成后 — 必须执行
 
 **必须执行以下全部：**
 
-1. **更新 self-improving/task-tracker.md**
-   - 将该任务状态改为"完成"
-   - 记录完成时间和结果摘要
+1. **通过 announce 接收结果**
+   - Sub-Agent 完成后会自动 announce 结果
+   - 用正常对话语气向用户说明：做了什么、结果在哪
 
 2. **如果 Orchestrator 有越界行为**
    - 立即写入 `self-improving/corrections.md`
@@ -288,7 +281,7 @@ Write your report to {project}/temp/menxi-report-001.md.
 
 ### 关于 temp/ 目录和 HEARTBEAT.md
 
-**temp/ 目录**：是项目级临时目录，在 TPR 项目执行时动态创建。skill 包不包含这些文件，由 Orchestrator 在执行时按需创建。`temp/task-tracker.md` 是单项目临时追踪，项目结束可归档或删除。全局长期追踪在 `self-improving/task-tracker.md`。
+**temp/ 目录**：是项目级临时目录，在 TPR 项目执行时动态创建。skill 包不包含这些文件，由 Orchestrator 在执行时按需创建。GRV 内容应写入 `temp/context-grv-{id}.md`，供后续 sub-agent 按需读取。
 
 **HEARTBEAT.md**：是 workspace 级配置文件，位于 workspace 根目录，不由 skill 包提供。如需配置，请参考 workspace 的 HEARTBEAT.md。
 
@@ -298,29 +291,23 @@ temp/
 ├── task-{id}.md          # 任务描述
 ├── context-{id}.md        # 上下文（GRV、需求等）
 ├── menxi-report-{id}.md   # Menxi 输出
-├── shangshu-report-{id}.md # Shangshu 输出
-└── task-tracker.md        # 当前项目临时追踪（项目结束可删）
-
-### 两个 task-tracker 的区别
-- `self-improving/task-tracker.md` — **全局长期追踪**（所有项目共享）
-- `temp/task-tracker.md` — **当前项目临时追踪**（项目结束可删除或归档）
-
-### Orchestrator 维护任务追踪
-在 `self-improving/task-tracker.md` 记录所有项目的活跃任务：
-```markdown
-## 任务追踪
-
-| ID | 任务 | 负责人 | 状态 | 依赖 |
-|----|------|--------|------|------|
-| T1 | GRV 草稿 | Zhongshu | 完成 | - |
-| T2 | Menxi 审查 | Menxi | 进行中 | T1 |
-| T3 | 实现 | Shangshu | 等待 | T2 |
+└── shangshu-report-{id}.md # Shangshu 输出
 ```
 
 ### Pitch File Reads
 在 task 描述里明确告诉 Sub-Agent 什么时候读哪个文件：
 - "Read `temp/context-grv-001.md` for the full GRV before starting"
 - "If you need to check the original requirements, read `temp/context-req-001.md`"
+
+### Sub-Agent 追踪工具
+
+使用 `subagents` 工具追踪所有活跃 sub-agent：
+```
+subagents list              # 查看所有 sub-agent 状态
+subagents list --recent 30  # 查看最近 30 分钟的 sub-agent
+```
+
+追踪信息包括：任务描述、运行状态、运行时长、Token 消耗。
 
 ---
 

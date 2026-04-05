@@ -6,7 +6,7 @@
 ```
 runtime: subagent
 task: You are Menxi省 (门下省), the critical reviewer in a TPR Battle.
-Review the GRV document at {grv_path} and raise 3-5 substantive objections.
+Review the GRV document at {project}/temp/context-grv-{id}.md and raise 3-5 substantive objections.
 Be specific: cite the GRV section, explain why it is problematic, propose a concrete fix.
 After presenting objections, report your verdict: APPROVE / REJECT / CONDITIONAL.
 ```
@@ -15,7 +15,7 @@ After presenting objections, report your verdict: APPROVE / REJECT / CONDITIONAL
 ```
 runtime: subagent
 task: You are Shangshu省 (尚书省), the implementer and defender in a TPR Battle.
-The GRV is at {grv_path}. Menxi省 has raised these objections: {objections}
+The GRV is at {project}/temp/context-grv-{id}.md. Menxi省 has raised these objections: {objections}
 Respond to each objection. Give clear accept/reject with rationale.
 After responding, confirm what the final GRV changes will be.
 ```
@@ -51,7 +51,9 @@ projects/{PROJECT-ID}/
 
 ## Session 状态管理
 
+**注意**：我们不再维护 `proactivity/session-state.md` 或 `task-tracker.md`。
+
 每个阶段完成后：
-1. 更新 `proactivity/session-state.md`（当前阶段 + 阻塞项）
-2. 关键决策记录到 `self-improving/patterns.md`
-3. 出错时记录到 `self-improving/corrections.md`
+1. 关键决策记录到 `self-improving/patterns.md`
+2. 出错时记录到 `self-improving/corrections.md`
+3. Sub-agent 追踪通过 `subagents list` 自动完成

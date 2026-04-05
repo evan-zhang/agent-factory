@@ -3,16 +3,12 @@
 ## 每次心跳检查（每 2 分钟）
 
 ### Step 1：检查 Sub-Agent 状态
-运行 `sessions_list`，检查是否有 Sub-Agent 正在执行。
+运行 `subagents list`，检查是否有 Sub-Agent 正在执行。
 
 - 如果有：列出任务名称和当前状态，发送给用户。
 - 如果全部空闲：进入 Step 2。
 
 ### Step 2：检查自我改进文档（外在验证）
-
-**检查 self-improving/task-tracker.md（位于 skill 包内）**
-- 最后更新时间是否在 1 小时内？
-- 如果超过 1 小时没有任何任务更新，说明 Orchestrator 可能忘记记录
 
 **检查 self-improving/corrections.md**
 - 最后更新时间是什么时候？
@@ -27,7 +23,6 @@
 如果发现异常，发送给用户：
 ```
 ⚠️ 自我改进文档异常：
-- self-improving/task-tracker.md 最后更新：[时间]
 - corrections.md 最后更新：[时间]
 - patterns.md 最后更新：[时间]
 建议：请 Orchestrator 检查是否需要补充记录。
