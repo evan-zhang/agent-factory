@@ -24,6 +24,7 @@
 
 | 目录名 | 产品名称 | 当前版本 | 项目编号 | 阶段 | 说明 |
 |---|---|---|---|---|---|
+| bp-auditor | BP 两级联动审计 | v1.0.0 | — | 🔧 待发布 | 两级联动 BP 审计工具 |
 | bp-manager | BP 管理工具 | — | — | S3 设计中 | 查询/管理 BP 目标/成果/举措 |
 | cms-meeting-monitor | AI慧记会议监控 | v1.0.2 | — | S5 测试中 | 从 AI慧记 拉取会议内容 |
 | openclaw-model-rankings | OpenRouter 模型排行 | v1.0.3 | `openclaw-model-rankings` | S4 执行中 | 第一阶段外部数据底座 |
@@ -56,6 +57,7 @@
 | create-xgjk-skill | `05_products/create-xgjk-skill/` | `xgjk-skill-factory` | 🔄 已移交 |
 | cms-meeting-monitor | `05_products/cms-meeting-monitor/` | — | 🔧 在建 |
 | openclaw-model-rankings | `05_products/openclaw-model-rankings/` | `openclaw-model-rankings` | 🔧 在建 |
+| bp-auditor | `05_products/bp-auditor/` | — | 🔧 在建 |
 | bp-manager | `05_products/bp-manager/` | — | 🔧 在建 |
 | skill-tool-registry | `05_products/skill-tool-registry/` | — | 🔧 在建 |
 
@@ -91,6 +93,11 @@
 - 对应平台：玄关开放平台 Skill 市场（`https://skills.mediportal.com.cn`）
 - 移交原因：工具依赖玄关内部 API，由玄关团队长期维护更合理
 - ClawHub slug 已改为 `xgjk-skill-factory`
+
+### bp-auditor — BP 两级联动审计（在建）
+- 定位：基于两级联动审计框架的 BP 审计 Skill，对 BP 进行递归审计
+- 核心能力：Goal + KR + 举措拆解审计 + 下级 BP 承接审计
+- 当前状态：v1.0.0，待发布
 
 ### bp-manager — BP 管理工具（在建）
 - 定位：查询/管理 BP 目标/成果/举措
