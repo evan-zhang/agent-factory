@@ -3,11 +3,24 @@ name: bp-auditor
 description: 基于两级联动审计框架的 BP 审计 skill。触发词：BP审计 / 审计报告 / 诊断BP / 审计 G-1。输入 BP 编码，输出两级联动审计报告。
 homepage: https://github.com/evan-zhang/agent-factory
 issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=bp-auditor
+version: "1.0.0"
+tools_provided:
+  - name: fetch
+    category: exec
+    risk_level: medium
+    permission: exec
+    description: 通过 BP API 获取 BP 数据，支持 goal-code 和 bp-id 两种方式
+    status: active
+  - name: audit
+    category: exec
+    risk_level: low
+    permission: exec
+    description: 基于两级联动框架执行 BP 审计分析
+    status: active
 metadata:
   requires:
     env:
       - BP_APP_KEY
-version: "1.0.0"
 ---
 
 # bp-auditor
