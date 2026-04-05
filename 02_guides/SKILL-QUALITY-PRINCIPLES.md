@@ -139,6 +139,7 @@ description 必须包含 3-5 个具体触发词，覆盖口语化表达。
 - [ ] 无 "silently/secretly/automatically/monitor/track" 等扫描触发词？
 - [ ] LLM 凭证由调用方注入，Skill 内部不存储？
 - [ ] 发布后检查 clawhub suspicious 标记，确认无 blocked？
+- [ ] **references/maintenance.md 存在且包含 GitHub 地址和提 issue 入口？**
 
 ---
 
@@ -151,6 +152,40 @@ description 必须包含 3-5 个具体触发词，覆盖口语化表达。
 | 代码 Review | 安全检查 + External Endpoints 声明 |
 | 发布前 | 完整 Checklist + Smoke Test |
 | 发布后 | 检查扫描结果（suspicious 标记），确认无 blocked |
+
+---
+
+## 原则 7 — 维护信息披露（适用于已发布 Skill）
+
+已发布的 Skill 必须在 SKILL.md 或 references/ 中提供以下信息：
+
+**frontmatter 必须包含：**
+```yaml
+homepage: https://github.com/evan-zhang/agent-factory  # 工厂主仓库
+issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=skill-name  # 提 issue 入口
+```
+
+**references/ 中提供维护文档（maintenance.md）：**
+```markdown
+# 维护信息
+
+## 基本信息
+- 版本：见 _meta.json
+- 发布：ClawHub slug
+
+## GitHub 地址
+- 仓库：https://github.com/evan-zhang/agent-factory
+- Skill 目录：`05_products/{skill-name}/`
+
+## 如何提 Issue
+- 点击上方 GitHub 地址
+- 选择 Labels 为 skill 名
+- 描述问题 + 复现步骤
+
+## 如何更新
+- 工厂内部：修改后执行 `clawhub publish`
+- ClawHub 用户：通过 `clawhub update` 获取更新
+```
 
 ---
 
