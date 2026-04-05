@@ -280,11 +280,17 @@ task: You are Menxi. Here is the full GRV: [粘贴 200 行文档...]
 3. 在 task 参数里只写文件路径和读取指令
 
 ```
-task: You are Menxi. 
+task: You are Menxi.
 Read the GRV document at {project}/temp/context-grv-001.md.
 Review it and raise your objections.
 Write your report to {project}/temp/menxi-report-001.md.
 ```
+
+### 关于 temp/ 目录和 HEARTBEAT.md
+
+**temp/ 目录**：是项目级临时目录，在 TPR 项目执行时动态创建。skill 包不包含这些文件，由 Orchestrator 在执行时按需创建。`temp/task-tracker.md` 是单项目临时追踪，项目结束可归档或删除。全局长期追踪在 `self-improving/task-tracker.md`。
+
+**HEARTBEAT.md**：是 workspace 级配置文件，位于 workspace 根目录，不由 skill 包提供。如需配置，请参考 workspace 的 HEARTBEAT.md。
 
 ### 文件命名规范
 ```
