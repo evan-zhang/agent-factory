@@ -51,6 +51,28 @@ Add whatever helps you do your job. This is your cheat sheet.
 
 **注意**：三个步骤缺一不可。发布后必须立即写发布说明，不能遗漏。
 
+### Skill 发布前验证清单（必须执行）
+
+发布前必须在**干净目录**执行 `clawhub install <skill>` 验证：
+
+1. 安装后列出所有文件：`ls -la <skill-dir>/`
+2. 对比 SKILL.md 中提到的每个文件是否存在
+3. 对比 references/ 目录文件是否完整
+4. 检查是否有遗漏的占位符或空文件
+
+**验证命令**：
+```bash
+# 1. 安装到临时目录
+mkdir -p /tmp/clawhub-test && cd /tmp/clawhub-test
+clawhub install <skill-name>
+
+# 2. 列出文件
+ls -la <skill-name>/
+
+# 3. 对比 SKILL.md 中的文件引用
+# 检查 references/、scripts/ 等目录是否完整
+```
+
 ---
 
 ### 外部平台文档（API 唯一来源）
