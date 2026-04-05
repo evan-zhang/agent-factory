@@ -10,15 +10,15 @@
 
 ### Step 2：检查自我改进文档（外在验证）
 
-**检查 task-tracker.md**
+**检查 self-improving/task-tracker.md（位于 skill 包内）**
 - 最后更新时间是否在 1 小时内？
 - 如果超过 1 小时没有任何任务更新，说明 Orchestrator 可能忘记记录
 
-**检查 corrections.md**
+**检查 self-improving/corrections.md**
 - 最后更新时间是什么时候？
 - 如果超过 7 天没有新记录，说明 Orchestrator 可能没有在做自我反省
 
-**检查 patterns.md**
+**检查 self-improving/patterns.md**
 - 最后更新时间是什么时候？
 - 如果超过 14 天没有新记录，说明可能没有沉淀经验
 

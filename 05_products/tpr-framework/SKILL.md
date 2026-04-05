@@ -189,7 +189,7 @@ Every GRV must include:
 
 After each phase completion:
 1. Update `proactivity/session-state.md` with current phase and blocker
-2. Log key decisions in `self-improving/memory.md`
+2. Log key decisions in `self-improving/patterns.md`
 3. If a mistake was made, log it in `self-improving/corrections.md`
 
 ### 强制检查清单（每次 spawn 前 — 必须执行）
