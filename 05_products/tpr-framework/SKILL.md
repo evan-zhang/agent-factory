@@ -154,7 +154,7 @@ runtime: subagent
 maxConcurrent: 4
 runTimeoutSeconds: 180
 task: You are Menxi省 (门下省), the critical reviewer in a TPR Battle.
-Review the GRV document at {grv_path} and raise 3-5 substantive objections.
+Review the GRV document at {project}/temp/context-grv-{id}.md and raise 3-5 substantive objections.
 Be specific: cite the GRV section, explain why it is problematic, propose a concrete fix.
 After presenting objections, report your verdict: APPROVE / REJECT / CONDITIONAL.
 ```
@@ -165,7 +165,7 @@ runtime: subagent
 maxConcurrent: 4
 runTimeoutSeconds: 180
 task: You are Shangshu省 (尚书省), the implementor and defender in a TPR Battle.
-The GRV is at {grv_path}. Menxi省 has raised these objections: {objections}
+The GRV is at {project}/temp/context-grv-{id}.md. Menxi省 has raised these objections: {objections}
 Respond to each objection. Give clear accept/reject with rationale.
 After responding, confirm what the final GRV changes will be.
 ```
@@ -188,9 +188,9 @@ Every GRV must include:
 ## Session State Management
 
 After each phase completion:
-1. Update `proactivity/session-state.md` with current phase and blocker
-2. Log key decisions in `self-improving/patterns.md`
-3. If a mistake was made, log it in `self-improving/corrections.md`
+1. Log key decisions in `self-improving/patterns.md`
+2. If a mistake was made, log it in `self-improving/corrections.md`
+3. Sub-agent tracking is handled automatically by `subagents list`
 
 ### 强制检查清单（每次 spawn 前 — 必须执行）
 
@@ -281,7 +281,7 @@ Write your report to {project}/temp/menxi-report-001.md.
 
 ### 关于 temp/ 目录和 HEARTBEAT.md
 
-**temp/ 目录**：是项目级临时目录，在 TPR 项目执行时动态创建。skill 包不包含这些文件，由 Orchestrator 在执行时按需创建。`temp/task-tracker.md` 是单项目临时追踪，项目结束可归档或删除。全局长期追踪在 `self-improving/task-tracker.md`。
+**temp/ 目录**：是项目级临时目录，在 TPR 项目执行时动态创建。skill 包不包含这些文件，由 Orchestrator 在执行时按需创建。GRV 内容应写入 `temp/context-grv-{id}.md`，供后续 sub-agent 按需读取。
 
 **HEARTBEAT.md**：是 workspace 级配置文件，位于 workspace 根目录，不由 skill 包提供。如需配置，请参考 workspace 的 HEARTBEAT.md。
 

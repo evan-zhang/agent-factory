@@ -87,9 +87,10 @@ Raise objections and write to {path}/temp/menxi-report-001.md.
 
 | 文档 | 更新频率 | 内容 |
 |------|---------|------|
-| task-tracker.md | 每次 spawn/完成 | 任务状态、依赖关系 |
 | corrections.md | 每次犯错时 | 错误、修正、预防 |
 | patterns.md | 每周复盘 | 成功模式、失败模式 |
+
+> 注意：任务追踪已改用 `subagents list` 自动完成，不再需要 task-tracker.md。
 
 ### 触发自我反省的条件
 - Orchestrator 自己干了 sub-agent 该干的事（越界）
