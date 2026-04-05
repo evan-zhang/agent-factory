@@ -146,16 +146,15 @@ Step 6: 生成报告 → 发给 Evan
 
 **问题**：下游 BP 数量多时，单次 spawn 会超时。
 
-**解决方案**：分批处理，每批最多 3 个下游 BP。
+**解决方案**：逐个处理，每批只处理 1 个下游 BP。
 
 ```
 # 伪代码
-downstream_list = [BP1, BP2, BP3, BP4, BP5, BP6]
-for batch in chunks(downstream_list, 3):
-    for bp in batch:
-        spawn audit_downstream(bp)
-    wait_for_batch_completion()
-    report_progress(len(completed), len(total))
+downstream_list = [BP1, BP2, BP3, ...]
+for bp in downstream_list:
+    spawn audit_downstream(bp)  # 一次一个
+    wait_for_completion()
+    report_progress(count, total)
 ```
 
 ---
