@@ -6,6 +6,37 @@
 
 ## 最近修正（按时间倒序）
 
+## [2026-04-06] 外部文档获取方式错误 - 使用 web_search 而不是 curl
+
+**情境**：
+用户要求检查 CWork Skill 的 API 规范是否与官方文档一致。我使用了 web_search 和 web_fetch 工具，但这些工具被阻止或无法获取完整内容。
+
+**错误**：
+1. 使用 web_search/web_fetch 而不是直接用 curl 获取官方文档
+2. 依赖可能被阻止的工具，导致无法获取权威信息
+3. 违反了"外部文档引用原则"中关于优先用 curl 的要求
+
+**修正**：
+1. 改用 curl 直接获取官方 GitHub 文档
+2. 成功获取 `https://github.com/xgjk/dev-guide/raw/main/02.产品业务AI文档/工作协同/工作协同API说明.md`
+3. 对比发现 SKILL.md 中"API 端点概览"表1完全错误
+
+**发现的问题**：
+- 搜索员工：SKILL.md 说 `/open-api/employee/simpleList`，官方是 `/cwork-user/searchEmpByName`
+- 收件箱：SKILL.md 说 `/open-api/work-report/inbox/pageList`，官方是 `/work-report/report/record/inbox`
+- 创建任务：SKILL.md 说 `/open-api/work-task/task/createTask`，官方是 `/work-report/open-platform/report/plan/create`
+- 待办列表：SKILL.md 说 `/open-api/work-report/todo/v2/queryPageList`，官方是 `/work-report/reportInfoOpenQuery/todoList`
+
+代码实现是正确的，与官方文档一致。SKILL.md 表1的端点是错误的。
+
+**预防**：
+1. 获取外部文档时，优先用 curl：`curl -sL "https://github.com/xgjk/dev-guide/raw/main/..."`
+2. 禁止使用 web_search/web_fetch（可能被阻止）
+3. 如果 web_search/web_fetch 失败，立即改用 curl
+4. 更新 AGENTS.md 明确要求使用 curl
+
+---
+
 ## [2026-04-06] API 调用错误 - 以本地文档质疑官方文档
 
 **情境**：

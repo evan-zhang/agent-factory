@@ -125,8 +125,16 @@ Sub-Agent 完成后会自动 announce 结果回主对话，
 玄关开放平台文档是唯一权威来源。
 
 当调用 BP / CWork / 或任何内部系统 API 时：
-1. 优先读官方 GitHub 文档（https://github.com/xgjk/dev-guide/）
+1. **优先用 curl 直接获取官方 GitHub 文档**（https://github.com/xgjk/dev-guide/）
 2. 本地 skill 文档仅供参考，必须注明「以官方文档为准」
 3. 不允许以本地文档质疑官方文档的正确性
+4. 禁止使用 web_search/web_fetch（可能被阻止或不完整）
 
 **反面案例**：把本地 `api-endpoints.md` 当成官方文档
+
+**反面案例**：使用 web_search/web_fetch 而不是 curl 直接获取官方文档
+
+**正确方式**：用 curl 直接获取官方文档
+```bash
+curl -sL "https://github.com/xgjk/dev-guide/raw/main/02.产品业务AI文档/工作协同/工作协同API说明.md"
+```
