@@ -45,6 +45,16 @@ tools_provided:
     status: active
 ---
 
+## API 文档
+
+> ⚠️ **重要提示**：本 Skill 调用玄关开放平台 BP API，权威文档是玄关开放平台官方文档。
+>
+> **官方文档链接**：https://github.com/xgjk/dev-guide/tree/main/02.产品业务AI文档/BP
+>
+> 本 Skill 的代码实现与官方文档完全一致。如需查看完整的 BP API 规范，请直接访问上述官方文档。
+
+---
+
 # bp-reporting-templates
 
 ## Mandatory pre-check (before generation)
