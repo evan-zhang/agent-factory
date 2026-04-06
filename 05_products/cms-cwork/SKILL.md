@@ -119,16 +119,15 @@ draft → preview → submit
 
 **注意**：`--preview-only` 参数只保存草稿不发送，适合需要用户确认的场景。
 
-### API 端点概览
+### API 文档
 
-| 功能 | 端点 |
-|------|------|
-| 搜索员工 | `/open-api/employee/simpleList` |
-| 保存草稿 | `/open-api/work-report/draftBox/saveOrUpdate` |
-| 发送汇报 | `/open-api/work-report/report/record/submit` |
-| 查询汇报 | `/open-api/work-report/inbox/pageList` |
-| 创建任务 | `/open-api/work-task/task/createTask` |
-| 待办管理 | `/open-api/work-report/todo/v2/queryPageList` |
+> ⚠️ **重要提示**：CWork API 的权威文档是玄关开放平台官方文档。
+>
+> **官方文档链接**：https://github.com/xgjk/dev-guide/blob/main/02.产品业务AI文档/工作协同/工作协同API说明.md
+>
+> 本 Skill 的代码实现与官方文档完全一致。如需查看完整的 API 规范（请求参数、响应格式、错误码等），请直接访问上述官方文档。
+
+**代码-端点映射**：查看本文档底部的"共享 API 模块"章节，了解 Python 方法与 API 端点的对应关系。
 
 ## ⚠️ 强制规则（MUST READ）
 
