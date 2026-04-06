@@ -117,3 +117,16 @@ Sub-Agent 完成后会自动 announce 结果回主对话，
 
 工厂不引用、不依赖第三方 Skill，所有基础能力必须自研可控。
 新增技能时同步更新 `05_products/index.md`。
+
+---
+
+## 外部文档引用原则（v2026.4.6）
+
+玄关开放平台文档是唯一权威来源。
+
+当调用 BP / CWork / 或任何内部系统 API 时：
+1. 优先读官方 GitHub 文档（https://github.com/xgjk/dev-guide/）
+2. 本地 skill 文档仅供参考，必须注明「以官方文档为准」
+3. 不允许以本地文档质疑官方文档的正确性
+
+**反面案例**：把本地 `api-endpoints.md` 当成官方文档
