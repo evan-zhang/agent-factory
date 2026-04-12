@@ -1,7 +1,7 @@
 # RULES.md — 造物 (factory-orchestrator) 核心规则索引
 
 > 本文件是机器可读的快速查阅索引。每次涉及模型配置、协作规则、人员信息、项目台账时，**先读本文件**，不靠语义搜索。
-> 最后更新：2026-03-28
+> 最后更新：2026-04-12
 
 ---
 
@@ -133,10 +133,9 @@ V 关键举措（3-6步）
 
 | 编号 | 名称 | 状态 | 关键路径 |
 |---|---|---|---|
-| AF-20260323-001 | CWork 工作协同 | S8 维护中 | `05_products/create-xgjk-skill/` |
-| AF-20260326-002 | CAS 聊天归档系统 | S8 观察期 | `04_workshop/AF-20260326-002/` |
-| AF-20260327-001 | bp-reporting-templates | READY_FOR_RELEASE | `04_workshop/AF-20260327-001/` |
-| AF-20260328-002 | cms-sop 统一SOP框架 | RELEASED | `05_products/cms-sop/` |
+| AF-20260326-002 | CAS 聊天归档系统 | RELEASED | `04_workshop/AF-20260326-002/` |
+| AF-20260327-001 | BP 报告模板 | RELEASED | `04_workshop/AF-20260327-001/` |
+| AF-20260412-001 | BP 统一工作平台 | READY | `04_workshop/AF-20260412-001/` |
 
 完整台账：`03_governance/factory-registry.md`
 
@@ -174,24 +173,68 @@ V 关键举措（3-6步）
 
 ---
 
-## 十一、Skill 源码统一管理规则（2026-03-29）
+## 十一、Skill 源码统一管理规则（2026-04-12 重构）
 
-### 所有 Skill 源码统一存放于工厂 `05_products/`
+### 所有 Skill 源码统一存放于 `04_workshop/AF-{编号}/`
 
-| Skill | 工厂路径 | 说明 |
+**核心原则**：项目编号是唯一标识，每个项目目录包含完整生命周期。
+
+| Skill | 项目编号 | 工厂路径 |
 |---|---|---|
-| `cms-cwork` | `05_products/cms-cwork/` | 软链接到 workspace-life/skills/cms-cwork |
-| `cas-chat-archive` | `04_workshop/AF-20260326-002/cas-chat-archive/` | 工厂 workshop |
-| `bp-reporting-templates` | `04_workshop/AF-20260327-001/04_execution/workspace/bp-reporting-templates/` | 工厂 workshop |
-| `cms-sop` | `05_products/cms-sop/` | 工厂 products（Lite+Full合并版）|
-| `create-xgjk-skill` | `05_products/create-xgjk-skill/` | 工厂 products |
-| `self-improving-proactive-agent` | `05_products/self-improving-proactive-agent/` | 工厂 products |
+| `bp-reporting-templates` | AF-20260327-001 | `04_workshop/AF-20260327-001/bp-reporting-templates/` |
+| `cas-chat-archive` | AF-20260326-002 | `04_workshop/AF-20260326-002/cas-chat-archive/` |
+| `tpr-framework` | AF-20260401-001 | `04_workshop/AF-20260401-001/tpr-framework/` |
+| `bp-manager` | AF-20260401-002 | `04_workshop/AF-20260401-002/bp-manager/` |
+| `bp-prototype` | AF-20260401-003 | `04_workshop/AF-20260401-003/bp-prototype/` |
+| `create-xgjk-skill` | AF-20260401-004 | `04_workshop/AF-20260401-004/create-xgjk-skill/` |
+| `xgjk-skill-auditor` | AF-20260331-002 | `04_workshop/AF-20260331-002/xgjk-skill-auditor/` |
+| `openclaw-model-rankings` | AF-20260403-001 | `04_workshop/AF-20260403-001/openclaw-model-rankings/` |
+| `bp-auditor` | AF-20260405-001 | `04_workshop/AF-20260405-001/bp-auditor/` |
+| `cms-meeting-monitor` | AF-20260405-002 | `04_workshop/AF-20260405-002/cms-meeting-monitor/` |
+| `skill-tool-registry` | AF-20260405-003 | `04_workshop/AF-20260405-003/skill-tool-registry/` |
+| `bp-unified` | AF-20260412-001 | `04_workshop/AF-20260412-001/bp-unified/` |
+
+### 项目目录结构（标准）
+
+```
+04_workshop/AF-{YYYYMMDD}-{序号}/
+├── {skill-name}/               ← 当前活跃源码
+│   ├── SKILL.md
+│   ├── README.md
+│   └── scripts/
+├── builds/                    ← 测试版本（压缩包）
+│   └── v{version}-{YYYYMMDD}-{HHMM}.tar.gz
+├── releases/                  ← 正式发布版本（压缩包）
+│   └── v{version}-{YYYYMMDD}-{HHMM}.tar.gz
+├── VERSION                    ← 当前版本号（如 1.0.0）
+├── 00_intake/                 ← 项目需求（可选）
+├── 01_discovery/              ← DISCOVERY 阶段（可选）
+├── 02_planning/               ← GRV 阶段（可选）
+├── 03_battle/                 ← BATTLE 阶段（可选）
+├── 04_execution/              ← IMPLEMENTATION 阶段（可选）
+└── 05_closure/                ← 项目收尾（可选）
+```
+
+### 版本管理规则
+
+**文件名格式**：
+- `builds/`：`v{version}-{YYYYMMDD}-{HHMM}.tar.gz`（精确到分钟）
+- `releases/`：`v{version}-{YYYYMMDD}-{HHMM}.tar.gz`（精确到分钟）
+
+**版本号管理**：
+- 在项目根目录维护 `VERSION` 文件（内容：`1.0.0`）
+- 每次正式发布时，手动更新版本号
+- 测试阶段版本号不变，用时间戳区分不同的测试包
+
+**发布流程**：
+1. 测试阶段：打包放到 `builds/`（版本号不变，时间戳递增）
+2. 正式发布：从 `builds/` 选择一个版本，复制到 `releases/`
+3. 更新 `VERSION` 文件
 
 ### 维护规则
-- **修改任何 Skill** → 改工厂对应目录，不改其他位置
-- **发布** → 从工厂目录直接 `clawhub publish`
-- **cms-cwork 特殊说明**：工厂路径通过软链接同步到 `workspace-life/skills/cms-cwork/`，运行时透明
-- `node_modules/dist/package-lock.json` 保留在 workspace-life 备份目录，通过软链接引用，不纳入版本控制
+- **修改任何 Skill** → 改 `04_workshop/AF-{编号}/{skill}/`，不改其他位置
+- **发布** → 从项目目录直接 `clawhub publish`
+- **05_products/ 已废弃** → 2026-04-12 合并到 `04_workshop/`
 
 
 ---

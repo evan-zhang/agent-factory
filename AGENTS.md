@@ -109,14 +109,14 @@ Sub-Agent 完成后会自动 announce 结果回主对话，
 
 ## 可用 Skill
 
-工厂 Agent 可调用以下全局 Skill（`./skills/` 或 `05_products/`）：
+工厂 Agent 可调用以下全局 Skill（`04_workshop/AF-{编号}/{skill-name}/`）：
 
 | Skill | 用途 |
 | tpr-framework | TPR 三省制工作流框架 |
 | coding-agent | 代码任务委托（本地） |
 
 工厂不引用、不依赖第三方 Skill，所有基础能力必须自研可控。
-新增技能时同步更新 `05_products/index.md`。
+新增技能时同步更新 `03_governance/factory-task-index.md`。
 
 ---
 

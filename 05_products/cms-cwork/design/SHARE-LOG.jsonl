@@ -1,1 +1,0 @@
-{"version": "v3.0.0", "date": "2026-04-03", "action": "release", "description": "Agent-First 重构：8个Python编排脚本完整实现", "author": "factory-orchestrator", "changes": ["新增cwork-todo.py待办管理脚本", "新增cwork-templates.py模板管理脚本", "完善DESIGN.md架构设计文档", "新增LEARNING-LOOP.md学习建议文档", "版本号从v2.0.0升级到v3.0.0", "完成8个脚本完整实现"], "principles_applied": ["Agent-First架构", "单一职责原则", "JSON协议标准化", "错误处理规范化"]}

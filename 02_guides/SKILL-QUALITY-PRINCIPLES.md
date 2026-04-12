@@ -217,7 +217,7 @@ issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=skill-name
 
 ## GitHub 地址
 - 仓库：https://github.com/evan-zhang/agent-factory
-- Skill 目录：`05_products/{skill-name}/`
+- Skill 目录：`04_workshop/AF-{编号}/{skill-name}/`
 
 ## 如何提 Issue
 - 点击上方 GitHub 地址

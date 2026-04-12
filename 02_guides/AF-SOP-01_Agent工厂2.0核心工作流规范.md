@@ -35,7 +35,7 @@
 发布不再是简单的“上传文件”，而是针对不同应用场景的资产化动作：
 
 ### 2.1 物理发布 (Local On-boarding)
-- **动作**：**交付总管** 将 `04_workshop` 中的开发成果物理迁移至 `05_products/` 目录。
+- **动作**：**交付总管** 将 `04_workshop` 中的开发成果打包成 `v{version}-{YYYYMMDD}-{HHMM}.tar.gz`，放到 `04_workshop/AF-{编号}/releases/` 目录。
 - **价值**：确保 Skill 在工厂本地环境中处于“就绪”状态。
 
 ### 2.2 云端发布 (ClawHub Registry)

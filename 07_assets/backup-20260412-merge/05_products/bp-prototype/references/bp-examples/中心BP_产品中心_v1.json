@@ -1,0 +1,39 @@
+{
+  "org": {
+    "id": "产品中心",
+    "name": "产品中心",
+    "level": "center"
+  },
+  "bp": {
+    "goals": [
+      {
+        "id": "产品中心-G1-R1",
+        "name": "产品中心直接贡献收入",
+        "targetValue": "4500百万元",
+        "parentId": "G1-R1",
+        "parentOutcomeId": "G1-R1",
+        "outcomes": [],
+        "actions": [
+          {
+            "name": "产品中心直接贡献收入"
+          }
+        ]
+      },
+      {
+        "id": "产品中心-G1-R3",
+        "name": "研发管线新药上市贡献",
+        "targetValue": "28%",
+        "parentId": "G1-R3",
+        "parentOutcomeId": "G1-R3",
+        "outcomes": [],
+        "actions": [
+          {
+            "name": "研发管线新药上市贡献"
+          }
+        ]
+      }
+    ]
+  },
+  "source": "workspace-company/bp-data/g1/centers.json",
+  "description": "中心层级BP，包含目标、成果、举措三层结构"
+}

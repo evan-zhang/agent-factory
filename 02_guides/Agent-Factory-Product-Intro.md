@@ -56,7 +56,7 @@ graph TD
 
 ### 【第四阶段：发布与演进 —— 确保价值落地】
 *   **S6 四重发布模式 (Release)**：发布不再是单向上传，而是针对四种受众的资产化交付：
-    1.  **物理发布 (Local On-boarding)**：成果入库至 `05_products/`，实现本地生产力即时转化。
+    1.  **物理发布 (Local On-boarding)**：成果打包成 `v{version}-{YYYYMMDD}-{HHMM}.tar.gz`，放到 `04_workshop/AF-{编号}/releases/`，实现本地生产力即时转化。
     2.  **云端发布 (ClawHub Registry)**：通过 `clawhub publish` 注册全球仓库，实现跨环境一键分发。
     3.  **企业发布 (Internal Market)**：同步至公司内部 Skill 市场，确保核心业务技能在组织内部安全流转。
     4.  **业务发布 (Artifact Delivery)**：将“工业级业务样件”正式推送至 Evan 窗口，完成业务价值的最终闭环。

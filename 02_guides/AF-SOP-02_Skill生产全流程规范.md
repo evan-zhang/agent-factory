@@ -655,14 +655,14 @@ metadata:
 ### 8.1 交付总管的任务
 
 交付总管负责四重分发：
-1. **物理发布**：迁移到 `05_products/`
+1. **物理发布**：迁移到 `04_workshop/AF-{编号}/releases/`
 2. **云端发布**：ClawHub 注册
 3. **企业发布**：内部 Skill 市场
 4. **业务交付**：推送样件给用户
 
 ### 8.2 物理发布（Local On-boarding）
 
-**动作**：将开发成果从 `04_workshop` 迁移到 `05_products/`
+**动作**：将开发成果打包成 `v{version}-{YYYYMMDD}-{HHMM}.tar.gz`，放到 `04_workshop/AF-{编号}/releases/`
 
 ### 8.3 云端发布（ClawHub Registry）
 
@@ -707,7 +707,7 @@ metadata:
 - 发布人：[交付总管]
 
 ## 四重分发状态
-- 物理发布：✅ 已迁移到 05_products/
+- 物理发布：✅ 已打包到 releases/
 - 云端发布：✅ ClawHub 已注册
 - 企业发布：✅ 内部 Skill 市场
   - Skill ID: [ID]
@@ -774,7 +774,7 @@ clawhub update skill-name
 工厂调度员负责：
 1. **更新设计档案**：`DESIGN.md`、`DISCUSSION-LOG.md`
 2. **记录经验教训**：如果有重要经验，记录到 `LEARNING-LOOP.md`
-3. **更新产品索引**：`05_products/index.md`
+3. **更新项目索引**：`03_governance/factory-task-index.md`
 
 ### 10.2 设计档案更新
 
@@ -831,7 +831,7 @@ clawhub update skill-name
 
 ### 10.4 产品索引更新
 
-**`05_products/index.md`**：
+**`03_governance/factory-task-index.md`**：
 ```markdown
 | 目录名 | 产品名称 | 版本 | ClawHub slug | 发布日期 | 状态 |
 |--------|---------|------|--------------|---------|------|

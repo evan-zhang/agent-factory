@@ -101,3 +101,44 @@
   - >2 分钟任务默认走子 Agent，主会话不被阻塞
   - 没有记录=没有发生（铁律）
   - 高风险动作（外发/改配置/重启）必须显式二次确认
+
+---
+
+## 2026-04-05 09:00 — CAS 日常验收巡检
+
+### 巡检结果
+
+- life hook：✅ 存在且 enabled
+- ops hook：✅ 存在且 enabled
+- company hook：❌ 未配置
+- code hook：❌ 未配置
+- life 日志：✅ 可读，今日文件存在（151KB）
+- ops 日志：✅ 可读，今日文件存在（23KB）
+- company 日志：❌ 目录不存在
+- code 日志：❌ 目录不存在
+- 总体积：2.8MB（远低于2GB阈值）
+- 最近24h归档失败：✅ 无 fail-soft 错误，无 blocked attachment 告警
+
+### 决策
+
+- company/code 需评估是否需要归档能力，如需则补充配置
+- life/ops 当前归档运行正常
+
+---
+
+## 2026-04-05 下午 — 同步确认
+
+### 发现
+
+- company/code gateway 的 chat-archive 目录不存在
+- 这意味着这两个 gateway 从未启用过 cas-chat-archive hook
+
+### 设计影响
+
+- 原本计划"四网关"独立归档
+- 实际只有 life 和 ops 两个 gateway 在归档
+- company/code 属于豁免还是待启用，需 Evan 确认
+
+---
+
+*最后更新：2026-04-05 22:30*
