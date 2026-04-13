@@ -1,50 +1,79 @@
 ---
 name: link-archivist
-description: Link Archivist v10. 收到链接后先判断 short/full/ask，再抓取、调研、归档、发送。支持本地归档（Obsidian+Git）和玄关知识库入库。
+description: Link Archivist v11. 收到链接或文件后，判断 short/full，抓取调研，生成报告，归档本地。
 ---
 
-# Link Archivist v10
+# Link Archivist v11
 
-## 规则
-- 先判断内容类型
-- short 直接简答
-- full 做完整调研
-- ask 先问 Evan
-- 不把执行细节塞进正文，执行交给 scripts/
+## 触发判断
+
+```
+收到消息
+ ├─ URL/链接         → 抓取内容 → 决定模式
+ ├─ 文件             → 调用外部解析工具提取文本 → 决定模式
+ ├─ 粘贴文本         → 直接判断模式
+ └─ 未初始化         → 引导配置 archive_dir
+```
+
+## 首次使用
+
+1. 检测 `~/.openclaw/link-archivist-config.json` 是否存在
+2. 不存在 → 引导用户设置 `archive_dir`（知识库主目录）
+3. 设置后写入配置文件
+
+**配置文件**：
+```json
+{
+  "archive_dir": "/Users/evan/知识库"
+}
+```
 
 ## 工作流
-1. 收到链接
-2. 抓基础信息
-3. 决定模式（`scripts/decide_mode.py`）
-4. 执行 short/full/ask
-5. 归档和更新索引
-6. 可选：入库到玄关知识库（`scripts/xgjk/`）
 
-## 归档通道
+1. **检测配置** → `scripts/init_config.py`
+2. **抓取内容** → r.jina.ai（通用）/ yt-dlp+whisper（YouTube）/ 外部文件解析
+3. **决定模式** → `scripts/decide_mode.py`（来源优先 + 关键词判断）
+   - **full**：GitHub/YouTube 来源，或关键词命中（开源、框架、论文等）→ 完整调研报告
+   - **short**：新闻资讯类 → 2-3 句话摘要
+   - **ask**：不确定 → 问用户
+4. **执行调研**（full 模式含 web_search 交叉验证）
+5. **生成洞察**（读本地索引 + 搜 Agent 记忆，动态生成）
+6. **归档本地** → `{archive_dir}/{YYYY-MM-DD}/K-{YYMMDD}-{NNN}-{标题简称}.md`
+   - 编号规则：K-YYMMDD-NNN，当日最大编号 +1
+   - 详见 `references/archive-template.md`
 
-### 本地归档（默认）
-- Obsidian + Git
-- 详见 `references/SOP-诸葛工作流.md`
+## 职责边界
 
-### 玄关知识库入库（可选）
-- 上传到玄关个人知识库
-- API 详见 `references/xgjk-knowledge-api.md`
-- 编号规则详见 `references/xgjk-archive-template.md`
-- 脚本：`scripts/xgjk/upload.sh`、`scripts/xgjk/search.sh`
-- Key 管理：首次绑定时存入 `~/.openclaw/knowledge-hub-key`
+**本 Skill 负责**：抓取 → 判断 → 调研 → 生成报告 → 归档本地
 
-## 入口脚本
-- `scripts/decide_mode.py`
-- `scripts/archive_report.py`
-- `scripts/update_learning_index.py`
+**不负责**：
+- 发送到哪个渠道（由 Agent 自己决定）
+- 文件解析（PDF/Word/PPT/图片等，由外部工具处理）
+- 知识索引管理（见 AF-20260413-003 LLM Wiki）
+- 云端同步（见 AF-20260413-002 知识库同步服务）
 
-## 资源
-- `references/report-template.md`
-- `references/decision-rules.md`
-- `references/migration-notes.md`
-- `references/xgjk-knowledge-api.md`
-- `references/xgjk-archive-template.md`
-- `examples/`
+## 脚本
 
-## 备份
-- v9 在 `backups/link-archivist-v9-2026-04-12/`
+| 脚本 | 用途 |
+|------|------|
+| `scripts/init_config.py` | 检测/创建配置文件 |
+| `scripts/decide_mode.py` | 判断 short/full/ask |
+| `scripts/archive_report.py` | 归档报告到本地目录 |
+
+## 参考
+
+| 文件 | 内容 |
+|------|------|
+| `references/report-template.md` | 报告模板（full + short） |
+| `references/archive-template.md` | 归档目录结构、编号规则 |
+| `references/decision-rules.md` | 模式判断规则说明 |
+| `references/SOP-诸葛工作流.md` | 详细 SOP（抓取→判断→搜索→写报告） |
+| `references/migration-notes.md` | 版本迁移说明 |
+| `examples/` | 4 个完整示例 |
+
+## 关联项目
+
+| 项目编号 | 名称 | 关系 |
+|----------|------|------|
+| AF-20260413-002 | 知识库同步服务 | 本地→云端同步 |
+| AF-20260413-003 | LLM Wiki | 知识索引与管理 |
