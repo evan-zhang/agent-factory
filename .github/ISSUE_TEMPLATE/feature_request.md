@@ -10,17 +10,30 @@ assignees: ''
 
 <!-- 清晰描述期望的功能 -->
 
-## 所属产品（必选）
+## 所属 Skill（必填）
 
-<!-- 请从以下选项中选择一个，删除其他选项 -->
-- [ ] product/bp-reporting
-- [ ] product/cas-chat-archive
-- [ ] product/cms-cwork
-- [ ] product/cms-meeting
-- [ ] product/cms-sop
-- [ ] product/xgjk-skill
-- [ ] product/enterprise-memory
-- [ ] other
+### Skill 层
+- [ ] cas-chat-archive（2603261）
+- [ ] tpr-framework（2604011）
+- [ ] bp-manager（2604012）
+- [ ] bp-prototype（2604013）
+- [ ] create-xgjk-skill（2604014）
+- [ ] openclaw-model-rankings（2604031）
+- [ ] bp-auditor（2604051）
+- [ ] cms-meeting-monitor（2604052）
+- [ ] bp-unified（2604121）
+- [ ] link-archivist（2604131）
+- [ ] douyin-video-analysis（2604171）
+
+### 规范 / 基础设施
+- [ ] factory-orchestrator（工厂调度）
+- [ ] specs/（规范层）
+- [ ] new-skill（新 Skill 请求）
+
+## 项目编号
+
+<!-- 必填，例如：2604131 -->
+项目编号：
 
 ## 背景/动机
 
