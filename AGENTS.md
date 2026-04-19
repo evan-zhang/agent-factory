@@ -3,18 +3,19 @@
 ## 架构
 
 - 唯一长期 Agent：Factory Orchestrator（`SOUL.md` 定义行为）
-- 6 个 Sub-Agent 模板：`agents/` 目录下，Orchestrator 按需 spawn，任务完成后销毁
-- 每个模板是任务指令文件，作为 `task` 参数传入
+- 7 个 Sub-Agent 定义：`specs/agents/` 目录下，Orchestrator 按需 spawn，任务完成后销毁
+- 每个定义是任务指令文件，作为 `task` 参数传入
 
 ## Sub-Agent 模板
 
-| 模板 | 目录 | 适用场景 |
-| Interview | `agents/interview/SOUL.md` | L2 S1-S2：需求引导、业务摘要结构化 |
-| Analyst | `agents/analyst/SOUL.md` | L2 S3：文档解析、能力盘点、缺口分析 |
-| Generator | `agents/generator/SOUL.md` | L2 S3：生成 Agent/Skill/API 规范文档 |
-| Validator | `agents/validator/SOUL.md` | 每步完成后：质量门控，PASS/FAIL 判定 |
-| Assembler | `agents/assembler/SOUL.md` | L2 S5-S6：组装最终 workspace、生成追溯矩阵 |
-| Reviewer | `agents/reviewer/SOUL.md` | 需要独立外部评审时 |
+| 模板 | 路径 | 适用场景 |
+| Interview | `specs/agents/interview.md` | L2 S1-S2：需求引导、业务摘要结构化 |
+| Analyst | `specs/agents/analyst.md` | L2 S3：文档解析、能力盘点、缺口分析 |
+| Generator | `specs/agents/generator.md` | L2 S3：生成 Agent/Skill/API 规范文档 |
+| Validator | `specs/agents/validator.md` | 每步完成后：质量门控，PASS/FAIL 判定 |
+| Assembler | `specs/agents/assembler.md` | L2 S5-S6：组装最终 workspace、生成追溯矩阵 |
+| Reviewer | `specs/agents/reviewer.md` | 需要独立外部评审时 |
+| Governance Officer | `specs/agents/governance-officer.md` | 治理合规检查 |
 
 ## Spawn 规则
 
@@ -27,12 +28,13 @@
 
 ### 启动时读取
 每个 sub-agent 启动时：
-1. 检查项目目录下是否有 `EXPERIENCE.md`
-2. 如有，读取最近 5 条，按同类型 sub-agent 优先
-3. 在 task 中注入摘要："本项目已有经验：[最近5条摘要]"
+1. 检查 `_runtime/experience/` 下是否有相关经验
+2. 读取最近 5 条，按同类型 sub-agent 优先
+3. 在 task 中注入摘要："工厂已有经验：[最近5条摘要]"
 
 ### 完成时写入
 任务 >10 分钟：强制写入一条经验。任务 <10 分钟：自愿。
+写入位置：`_runtime/experience/EXPERIENCE.md`
 写入格式：
 ```
 ## [日期] [Sub-Agent类型] [任务摘要]
@@ -41,7 +43,7 @@
 - **前车之鉴**：
 - **上下文**：（项目约束、技术栈版本等关键前提）
 ```
-每条最少 100 字，追加到 `EXPERIENCE.md` 末尾（倒序排列，最新在前）。
+每条最少 100 字，追加到末尾（倒序排列，最新在前）。
 
 ## 流程 → Sub-Agent 映射
 
@@ -109,14 +111,14 @@ Sub-Agent 完成后会自动 announce 结果回主对话，
 
 ## 可用 Skill
 
-工厂 Agent 可调用以下全局 Skill（`04_workshop/AF-{编号}/{skill-name}/`）：
+工厂 Agent 可调用以下全局 Skill（`projects/{编号}/{skill-name}/`）：
 
-| Skill | 用途 |
-| tpr-framework | TPR 三省制工作流框架 |
-| coding-agent | 代码任务委托（本地） |
+| Skill | 项目编号 | 用途 |
+| tpr-framework | 2604011 | TPR 三省制工作流框架 |
+| coding-agent | — | 代码任务委托（本地） |
 
 工厂不引用、不依赖第三方 Skill，所有基础能力必须自研可控。
-新增技能时同步更新 `03_governance/factory-task-index.md`。
+新增技能时同步更新 `_runtime/governance/factory-task-index.md`。
 
 ---
 

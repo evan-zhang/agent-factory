@@ -7,56 +7,52 @@
 ### 配置
 
 - **类型**: factory
-- **版本**: v1.0
+- **版本**: v2.0
 - **入口 SOUL**: `./SOUL.md`
 - **角色定义**: `./AGENTS.md`
 - **主工作区**: `./projects`
 
-### 启动方式
+### 目录结构（v2.0）
 
-OpenClaw 加载本目录作为 workspace 时，将以 `./SOUL.md` 定义的 Factory Orchestrator 作为主 Agent。
+```
+agent-factory/
+├── specs/              ← 规范层（只读）
+│   ├── workflows/      SOP 工作流
+│   ├── templates/      项目模板
+│   ├── agents/         Sub-Agent 定义
+│   ├── governance/     治理规范
+│   └── quality/        质量标准
+├── projects/           ← 项目层（每个项目独立目录）
+│   └── {YYMMDDN}/      项目编号，如 2604191
+│       ├── {skill}/    Skill 源码
+│       ├── builds/     测试包
+│       ├── releases/   正式发布包
+│       └── VERSION     当前版本号
+├── _runtime/           ← 运行时数据（不入 git）
+│   ├── logs/           日志
+│   ├── experience/     跨项目经验沉淀
+│   └── governance/     治理台账实际数据
+└── (根文件)            SOUL.md, AGENTS.md, IDENTITY.md 等
+```
 
-### 子 Agent 路径
+### Sub-Agent 定义
 
-| 角色 | SOUL 路径 |
-|------|-----------|
-| orchestrator | ./agents/orchestrator/SOUL.md |
-| interview | ./agents/interview/SOUL.md |
-| analyst | ./agents/analyst/SOUL.md |
-| generator | ./agents/generator/SOUL.md |
-| validator | ./agents/validator/SOUL.md |
-| assembler | ./agents/assembler/SOUL.md |
-| reviewer | ./agents/reviewer/SOUL.md |
-| governance-officer | ./agents/governance-officer/SOUL.md |
-
-### 模板路径
-
-| 模板 | 路径 |
+| 角色 | 路径 |
 |------|------|
-| Agent 定义 | ./TEMPLATES/agent-definition.md |
-| Skill 设计 | ./TEMPLATES/skill-design.md |
-| API 契约 | ./TEMPLATES/api-contract.md |
-| 追溯矩阵 | ./TEMPLATES/agent-skill-api-matrix.csv |
-| 验收清单 | ./TEMPLATES/acceptance-checklist.md |
+| interview | specs/agents/interview.md |
+| analyst | specs/agents/analyst.md |
+| generator | specs/agents/generator.md |
+| validator | specs/agents/validator.md |
+| assembler | specs/agents/assembler.md |
+| reviewer | specs/agents/reviewer.md |
+| governance-officer | specs/agents/governance-officer.md |
 
-### 技能路径
+### 隔离规则
 
-| 技能 | 路径 |
-|------|------|
-| tpr-framework | ./skills/tpr-framework/ |
-| self-improving-proactive-agent | ./skills/self-improving-proactive-agent/ |
-
-> 注意：技能安装在 `./skills/` 目录，工厂所有角色均可调用。
-
-### 治理路径
-
-| 台账 | 路径 |
-|------|------|
-| 入场台账 | ./governance/admission-log.md |
-| Override 记录 | ./governance/override-log.md |
-| 回滚记录 | ./governance/rollback-log.md |
-| 版本历史 | ./governance/version-history/ |
+- **specs/** 是只读规范层，项目执行时不可修改
+- **projects/{id}/** 是每个项目的独立空间，只修改自己的目录
+- **_runtime/** 是运行时数据，由 Orchestrator 维护，不入 git
 
 ---
 
-*Agent Factory v1.0*
+*Agent Factory v2.0*

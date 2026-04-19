@@ -1,3 +1,0 @@
-{"date":"2026-03-27","version":"v0.4.3","channel":"clawhub","slug":"bp-reporting-templates","action":"publish","summary":"v0.4.3 稳定版发布"}
-{"date":"2026-03-31","version":"v0.5.0","channel":"clawhub","slug":"bp-reporting-templates","action":"publish","summary":"v0.5.0 新增batch_get_key_position_markdown，对接BP 4.17接口"}
-{"date":"2026-04-01","version":"v0.5.1","channel":"clawhub","slug":"bp-reporting-templates","action":"publish","summary":"v0.5.1 结构修复：output测试目录归档，新增setup.md，description补中文触发词"}

@@ -1,46 +1,44 @@
-# 配置文件（含 bot token）
-config/
+# 运行时数据（不入 git）
+_runtime/
 
-# 治理台账（运行时数据）
-governance/*.md
-
-# 项目工作区（运行时数据）
-projects/
-
-# 快照
-snapshots/
+# 构建产物
+builds/
+releases/
 
 # 系统文件
 .DS_Store
 
-# Node 依赖
-node_modules/
-package-lock.json
-package.json
-
-# Python 虚拟环境和缓存
+# Python
 .venv/
 __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
 
-# 构建产物（TypeScript）
+# Node
+node_modules/
+package-lock.json
+package.json
 dist/
 
 # 测试输出
 output-test/
 
-# 运行时数据
-06_memory/runtime-data/
-cms-meeting-materials/
-
-# 备份存档
-07_assets/archives/
-08_infra/backups/
+# 临时文件
+tmp/
+*.tmp
 
 # 幽灵目录防护
 ${LIFE_WORKSPACE}/
+${OPS_WORKSPACE}/
 
-# 工具目录
-.spec-workflow/
+# 旧目录（已迁移，防止误创建）
+01_brain/
+02_guides/
+03_governance/
+04_workshop/
+05_products/
+06_memory/
+07_assets/
+08_infra/
+TEMPLATES/

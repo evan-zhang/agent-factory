@@ -1,0 +1,26 @@
+# ============================================
+# BP评分权重配置
+# 修改此文件即可调整评分逻辑，无需修改代码
+# 所有权重组内之和必须 = 1.0
+# ============================================
+
+# 同级BP权重评分维度（用于：同层BP相互比较）
+peer_scoring:
+  strategic_alignment: 0.40     # 战略对齐度
+  measurability: 0.20           # 成果可衡量性
+  measure_coverage: 0.20        # 举措覆盖度
+  impact_scope: 0.20            # 影响面与辐射范围
+
+# 分值池分配维度（用于：评估下级BP对上级BP的贡献度）
+pool_distribution:
+  target_accuracy: 0.45         # 目标承接准确性
+  outcome_contribution: 0.35    # 成果对上级贡献
+  measure_completeness: 0.20    # 举措完整性
+
+# 系统参数
+system:
+  confidence_threshold: 0.70    # AI置信度阈值（低于此值列入待确认项）
+  min_bp_score: 1.0             # 同级BP最低分（避免某BP得0分）
+  min_undertaker_score: 0.5     # 承接方最低分
+  max_batch_size: 10            # AI批处理每批最大BP数量
+  llm_retry_count: 3            # LLM调用失败重试次数

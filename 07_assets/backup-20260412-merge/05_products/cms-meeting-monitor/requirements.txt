@@ -1,2 +1,0 @@
-# cms-meeting-monitor / requirements.txt
-# 无额外依赖，依赖 cms-meeting-materials 的环境
