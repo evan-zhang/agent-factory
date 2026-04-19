@@ -1,0 +1,26 @@
+name: Block PRs
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  block-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close PR with message
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ 本仓库暂不接受 PR。\n\n如果你发现问题或想提交功能请求，请提 Issue：\nhttps://github.com/${{ github.repository }}/issues/new/choose\n\n所有变更由仓库维护者评估后自行提交。'
+            })
+            github.rest.pulls.update({
+              pull_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'closed'
+            })

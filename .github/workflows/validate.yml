@@ -1,14 +1,11 @@
-name: Issue/PR Validation
+name: Issue Validation
 
 on:
   issues:
     types: [opened, edited]
-  pull_request:
-    types: [opened, edited, synchronize]
 
 jobs:
   validate-issue:
-    if: github.event_name == 'issues'
     runs-on: ubuntu-latest
     steps:
       - name: Check Issue has project number
@@ -17,17 +14,8 @@ jobs:
           TITLE="${{ github.event.issue.title }}"
           COMBINED="$TITLE $BODY"
 
-          # Check for project number pattern (260XXXX)
           if ! echo "$COMBINED" | grep -qE '260[0-9]{4}[1-9]'; then
             echo "ISSUE_MISSING_PROJECT=true" >> $GITHUB_ENV
-          fi
-
-      - name: Check Issue has Skill name
-        if: env.ISSUE_MISSING_PROJECT == 'true'
-        run: |
-          BODY="${{ github.event.issue.body }}"
-          if ! echo "$BODY" | grep -qE 'project number|项目编号'; then
-            echo "ISSUE_INVALID=true" >> $GITHUB_ENV
           fi
 
       - name: Close invalid Issue
@@ -48,58 +36,3 @@ jobs:
               state: 'closed',
               state_reason: 'not_planned'
             })
-
-  validate-pr:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check PR only modifies one project
-        run: |
-          # Get the list of changed directories
-          CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha }} HEAD | grep '^projects/' | sed 's|/.*||' | sort -u)
-
-          # Count how many unique project directories are changed
-          COUNT=$(echo "$CHANGED" | wc -l | tr -d ' ')
-
-          echo "CHANGED_PROJECTS=$CHANGED"
-          echo "PROJECT_COUNT=$COUNT"
-
-          if [ "$COUNT" -gt 1 ]; then
-            echo "PR_MULTIPLE_PROJECTS=true" >> $GITHUB_ENV
-          fi
-
-          # Check if specs/ is modified
-          if git diff --name-only ${{ github.event.pull_request.base.sha }} HEAD | grep -q '^specs/'; then
-            echo "PR_MODIFIES_SPECS=true" >> $GITHUB_ENV
-          fi
-
-      - name: Warn if PR modifies multiple projects
-        if: env.PR_MULTIPLE_PROJECTS == 'true'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.payload.pull_request.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '⚠️ 此 PR 修改了多个项目目录（`projects/` 下超过 1 个子目录）。\n\n请拆分成多个 PR，每个 PR 只对应一个项目编号（2604XXX）。\n\n修改的项目：${{ env.CHANGED_PROJECTS }}'
-            })
-
-      - name: Block if PR modifies specs/
-        if: env.PR_MODIFIES_SPECS == 'true'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.payload.pull_request.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '🚫 此 PR 修改了 `specs/` 目录。\n\n`specs/` 是规范层，**只读**，不允许直接修改。\n\n如需改动规范，请先提 Issue 说明原因，由仓库维护者评估。'
-            })
-            github.rest.pulls.update({
-              pull_number: context.payload.pull_request.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'closed'
-            })
-            process.exit(1)
