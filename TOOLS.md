@@ -1,33 +1,21 @@
 # TOOLS.md - Local Notes
 
-## Skill 版本与发布规范
+### 发布规范（简化版）
 
-### 版本号规则
+**发布 = push 到 GitHub master。**
 
-- **测试包**：未正式发布前，版本号不变，用时间戳区分迭代
-  - 命名：`v{版本号}-{YYYYMMDD}-{HHMM}.zip`
-  - 示例：`v1.3.0-20260413-2144.zip`
-  - 只在用户明确说「发布新版本」时才升版本号
-- **正式发布**：由 Evan 手动决定版本号和发布时机
+- 何时发布：Evan 说「发布」时，才算正式版本
+- 版本号：发布时更新 `projects/{id}/VERSION`
+- 发布方式：push master 到 GitHub，用户从 master 下载源码
+- 不再打包 zip，不占 GitHub 空间
+- ClawHub 等第三方平台由 Evan 自行决定是否发布
 
-### 发布流程（用户说「发布新版本」时执行）
+### 测试规范
 
-1. 更新 `projects/{id}/VERSION` 文件
-2. 从 skill 源码目录打包到 releases/：
-```bash
-cd projects/{id}/{skill-name}
-zip -r ../releases/v{版本号}-$(date +%Y%m%d-%H%M).zip . \
-  -x '*.pyc' -x '__pycache__/*' -x '*.DS_Store' -x 'builds/*' -x 'releases/*'
-```
-3. git commit + push
-
-### 测试包构建
-
-```bash
-cd projects/{id}/{skill-name}
-zip -r ../builds/v{版本号}-$(date +%Y%m%d-%H%M).zip . \
-  -x '*.pyc' -x '__pycache__/*' -x '*.DS_Store' -x 'builds/*' -x 'releases/*'
-```
+- 不需要打包
+- 不需要 GitHub Release
+- 测试 agent 直接 clone master：`git clone --depth 1 https://github.com/evan-zhang/agent-factory.git`
+- Skill 目录：`projects/{id}/{skill-name}/`
 
 ---
 
