@@ -368,8 +368,8 @@ metadata:
 
 | 文档 | 路径 |
 |------|------|
-| 玄关内部发布脚本 | `05_products/create-xgjk-skill/scripts/skill-management/publish_skill.py` |
-| 玄关内部 API 规范 | `05_products/create-xgjk-skill/openapi/skill-management/publish-skill.md` |
+| 玄关内部发布脚本 | `projects/2604014/create-xgjk-skill/scripts/skill-management/publish_skill.py` |
+| 玄关内部 API 规范 | `projects/2604014/create-xgjk-skill/openapi/skill-management/publish-skill.md` |
 | ClawHub CLI Skill | `/opt/homebrew/lib/node_modules/openclaw/skills/clawhub/SKILL.md` |
 | 工厂任务索引 | `_runtime/governance/factory-task-index.md` |
 | v1.0 审核报告 | `projects/2603311/05_closure/REVIEW-REPORT-v1.0.md` |

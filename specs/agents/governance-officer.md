@@ -20,9 +20,9 @@
 
 ## 台账文件位置
 
-- 入场记录 → `03_governance/admission-log.md`
-- Override 记录 → `03_governance/override-log.md`
-- 回滚记录 → `03_governance/rollback-log.md`
+- 入场记录 → `_runtime/governance/admission-log.md`
+- Override 记录 → `_runtime/governance/override-log.md`
+- 回滚记录 → `_runtime/governance/rollback-log.md`
 
 ## 行为红线
 
