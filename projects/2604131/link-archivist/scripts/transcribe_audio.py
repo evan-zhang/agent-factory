@@ -4,6 +4,7 @@ import json
 import os
 import sys
 import time
+import uuid
 from pathlib import Path
 
 # Configuration
@@ -33,59 +34,56 @@ def load_app_key() -> str | None:
     return None
 
 
-def upload_to_cwork(file_path: str, app_key: str) -> str:
-    """Upload file to CWork file server and get download URL.
+def upload_to_qiniu(file_path: str, app_key: str) -> str:
+    """Upload file to Qiniu cloud storage and return public URL.
 
-    API: POST /cwork-file/uploadWholeFile (multipart/form-data)
-    Reference: 基础服务 API 文档 4.1
+    AI慧记 requires the file URL to be from Qiniu (七牛), not MinIO/CWork.
+    This function uploads to Qiniu using the official qiniu SDK.
 
     Args:
         file_path: Path to local file
+        app_key: XGJK appKey
 
     Returns:
-        Download URL (valid for 1 hour)
+        Public URL accessible by 慧记 service
     """
-    import requests
+    import qiniu
 
     file_path = Path(file_path).expanduser()
     if not file_path.exists():
         raise FileNotFoundError(f"File not found: {file_path}")
 
-    print(f"Uploading {file_path.name} to CWork...", file=sys.stderr)
-
-    # Upload using multipart/form-data
-    with open(file_path, "rb") as f:
-        files = {"file": (file_path.name, f, "application/octet-stream")}
-        resp = requests.post(
-            f"{CWORK_API_URL}/cwork-file/uploadWholeFile",
-            headers={"appKey": app_key},
-            files=files,
-            timeout=300
-        )
-    resp.raise_for_status()
-    result = resp.json()
-
-    if result.get("resultCode") != 1:
-        raise Exception(f"Failed to upload file: {result}")
-
-    resource_id = result["data"]
-
-    # Get download URL
+    # Get Qiniu upload token
+    import requests
     resp = requests.get(
-        f"{CWORK_API_URL}/cwork-file/getDownloadInfo",
+        f"{CWORK_API_URL}/cwork-file/getUploadToken/cwork",
         headers={"appKey": app_key},
-        params={"resourceId": resource_id},
         timeout=30
     )
     resp.raise_for_status()
     result = resp.json()
-
     if result.get("resultCode") != 1:
-        raise Exception(f"Failed to get download URL: {result}")
+        raise Exception(f"Failed to get Qiniu token: {result}")
 
-    download_url = result["data"]["downloadUrl"]
-    print(f"Uploaded: {download_url}", file=sys.stderr)
-    return download_url
+    token_data = result["data"]
+    host = token_data["host"]      # e.g. https://cwork.file.hubmedi.com.cn
+    token = token_data["token"]   # Qiniu upload token
+
+    # Generate key: UUID + original extension
+    suffix = file_path.suffix.lstrip(".") or "mp3"
+    key = f"{uuid.uuid4().hex}.{suffix}"
+
+    print(f"Uploading {file_path.name} to Qiniu ({host})...", file=sys.stderr)
+
+    # Upload via qiniu SDK
+    ret, info = qiniu.put_file(token, key, str(file_path), mime_type="audio/mpeg")
+    if info.status_code != 200:
+        raise Exception(f"Qiniu upload failed: {info.status_code} {info.text}")
+
+    # Public URL for 慧记 service
+    file_url = f"{host}/{key}"
+    print(f"Uploaded to Qiniu: {file_url}", file=sys.stderr)
+    return file_url
 
 
 def transcribe(audio_file: str, app_key: str) -> str:
@@ -112,7 +110,7 @@ def transcribe(audio_file: str, app_key: str) -> str:
     import requests
 
     # Step 1: Upload to CWork
-    file_url = upload_to_cwork(audio_file, app_key)
+    file_url = upload_to_qiniu(audio_file, app_key)
 
     # Step 2: Create Huiji task
     file_ext = Path(audio_file).suffix.lstrip(".")
