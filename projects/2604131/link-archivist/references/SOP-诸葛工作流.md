@@ -30,13 +30,13 @@
 **首选方案：curl + jina.ai 代理**
 
 ```bash
-curl -sL --max-time 30 "https://r.jina.ai/https://m.toutiao.com/is/xxxxx/" 2>&1
+curl -sL --max-time 60 "https://r.jina.ai/https://m.toutiao.com/is/xxxxx/" 2>&1
 ```
 
 **思考过程：**
 1. 今日头条有反爬机制，直接 curl 可能超时或被拦截
 2. jina.ai 是内容代理服务，可以绕过反爬，返回干净的 Markdown
-3. `--max-time 30` 防止无限等待
+3. `--max-time 60` 防止无限等待
 
 **常见问题：**
 | 问题 | 原因 | 解决方案 |
@@ -355,8 +355,9 @@ message(
 ### 7.1 链接打不开
 
 **今日头条链接打不开：**
-1. 换 `https://r.jina.ai/` 代理
-2. 仍然失败 → 用 Web Search 搜索内容
+1. 换 `https://r.jina.ai/` 代理（timeout=60s）
+2. 仍然失败 → Playwright + wait_for_timeout(5000) 等待动态内容
+3. 仍然失败 → 用 Web Search 搜索内容
 
 **YouTube 链接无法下载：**
 1. 检查是否是短链接格式（需要展开）

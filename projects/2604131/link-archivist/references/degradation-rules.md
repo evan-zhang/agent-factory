@@ -57,7 +57,7 @@
 5. **交叉验证**：多个搜索结果互相印证，确保信息准确
 
 **实测案例**（2026-04-14）：
-- 今日头条链接 → jina.ai 空内容、curl 拿到 JS 加密页、Playwright 未安装
+- 今日头条链接 → jina.ai 空内容、curl 拿到 JS 加密页 → Playwright + wait_for_timeout 等待动态内容
 - → DuckDuckGo 搜索标题关键词 → 找到 CSDN/知乎/GitHub 上的同题文章
 - → 定位到 Karpathy 的 GitHub Gist 原文 → 直接 raw URL 抓取成功
 - → 获得比头条文章更完整的一手信息
@@ -72,7 +72,7 @@ url = '<目标URL>'
 headers = {
     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15'
 }
-r = requests.get(url, headers=headers, timeout=10)
+r = requests.get(url, headers=headers, timeout=60)
 soup = BeautifulSoup(r.text, 'html.parser')
 article = soup.find('article')
 if article:
@@ -80,6 +80,22 @@ if article:
         tag.decompose()
     text = article.get_text(' ', strip=True)
 ```
+
+**Playwright 配置**（用于有 JS 反爬的目标网站）：
+
+```python
+from playwright.sync_api import sync_playwright
+
+with sync_playwright() as p:
+    browser = p.chromium.launch()
+    page = browser.new_page()
+    page.goto(url, wait_until="networkidle", timeout=60000)
+    page.wait_for_timeout(5000)  # 额外等待 5s，确保动态内容加载完毕
+    content = page.content()
+    browser.close()
+```
+
+> 超时统一设 60s，等待时间设 5s 以上（头条等重 JS 网站可设 10s）。
 
 **注意**：今日头条移动端短链接（m.toutiao.com/is/xxx）有 _$jsvmprt JS 加密，BeautifulSoup 方案基本无效，请直接使用搜索引擎绕行法。
 
