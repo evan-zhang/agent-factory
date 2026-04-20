@@ -6,7 +6,17 @@
 
 - 何时发布：Evan 说「发布」时，才算正式版本
 - 版本号：发布时更新 `projects/{id}/VERSION`
-- 安装方式：`git clone --depth 1 https://github.com/evan-zhang/agent-factory.git`
+- 安装方式：只取单个 skill 目录，不 clone 全量仓库
+- **推荐方式（git sparse-checkout）**：
+  ```bash
+  git clone --depth 1 --sparse https://github.com/evan-zhang/agent-factory.git
+  cd agent-factory
+  git sparse-checkout set projects/{id}/{skill-name}
+  ```
+- **备选方式（svn export）**：
+  ```bash
+  svn checkout https://github.com/evan-zhang/agent-factory/trunk/projects/{id}/{skill-name}
+  ```
 - Skill 目录：`projects/{id}/{skill-name}/`
 - 不打包、不占 GitHub 空间
 - ClawHub 等第三方平台由 Evan 自行决定
