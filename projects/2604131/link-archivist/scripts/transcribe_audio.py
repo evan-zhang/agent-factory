@@ -95,15 +95,19 @@ def transcribe(audio_file: str, app_key: str) -> str:
     Steps:
     1. Upload audio to CWork file server
     2. Create Huiji task with file URL
-    3. Poll for completion
-    4. Return transcribed text
+    3. Poll checkSecondSttV2 for completion
+    4. Concatenate sttPartList rewriteText as full transcript
+
+    API reference: AI慧记 Open API 接口文档 v1.5 (2026-04-16)
+      - startChatByFileUrl: §4.7
+      - checkSecondSttV2: §4.2  →  CheckSecondSttV2VO
 
     Args:
         audio_file: Path to audio file (mp3, m4a, wav, mp4)
         app_key: XGJK appKey for authentication
 
     Returns:
-        Transcribed text (tidyText or simpleSummary)
+        Transcribed text (concatenated rewriteText from sttPartList)
     """
     import requests
 
@@ -128,11 +132,12 @@ def transcribe(audio_file: str, app_key: str) -> str:
     task_id = result["data"]["_id"]
     print(f"Huiji task created: {task_id}", file=sys.stderr)
 
-    # Step 3: Poll for completion
+    # Step 3: Poll for completion via checkSecondSttV2 (not findChat)
+    # State: 1=进行中, 2=成功, 3=失败
     max_attempts = 120  # 10 minutes max
     for attempt in range(max_attempts):
         resp = requests.post(
-            f"{HUIJI_BASE_URL}/ai-huiji/meetingChat/findChat",
+            f"{HUIJI_BASE_URL}/ai-huiji/meetingChat/checkSecondSttV2",
             headers={"appKey": app_key, "Content-Type": "application/json"},
             json={"meetingChatId": task_id},
             timeout=30
@@ -143,21 +148,40 @@ def transcribe(audio_file: str, app_key: str) -> str:
         if result.get("resultCode") != 1:
             raise Exception(f"Failed to query Huiji task: {result}")
 
-        data = result["data"]
-        state = data.get("recordState")
+        data = result.get("data")
+        if data is None:
+            raise Exception("Huiji returned null data during poll")
+
+        state = data.get("state")
 
         if state == 2:  # Completed
-            tidy_text = data.get("tidyText")
-            simple_summary = data.get("simpleSummary")
-            text = tidy_text or simple_summary or ""
-            print(f"Transcription completed: {len(text)} chars", file=sys.stderr)
+            stt_part_list = data.get("sttPartList") or []
+            # Concatenate rewriteText from each part in order
+            text_parts = []
+            for part in stt_part_list:
+                rt = part.get("rewriteText", "").strip()
+                if rt:
+                    text_parts.append(rt)
+            text = "\n".join(text_parts)
+            if not text:
+                # Fallback: try tidyText / simpleSummary if sttPartList is empty
+                text = data.get("tidyText") or data.get("simpleSummary") or ""
+                if not text:
+                    raise Exception(
+                        "Huiji transcription completed (state=2) but both "
+                        "sttPartList and tidyText are empty. "
+                        "The audio may exceed the service's length limit."
+                    )
+            print(f"Transcription completed: {len(text)} chars from {len(stt_part_list)} parts", file=sys.stderr)
             return text
         elif state == 3:  # Error
-            error_msg = data.get("errorMsg", "Unknown error")
-            raise Exception(f"Huiji transcription failed: {error_msg}")
+            err_msg = data.get("errMsg") or "Unknown error"
+            raise Exception(f"Huiji transcription failed: {err_msg}")
 
+        # state == 1 (进行中) or unexpected: keep polling
         if (attempt + 1) % 12 == 0:  # Every minute
-            print(f"Transcribing... ({(attempt + 1) * 5}s / 600s)", file=sys.stderr)
+            progress = data.get("totalProgress", "N/A")
+            print(f"Transcribing... ({(attempt + 1) * 5}s / 600s, progress={progress})", file=sys.stderr)
 
         time.sleep(5)
 
