@@ -21,6 +21,30 @@
 - 不打包、不占 GitHub 空间
 - ClawHub 等第三方平台由 Evan 自行决定
 
+## 测试通知规范
+
+每次 Skill 更新需要提交测试时，按以下模板在 Issue 或通知消息中填写：
+
+```
+🔬 {Skill 名称} v{x.y.z} 测试包
+
+📦 安装命令：
+git clone --depth 1 --sparse https://github.com/evan-zhang/agent-factory.git
+cd agent-factory
+git sparse-checkout set projects/{id}/{skill-name}
+
+Skill 目录：agent-factory/projects/{id}/{skill-name}/
+
+本次更新内容：
+1. {更新点1}
+2. {更新点2}
+3. ...
+
+重点测试方向：
+- {测试点1}
+- {测试点2}
+```
+
 ## 外部平台文档（API 唯一来源）
 
 | 平台 | GitHub 地址 | 覆盖业务模块 |
