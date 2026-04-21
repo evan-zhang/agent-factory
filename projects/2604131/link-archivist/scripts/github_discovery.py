@@ -29,8 +29,8 @@ def extract_project_names(text):
         r'["\u201c\u201d]([A-Z][a-zA-Z0-9_-]+)["\u201c\u201d]',
         r"'([^']+)'",
         r'\uff08([^\uff09]+)\uff09',  # 中文括号
-        r'\b([A-Z][a-zA-Z0-9]+)\b',  # 大写字母开头的词: AutoGPT, GitHub, GPT4
-        r'\b([a-z]+[-_][a-z]+)\b',  # kebab-case
+        r'(?<![A-Za-z0-9])([A-Z][a-zA-Z0-9]+)(?![A-Za-z0-9])',  # 大写字母开头的词: AutoGPT, GitHub, GPT4
+        r'(?<![A-Za-z0-9])([a-z]+[-_][a-z]+)(?![A-Za-z0-9])',  # kebab-case
     ]
     blocked = {'github', 'google', 'microsoft', 'facebook', 'amazon', 'apple', 'example'}
     seen = set()
