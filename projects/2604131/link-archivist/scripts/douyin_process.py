@@ -3,8 +3,59 @@
 抖音视频分析一键脚本
 用法: python3 douyin_process.py <抖音分享链接> [输出目录]
 
-流程: mcporter解析 → curl下载视频 → ffmpeg提取音频 → 生成报告
+流程（优先 API 方案）：
+  1. API方案：玄关开放平台API → 直接返回ASR文本（推荐）
+  2. MC方案：mcporter解析 → curl下载视频 → ffmpeg提取音频 → 生成报告（降级）
 """
+
+import sys
+import os
+import re
+import json
+import subprocess
+import shutil
+import time
+import urllib.request
+from datetime import datetime
+from pathlib import Path
+
+# API方案配置（玄关开放平台抖音音频导出）
+DOUYIN_API_BASE = "https://hk-al-xg-node.mediportal.com.cn"
+DOUYIN_API_TOKEN = "47a0e299aaea700d6133a9ee3ab17018a56c616ada15ba1f484faec70801169b"
+
+
+def process_with_api(share_link):
+    """
+    玄关开放平台API方案：直接调用抖音音频导出API，获取ASR文本。
+    推荐优先使用，无需mcporter/ffmpeg。
+    """
+    print("[1/1] 调用玄关开放平台API提取音频+ASR...")
+
+    payload = json.dumps({"url": share_link}).encode()
+    req = urllib.request.Request(
+        f"{DOUYIN_API_BASE}/api/open/audio/export-with-asr",
+        data=payload,
+        headers={
+            "Authorization": f"Bearer {DOUYIN_API_TOKEN}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+
+    with urllib.request.urlopen(req, timeout=200) as resp:
+        result = json.loads(resp.read().decode("utf-8"))
+
+    if result.get("status") != "200":
+        raise RuntimeError(f"API返回错误: {result.get('msg', 'unknown')}")
+
+    data = result.get("data", {})
+    return {
+        "aweme_id": data.get("aweme_id", ""),
+        "is_original": data.get("is_original", False),
+        "music_title": data.get("music_title", ""),
+        "asr_text": data.get("asr_text", ""),
+        "share_link": share_link,
+    }
 
 import sys
 import os
@@ -197,22 +248,50 @@ def generate_report(info, output_dir, audio_duration, transcript=""):
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("用法: python3 douyin_process.py <抖音分享链接> [输出目录]")
-        print("示例: python3 douyin_process.py https://v.douyin.com/XXXXX/")
+    use_api = "--api" in sys.argv
+    if len(sys.argv) < 2 or (len(sys.argv) < 3 and not use_api):
+        print("用法: python3 douyin_process.py <抖音分享链接> [输出目录] [--api]")
+        print("  --api: 使用玄关开放平台API方案（推荐，默认方案）")
+        print("  不加--api: 使用mcporter+ffmpeg方案（降级方案）")
+        print("示例: python3 douyin_process.py https://v.douyin.com/XXXXX/ /tmp/douyin_out")
         sys.exit(1)
-    
-    share_link = sys.argv[1]
-    output_dir = sys.argv[2] if len(sys.argv) > 2 else f"/tmp/douyin_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    
+
+    share_link = sys.argv[1] if len(sys.argv) >= 2 else sys.argv[2]
+    output_dir = sys.argv[2] if len(sys.argv) >= 3 and sys.argv[2] != "--api" else f"/tmp/douyin_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+
     print(f"{'='*50}")
     print(f"抖音视频分析")
     print(f"链接: {share_link}")
     print(f"输出: {output_dir}")
+    print(f"方案: {'玄关API' if use_api else 'mcporter+ffmpeg降级'}")
     print(f"{'='*50}\n")
-    
+
     os.makedirs(output_dir, exist_ok=True)
-    
+
+    # API方案（推荐）
+    if use_api:
+        try:
+            info = process_with_api(share_link)
+            print(f"  视频ID: {info['aweme_id']}")
+            print(f"  ASR长度: {len(info['asr_text'])} 字")
+            print(f"  ASR预览: {info['asr_text'][:80]}...")
+            result = {
+                "success": True,
+                "method": "api",
+                "aweme_id": info["aweme_id"],
+                "is_original": info["is_original"],
+                "music_title": info["music_title"],
+                "asr_text": info["asr_text"],
+                "share_link": share_link,
+                "output_dir": output_dir,
+            }
+            print(f"\n__JSON_RESULT__{json.dumps(result, ensure_ascii=False)}")
+            return
+        except Exception as e:
+            print(f"  API方案失败: {e}")
+            print(f"  降级为mcporter+ffmpeg方案...")
+
+    # 降级方案：mcporter+ffmpeg
     # Step 1: 解析链接（优先 MCP，失败用 Python）
     info = None
     try:
@@ -225,20 +304,20 @@ def main():
         except Exception as e2:
             print(f"  Python 解析也失败: {e2}")
             sys.exit(1)
-    
+
     info["share_link"] = share_link
-    
+
     # Step 2: 下载视频
     video_path = os.path.join(output_dir, "video.mp4")
     download_video(info["download_url"], video_path)
-    
+
     # Step 3: 提取音频
     audio_path = os.path.join(output_dir, "audio.mp3")
     audio_duration = extract_audio(video_path, audio_path)
-    
+
     # Step 4: 生成报告
     report_path = generate_report(info, output_dir, audio_duration)
-    
+
     print(f"\n{'='*50}")
     print(f"✅ 分析完成!")
     print(f"输出目录: {output_dir}/")
@@ -246,10 +325,11 @@ def main():
     print(f"  audio.mp3  - 音频文件")
     print(f"  report.md  - 分析报告")
     print(f"{'='*50}")
-    
+
     # 返回 JSON 结果供 Agent 使用
     result = {
         "success": True,
+        "method": "mcporter",
         "title": info["title"],
         "video_id": info["video_id"],
         "output_dir": output_dir,
