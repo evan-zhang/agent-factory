@@ -5,7 +5,6 @@
 **发布 = push 到 GitHub master。**
 
 - 何时发布：Evan 说「发布」时，才算正式版本
-- 版本号：发布时更新 `projects/{id}/VERSION`
 - 安装方式：只取单个 skill 目录，不 clone 全量仓库
 - **推荐方式（git sparse-checkout）**：
   ```bash
@@ -21,9 +20,48 @@
 - 不打包、不占 GitHub 空间
 - ClawHub 等第三方平台由 Evan 自行决定
 
-## 测试通知规范
+## 版本号管理
 
-每次 Skill 更新需要提交测试时，按以下模板在 Issue 或通知消息中填写：
+版本号在以下三处同步更新（发版时必须全部修改）：
+
+| 位置 | 文件路径 | 内容 |
+|------|---------|------|
+| 项目级 | `projects/{id}/VERSION` | `1.2.3`（纯文本） |
+| Skill 级 | `projects/{id}/{skill}/SKILL.md` frontmatter | `version: "1.2.3"` |
+| Skill 级 | `projects/{id}/{skill}/version.json` | `{"skillcode":"...","version":"1.2.3"}` |
+
+版本号格式：SemVer（主版本.次版本.修订号），例如 `1.4.0`。
+
+## 发版流程
+
+### Step 1：确定版本号
+- 从上一个版本递增（修订号 +1 适用于 bugfix，，次版本 +1 适用于新功能，主版本 +1 适用于破坏性变更）
+- 版本号同时更新到以上三处
+
+### Step 2：提交 Git
+```bash
+git add projects/{id}/{skill}/
+git commit -m "release: {skill} v{x.y.z}"
+git push origin master
+```
+
+### Step 3：发测试通知
+按下方「测试通知模板」填写，发送到对应 Issue 或通知渠道。
+
+### Step 4（如需发布到 ClawHub）
+```bash
+clawhub publish ./projects/{id}/{skill} \
+  --slug {skill-slug} \
+  --name "{Skill 名称}" \
+  --version {x.y.z} \
+  --changelog "本次更新：1. xxx 2. xxx"
+```
+
+> 注意：`clawhub install` 默认安装到 `{workdir}/skills/{slug}`，需手动同步到正确路径。
+
+## 测试通知模板
+
+每次 Skill 更新需要提交测试时，按以下模板填写：
 
 ```
 🔬 {Skill 名称} v{x.y.z} 测试包
