@@ -7,9 +7,127 @@
   <style>
     /* ============================================
        药品市场全景报告模板
-       版本：v1.0.2
+       版本：v1.0.3
        生成技能：pharma-market-landscape-report
        ============================================ */
+
+    /* ===== I18N UI 变量（默认简体中文 zh-CN）=====
+       语言切换：修改 html[lang="{{LANG}}"] 属性值
+       支持：zh-CN | zh-TW | en | ms */
+    :root {
+      --ui-confidential: "机密文件 — 市场洞察";
+      --ui-exec-summary: "执行摘要";
+      --ui-toc: "目录";
+      --ui-part1: "第一部分";
+      --ui-part2: "第二部分";
+      --ui-part3: "第三部分";
+      --ui-market-landscape: "市场全景";
+      --ui-patient-distribution: "患者分布";
+      --ui-channel-type: "渠道深度报告";
+      --ui-references: "参考文献";
+      --ui-report-date: "报告日期";
+      --ui-product-center: "产品中心";
+      --ui-version: "版本";
+      --ui-key-finding: "⚠ 关键发现";
+      --ui-insight: "💡 市场洞察";
+      --ui-action: "🎯 行动建议";
+      --ui-tier1: "🔴 TIER-1 KOL — 核心意见领袖";
+      --ui-tier2: "🟡 TIER-2 KOL — 重要意见领袖";
+      --ui-tier3: "🔵 TIER-3 KOL — 潜力意见领袖";
+      --ui-so-what: "So What?";
+      --ui-unfound: "[未找到]";
+      --ui-chapter-prefix: "第";
+      --ui-chapter-suffix: "章";
+      --ui-core-question: "核心问题：";
+      --ui-data-list: "本章数据清单";
+    }
+
+    /* 繁体中文（zh-TW）*/
+    html[lang="zh-TW"] {
+      --ui-confidential: "機密文件 — 市場洞察";
+      --ui-exec-summary: "執行摘要";
+      --ui-toc: "目錄";
+      --ui-part1: "第一部分";
+      --ui-part2: "第二部分";
+      --ui-part3: "第三部分";
+      --ui-market-landscape: "市場全景";
+      --ui-patient-distribution: "患者分布";
+      --ui-channel-type: "渠道深度報告";
+      --ui-references: "參考文獻";
+      --ui-report-date: "報告日期";
+      --ui-product-center: "產品中心";
+      --ui-version: "版本";
+      --ui-key-finding: "⚠ 關鍵發現";
+      --ui-insight: "💡 市場洞察";
+      --ui-action: "🎯 行動建議";
+      --ui-tier1: "🔴 TIER-1 KOL — 核心意見領袖";
+      --ui-tier2: "🟡 TIER-2 KOL — 重要意見領袖";
+      --ui-tier3: "🔵 TIER-3 KOL — 潛力意見領袖";
+      --ui-so-what: "So What?";
+      --ui-unfound: "[未找到]";
+      --ui-chapter-prefix: "第";
+      --ui-chapter-suffix: "章";
+      --ui-core-question: "核心問題：";
+      --ui-data-list: "本章數據清單";
+    }
+
+    /* 英语（en）*/
+    html[lang="en"] {
+      --ui-confidential: "Confidential — Market Intelligence";
+      --ui-exec-summary: "Executive Summary";
+      --ui-toc: "Table of Contents";
+      --ui-part1: "Part I";
+      --ui-part2: "Part II";
+      --ui-part3: "Part III";
+      --ui-market-landscape: "Market Landscape";
+      --ui-patient-distribution: "Patient Distribution";
+      --ui-channel-type: "Channel Deep Dive";
+      --ui-references: "References";
+      --ui-report-date: "Report Date";
+      --ui-product-center: "Product Center";
+      --ui-version: "Version";
+      --ui-key-finding: "⚠ Key Finding";
+      --ui-insight: "💡 Market Insight";
+      --ui-action: "🎯 Action Recommendation";
+      --ui-tier1: "🔴 TIER-1 KOL — Key Opinion Leader";
+      --ui-tier2: "🟡 TIER-2 KOL — Important Opinion Leader";
+      --ui-tier3: "🔵 TIER-3 KOL — Emerging Opinion Leader";
+      --ui-so-what: "So What?";
+      --ui-unfound: "[Not Found]";
+      --ui-chapter-prefix: "";
+      --ui-chapter-suffix: "";
+      --ui-core-question: "Core Question: ";
+      --ui-data-list: "Chapter Data Requirements";
+    }
+
+    /* 马来语（ms）*/
+    html[lang="ms"] {
+      --ui-confidential: "Sulit — Risikan Pasaran";
+      --ui-exec-summary: "Ringkasan Eksekutif";
+      --ui-toc: "Kandungan";
+      --ui-part1: "Bahagian I";
+      --ui-part2: "Bahagian II";
+      --ui-part3: "Bahagian III";
+      --ui-market-landscape: "Landskap Pasaran";
+      --ui-patient-distribution: "Taburan Pesakit";
+      --ui-channel-type: "Saluran Mendalam";
+      --ui-references: "Rujukan";
+      --ui-report-date: "Tarikh Laporan";
+      --ui-product-center: "Pusat Produk";
+      --ui-version: "Versi";
+      --ui-key-finding: "⚠ Penemuan Utama";
+      --ui-insight: "💡 Pandangan Pasaran";
+      --ui-action: "🎯 Cadangan Tindakan";
+      --ui-tier1: "🔴 TIER-1 KOL — Pemimpin Pendapat Utama";
+      --ui-tier2: "🟡 TIER-2 KOL — Pemimpin Pendapat Penting";
+      --ui-tier3: "🔵 TIER-3 KOL — Pemimpin Pendapat Baru";
+      --ui-so-what: "So What?";
+      --ui-unfound: "[Tidak Ditemui]";
+      --ui-chapter-prefix: "";
+      --ui-chapter-suffix: "";
+      --ui-core-question: "Soalan Teras: ";
+      --ui-data-list: "Keperluan Data Bab";
+    }
 
     /* 基础重置 */
     * {
@@ -264,7 +382,7 @@
     }
 
     .highlight-box::before {
-      content: "⚠ 关键发现";
+      content: var(--ui-key-finding);
       font-weight: 700;
       color: #856404;
       display: block;
@@ -282,7 +400,7 @@
     }
 
     .insight::before {
-      content: "💡 市场洞察";
+      content: var(--ui-insight);
       font-weight: 700;
       color: #0c5460;
       display: block;
@@ -300,7 +418,7 @@
     }
 
     .action-box::before {
-      content: "🎯 行动建议";
+      content: var(--ui-action);
       font-weight: 700;
       color: #155724;
       display: block;
@@ -321,7 +439,7 @@
     }
 
     .tier-1::before {
-      content: "🔴 TIER-1 KOL — 核心意见领袖";
+      content: var(--ui-tier1);
       font-weight: 700;
       color: #c8102e;
       display: block;
@@ -335,7 +453,7 @@
     }
 
     .tier-2::before {
-      content: "🟡 TIER-2 KOL — 重要意见领袖";
+      content: var(--ui-tier2);
       font-weight: 700;
       color: #856404;
       display: block;
@@ -349,7 +467,7 @@
     }
 
     .tier-3::before {
-      content: "🔵 TIER-3 KOL — 潜力意见领袖";
+      content: var(--ui-tier3);
       font-weight: 700;
       color: #0c5460;
       display: block;
@@ -531,7 +649,7 @@
     }
 
     .so-what::before {
-      content: "💡 核心启示";
+      content: var(--ui-insight);
       font-weight: 700;
       color: #0f3460;
       display: block;
@@ -572,7 +690,7 @@
     }
 
     .chapter-placeholder::before {
-      content: "📋 本章数据清单";
+      content: "📋 " var(--ui-data-list);
       font-size: 16px;
       font-weight: 600;
       display: block;
@@ -606,28 +724,28 @@
 
   <!-- 文档页眉 -->
   <div class="doc-header">
-    <span>机密文件 — 市场洞察</span>
+    <span>{{UI_CONFIDENTIAL}}</span>
     <span class="product-info">{{PRODUCT_NAME}} | {{TARGET_MARKET}} | {{EXECUTION_DATE}}</span>
   </div>
 
   <!-- 封面 -->
   <div class="cover-page">
-    <div class="confidential-badge">机密文件 — 患者与市场洞察</div>
+    <div class="confidential-badge">{{UI_CONFIDENTIAL}}</div>
     <h1 class="main-title">{{PRODUCT_NAME}}</h1>
     <div class="product-name">{{LOCAL_BRAND_NAME}}</div>
     <p class="subtitle">{{TARGET_MARKET}} {{THERAPY_AREA}} 市场推广全景报告<br>
     融合市场全景分析、患者全渠道分布、{{CHANNEL_TYPE}}深度拆解的三合一战略报告 —— 基于麦肯锡结构化框架</p>
     <div class="meta-block">
       <div class="meta-row">
-        <span class="meta-label">报告日期</span>
+        <span class="meta-label">{{UI_REPORT_DATE}}</span>
         <span>{{EXECUTION_DATE}}</span>
       </div>
       <div class="meta-row">
-        <span class="meta-label">产品中心</span>
+        <span class="meta-label">{{UI_PRODUCT_CENTER}}</span>
         <span>{{LICENSE_HOLDER}}</span>
       </div>
       <div class="meta-row">
-        <span class="meta-label">版本</span>
+        <span class="meta-label">{{UI_VERSION}}</span>
         <span>{{REPORT_VERSION}}</span>
       </div>
     </div>
@@ -635,8 +753,8 @@
 
   <!-- 执行摘要 -->
   <section id="s0" class="exec-summary">
-    <div class="exec-title">执行摘要</div>
-    <p class="exec-question">核心问题：{{CORE_QUESTION}}</p>
+    <div class="exec-title">{{UI_EXEC_SUMMARY}}</div>
+    <p class="exec-question">{{UI_CORE_QUESTION}}{{CORE_QUESTION}}</p>
     <p>{{EXEC_SUMMARY_CONTENT}}</p>
     <div class="chapter-placeholder">
       <strong>本章数据清单</strong><br>
@@ -649,10 +767,10 @@
 
   <!-- 目录 -->
   <div class="toc-page">
-    <h2 class="toc-title">目录</h2>
+    <h2 class="toc-title">{{UI_TOC}}</h2>
 
     <div class="toc-part">
-      <div class="toc-part-title">第一部分：市场全景</div>
+      <div class="toc-part-title">{{UI_PART1}}：{{UI_MARKET_LANDSCAPE}}</div>
       <ol class="toc-chapters">
         <li><span>一 流行病学与疾病负担</span><span>第 1 章</span></li>
         <li><span>二 医疗体系概览</span><span>第 2 章</span></li>
@@ -664,7 +782,7 @@
     </div>
 
     <div class="toc-part">
-      <div class="toc-part-title">第二部分：患者分布</div>
+      <div class="toc-part-title">{{UI_PART2}}：{{UI_PATIENT_DISTRIBUTION}}</div>
       <ol class="toc-chapters" start="7">
         <li><span>七 患者地理分布与渠道结构</span><span>第 7 章</span></li>
         <li><span>八 治疗渠道分布</span><span>第 8 章</span></li>
@@ -674,7 +792,7 @@
     </div>
 
     <div class="toc-part">
-      <div class="toc-part-title">第三部分：{{CHANNEL_TYPE}} 深度报告</div>
+      <div class="toc-part-title">{{UI_PART3}}：{{UI_CHANNEL_TYPE}}</div>
       <ol class="toc-chapters" start="11">
         <li><span>十一 服务提供者总览</span><span>第 11 章</span></li>
         <li><span>十二 重点机构逐院拆解</span><span>第 12 章</span></li>
@@ -685,21 +803,21 @@
     </div>
 
     <div class="toc-part">
-      <div class="toc-part-title">参考文献</div>
+      <div class="toc-part-title">{{UI_REFERENCES}}</div>
     </div>
   </div>
 
   <!-- 第一部分分隔页 -->
   <div class="part-divider">
-    <div class="part-label">第一部分</div>
-    <div class="part-title">市场全景</div>
+    <div class="part-label">{{UI_PART1}}</div>
+    <div class="part-title">{{UI_MARKET_LANDSCAPE}}</div>
     <div class="part-desc">覆盖流行病学、医疗体系、治疗格局、竞争格局、KOL 与推广渠道</div>
   </div>
 
   <!-- Section 1: Epidemiology -->
   <section id="s1">
     <div class="section-header">
-      <div class="section-id">第一章 Chapter 1</div>
+      <div class="section-id">{{UI_PART1}} 01</div>
       <h2 class="section-title">一流行病学与疾病负担<br><span style="font-size:14px;font-weight:400;color:#666">Epidemiology and Disease Burden</span></h2>
     </div>
     <div class="chapter-placeholder">
@@ -728,7 +846,7 @@
   <!-- Section 2: Healthcare System -->
   <section id="s2">
     <div class="section-header">
-      <div class="section-id">第二章 Chapter 2</div>
+      <div class="section-id">{{UI_PART1}} 02</div>
       <h2 class="section-title">二医疗体系概览<br><span style="font-size:14px;font-weight:400;color:#666">Healthcare System Overview</span></h2>
     </div>
     <div class="chapter-placeholder">
@@ -740,7 +858,7 @@
   <!-- Section 3: Treatment Landscape -->
   <section id="s3">
     <div class="section-header">
-      <div class="section-id">第三章 Chapter 3</div>
+      <div class="section-id">{{UI_PART1}} 03</div>
       <h2 class="section-title">三当前治疗格局<br><span style="font-size:14px;font-weight:400;color:#666">Current Treatment Landscape</span></h2>
     </div>
     <div class="chapter-placeholder">
@@ -752,7 +870,7 @@
   <!-- Section 4: Competitive Landscape -->
   <section id="s4">
     <div class="section-header">
-      <div class="section-id">第四章 Chapter 4</div>
+      <div class="section-id">{{UI_PART1}} 04</div>
       <h2 class="section-title">四竞争格局与药政状态<br><span style="font-size:14px;font-weight:400;color:#666">Competitive Landscape & Registration</span></h2>
     </div>
     <div class="chapter-placeholder">
@@ -764,7 +882,7 @@
   <!-- Section 5: KOL Identification -->
   <section id="s5">
     <div class="section-header">
-      <div class="section-id">第五章 Chapter 5</div>
+      <div class="section-id">{{UI_PART1}} 05</div>
       <h2 class="section-title">五关键意见领袖识别<br><span style="font-size:14px;font-weight:400;color:#666">KOL Identification</span></h2>
     </div>
     <div class="chapter-placeholder">
@@ -779,7 +897,7 @@
   <!-- Section 6: Promotional Channels -->
   <section id="s6">
     <div class="section-header">
-      <div class="section-id">第六章 Chapter 6</div>
+      <div class="section-id">{{UI_PART1}} 06</div>
       <h2 class="section-title">六推广渠道分析<br><span style="font-size:14px;font-weight:400;color:#666">Promotional Channel Analysis</span></h2>
     </div>
     <div class="chapter-placeholder">
@@ -790,15 +908,15 @@
 
   <!-- Part II Divider -->
   <div class="part-divider">
-    <div class="part-label">第二部分 PART II</div>
-    <div class="part-title">患者分布全渠道</div>
+    <div class="part-label">{{UI_PART2}} PART II</div>
+    <div class="part-title">{{UI_PATIENT_DISTRIBUTION}}</div>
     <div class="part-desc">Patient Distribution — 地理分布、治疗渠道、医保/费用、患者画像、诊断缺口</div>
   </div>
 
   <!-- Section 7: Geographic Distribution -->
   <section id="s7">
     <div class="section-header">
-      <div class="section-id">第七章 Chapter 7</div>
+      <div class="section-id">{{UI_PART2}} 07</div>
       <h2 class="section-title">七患者地理分布与渠道结构<br><span style="font-size:14px;font-weight:400;color:#666">Geographic Distribution & Channel Structure</span></h2>
     </div>
     <div class="chapter-placeholder">
@@ -810,7 +928,7 @@
   <!-- Section 8: Treatment Channels -->
   <section id="s8">
     <div class="section-header">
-      <div class="section-id">第八章 Chapter 8</div>
+      <div class="section-id">{{UI_PART2}} 08</div>
       <h2 class="section-title">八治疗渠道分布<br><span style="font-size:14px;font-weight:400;color:#666">Treatment Channel Distribution</span></h2>
     </div>
     <div class="chapter-placeholder">
@@ -827,7 +945,7 @@
   <!-- Section 9: Reimbursement -->
   <section id="s9">
     <div class="section-header">
-      <div class="section-id">第九章 Chapter 9</div>
+      <div class="section-id">{{UI_PART2}} 09</div>
       <h2 class="section-title">九医保/处方集/费用结构<br><span style="font-size:14px;font-weight:400;color:#666">Reimbursement & Cost Structure</span></h2>
     </div>
     <div class="chapter-placeholder">
@@ -839,7 +957,7 @@
   <!-- Section 10: Patient Demographics -->
   <section id="s10">
     <div class="section-header">
-      <div class="section-id">第十章 Chapter 10</div>
+      <div class="section-id">{{UI_PART2}} 10</div>
       <h2 class="section-title">十患者人口统计学与诊断缺口<br><span style="font-size:14px;font-weight:400;color:#666">Patient Demographics & Diagnosis Gap</span></h2>
     </div>
     <div class="chapter-placeholder">
@@ -850,15 +968,15 @@
 
   <!-- Part III Divider -->
   <div class="part-divider">
-    <div class="part-label">第三部分 PART III</div>
-    <div class="part-title">{{CHANNEL_TYPE}}深度报告</div>
+    <div class="part-label">{{UI_PART3}} PART III</div>
+    <div class="part-title">{{UI_CHANNEL_TYPE}}</div>
     <div class="part-desc">Channel Deep Dive — 机构拆解、KOL分层、费用结构、X+Y+N策略</div>
   </div>
 
   <!-- Section 11: Provider Overview -->
   <section id="s11">
     <div class="section-header">
-      <div class="section-id">第十一章 Chapter 11</div>
+      <div class="section-id">{{UI_PART3}} 11</div>
       <h2 class="section-title">十一服务提供者总览<br><span style="font-size:14px;font-weight:400;color:#666">Provider Landscape Overview</span></h2>
     </div>
     <div class="chapter-placeholder">
@@ -870,7 +988,7 @@
   <!-- Section 12: Top Institutions -->
   <section id="s12">
     <div class="section-header">
-      <div class="section-id">第十二章 Chapter 12</div>
+      <div class="section-id">{{UI_PART3}} 12</div>
       <h2 class="section-title">十二重点机构逐院拆解<br><span style="font-size:14px;font-weight:400;color:#666">Top Institutions Deep Dive</span></h2>
     </div>
     <div class="chapter-placeholder">
@@ -882,7 +1000,7 @@
   <!-- Section 13: KOL Tiering -->
   <section id="s13">
     <div class="section-header">
-      <div class="section-id">第十三章 Chapter 13</div>
+      <div class="section-id">{{UI_PART3}} 13</div>
       <h2 class="section-title">十三KOL分层与学术网络<br><span style="font-size:14px;font-weight:400;color:#666">KOL Tiering & Engagement Map</span></h2>
     </div>
     <div class="chapter-placeholder">
@@ -909,7 +1027,7 @@
   <!-- Section 14: Cost Economics -->
   <section id="s14">
     <div class="section-header">
-      <div class="section-id">第十四章 Chapter 14</div>
+      <div class="section-id">{{UI_PART3}} 14</div>
       <h2 class="section-title">十四费用结构与健康经济学<br><span style="font-size:14px;font-weight:400;color:#666">Cost Structure & Health Economics</span></h2>
     </div>
     <div class="chapter-placeholder">
@@ -921,7 +1039,7 @@
   <!-- Section 15: Coverage Strategy -->
   <section id="s15">
     <div class="section-header">
-      <div class="section-id">第十五章 Chapter 15</div>
+      <div class="section-id">{{UI_PART3}} 15</div>
       <h2 class="section-title">十五X+Y+N覆盖策略与行动方案<br><span style="font-size:14px;font-weight:400;color:#666">X+Y+N Coverage Strategy & Action Plan</span></h2>
     </div>
     <div class="chapter-placeholder">
@@ -937,7 +1055,7 @@
 
   <!-- References -->
   <div class="references">
-    <h2 class="references-title">參考文獻 References</h2>
+    <h2 class="references-title">{{UI_REFERENCES}} References</h2>
     <ol>
       <!-- 至少15条参考文献占位 -->
       <li>[1] <span class="citation">[来源信息将根据实际调研填充]</span></li>

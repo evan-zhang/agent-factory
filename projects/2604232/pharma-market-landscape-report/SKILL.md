@@ -1,6 +1,6 @@
 ---
 name: pharma-market-landscape-report
-version: "v1.0.2"
+version: "v1.0.3"
 skillcode: pharma-market-landscape-report
 description: 药品市场全景报告生成技能。采用固定 15 章、3 部分结构，输出单一 HTML 报告，适用于多治疗领域与多市场的市场洞察、KOL 映射、渠道策略与准入分析。
 tags:
@@ -17,7 +17,7 @@ date: "2026-04-23"
 changelog: |
   - v1.0.0 (2026-04-23): 初始版本，已验证皮肤科/肾脏科/精神科 × 港台新马场景
   - v1.0.1 (2026-04-23): 完成 P0 修复，增强 research schema 字段约束与章节证据完整性要求
-  - v1.0.2 (2026-04-23): 全部文档统一为中文，细化 QA 验证方法，增强 HTML 模板章节数据清单与内容占位说明
+  - v1.0.3 (2026-04-23): 新增多语言（zh-CN/zh-TW/en/ms）i18n 支持，模板 UI 标签全部通过 CSS 变量化，SKILL.md 增加多语言处理规范
 ---
 
 # 药品市场全景报告技能
@@ -39,7 +39,13 @@ changelog: |
 - `product_name`：品牌名 + 通用名
 - `therapy_area`：治疗领域 / 疾病领域
 - `target_market`：目标市场 / 国家 / 地区
-- `language`：输出语言
+- `language`：输出语言，支持以下值：
+  - `zh-CN`：简体中文（默认）
+  - `zh-TW`：繁体中文
+  - `en`：English
+  - `ms`：Bahasa Melayu
+  - 执行时需根据该值设置 HTML `lang` 属性（`<html lang="{{LANG}}">`），模板将自动切换 UI 标签语言
+  - 对于新加坡、马来西亚，默认准备双语版本（`en` 为主版本），除非用户明确要求单语输出
 
 ## 选填输入
 - `local_brand_name`：当地品牌名
@@ -139,6 +145,44 @@ changelog: |
 - `pct-bar`
 - `exec-summary`
 - `part-divider`
+
+## 多语言规范
+模板 `templates/report_template.html` 内置 i18n（国际化和本地化）支持，通过 CSS 变量实现 UI 标签语言切换。
+
+### 支持的语言
+| 语言代码 | 名称 | 说明 |
+|---------|------|------|
+| `zh-CN` | 简体中文 | 默认语言 |
+| `zh-TW` | 繁体中文 | 台湾、香港市场 |
+| `en` | English | 新加坡、马来西亚（默认主版本） |
+| `ms` | Bahasa Melayu | 马来西亚市场 |
+
+### 语言切换机制
+- Phase 5（报告撰写）阶段，执行者需将 `{{LANG}}` 替换为实际语言代码
+- HTML `<html lang="{{LANG}}">` 属性控制 CSS 语言选择器
+- CSS 变量 `--ui-*` 根据 `[lang="{{LANG}}"]` 属性选择器自动切换
+
+### UI 变量清单（模板内使用）
+| 变量名 | 用途 |
+|--------|------|
+| `{{UI_CONFIDENTIAL}}` | 保密标识文字 |
+| `{{UI_EXEC_SUMMARY}}` | 执行摘要标题 |
+| `{{UI_TOC}}` | 目录标题 |
+| `{{UI_PART1/2/3}}` | 第一/二/三部分名称 |
+| `{{UI_MARKET_LANDSCAPE}}` | 市场全景 |
+| `{{UI_PATIENT_DISTRIBUTION}}` | 患者分布 |
+| `{{UI_CHANNEL_TYPE}}` | 渠道深度报告 |
+| `{{UI_REFERENCES}}` | 参考文献 |
+| `{{UI_REPORT_DATE}}` | 报告日期（标签） |
+| `{{UI_PRODUCT_CENTER}}` | 产品中心（标签） |
+| `{{UI_VERSION}}` | 版本（标签） |
+| `{{UI_CORE_QUESTION}}` | 核心问题（标签） |
+| CSS var `--ui-*` | callout 框标签（highlight-box/insight/action-box/tier-1/2/3） |
+
+### 新加坡 / 马来西亚双语策略
+- 默认以 `en` 为主语言，HTML 标签、章节标题均使用英文
+- 若用户要求双语，同时输出 `{{TARGET_MARKET}}_product_market_report_en.html` 和 `{{TARGET_MARKET}}_product_market_report_zh-CN.html`（或 `ms`）
+- 双语版本共享同一套证据文件（JSON），仅 UI 标签语言不同
 
 ## 不同输出模式的行为
 ### `outline-first`
