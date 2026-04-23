@@ -4,6 +4,36 @@
 目标城市：{目标城市}
 年份/时间范围：{年份/时间范围}
 
+=== Phase 0：环境初始化（首次执行必做）===
+
+在开始采集前，必须先确认 MiniMax web_search 环境可用。
+
+请按以下步骤执行：
+
+1. 运行初始化脚本：
+   bash projects/2604233/scripts/setup-minimax.sh
+
+2. 如果脚本提示需要 API Key，暂停并向用户请求：
+   "需要 MiniMax Token Plan API Key 才能使用联网搜索。
+    获取方式：访问 https://platform.minimax.io/subscribe/token-plan 订阅 Token Plan，
+    在控制台获取 API Key（格式：sk-cp-j-xxxx...）
+    请发送你的 API Key："
+
+3. 用户提供 Key 后，将 Key 作为参数重新运行：
+   bash projects/2604233/scripts/setup-minimax.sh --key <用户提供的Key>
+
+4. 脚本会自动完成：
+   - 检查/安装 uv（uvx）
+   - 检查/安装 mcporter
+   - 写入 MiniMax MCP 配置到 ~/.mcporter/mcporter.json
+   - 验证 web_search 可用
+
+5. 初始化完成后，继续执行下面的采集流程。
+
+如果环境已初始化过（mcporter 中已有 minimax 配置且验证通过），跳过此步骤。
+
+=== Phase 1：政策采集 ===
+
 请依次执行以下 7 个政策采集 skills，不要并行执行，不要合并不同 skill 的输出结果，不要跨模块读取或修改其他模块目录。
 
 全局执行要求：
