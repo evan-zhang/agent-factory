@@ -1,83 +1,106 @@
-# Workflow
+# 工作流
 
-## Phase 1 — Intake and framing
-Capture the following:
-- Product name
-- Generic name
-- Local brand name if relevant
-- Therapy area / disease area
-- Target market
-- Language
-- Assessment mode
-- Any known company context
+## Phase 1 — 信息采集与任务定标
+收集并标准化以下信息：
+- 产品名称、通用名、当地品牌名
+- 治疗领域 / 疾病领域
+- 目标市场
+- 输出语言
+- `assessment_mode`
+- `license_holder`
+- 用户指定的来源偏好、禁区与重点问题
 
-Normalize the market naming convention and establish terminology style for the selected region.
+执行要求：
+- 建立市场命名规范、机构命名规范、币种与时间口径。
+- 明确专业术语是否保留英文原文，例如 KOL、JAK、ESRD、CKD、HD、PD、SHS、HA、NSC、TFDA、NHI。
+- 若缺少核心输入，停止进入下一阶段并请求补充。
 
-## Phase 2 — Research planning
-Create exactly 3 parallel workstreams.
+## Phase 2 — 调研规划
+固定拆分为 3 条调研轨道。
 
-### Workstream A — Market Landscape
-Cover:
-- Epidemiology
-- Healthcare system and specialty structure
-- Current treatment guidelines and treatment flow
-- Competitive landscape and registration
-- KOL and society landscape
-- Promotion channels
+### 轨道 A：市场全景
+覆盖：
+- 流行病学
+- 医疗体系与专科结构
+- 诊疗路径与治疗格局
+- 竞争格局与注册状态
+- KOL 与学会生态
+- 推广渠道
 
-### Workstream B — Patient Distribution
-Cover:
-- Geographic concentration
-- Diagnosis and treatment settings
-- Referral pathways
-- Payer / reimbursement / formulary rules
-- Patient demographics and diagnosis gap
+### 轨道 B：患者分布
+覆盖：
+- 区域集中度
+- 诊断与治疗场景
+- 转诊路径
+- 付费方 / 医保 / 处方集规则
+- 患者人口统计与诊断缺口
 
-### Workstream C — Channel Deep Dive
-Cover:
-- Major providers and networks
-- Top institutions
-- KOL tiering
-- Cost and economics
-- Recommended X+Y+N strategy
+### 轨道 C：渠道深挖
+覆盖：
+- 主要服务提供者与网络
+- 重点机构
+- KOL 分层
+- 费用结构与健康经济学
+- X+Y+N 覆盖策略
 
-## Phase 3 — Evidence capture
-Do not draft final prose yet.
-For each chapter, collect evidence into the research schema.
-Every chapter should aim to contain:
-- 3 or more sourced findings
-- 1 or more structured tables
-- 1 draft callout insight
-- chapter references
+执行要求：
+- 每条轨道都要落到具体章节与具体数据源。
+- 为每章预设最少 1 张表格、1 个 callout box、1 组引用。
 
-Any unfound data must be marked `[未找到]`.
+## Phase 3 — 证据收集
+此阶段只收集证据，不撰写最终成文。
 
-## Phase 4 — Assembly planning
-Before HTML drafting, verify:
-- all 15 chapters have evidence
-- major gaps are explicitly marked
-- references are deduplicated
-- X+Y+N strategy is grounded in actual institutions and KOLs identified earlier
+每章证据至少包含：
+- 3 条以上有来源的关键发现
+- 1 张以上结构化表格
+- 1 条可落地的 callout 候选
+- 本章参考文献
+- 数据缺口记录
+- 如适用，KOL 信息与来源
 
-## Phase 5 — Report drafting
-Draft in this sequence:
-1. Cover
-2. Executive summary
-3. Table of contents
-4. Part I chapters
-5. Part II chapters
-6. Part III chapters
-7. References
+执行要求：
+- 所有未找到的数据必须写为 `[未找到]`。
+- 同一数字如存在多来源冲突，要记录口径差异与优先采用原因。
+- 优先保留原始机构名称、发布时间、URL 与访问日期。
 
-Use the report template file.
-Do not improvise HTML structure outside the approved skeleton unless needed for data display.
+## Phase 4 — 组装规划
+在进入 HTML 撰写前完成装配检查。
 
-## Phase 6 — QA validation
-Run through the checklist in `checklists/qa_checklist.md`.
-If any critical item fails, revise before publish.
+必须验证：
+- 15 章是否全部有证据
+- 章节之间是否存在口径冲突
+- 参考文献是否已去重
+- X+Y+N 策略是否建立在真实机构与真实 KOL 发现之上
+- 数据缺口是否已显式暴露而非被正文掩盖
 
-## Phase 7 — Publish
-File naming rule:
+## Phase 5 — 报告撰写
+严格按以下顺序组装：
+1. 封面
+2. 执行摘要
+3. 目录
+4. 第一部分第 1–6 章
+5. 第二部分第 7–10 章
+6. 第三部分第 11–15 章
+7. 参考文献
+
+执行要求：
+- 使用 `templates/report_template.html` 作为唯一结构骨架。
+- 不得跳章撰写，不得遗漏章节。
+- 每章必须至少包含表格、引用、callout box，以及如适用的 KOL 信息。
+
+## Phase 6 — QA 验证
+逐项执行 `checklists/qa_checklist.md`。
+
+执行要求：
+- 结构、内容、格式、最低门槛四类检查都要覆盖。
+- 任何关键项失败都必须回到撰写阶段修复。
+- QA 结果需记录 PASS / FAIL、问题描述、修复动作、复检结论。
+
+## Phase 7 — 发布
+命名规则：
 `{market_code}_{product_code}_market_report_{lang}.html`
 
-If no publish tool exists, return the HTML file as the final artifact.
+执行要求：
+- 若存在发布目录，则复制最终文件至发布目录。
+- 若不存在发布工具，则返回 HTML 文件作为最终交付物。
+- 发布前再次确认版本号为 `v1.0.2`，并保留 QA 报告与证据文件。

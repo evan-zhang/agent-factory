@@ -1,32 +1,55 @@
-# QA Checklist
+# QA 检查清单
 
-## Structural checks
-- [ ] Cover includes confidentiality label, product, market, subtitle, and metadata
-- [ ] Executive summary exists and contains disease burden, treatment landscape, and strategy sections
-- [ ] Table of contents lists all 15 chapters plus references
-- [ ] 3 part dividers exist
-- [ ] Chapters 1–15 all exist
-- [ ] Section ids `s1` to `s15` are present
-- [ ] Reference section exists
+## 结构检查
+- [ ] 封面包含保密标识、产品名、市场名、副标题与元信息
+  验证方法：打开最终 HTML，检查封面首屏是否同时显示保密标签、`{{PRODUCT_NAME}}` 对应内容、目标市场、报告副标题、报告日期、产品中心与版本信息。
+- [ ] 执行摘要存在，且包含疾病负担、治疗格局、渠道洞察与行动建议
+  验证方法：定位 `id="s0"` 的执行摘要区，确认至少覆盖“疾病负担/市场机会、治疗格局、渠道或准入洞察、行动建议”四类内容。
+- [ ] 目录列出全部 15 章及参考文献
+  验证方法：检查目录区域是否完整列出第 1 章至第 15 章，并单独列出参考文献入口。
+- [ ] 3 个部分分隔页均存在
+  验证方法：搜索 `part-divider`，确认第一部分、第二部分、第三部分各出现 1 次。
+- [ ] 第 1–15 章全部存在
+  验证方法：搜索章节标题或 `id="s1"` 至 `id="s15"`，确认无缺章、无重复章。
+- [ ] `s1` 到 `s15` 的 section id 完整存在
+  验证方法：用全文搜索或 DOM 检查工具确认 `section id="s1"` 至 `section id="s15"` 连续存在。
+- [ ] 参考文献区存在
+  验证方法：搜索“参考文献”标题或 `.references` 容器，确认列表可见且非空。
 
-## Content checks
-- [ ] Every chapter has at least one table
-- [ ] Every chapter has at least one callout box
-- [ ] All major quantitative claims have citations
-- [ ] Pricing / access / regulatory fields are sourced
-- [ ] KOL names, titles, and institutions are sourced
-- [ ] Missing data is marked `[未找到]`
-- [ ] X+Y+N strategy uses named institutions and named KOLs where available
-- [ ] Chapter 15 includes a 3-phase action plan
+## 内容检查
+- [ ] 每章至少有 1 张表格
+  验证方法：逐章检查是否存在 `<table>`，并确认表格内容不是空壳占位符。
+- [ ] 每章至少有 1 个 callout box
+  验证方法：逐章检查是否使用 `highlight-box`、`insight`、`action-box`、`tier-1/2/3` 或等效章节 callout 容器。
+- [ ] 所有核心定量结论均带引用
+  验证方法：抽查患者数、患病率、市场规模、价格、覆盖率、机构数量等数字，确认同段或同句附近存在引用标记。
+- [ ] 定价、准入、注册、医保字段均已标注来源
+  验证方法：重点审查第 4、9、14、15 章，确认每项定价、注册状态、医保或 NHI / TFDA 等信息后均有来源。
+- [ ] KOL 姓名、职称、机构信息均带来源
+  验证方法：检查第 5、12、13、15 章中的 KOL 条目，确认姓名、机构、职称与影响力判断均可追溯。
+- [ ] 未找到的数据统一标记为 `[未找到]`
+  验证方法：搜索明显缺口字段，确认没有“待补充”“TBD”“N/A”等混用写法，统一使用 `[未找到]`。
+- [ ] X+Y+N 策略使用已命名机构与已命名 KOL（如可得）
+  验证方法：检查第 15 章，确认 X、Y、N 的建议对象能回链到前文章节已识别的机构、网络或 KOL。
+- [ ] 第 15 章包含 3 阶段行动计划
+  验证方法：检查第 15 章是否明确区分短期、中期、长期，或 Phase 1 / 2 / 3 三段执行动作。
 
-## Formatting checks
-- [ ] CSS classes are used consistently
-- [ ] HTML tags are closed correctly
-- [ ] Tables render correctly
-- [ ] Reference anchors match inline reference numbers
-- [ ] URLs are complete and valid-looking
+## 格式检查
+- [ ] CSS 类使用一致
+  验证方法：抽查 `highlight-box`、`insight`、`action-box`、`tier-1/2/3`、`patient-flow`、`num-highlight`、`pct-bar`、`exec-summary`、`part-divider` 是否按模板定义使用。
+- [ ] HTML 标签闭合正确
+  验证方法：使用浏览器开发者工具或 HTML 校验工具检查 DOM 结构，确认无明显标签错位或闭合错误。
+- [ ] 表格渲染正常
+  验证方法：在浏览器打开 HTML，检查表头、列宽、换行、边框与跨页打印表现是否可读。
+- [ ] 引用锚点与正文引用编号匹配
+  验证方法：抽查正文中的引用编号与参考文献列表编号，确认不存在断链、跳号或重复编号。
+- [ ] URL 完整且形式有效
+  验证方法：抽查参考文献 URL，确认以 `http://` 或 `https://` 开头，且无明显截断。
 
-## Minimum thresholds
-- [ ] At least 15 references
-- [ ] At least 15 tables
-- [ ] At least 10 callout boxes
+## 最低门槛
+- [ ] 参考文献不少于 15 条
+  验证方法：统计参考文献区 `<li>` 数量，确认不少于 15 条。
+- [ ] 表格不少于 15 张
+  验证方法：统计全文 `<table>` 数量，确认不少于 15 张。
+- [ ] callout box 不少于 10 个
+  验证方法：统计 `highlight-box`、`insight`、`action-box`、`tier-1/2/3` 等 callout 容器总数，确认不少于 10 个。

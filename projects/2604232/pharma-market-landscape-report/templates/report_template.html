@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="{{LANG}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{PRODUCT_NAME}} — {{TARGET_MARKET}} {{THERAPY_AREA}} 市场全景报告</title>
+  <style>
+    /* ============================================
+       药品市场全景报告模板
+       版本：v1.0.2
+       生成技能：pharma-market-landscape-report
+       ============================================ */
+
+    /* 基础重置 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #1a1a1a;
+      background: #ffffff;
+    }
+
+    /* 文档页眉（保密标识） */
+    .doc-header {
+      background: #c8102e;
+      color: #ffffff;
+      padding: 8px 24px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .doc-header .product-info {
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    /* 封面 */
+    .cover-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #ffffff;
+      text-align: center;
+      padding: 60px 40px;
+    }
+
+    .cover-page .confidential-badge {
+      border: 2px solid #c8102e;
+      color: #c8102e;
+      padding: 6px 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 60px;
+      background: transparent;
+    }
+
+    .cover-page .main-title {
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 20px;
+      max-width: 800px;
+    }
+
+    .cover-page .product-name {
+      font-size: 28px;
+      font-weight: 600;
+      color: #4da6ff;
+      margin-bottom: 40px;
+    }
+
+    .cover-page .subtitle {
+      font-size: 18px;
+      color: #cccccc;
+      margin-bottom: 60px;
+      max-width: 700px;
+    }
+
+    .cover-page .meta-block {
+      background: rgba(255,255,255,0.1);
+      padding: 30px 50px;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+
+    .cover-page .meta-block .meta-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+      margin: 8px 0;
+      font-size: 13px;
+    }
+
+    .cover-page .meta-block .meta-label {
+      color: #999999;
+    }
+
+    /* 执行摘要 */
+    .exec-summary {
+      background: #f8f9fa;
+      border-left: 4px solid #c8102e;
+      padding: 24px 28px;
+      margin: 30px 0;
+    }
+
+    .exec-summary .exec-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #c8102e;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .exec-summary .exec-question {
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #1a1a1a;
+    }
+
+    .exec-summary p {
+      margin-bottom: 10px;
+      text-align: justify;
+    }
+
+    /* 目录 */
+    .toc-page {
+      padding: 40px 60px;
+      page-break-after: always;
+    }
+
+    .toc-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 30px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #c8102e;
+    }
+
+    .toc-part {
+      margin: 24px 0;
+    }
+
+    .toc-part-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f3460;
+      margin-bottom: 12px;
+      padding: 8px 16px;
+      background: #f0f4f8;
+      border-left: 3px solid #0f3460;
+    }
+
+    .toc-chapters {
+      list-style: none;
+      padding-left: 20px;
+    }
+
+    .toc-chapters li {
+      padding: 6px 0;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed #e0e0e0;
+    }
+
+    .toc-chapters li:last-child {
+      border-bottom: none;
+    }
+
+    /* 部分分隔页 */
+    .part-divider {
+      page-break-before: always;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+      color: #ffffff;
+      text-align: center;
+      padding: 60px;
+    }
+
+    .part-divider .part-label {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #4da6ff;
+      margin-bottom: 20px;
+    }
+
+    .part-divider .part-number {
+      font-size: 80px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.15);
+      position: absolute;
+    }
+
+    .part-divider .part-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .part-divider .part-desc {
+      font-size: 16px;
+      color: #cccccc;
+      max-width: 600px;
+    }
+
+    /* 章节样式 */
+    section {
+      padding: 30px 50px;
+      page-break-inside: avoid;
+    }
+
+    .section-header {
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .section-id {
+      font-size: 11px;
+      font-weight: 700;
+      color: #999999;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-top: 6px;
+    }
+
+    /* 强调框 */
+    .highlight-box {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-left: 4px solid #ffc107;
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+
+    .highlight-box::before {
+      content: "⚠ 关键发现";
+      font-weight: 700;
+      color: #856404;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    /* 洞察框 */
+    .insight {
+      background: #e8f4f8;
+      border: 1px solid #17a2b8;
+      border-left: 4px solid #17a2b8;
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+
+    .insight::before {
+      content: "💡 市场洞察";
+      font-weight: 700;
+      color: #0c5460;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    /* 行动建议框 */
+    .action-box {
+      background: #d4edda;
+      border: 1px solid #28a745;
+      border-left: 4px solid #28a745;
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+
+    .action-box::before {
+      content: "🎯 行动建议";
+      font-weight: 700;
+      color: #155724;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    /* KOL 分层框 */
+    .tier-1, .tier-2, .tier-3 {
+      padding: 14px 18px;
+      margin: 14px 0;
+      border-radius: 4px;
+      border-left: 4px solid;
+    }
+
+    .tier-1 {
+      background: #f8d7da;
+      border-color: #c8102e;
+    }
+
+    .tier-1::before {
+      content: "🔴 TIER-1 KOL — 核心意见领袖";
+      font-weight: 700;
+      color: #c8102e;
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .tier-2 {
+      background: #fff3cd;
+      border-color: #ffc107;
+    }
+
+    .tier-2::before {
+      content: "🟡 TIER-2 KOL — 重要意见领袖";
+      font-weight: 700;
+      color: #856404;
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .tier-3 {
+      background: #d1ecf1;
+      border-color: #17a2b8;
+    }
+
+    .tier-3::before {
+      content: "🔵 TIER-3 KOL — 潜力意见领袖";
+      font-weight: 700;
+      color: #0c5460;
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    /* 患者流向图 */
+    .patient-flow {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+
+    .patient-flow-title {
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 14px;
+      color: #1a1a1a;
+    }
+
+    .patient-flow-step {
+      display: inline-block;
+      padding: 8px 16px;
+      background: #ffffff;
+      border: 2px solid #0f3460;
+      border-radius: 4px;
+      margin: 4px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .patient-flow-arrow {
+      display: inline-block;
+      color: #0f3460;
+      font-size: 18px;
+      vertical-align: middle;
+      margin: 0 4px;
+    }
+
+    /* 数字强调 */
+    .num-highlight {
+      font-size: 28px;
+      font-weight: 700;
+      color: #c8102e;
+    }
+
+    /* 百分比条 */
+    .pct-bar {
+      background: #e9ecef;
+      height: 24px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 10px 0;
+      position: relative;
+    }
+
+    .pct-bar .pct-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0f3460 0%, #4da6ff 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 10px;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* 表格 */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 13px;
+    }
+
+    th {
+      background: #0f3460;
+      color: #ffffff;
+      padding: 12px 14px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+
+    tr:hover {
+      background: #e8f4f8;
+    }
+
+    /* 行内引用 */
+    .citation {
+      font-size: 11px;
+      color: #666666;
+      vertical-align: super;
+    }
+
+    .citation a {
+      color: #0f3460;
+      text-decoration: none;
+    }
+
+    /* 参考文献区 */
+    .references {
+      padding: 40px 50px;
+      background: #f8f9fa;
+      page-break-before: always;
+    }
+
+    .references-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #c8102e;
+    }
+
+    .references ol {
+      padding-left: 24px;
+    }
+
+    .references li {
+      margin-bottom: 10px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #333333;
+    }
+
+    .references li a {
+      color: #0f3460;
+      word-break: break-all;
+    }
+
+    /* 打印样式 */
+    @media print {
+      .doc-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+      }
+
+      section {
+        padding: 20px 30px;
+      }
+
+      .part-divider {
+        min-height: auto;
+        padding: 40px;
+      }
+
+      .cover-page {
+        min-height: auto;
+        padding: 40px;
+      }
+    }
+
+    /* 核心启示框 */
+    .so-what {
+      background: #f0f4f8;
+      border: 2px solid #0f3460;
+      border-left: 6px solid #0f3460;
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+
+    .so-what::before {
+      content: "💡 核心启示";
+      font-weight: 700;
+      color: #0f3460;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    /* 渠道信息框 */
+    .channel-box {
+      background: #ffffff;
+      border: 1px solid #dee2e6;
+      padding: 16px;
+      margin: 12px 0;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .channel-name {
+      font-weight: 700;
+      color: #0f3460;
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .channel-pct {
+      font-size: 24px;
+      font-weight: 700;
+      color: #c8102e;
+    }
+
+    /* 章节数据清单占位 */
+    .chapter-placeholder {
+      background: #f8f9fa;
+      border: 2px dashed #cccccc;
+      padding: 40px;
+      text-align: center;
+      color: #999999;
+      margin: 20px 0;
+    }
+
+    .chapter-placeholder::before {
+      content: "📋 本章数据清单";
+      font-size: 16px;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    /* 页脚 */
+    .page-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #f8f9fa;
+      border-top: 1px solid #e0e0e0;
+      padding: 8px 24px;
+      font-size: 10px;
+      color: #999999;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    @media print {
+      .page-footer {
+        position: fixed;
+        bottom: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 文档页眉 -->
+  <div class="doc-header">
+    <span>机密文件 — 市场洞察</span>
+    <span class="product-info">{{PRODUCT_NAME}} | {{TARGET_MARKET}} | {{EXECUTION_DATE}}</span>
+  </div>
+
+  <!-- 封面 -->
+  <div class="cover-page">
+    <div class="confidential-badge">机密文件 — 患者与市场洞察</div>
+    <h1 class="main-title">{{PRODUCT_NAME}}</h1>
+    <div class="product-name">{{LOCAL_BRAND_NAME}}</div>
+    <p class="subtitle">{{TARGET_MARKET}} {{THERAPY_AREA}} 市场推广全景报告<br>
+    融合市场全景分析、患者全渠道分布、{{CHANNEL_TYPE}}深度拆解的三合一战略报告 —— 基于麦肯锡结构化框架</p>
+    <div class="meta-block">
+      <div class="meta-row">
+        <span class="meta-label">报告日期</span>
+        <span>{{EXECUTION_DATE}}</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">产品中心</span>
+        <span>{{LICENSE_HOLDER}}</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">版本</span>
+        <span>{{REPORT_VERSION}}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 执行摘要 -->
+  <section id="s0" class="exec-summary">
+    <div class="exec-title">执行摘要</div>
+    <p class="exec-question">核心问题：{{CORE_QUESTION}}</p>
+    <p>{{EXEC_SUMMARY_CONTENT}}</p>
+    <div class="chapter-placeholder">
+      <strong>本章数据清单</strong><br>
+      1. 核心结论：疾病负担、治疗格局、竞争态势、准入环境。<br>
+      2. 商业判断：产品机会、主要风险、渠道洞察、X+Y+N 策略摘要。<br>
+      3. 关键量化数据：患者规模、渠道占比、价格或报销、重点机构 / KOL 数量。<br>
+      4. 引用要求：摘要中的核心数字与判断需可回溯到正文章节或参考文献。
+    </div>
+  </section>
+
+  <!-- 目录 -->
+  <div class="toc-page">
+    <h2 class="toc-title">目录</h2>
+
+    <div class="toc-part">
+      <div class="toc-part-title">第一部分：市场全景</div>
+      <ol class="toc-chapters">
+        <li><span>一 流行病学与疾病负担</span><span>第 1 章</span></li>
+        <li><span>二 医疗体系概览</span><span>第 2 章</span></li>
+        <li><span>三 当前治疗格局</span><span>第 3 章</span></li>
+        <li><span>四 竞争格局与药政状态</span><span>第 4 章</span></li>
+        <li><span>五 KOL 识别</span><span>第 5 章</span></li>
+        <li><span>六 推广渠道分析</span><span>第 6 章</span></li>
+      </ol>
+    </div>
+
+    <div class="toc-part">
+      <div class="toc-part-title">第二部分：患者分布</div>
+      <ol class="toc-chapters" start="7">
+        <li><span>七 患者地理分布与渠道结构</span><span>第 7 章</span></li>
+        <li><span>八 治疗渠道分布</span><span>第 8 章</span></li>
+        <li><span>九 医保 / 处方集 / 费用结构</span><span>第 9 章</span></li>
+        <li><span>十 患者人口统计学与诊断缺口</span><span>第 10 章</span></li>
+      </ol>
+    </div>
+
+    <div class="toc-part">
+      <div class="toc-part-title">第三部分：{{CHANNEL_TYPE}} 深度报告</div>
+      <ol class="toc-chapters" start="11">
+        <li><span>十一 服务提供者总览</span><span>第 11 章</span></li>
+        <li><span>十二 重点机构逐院拆解</span><span>第 12 章</span></li>
+        <li><span>十三 KOL 分层与学术网络</span><span>第 13 章</span></li>
+        <li><span>十四 费用结构与健康经济学</span><span>第 14 章</span></li>
+        <li><span>十五 X+Y+N 覆盖策略与行动方案</span><span>第 15 章</span></li>
+      </ol>
+    </div>
+
+    <div class="toc-part">
+      <div class="toc-part-title">参考文献</div>
+    </div>
+  </div>
+
+  <!-- 第一部分分隔页 -->
+  <div class="part-divider">
+    <div class="part-label">第一部分</div>
+    <div class="part-title">市场全景</div>
+    <div class="part-desc">覆盖流行病学、医疗体系、治疗格局、竞争格局、KOL 与推广渠道</div>
+  </div>
+
+  <!-- Section 1: Epidemiology -->
+  <section id="s1">
+    <div class="section-header">
+      <div class="section-id">第一章 Chapter 1</div>
+      <h2 class="section-title">一流行病学与疾病负担<br><span style="font-size:14px;font-weight:400;color:#666">Epidemiology and Disease Burden</span></h2>
+    </div>
+    <div class="chapter-placeholder">
+      流行病学数据将根据目标市场实际情况填充。<br>
+      包含：患病率、发病率、患者总数、风险因素、种族分布、年龄分布、性别分布。
+    </div>
+    <!-- Example table structure -->
+    <table>
+      <thead>
+        <tr>
+          <th>指标</th>
+          <th>数据</th>
+          <th>来源</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>[指标名称]</td>
+          <td class="num-highlight">[数据]</td>
+          <td>[来源]</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Section 2: Healthcare System -->
+  <section id="s2">
+    <div class="section-header">
+      <div class="section-id">第二章 Chapter 2</div>
+      <h2 class="section-title">二医疗体系概览<br><span style="font-size:14px;font-weight:400;color:#666">Healthcare System Overview</span></h2>
+    </div>
+    <div class="chapter-placeholder">
+      医疗体系分析将根据目标市场实际情况填充。<br>
+      包含：公立医疗体系、私立医疗体系、专科结构、转诊路径。
+    </div>
+  </section>
+
+  <!-- Section 3: Treatment Landscape -->
+  <section id="s3">
+    <div class="section-header">
+      <div class="section-id">第三章 Chapter 3</div>
+      <h2 class="section-title">三当前治疗格局<br><span style="font-size:14px;font-weight:400;color:#666">Current Treatment Landscape</span></h2>
+    </div>
+    <div class="chapter-placeholder">
+      治疗格局分析将根据调研证据填充。<br>
+      包含：现有治疗方案、治疗路径、未满足需求。
+    </div>
+  </section>
+
+  <!-- Section 4: Competitive Landscape -->
+  <section id="s4">
+    <div class="section-header">
+      <div class="section-id">第四章 Chapter 4</div>
+      <h2 class="section-title">四竞争格局与药政状态<br><span style="font-size:14px;font-weight:400;color:#666">Competitive Landscape & Registration</span></h2>
+    </div>
+    <div class="chapter-placeholder">
+      竞争格局分析将填充。<br>
+      包含：竞品列表、市场份额、注册状态、价格信息。
+    </div>
+  </section>
+
+  <!-- Section 5: KOL Identification -->
+  <section id="s5">
+    <div class="section-header">
+      <div class="section-id">第五章 Chapter 5</div>
+      <h2 class="section-title">五关键意见领袖识别<br><span style="font-size:14px;font-weight:400;color:#666">KOL Identification</span></h2>
+    </div>
+    <div class="chapter-placeholder">
+      KOL列表将根据实际调研填充。<br>
+      包含：KOL姓名、所属机构、学术领域、影响力评估。
+    </div>
+    <div class="tier-1">
+      <strong>示例格式：</strong> 机构 | 姓名 | 职称 | 学术专长 | 影响力评分
+    </div>
+  </section>
+
+  <!-- Section 6: Promotional Channels -->
+  <section id="s6">
+    <div class="section-header">
+      <div class="section-id">第六章 Chapter 6</div>
+      <h2 class="section-title">六推广渠道分析<br><span style="font-size:14px;font-weight:400;color:#666">Promotional Channel Analysis</span></h2>
+    </div>
+    <div class="chapter-placeholder">
+      推广渠道分析将填充。<br>
+      包含：学术会议、患者组织、数字营销。
+    </div>
+  </section>
+
+  <!-- Part II Divider -->
+  <div class="part-divider">
+    <div class="part-label">第二部分 PART II</div>
+    <div class="part-title">患者分布全渠道</div>
+    <div class="part-desc">Patient Distribution — 地理分布、治疗渠道、医保/费用、患者画像、诊断缺口</div>
+  </div>
+
+  <!-- Section 7: Geographic Distribution -->
+  <section id="s7">
+    <div class="section-header">
+      <div class="section-id">第七章 Chapter 7</div>
+      <h2 class="section-title">七患者地理分布与渠道结构<br><span style="font-size:14px;font-weight:400;color:#666">Geographic Distribution & Channel Structure</span></h2>
+    </div>
+    <div class="chapter-placeholder">
+      患者地理分布分析将填充。<br>
+      包含：区域分布、城乡分布、主要都市圈。
+    </div>
+  </section>
+
+  <!-- Section 8: Treatment Channels -->
+  <section id="s8">
+    <div class="section-header">
+      <div class="section-id">第八章 Chapter 8</div>
+      <h2 class="section-title">八治疗渠道分布<br><span style="font-size:14px;font-weight:400;color:#666">Treatment Channel Distribution</span></h2>
+    </div>
+    <div class="chapter-placeholder">
+      治疗渠道分析将填充。<br>
+      包含：各渠道患者数量及占比。
+    </div>
+    <div class="channel-box">
+      <div class="channel-name">[渠道名称]</div>
+      <div class="channel-pct">[XX]</div>
+      <p>推算占比：约 [XX-XX]% 的在治患者（ ~[X,XXX-X,XXX] 人）</p>
+    </div>
+  </section>
+
+  <!-- Section 9: Reimbursement -->
+  <section id="s9">
+    <div class="section-header">
+      <div class="section-id">第九章 Chapter 9</div>
+      <h2 class="section-title">九医保/处方集/费用结构<br><span style="font-size:14px;font-weight:400;color:#666">Reimbursement & Cost Structure</span></h2>
+    </div>
+    <div class="chapter-placeholder">
+      医保与费用分析将填充。<br>
+      包含：医保覆盖、处方集状态、自费市场、价格区间。
+    </div>
+  </section>
+
+  <!-- Section 10: Patient Demographics -->
+  <section id="s10">
+    <div class="section-header">
+      <div class="section-id">第十章 Chapter 10</div>
+      <h2 class="section-title">十患者人口统计学与诊断缺口<br><span style="font-size:14px;font-weight:400;color:#666">Patient Demographics & Diagnosis Gap</span></h2>
+    </div>
+    <div class="chapter-placeholder">
+      患者画像与诊断缺口分析将填充。<br>
+      包含：年龄分布、性别分布、诊断延迟、未诊患者比例。
+    </div>
+  </section>
+
+  <!-- Part III Divider -->
+  <div class="part-divider">
+    <div class="part-label">第三部分 PART III</div>
+    <div class="part-title">{{CHANNEL_TYPE}}深度报告</div>
+    <div class="part-desc">Channel Deep Dive — 机构拆解、KOL分层、费用结构、X+Y+N策略</div>
+  </div>
+
+  <!-- Section 11: Provider Overview -->
+  <section id="s11">
+    <div class="section-header">
+      <div class="section-id">第十一章 Chapter 11</div>
+      <h2 class="section-title">十一服务提供者总览<br><span style="font-size:14px;font-weight:400;color:#666">Provider Landscape Overview</span></h2>
+    </div>
+    <div class="chapter-placeholder">
+      服务提供者总览将填充。<br>
+      包含：机构数量、类型分布、地域分布。
+    </div>
+  </section>
+
+  <!-- Section 12: Top Institutions -->
+  <section id="s12">
+    <div class="section-header">
+      <div class="section-id">第十二章 Chapter 12</div>
+      <h2 class="section-title">十二重点机构逐院拆解<br><span style="font-size:14px;font-weight:400;color:#666">Top Institutions Deep Dive</span></h2>
+    </div>
+    <div class="chapter-placeholder">
+      重点机构逐院拆解将填充。<br>
+      包含：机构名称、定位、治疗能力、联系方式。
+    </div>
+  </section>
+
+  <!-- Section 13: KOL Tiering -->
+  <section id="s13">
+    <div class="section-header">
+      <div class="section-id">第十三章 Chapter 13</div>
+      <h2 class="section-title">十三KOL分层与学术网络<br><span style="font-size:14px;font-weight:400;color:#666">KOL Tiering & Engagement Map</span></h2>
+    </div>
+    <div class="chapter-placeholder">
+      KOL分层与管理策略将填充。<br>
+      包含：Tiers定义、覆盖优先级、学术网络。
+    </div>
+    <div class="tier-1">
+      <strong>TIER-1 核心KOL</strong><br>
+      覆盖优先级：[最高]<br>
+      建议互动频率：每月至少1次
+    </div>
+    <div class="tier-2">
+      <strong>TIER-2 重要KOL</strong><br>
+      覆盖优先级：[高]<br>
+      建议互动频率：每季度至少1次
+    </div>
+    <div class="tier-3">
+      <strong>TIER-3 潜力KOL</strong><br>
+      覆盖优先级：[中]<br>
+      建议互动频率：按需互动
+    </div>
+  </section>
+
+  <!-- Section 14: Cost Economics -->
+  <section id="s14">
+    <div class="section-header">
+      <div class="section-id">第十四章 Chapter 14</div>
+      <h2 class="section-title">十四费用结构与健康经济学<br><span style="font-size:14px;font-weight:400;color:#666">Cost Structure & Health Economics</span></h2>
+    </div>
+    <div class="chapter-placeholder">
+      费用结构与健康经济学分析将填充。<br>
+      包含：治疗费用、增量成本效果、产品定价策略。
+    </div>
+  </section>
+
+  <!-- Section 15: Coverage Strategy -->
+  <section id="s15">
+    <div class="section-header">
+      <div class="section-id">第十五章 Chapter 15</div>
+      <h2 class="section-title">十五X+Y+N覆盖策略与行动方案<br><span style="font-size:14px;font-weight:400;color:#666">X+Y+N Coverage Strategy & Action Plan</span></h2>
+    </div>
+    <div class="chapter-placeholder">
+      X+Y+N覆盖策略与分阶段行动方案将填充。
+    </div>
+    <div class="action-box">
+      <strong>建议采用「X+Y+N」覆盖策略：</strong><br>
+      X = [X]家重点机构<br>
+      Y = [Y]位核心KOL<br>
+      N = N个连锁渠道合作网络
+    </div>
+  </section>
+
+  <!-- References -->
+  <div class="references">
+    <h2 class="references-title">參考文獻 References</h2>
+    <ol>
+      <!-- 至少15条参考文献占位 -->
+      <li>[1] <span class="citation">[来源信息将根据实际调研填充]</span></li>
+      <li>[2] <span class="citation">[来源信息将根据实际调研填充]</span></li>
+      <li>[3] <span class="citation">[来源信息将根据实际调研填充]</span></li>
+      <li>[4] <span class="citation">[来源信息将根据实际调研填充]</span></li>
+      <li>[5] <span class="citation">[来源信息将根据实际调研填充]</span></li>
+      <li>[6] <span class="citation">[来源信息将根据实际调研填充]</span></li>
+      <li>[7] <span class="citation">[来源信息将根据实际调研填充]</span></li>
+      <li>[8] <span class="citation">[来源信息将根据实际调研填充]</span></li>
+      <li>[9] <span class="citation">[来源信息将根据实际调研填充]</span></li>
+      <li>[10] <span class="citation">[来源信息将根据实际调研填充]</span></li>
+      <li>[11] <span class="citation">[来源信息将根据实际调研填充]</span></li>
+      <li>[12] <span class="citation">[来源信息将根据实际调研填充]</span></li>
+      <li>[13] <span class="citation">[来源信息将根据实际调研填充]</span></li>
+      <li>[14] <span class="citation">[来源信息将根据实际调研填充]</span></li>
+      <li>[15] <span class="citation">[来源信息将根据实际调研填充]</span></li>
+    </ol>
+  </div>
+
+  <!-- Page Footer -->
+  <div class="page-footer">
+    <span>{{PRODUCT_NAME}} | {{TARGET_MARKET}} Market Intelligence Report</span>
+    <span>{{EXECUTION_DATE}}</span>
+  </div>
+
+</body>
+</html>
