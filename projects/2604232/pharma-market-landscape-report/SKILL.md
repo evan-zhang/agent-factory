@@ -12,7 +12,7 @@ tags:
 category: professional-skill
 author: Agent Factory
 homepage: https://github.com/evan-zhang/agent-factory
-source: projects/2604231/pharma-market-landscape-report
+source: projects/2604232/pharma-market-landscape-report
 date: "2026-04-23"
 changelog: |
   - v1.0.0 (2026-04-23): 初始版本，已验证皮肤科/肾脏科/精神科 x 港台新马
