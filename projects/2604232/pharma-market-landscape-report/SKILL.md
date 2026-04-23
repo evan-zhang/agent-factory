@@ -1,6 +1,6 @@
 ---
 name: pharma-market-landscape-report
-version: "1.0.0"
+version: "1.0.1"
 skillcode: pharma-market-landscape-report
 description: 药品市场全景报告生成技能。三合一全景报告模板（15章x3部分），基于McKinsey结构化框架，治疗领域无关/市场无关，输出单一HTML报告。
 tags:
