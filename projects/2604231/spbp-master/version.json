@@ -1,0 +1,9 @@
+{
+  "skillcode": "spbp-master",
+  "version": "1.0.0",
+  "projectId": "2604231",
+  "category": "orchestration",
+  "changelog": "初始版本，基于 SPBP主控编排器规则总结2026-04-01更新版",
+  "createdAt": "2026-04-23",
+  "author": "Agent Factory"
+}
