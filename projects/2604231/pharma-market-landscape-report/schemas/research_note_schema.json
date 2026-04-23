@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pharma Market Landscape Chapter Research Note",
+  "type": "object",
+  "required": [
+    "chapter_id",
+    "chapter_title",
+    "key_findings",
+    "tables",
+    "callout_candidates",
+    "references"
+  ],
+  "properties": {
+    "chapter_id": {
+      "type": "string",
+      "description": "Example: ch1, ch2 ... ch15"
+    },
+    "chapter_title": {
+      "type": "string"
+    },
+    "key_findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["claim", "source_type", "source_url"],
+        "properties": {
+          "claim": {"type": "string"},
+          "source_type": {
+            "type": "string",
+            "enum": ["government", "regulator", "guideline", "journal", "hospital", "society", "company", "media", "other"]
+          },
+          "source_url": {"type": "string"},
+          "confidence": {
+            "type": "string",
+            "enum": ["high", "medium", "low"]
+          }
+        }
+      }
+    },
+    "tables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "columns", "rows"],
+        "properties": {
+          "title": {"type": "string"},
+          "columns": {"type": "array", "items": {"type": "string"}},
+          "rows": {"type": "array", "items": {"type": "array", "items": {"type": "string"}}}
+        }
+      }
+    },
+    "callout_candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "text"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["highlight-box", "insight", "action-box"]
+          },
+          "text": {"type": "string"}
+        }
+      }
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "url"],
+        "properties": {
+          "id": {"type": "string"},
+          "label": {"type": "string"},
+          "url": {"type": "string"}
+        }
+      }
+    },
+    "data_gaps": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}
