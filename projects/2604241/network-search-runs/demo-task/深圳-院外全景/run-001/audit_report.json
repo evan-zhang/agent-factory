@@ -1,0 +1,57 @@
+{
+  "task_id": "demo-task",
+  "run_id": "run-001",
+  "spec_version": "1.1",
+  "generated_at": "2026-04-24T05:11:37Z",
+  "field_verdicts": [
+    {
+      "field_name": "本地医保与双通道政策",
+      "stance": "support",
+      "reasons": [
+        "规则检查通过"
+      ],
+      "codes": []
+    },
+    {
+      "field_name": "处方外流与院外衔接",
+      "stance": "support",
+      "reasons": [
+        "规则检查通过"
+      ],
+      "codes": []
+    },
+    {
+      "field_name": "DTP与定点药店管理公示",
+      "stance": "support",
+      "reasons": [
+        "规则检查通过"
+      ],
+      "codes": []
+    },
+    {
+      "field_name": "药监卫健院外相关通报",
+      "stance": "support",
+      "reasons": [
+        "规则检查通过"
+      ],
+      "codes": []
+    },
+    {
+      "field_name": "互联网医院与电子处方试点",
+      "stance": "support",
+      "reasons": [
+        "规则检查通过"
+      ],
+      "codes": []
+    },
+    {
+      "field_name": "集采与院外衔接公开信息",
+      "stance": "support",
+      "reasons": [
+        "规则检查通过"
+      ],
+      "codes": []
+    }
+  ],
+  "errors": []
+}

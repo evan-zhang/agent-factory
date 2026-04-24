@@ -1,0 +1,9 @@
+{
+  "task_id": "demo-task",
+  "run_id": "run-001",
+  "evidence_id_strategy": "monotonic_int",
+  "started_at": "2026-04-24T04:34:36Z",
+  "spec_template_path": "/Users/nancy/.openclaw/网络搜索/pharma-city-outpatient-search-spec.template.json",
+  "run_root": "/Users/nancy/.openclaw/workspace/pharma-outpatient-search/network-search-runs/demo-task/深圳-院外全景/run-001",
+  "spec_version": "1.1"
+}

@@ -1,0 +1,208 @@
+{
+  "task_id": "demo-task",
+  "city_or_topic": "深圳-院外全景",
+  "spec_version": "1.1",
+  "generated_at": "2026-04-24T04:34:36Z",
+  "field_specs": [
+    {
+      "field_name": "本地医保与双通道政策",
+      "field_type": "fact",
+      "search_intent": "检索指定城市/省医保公开信息中与双通道、门诊统筹、国谈药院外可及性相关的政策与目录线索",
+      "positive_queries": [
+        "深圳 双通道 医保 site:gov.cn",
+        "深圳 国谈药 定点 零售 site:gov.cn",
+        "深圳 门诊统筹 定点药店 site:gov.cn"
+      ],
+      "counter_queries": [
+        "深圳 双通道 目录 调整 调出 暂停",
+        "深圳 医保 政策 废止 修订"
+      ],
+      "exclude_terms": [
+        "软文",
+        "广告",
+        "代购"
+      ],
+      "required_evidence_count": 2,
+      "min_source_grade": "B",
+      "freshness_window_days": 730,
+      "acceptance_rule": "至少2条独立政府公开来源；内容与城市/省级医保政策表述可对应",
+      "global_queries": []
+    },
+    {
+      "field_name": "处方外流与院外衔接",
+      "field_type": "judgment",
+      "search_intent": "检索处方外流、电子处方、院外取药与医疗机构衔接的公开政策或解读（以政府源为准）",
+      "positive_queries": [
+        "深圳 处方外流 外配 site:gov.cn",
+        "深圳 电子处方 流转 药店 site:gov.cn",
+        "深圳 外购药 医保 site:gov.cn"
+      ],
+      "counter_queries": [
+        "深圳 外配 限制 暂停 通知",
+        "深圳 电子处方 违规 通报"
+      ],
+      "exclude_terms": [
+        "软文",
+        "招商",
+        "代购"
+      ],
+      "required_evidence_count": 2,
+      "min_source_grade": "B",
+      "freshness_window_days": 730,
+      "acceptance_rule": "至少1条B级及以上政府来源；无未解释的相反政策表述",
+      "global_queries": []
+    },
+    {
+      "field_name": "DTP与定点药店管理公示",
+      "field_type": "fact",
+      "search_intent": "检索与DTP、特药药房、定点零售药店相关的公示、名单或监管信息（政府站点）",
+      "positive_queries": [
+        "深圳 DTP 定点药店 site:gov.cn",
+        "深圳 特药 定点零售 site:gov.cn",
+        "深圳 双通道 药店 名单 site:gov.cn"
+      ],
+      "counter_queries": [
+        "深圳 定点药店 取消 处罚 通报",
+        "深圳 DTP 退出 暂停"
+      ],
+      "exclude_terms": [
+        "软文",
+        "招商"
+      ],
+      "required_evidence_count": 2,
+      "min_source_grade": "B",
+      "freshness_window_days": 730,
+      "acceptance_rule": "至少2条独立来源；名单/公示与药监或医保公开信息可对应",
+      "global_queries": []
+    },
+    {
+      "field_name": "药监卫健院外相关通报",
+      "field_type": "fact",
+      "search_intent": "检索药监、卫健部门对零售环节、药品流通、质量抽检等公开通报中与院外相关的部分",
+      "positive_queries": [
+        "深圳 药品流通 监管 site:gov.cn",
+        "深圳 零售药店 抽检 通报 site:gov.cn",
+        "深圳 药监局 行政处罚 site:gov.cn"
+      ],
+      "counter_queries": [
+        "深圳 药店 撤销 吊销 公告",
+        "深圳 药品质量 不合格 通告"
+      ],
+      "exclude_terms": [
+        "自媒体",
+        "软文"
+      ],
+      "required_evidence_count": 2,
+      "min_source_grade": "B",
+      "freshness_window_days": 730,
+      "acceptance_rule": "至少2条独立政府或授权公开来源；与院外零售/流通相关",
+      "global_queries": []
+    },
+    {
+      "field_name": "互联网医院与电子处方试点",
+      "field_type": "judgment",
+      "search_intent": "检索互联网医院、复诊处方、电子处方在城市落地的公开政策或试点文件",
+      "positive_queries": [
+        "深圳 互联网医院 处方 site:gov.cn",
+        "深圳 电子处方 试点 site:gov.cn",
+        "深圳 复诊 处方 药店 site:gov.cn"
+      ],
+      "counter_queries": [
+        "深圳 互联网医院 查处 通报",
+        "深圳 电子处方 暂停 整改"
+      ],
+      "exclude_terms": [
+        "软文",
+        "广告"
+      ],
+      "required_evidence_count": 2,
+      "min_source_grade": "C",
+      "freshness_window_days": 730,
+      "acceptance_rule": "至少1条B级及以上政府来源；试点与限制表述无未解释冲突",
+      "global_queries": []
+    },
+    {
+      "field_name": "集采与院外衔接公开信息",
+      "field_type": "judgment",
+      "search_intent": "检索集采、续约、非集采渠道与院外药店衔接的公开政策或说明（政府源）",
+      "positive_queries": [
+        "深圳 集采 药店 供应 site:gov.cn",
+        "深圳 国家组织药品集中采购 院外 site:gov.cn",
+        "深圳 医保 集采 衔接 site:gov.cn"
+      ],
+      "counter_queries": [
+        "深圳 集采 断供 约谈 通报",
+        "深圳 集采 撤网 暂停交易"
+      ],
+      "exclude_terms": [
+        "软文",
+        "招商"
+      ],
+      "required_evidence_count": 2,
+      "min_source_grade": "B",
+      "freshness_window_days": 730,
+      "acceptance_rule": "至少2条独立来源；与集采/供应政策表述可对应",
+      "global_queries": []
+    }
+  ],
+  "source_policy": {
+    "include_domains": [
+      "nmpa.gov.cn",
+      "gov.cn"
+    ],
+    "exclude_domains": [
+      "tieba.baidu.com",
+      "zhihu.com",
+      "douyin.com",
+      "xiaohongshu.com"
+    ],
+    "min_grade_for_support": "B"
+  },
+  "query_policy": {
+    "max_rounds": 3,
+    "run_round_2_when": [
+      "evidence_insufficient",
+      "missing_high_grade_source"
+    ],
+    "run_round_3_when": [
+      "still_uncertain_after_round_2",
+      "conflict_detected"
+    ],
+    "stop_when_met": true
+  },
+  "channel_bindings": {
+    "CN_SEARCH": [
+      "minmax_web_search_mcp"
+    ],
+    "GLOBAL_SEARCH": [
+      "tavily_search",
+      "serper_search"
+    ],
+    "BROWSER_AUTH": [
+      "cursor_ide_browser"
+    ]
+  },
+  "channel_policy": {
+    "fact_field_default": "CN_SEARCH",
+    "judgment_field_default": [
+      "CN_SEARCH",
+      "GLOBAL_SEARCH"
+    ],
+    "switch_on_quality_below": 0.65
+  },
+  "done_criteria": {
+    "required_field_coverage": 1.0,
+    "required_counter_check_coverage": 1.0
+  },
+  "retry_policy": {
+    "query_timeout_sec": 25,
+    "query_retry_max": 2,
+    "per_field_source_try_max": 4,
+    "consecutive_fail_handoff": 5
+  },
+  "output_policy": {
+    "base_dir": "./network-search-runs",
+    "run_id": "run-001",
+    "overwrite": false
+  }
+}
