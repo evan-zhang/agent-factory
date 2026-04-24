@@ -1,6 +1,6 @@
-# OpenClaw 调用 Claude Code / Codex 指南 v3.0
+# OpenClaw 调用 Claude Code / Codex 指南 v4.0
 
-> 2026-04-23 | v2.0 → v3.0 新增 Codex 完整调用指南
+> 2026-04-24 | v3.0 → v4.0 新增 SSH 远程调用 Claude Code + MCP Web Search
 
 ---
 
@@ -233,8 +233,118 @@ A: 关闭沙箱后 Codex 走正常系统网络栈，Clash TUN 正常接管，问
 
 ---
 
+## 八、SSH 远程调用 Claude Code
+
+### 架构
+
+```
+本机 (Mac mini, 内存有限)
+ └─ SSH ──→ 远程 Mac Studio (192.168.91.72)
+              └─ Claude Code CLI + MCP Web Search
+```
+
+本机内存不足时，通过 SSH 调用远程机器上的 Claude Code，利用远程机器的 MCP web search 获取实时数据。
+
+### 前提条件
+
+**远程机器（Mac Studio）**：
+- 已安装 Claude Code CLI：`npm install -g @anthropic-ai/claude-code`
+- 已配置 MCP server（web search）：`claude mcp add zai-mcp-server -s user -- npx -y @z_ai/mcp-server`
+- 已配置 API Key（`~/.claude/settings.json`）
+
+**本机（Mac mini）**：
+- 已安装 sshpass：`brew install hudochenkov/sshpass/sshpass`
+- SSH 可达远程机器
+
+### 调用方式
+
+**基础调用**：
+```bash
+exec command:"sshpass -p '密码' ssh -o StrictHostKeyChecking=no 用户@IP 'export PATH=/opt/homebrew/bin:$PATH; claude --print --dangerously-skip-permissions --max-turns 3 \"你的问题\"'" timeout:300
+```
+
+**启用 Web Search（在 prompt 中指示 Claude 使用 MCP 工具）**：
+```bash
+exec background:true command:"sshpass -p '密码' ssh -o StrictHostKeyChecking=no 用户@IP 'export PATH=/opt/homebrew/bin:$PATH; claude --print --dangerously-skip-permissions --model claude-sonnet-4-20250514 --max-turns 3 \"请先使用你的 MCP web search 工具搜索最新信息，然后回答：XXX的最新新闻\"'" timeout:300
+```
+
+**Python 封装调用**：
+```python
+import subprocess, os
+
+def run_claude_remote(prompt, timeout=300, max_turns=3):
+    web_prompt = (
+        "请先使用你的 MCP web search 工具搜索最新信息，"
+        "然后基于搜索结果回答以下问题。确保引用来源。\n\n" + prompt
+    )
+    remote_cmd = (
+        f"export PATH=/opt/homebrew/bin:$PATH; "
+        f"claude --print"
+        f" --dangerously-skip-permissions"
+        f" --model claude-sonnet-4-20250514"
+        f" --max-turns {max_turns}"
+        f" {subprocess.list2cmdline([web_prompt])}"
+    )
+    result = subprocess.run(
+        ["sshpass", "-p", "密码",
+         "ssh", "-o", "StrictHostKeyChecking=no",
+         "-o", "ConnectTimeout=10",
+         "用户@IP", remote_cmd],
+        capture_output=True, text=True, timeout=timeout,
+        env={**os.environ, "TERM": "dumb"}
+    )
+    if result.returncode == 0 and result.stdout.strip():
+        return {"success": True, "content": result.stdout.strip()}
+    else:
+        return {"success": False, "error": result.stderr[:200]}
+```
+
+### ⚠️ SSH 非交互 Shell 注意
+
+SSH 非交互登录不会加载 `.zshrc`/`.bashrc`，导致 PATH 不完整。**必须手动 export PATH**：
+
+```bash
+# ❌ 错误：找不到 claude
+ssh user@host "which claude"
+
+# ✅ 正确：手动设置 PATH
+ssh user@host "export PATH=/opt/homebrew/bin:$PATH; claude --version"
+```
+
+常见 Homebrew 路径：Apple Silicon `/opt/homebrew/bin`，Intel `/usr/local/bin`。
+
+### 参数速查
+
+| 参数 | 说明 | 推荐值 |
+|------|------|--------|
+| `--print` | 非交互模式 | 必须加 |
+| `--dangerously-skip-permissions` | 跳过权限确认 | 必须加 |
+| `--model` | 模型选择 | `claude-sonnet-4-20250514` |
+| `--max-turns` | 最大交互轮数 | 搜索类 3，纯文本 2 |
+| timeout | exec 超时 | 搜索类 300s |
+| `TERM=dumb` | 禁用终端颜色 | 建议加 |
+
+### 踩坑记录
+
+1. **本机 OOM** → 优先用远程，不在本机跑
+2. **SSH 认证失败** → 用 `sshpass` 密码认证，不依赖 SSH key
+3. **MCP 超时** → timeout 设 300s，`--max-turns` 至少 2（1搜索+1回答）
+4. **`--allowedTools` 格式** → 不加，让 Claude 自动使用已配置的 MCP server
+
+### 适用场景对比
+
+| 场景 | 本机 Claude Code | SSH 远程 Claude Code |
+|------|------------------|---------------------|
+| 本机内存充足 | ✅ | 不需要 |
+| 本机内存紧张 | ❌ 可能 OOM | ✅ 推荐方式 |
+| 需要 MCP web search | ❌ 本机未配置 | ✅ 远程已配置 |
+| Codex 联网研究 | ✅ bypass sandbox | 不适用 |
+
+---
+
 ## 版本历史
 
+- **v4.0** (2026-04-24): 新增 SSH 远程调用 Claude Code + MCP Web Search
 - **v3.0** (2026-04-23): 新增 Codex 完整调用指南，解决沙箱+联网问题
 - **v2.0** (2026-04-21): 新增模型映射、内存要求、Clash SSRF 配置
 - **v1.0** (2026-04-20): 初始版本
@@ -247,3 +357,4 @@ A: 关闭沙箱后 Codex 走正常系统网络栈，Clash TUN 正常接管，问
 - Codex 配置：`~/.codex/settings.json`
 - Gateway 模型配置：`Gateway 模型与上下文配置标准 v1.0`
 - OpenClaw coding-agent skill：`/opt/homebrew/lib/node_modules/openclaw/skills/coding-agent/SKILL.md`
+- SSH 远程调用详细指南：`references/claude-code-remote-guide.md`
