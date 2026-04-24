@@ -7,10 +7,32 @@ set -e
 
 # === 参数解析 ===
 # 优先级：--key 参数 > MINIMAX_API_KEY 环境变量 > 交互式 read
+# 优先级：--host 参数 > MINIMAX_API_HOST 环境变量 > 自动判断（国内版默认）
 MINIMAX_KEY="${MINIMAX_API_KEY:-}"
-if [ "$1" = "--key" ] && [ -n "$2" ]; then
-    MINIMAX_KEY="$2"
-    shift 2
+MINIMAX_HOST="${MINIMAX_API_HOST:-}"
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --key)
+            if [ -n "$2" ]; then MINIMAX_KEY="$2"; shift 2; else shift; fi
+            ;;
+        --host)
+            if [ -n "$2" ]; then MINIMAX_HOST="$2"; shift 2; else shift; fi
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
+
+# 自动判断 API Host（国内版 vs 国际版）
+# 国内版：https://api.minimax.chat（大多数中国用户）
+# 国际版：https://api.minimax.io
+if [ -z "$MINIMAX_HOST" ]; then
+    MINIMAX_HOST="https://api.minimax.chat"
+    # 如果 Key 以 sk-cp-i- 开头，使用国际版
+    if echo "$MINIMAX_KEY" | grep -q '^sk-cp-i-'; then
+        MINIMAX_HOST="https://api.minimax.io"
+    fi
 fi
 
 # 颜色
@@ -65,7 +87,7 @@ ok "mcporter 已就绪: $MCPORTER_PATH"
 echo ""
 echo "--- Step 3/5: 检查 mcporter 配置 ---"
 NEEDS_CONFIG=false
-MINIMAX_KEY=""
+# 注意：不在此处重置 MINIMAX_KEY，保留脚本头部 --key / 环境变量传入的值
 
 if [ -f "$MCPORTER_CONFIG" ]; then
     # 检查是否已有 minimax 配置
@@ -144,7 +166,7 @@ d['mcpServers']['minimax'] = {
     'args': ['minimax-coding-plan-mcp', '-y'],
     'env': {
         'MINIMAX_API_KEY': '$MINIMAX_KEY',
-        'MINIMAX_API_HOST': 'https://api.minimax.io'
+        'MINIMAX_API_HOST': '$MINIMAX_HOST'
     }
 }
 with open('$MCPORTER_CONFIG', 'w') as f:
@@ -161,7 +183,7 @@ print('ok')
       "args": ["minimax-coding-plan-mcp", "-y"],
       "env": {
         "MINIMAX_API_KEY": "$MINIMAX_KEY",
-        "MINIMAX_API_HOST": "https://api.minimax.io"
+        "MINIMAX_API_HOST": "$MINIMAX_HOST"
       }
     }
   }
@@ -189,7 +211,7 @@ if echo "$VERIFY_RESULT" | grep -qi "error\|fail\|timeout\|not found\|login fail
         echo "常见问题排查："
         echo "  1. Key 不是 Token Plan Key（需 sk-cp- 开头）"
         echo "  2. uvx 路径不正确（运行 which uvx 确认）"
-        echo "  3. 网络问题（确认能访问 api.minimax.io）"
+        echo "  3. 网络问题（确认能访问 $MINIMAX_HOST）"
         exit 1
     fi
 else
