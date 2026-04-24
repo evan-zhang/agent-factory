@@ -1,29 +1,28 @@
 #!/bin/bash
+# test-finalize.sh — 测试收口
+# 用法: bash scripts/test-finalize.sh [RUN_ROOT] [SKILL_DIR]
+
 set -e
 
-RUN_ROOT="/tmp/pharma-test/network-search-runs/test-2604241/杭州-院外全景/run-001"
-SKILL_DIR="/Users/evan/.openclaw/gateways/life/domains/agent-factory/projects/2604241"
+RUN_ROOT="${1:-/tmp/pharma-test/network-search-runs/test-2604241/杭州-院外全景/run-001}"
+SKILL_DIR="${2:-$(cd "$(dirname "$0")/.." && pwd)}"
 
-# 创建 summary.md（Step 5 — 总控写）
-cat > "$RUN_ROOT/summary.md" << 'EOF'
-# 杭州-院外全景 检索摘要
+# 如果 summary.md 不存在，创建测试版
+if [ ! -f "$RUN_ROOT/summary.md" ]; then
+  cat > "$RUN_ROOT/summary.md" << 'EOF'
+# {city_or_topic} — 院外药品公开信息检索摘要（测试）
 
-## 测试运行
-本 run 为流程验证测试，仅完成 1 条证据采集。
+## 整体结论
+流程验证测试。
 
-### 已覆盖维度
-- 本地医保与双通道政策：1条证据（uncertain，需补检）
+## 分维度结论
+### 本地医保与双通道政策
+判定: uncertain | 需补检
 
-### 未覆盖维度
-- 处方外流与院外衔接
-- DTP与定点药店管理公示
-- 药监卫健院外相关通报
-- 互联网医院与电子处方试点
-- 集采与院外衔接公开信息
-
-## 结论
-流程验证通过。完整采集需要补充证据。
+## 待补充项
+其余5个维度无证据，需补检。
 EOF
+fi
 
 echo "=== Step 6: finalize_run.py ==="
 python3 "$SKILL_DIR/pharma-outpatient-orchestrator/scripts/run/finalize_run.py" --run-root "$RUN_ROOT" 2>&1

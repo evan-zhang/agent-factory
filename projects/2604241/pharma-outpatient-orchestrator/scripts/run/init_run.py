@@ -193,7 +193,7 @@ def main() -> None:
     run_meta: dict[str, Any] = {
         "task_id": task_id,
         "run_id": run_id,
-        "evidence_id_strategy": "monotonic_int",
+        "evidence_id_strategy": "caller_provided",
         "started_at": gen_at,
         "spec_template_path": str(tpl_path.resolve()),
         "run_root": str(run_root),

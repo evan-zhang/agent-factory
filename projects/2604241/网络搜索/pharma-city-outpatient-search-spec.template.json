@@ -119,7 +119,10 @@
       "min_source_grade": "C",
       "freshness_window_days": 730,
       "acceptance_rule": "至少1条B级及以上政府来源；试点与限制表述无未解释冲突",
-      "global_queries": []
+      "global_queries": [
+        "{{CITY}} internet hospital prescribing policy China",
+        "{{CITY}} telemedicine e-prescription pilot China"
+      ]
     },
     {
       "field_name": "集采与院外衔接公开信息",

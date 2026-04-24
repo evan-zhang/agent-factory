@@ -23,10 +23,25 @@ def url_grade(url: str) -> str:
         return "D"
     if not netloc:
         return "D"
+    # A 级：药监局、药典委等核心监管机构
     if "nmpa.gov.cn" in netloc or "chp.org.cn" in netloc:
         return "A"
+    # B 级：政府站点（含地方政府）
     if netloc.endswith("gov.cn") or ".gov.cn" in netloc:
         return "B"
+    # C 级：学术机构、央媒、权威行业平台
+    c_domains = (
+        ".edu.cn", ".ac.cn",           # 学术机构
+        "xinhuanet.com", "people.com.cn", "cctv.com", "cntv.cn",  # 央媒
+        "nhc.gov.cn",                     # 国家卫健委（备选）
+        "nhsa.gov.cn",                    # 国家医保局（备选）
+        "yaozh.com",                      # 医药数据平台
+        "menet.com.cn",                   # 医药经济报
+        "phirda.org",                     # 医药研发协会
+    )
+    for cd in c_domains:
+        if cd in netloc:
+            return "C"
     return "D"
 
 
