@@ -1,6 +1,6 @@
 # MiniMax Web Search MCP 配置指南
 
-> 适用对象：需要联网搜索能力的 OpenClaw Agent
+> 适用对象：需要联网搜索能力的 Agent
 > 更新日期：2026-04-23
 
 ---
@@ -11,7 +11,7 @@
 |------|------|
 | MiniMax Token Plan 订阅 | 需在 <https://platform.minimax.io/subscribe/token-plan> 订阅，获取专属 API Key（以 `sk-cp-` 开头） |
 | uv / uvx | Python 包管理工具，用于运行 `minimax-coding-plan-mcp` |
-| mcporter | OpenClaw MCP 管理工具，用于调用 MCP Server |
+| mcporter | MCP 管理工具，用于调用 MCP Server |
 
 ### 安装 uv（如未安装）
 
@@ -120,7 +120,7 @@ mcporter call minimax.understand_image prompt="描述这张图片" image_url="ht
 
 ---
 
-## 四、在 OpenClaw Agent 中使用
+## 四、在 Agent 中使用
 
 ### 方式一：通过 exec 调用
 

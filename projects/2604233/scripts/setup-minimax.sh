@@ -5,6 +5,14 @@
 
 set -e
 
+# === 参数解析 ===
+# 优先级：--key 参数 > MINIMAX_API_KEY 环境变量 > 交互式 read
+MINIMAX_KEY="${MINIMAX_API_KEY:-}"
+if [ "$1" = "--key" ] && [ -n "$2" ]; then
+    MINIMAX_KEY="$2"
+    shift 2
+fi
+
 # 颜色
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -98,8 +106,11 @@ if [ "$NEEDS_CONFIG" = true ]; then
     echo "  2. 订阅 Token Plan（Coding Plan）"
     echo "  3. 在控制台获取 API Key（格式：sk-cp-j-xxxx...）"
     echo ""
-    echo -n "请输入 MiniMax Token Plan API Key: "
-    read -r MINIMAX_KEY
+    # 如果已有 key（来自 --key 参数或环境变量），跳过交互输入
+    if [ -z "$MINIMAX_KEY" ]; then
+        echo -n "请输入 MiniMax Token Plan API Key: "
+        read -r MINIMAX_KEY
+    fi
     
     if [ -z "$MINIMAX_KEY" ]; then
         fail "未输入 API Key，初始化中止。"
@@ -168,14 +179,19 @@ echo ""
 echo "--- Step 5/5: 验证 MiniMax web_search ---"
 VERIFY_RESULT=$(mcporter call minimax.web_search query="测试搜索" 2>&1 || true)
 if echo "$VERIFY_RESULT" | grep -qi "error\|fail\|timeout\|not found\|login fail"; then
-    fail "MiniMax web_search 调用失败"
-    echo "错误信息: $VERIFY_RESULT"
-    echo ""
-    echo "常见问题排查："
-    echo "  1. Key 不是 Token Plan Key（需 sk-cp- 开头）"
-    echo "  2. uvx 路径不正确（运行 which uvx 确认）"
-    echo "  3. 网络问题（确认能访问 api.minimax.io）"
-    exit 1
+    # 二次确认：检查是否包含有效搜索结果（避免误判 error_code:0 等）
+    if echo "$VERIFY_RESULT" | grep -q '"query_id"\|"search_results"\|"title"'; then
+        ok "MiniMax web_search 调用成功（响应含已知错误关键词但结果有效）"
+    else
+        fail "MiniMax web_search 调用失败"
+        echo "错误信息: $VERIFY_RESULT"
+        echo ""
+        echo "常见问题排查："
+        echo "  1. Key 不是 Token Plan Key（需 sk-cp- 开头）"
+        echo "  2. uvx 路径不正确（运行 which uvx 确认）"
+        echo "  3. 网络问题（确认能访问 api.minimax.io）"
+        exit 1
+    fi
 else
     ok "MiniMax web_search 调用成功"
 fi
