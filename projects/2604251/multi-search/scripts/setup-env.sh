@@ -1,7 +1,7 @@
 #!/bin/bash
 # setup-env.sh — 多源搜索环境初始化 + 能力探测（兼容 OpenClaw / Hermes）
 # 用途：配置 MiniMax web_search MCP + 探测采集工具链能力
-# 项目：2604233 七大政策采集 Skill Pack
+# 项目：2604251 multi-search
 #
 # 支持运行时：
 #   OpenClaw — 通过 mcporter CLI 管理 MCP
@@ -64,7 +64,7 @@ info() { echo "${BLUE}ℹ️  $1${NC}"; }
 
 echo "========================================"
 echo "  MiniMax Web Search 环境初始化"
-echo "  项目 2604233 · 七大政策采集"
+echo "  项目 2604251 · multi-search"
 echo "========================================"
 echo ""
 info "检测到运行时: $RUNTIME"
@@ -378,8 +378,7 @@ fi
 if [ "$FETCH_JS" = false ] && [ -n "$TEST_CONTENT" ] && [ ${#TEST_CONTENT} -gt 200 ]; then
     TEXT_DENSITY=$(echo "$TEST_CONTENT" | sed 's/<[^>]*>//g' | tr -d '[:space:]' | wc -c)
     if [ "$TEXT_DENSITY" -gt 200 ]; then
-        FETCH_JS=true
-        ok "抓取：$FETCH_TOOL 可获取页面正文"
+        ok "抓取：$FETCH_TOOL 可获取静态页面正文"
     else
         warn "抓取：$FETCH_TOOL 获取到页面但正文过少（可能不支持 JS 渲染）"
     fi
