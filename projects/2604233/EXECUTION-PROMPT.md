@@ -36,7 +36,7 @@
 
 1. **搜索能力探测**
    - ✅ MiniMax web_search（via mcporter call minimax.web_search）— 主力搜索工具
-   - 可选：Tavily search（via openclaw-tavily-search 或 API）— 通用搜索回退
+   - 可选：Tavily search（via API 或环境内置工具）— 通用搜索回退
    - 可选：如果 mcporter 中有 exa 配置，Exa AI 可用于定向搜索（includeDomains: ["gov.cn"]）
 
 2. **页面抓取能力探测**
