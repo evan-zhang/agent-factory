@@ -233,6 +233,7 @@ echo ""
 
 # 6.1 搜索能力
 SEARCH_MINIMAX=false
+SEARCH_TAVILY=false
 SEARCH_EXA=false
 
 if mcporter call minimax.web_search query="探测测试" >/dev/null 2>&1; then
@@ -240,6 +241,14 @@ if mcporter call minimax.web_search query="探测测试" >/dev/null 2>&1; then
     ok "搜索：MiniMax web_search 已就绪"
 else
     warn "搜索：MiniMax web_search 不可用"
+fi
+
+# 检测 Tavily（通过环境变量或 openclaw-tavily-search）
+if [ -n "$TAVILY_API_KEY" ] || which openclaw-tavily-search >/dev/null 2>&1; then
+    SEARCH_TAVILY=true
+    ok "搜索回退：Tavily search 可用"
+else
+    echo "搜索回退：Tavily search 未配置（可选，MiniMax 不可用时使用）"
 fi
 
 if mcporter list 2>/dev/null | grep -q 'exa'; then
@@ -275,6 +284,7 @@ echo "========================================"
 echo ""
 echo "本次采集可用工具："
 echo "  搜索：MiniMax web_search [$([ "$SEARCH_MINIMAX" = true ] && echo '已就绪' || echo '不可用')]"
+echo "  搜索回退：Tavily search [$([ "$SEARCH_TAVILY" = true ] && echo '可用' || echo '未配置')]"
 echo "  搜索增强：Exa AI [$([ "$SEARCH_EXA" = true ] && echo '可用' || echo '未配置')]"
 echo "  页面抓取：web_fetch [$([ "$FETCH_JS" = true ] && echo '支持JS渲染' || echo '不支持JS渲染')]"
 if [ "$FETCH_JS" = false ]; then
@@ -282,8 +292,11 @@ if [ "$FETCH_JS" = false ]; then
 fi
 echo ""
 echo "工具选择策略："
-echo "  搜索：优先 MiniMax → 不可用回退 web_fetch → 都不可用则停止"
+echo "  搜索：优先 MiniMax → Tavily → Exa → web_fetch → 都不可用则停止"
 echo "  抓取：使用 web_fetch → 拿到空壳时在缺口表标注「JS渲染失败」"
+if [ "$SEARCH_TAVILY" = true ]; then
+    echo "  Tavily 回退：MiniMax 搜索无结果时，自动切换 Tavily 重试"
+fi
 if [ "$SEARCH_EXA" = true ]; then
     echo "  Exa 定向：gov.cn 页面搜索不到时，用 Exa includeDomains 定向搜索"
 fi

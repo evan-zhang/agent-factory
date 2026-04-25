@@ -211,7 +211,41 @@ bash scripts/minimax_web_search.sh --query "搜索内容" --json
 
 ---
 
-## 八、可选增强：Exa AI 搜索
+---
+
+## 八、搜索回退：Tavily Search
+
+Tavily 是通用搜索引擎，作为 MiniMax 的回退方案。当 MiniMax 搜索无结果或质量不佳时，自动切换 Tavily 重试。
+
+### 配置方式
+
+**方式一：环境变量（推荐）**
+```bash
+export TAVILY_API_KEY="tvly-你的Key"
+```
+
+**方式二：OpenClaw 内置工具**
+如果 OpenClaw 环境已安装 `openclaw-tavily-search`，无需额外配置。
+
+### 获取 API Key
+
+1. 访问 https://tavily.com 注册
+2. 免费额度：1000 次/月
+3. API Key 格式：`tvly-xxxx...`
+
+### 使用场景
+
+- MiniMax 搜索无结果时自动回退
+- MiniMax 不可用时作为主搜索引擎
+- 某些关键词 MiniMax 返回质量不佳时，Tavily 可能返回不同结果
+
+### 注意事项
+
+- 非必选，不配置不影响基础采集（MiniMax 主力）
+- setup-minimax.sh 会自动检测 Tavily 是否可用
+- 优先级：MiniMax > Tavily > Exa > web_fetch
+
+## 九、可选增强：Exa AI 搜索
 
 Exa AI 支持精准的 `includeDomains` 定向搜索，可以专门搜索 gov.cn 官方来源。作为 MiniMax 的补充，非必选。
 

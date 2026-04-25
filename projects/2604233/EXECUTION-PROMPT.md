@@ -36,6 +36,7 @@
 
 1. **搜索能力探测**
    - ✅ MiniMax web_search（via mcporter call minimax.web_search）— 主力搜索工具
+   - 可选：Tavily search（via openclaw-tavily-search 或 API）— 通用搜索回退
    - 可选：如果 mcporter 中有 exa 配置，Exa AI 可用于定向搜索（includeDomains: ["gov.cn"]）
 
 2. **页面抓取能力探测**
@@ -50,13 +51,14 @@
    ```
    本次采集可用工具：
    搜索：MiniMax web_search [已就绪]
+   搜索回退：Tavily search [可用/不可用]
    搜索增强：Exa AI [可用/不可用]
    页面抓取：web_fetch [支持JS/不支持JS]
    已知限制：[如 web_fetch 不支持 JS 渲染 gov.cn 页面]
    ```
 
 4. **工具选择策略（基于探测结果自动决定）**
-   - 搜索：优先 MiniMax → 不可用回退 web_fetch → 都不可用则停止
+   - 搜索：优先 MiniMax → Tavily → Exa → web_fetch → 都不可用则停止
    - 抓取：使用 web_fetch → 拿到空壳时在缺口表标注「JS 渲染页面，当前工具无法抓取」
    - 不自行安装额外抓取工具（Playwright 等由运行时环境提供）
 
@@ -68,12 +70,13 @@
 
 **搜索要求**：
 1. 所有 skill 都使用同一组输入参数：目标城市 + 年份/时间范围
-2. 搜索工具按 Phase 0 探测结果选择（优先 MiniMax web_search）
+2. 搜索工具按 Phase 0 探测结果选择（优先 MiniMax → Tavily → Exa → web_fetch）
 3. 每个 skill 必须先读取自身内置 references/*.md，再按该 reference 的渠道模板和顺序检索
 4. 每次搜索查询都必须包含目标城市和年份/时间范围；如确需补充无年份政策原文，可额外检索无年份关键词，但必须在备注说明
 5. 搜索不到时，尝试以下策略后再标记缺口：
    - 换用不同的关键词组合（城市名简称/别名、政策文号、部门全称/简称）
    - 换用不同的 site: 限定（从顶级域名到子域名）
+   - 切换搜索引擎：MiniMax → Tavily → Exa
    - 如果 Exa 可用，用 includeDomains 定向搜索 gov.cn
 
 **采集要求**：
