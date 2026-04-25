@@ -146,6 +146,44 @@ curl -sL --max-time 15 "{URL}"
 - 404 / 错误页 / 空白页 / 登录拦截页
 - JS 渲染失败拿到的空壳
 
+## 可选扩展：远程 Claude Code（非标准层）
+
+利用已有远程 Claude Code 环境（SSH 可达的 Mac Studio），通过 Claude Code 的 MCP browser/web-reader 工具实现 JS 渲染 + AI 内容理解。
+
+**为什么不放进标准降级链**：依赖特定基础设施（SSH + 远程机器 + Claude Code），不具备通用性。
+
+**什么时候用**：
+- 标准降级链全部失败时，作为最后手段
+- 页面需要 AI 理解内容（不只是抓文本，还需要提取结构化信息）
+- 已有 SSH 可达的 Claude Code 环境
+
+**用法**：
+```bash
+# 通过 SSH 调用远程 Claude Code
+ssh user@remote-host "claude --print --dangerously-skip-permissions \
+  --max-turns 2 \
+  '请使用你的 web reader 工具抓取以下页面的完整内容：{URL}'"
+```
+
+**配置要求**：
+- SSH 可达的远程机器
+- 远程机器已安装 Claude Code CLI + MCP 工具链
+- `sshpass` 或 SSH Key 认证
+
+**能力探测**：
+```bash
+if ssh -o ConnectTimeout=5 user@host "which claude" 2>/dev/null; then
+    ok "可选扩展：远程 Claude Code 可用"
+fi
+```
+
+**优缺点**：
+- ✅ 完整 JS 渲染 + AI 理解，能处理任何页面
+- ✅ 已有基础设施，零额外成本
+- ❌ 延迟较高（5-15s）
+- ❌ 依赖远程服务可用性
+- ❌ 并发受限
+
 ## 缺口标注格式
 
 当抓取失败时，在缺口表中记录：
