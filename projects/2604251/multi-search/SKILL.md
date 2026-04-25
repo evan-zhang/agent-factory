@@ -177,11 +177,27 @@ MINIMAX_API_KEY=sk-cp-j-xxx bash scripts/setup-env.sh
 5. 探测 4 级抓取能力（内置 → Jina Reader → Crawl4AI → curl）
 6. 输出完整工具清单
 
-## 统一规范
+## 数据落盘
 
-- 真源：本 Skill 的 `references/*.md` 和 `scripts/`
-- 配置指南：`docs/search-setup-guide.md`
-- 日志：由调用方管理，本 Skill 不产生日志
+所有搜索和抓取结果必须落盘，作为举证证据链。
+
+存储位置：调用方项目目录 `_data/multi-search/{session-id}/`
+
+```
+_data/multi-search/{session-id}/
+├── session.json          # 会话元数据
+├── search/               # 搜索结果（JSON）
+│   ├── S-001-minimax.json
+│   └── S-002-tavily.json
+└── fetch/                # 抓取结果（Markdown + 元数据）
+    ├── F-001-sz.gov.cn.md
+    └── F-001-sz.gov.cn.meta.json
+```
+
+每条记录带唯一引用ID（refId / fetchId），举证时可完整追溯：
+搜了什么 → 哪个引擎 → 打开哪个URL → 什么工具抓的 → 抓到了什么
+
+详见 `references/data-storage-spec.md`
 
 ## 在本流水线中的使用方式
 
@@ -199,6 +215,7 @@ MINIMAX_API_KEY=sk-cp-j-xxx bash scripts/setup-env.sh
 | 初始化搜索环境 | setup | `./scripts/setup-env.sh` |
 | 查看配置指南 | docs | `./docs/search-setup-guide.md` |
 | 理解降级策略 | references | `./references/search-fallback.md` + `./references/fetch-fallback.md` |
+| 数据落盘规范 | references | `./references/data-storage-spec.md` |
 
 ## 宪章
 
@@ -207,6 +224,7 @@ MINIMAX_API_KEY=sk-cp-j-xxx bash scripts/setup-env.sh
 - **不**做政策裁决或内容判断
 - **不**修改调用方的 state.json 或输出文件
 - 来源类型和可信度由调用方判断，本 Skill 只提供工具
+- **不**持有搜索/抓取数据（数据落盘到调用方项目目录）
 
 ## 目录结构
 
@@ -219,7 +237,8 @@ multi-search/
 ├── references/
 │   ├── search-fallback.md
 │   ├── fetch-fallback.md
-│   └── search-strategy.md
+│   ├── search-strategy.md
+│   └── data-storage-spec.md
 └── scripts/
     └── setup-env.sh
 ```
