@@ -297,7 +297,7 @@ Exa AI 支持精准的 `includeDomains` 定向搜索，可以专门搜索 gov.cn
 2. 添加 mcporter 配置：
 
 ```bash
-mcporter add exa -s user -- npx -y @anthropic-ai/exa-mcp-server
+mcporter add exa -s user -- npx -y exa-mcp-server
 ```
 
 或在 `~/.mcporter/mcporter.json` 中手动添加：
@@ -308,7 +308,7 @@ mcporter add exa -s user -- npx -y @anthropic-ai/exa-mcp-server
     "minimax": { ... },
     "exa": {
       "command": "npx",
-      "args": ["-y", "@anthropic-ai/exa-mcp-server"],
+      "args": ["-y", "exa-mcp-server"],
       "env": {
         "EXA_API_KEY": "你的Exa Key"
       }
