@@ -1,7 +1,21 @@
 # MiniMax Web Search MCP 配置指南
 
-> 适用对象：需要联网搜索能力的 Agent
+> 适用对象：需要联网搜索能力的 Agent（兼容 OpenClaw / Hermes）
 > 更新日期：2026-04-25
+
+## 兼容性
+
+本指南同时支持两个 Agent 运行时：
+
+| | OpenClaw | Hermes |
+|---|---|---|
+| MCP 配置 | `~/.mcporter/mcporter.json` | `~/.hermes/config.yaml` |
+| MCP 管理工具 | mcporter CLI | 内置原生支持 |
+| 搜索工具 | web_fetch | web_search / web_extract |
+| 浏览器 | 无内置 | browser_navigate / browser_snapshot |
+| 脚本兼容 | ✅ | ✅（setup-minimax.sh 自动检测）|
+
+setup-minimax.sh 会自动检测运行时环境并使用对应的配置方式，无需手动选择。
 
 ---
 
@@ -45,7 +59,9 @@ mcporter --version
 
 > ⚠️ **注意**：Token Plan 的 Key 和普通 MiniMax API Key 不同。普通 Key（`sk-` 开头）不支持 web_search，必须是 Token Plan 的 Key（`sk-cp-` 开头）才行。
 
-### Step 2：配置 mcporter
+### Step 2：配置 MCP
+
+#### OpenClaw（mcporter）
 
 编辑 `~/.mcporter/mcporter.json`，添加 minimax server：
 
@@ -65,6 +81,25 @@ mcporter --version
 ```
 
 > **注意**：`command` 中的路径要替换为你机器上 uvx 的实际路径。用 `which uvx` 查看。
+
+#### Hermes（config.yaml）
+
+编辑 `~/.hermes/config.yaml`，添加 minimax server：
+
+```yaml
+mcp_servers:
+  minimax:
+    command: /Users/xxx/.local/bin/uvx
+    args:
+      - minimax-coding-plan-mcp
+      - -y
+    env:
+      MINIMAX_API_KEY: sk-cp-j-你的TokenPlan密钥
+      MINIMAX_API_HOST: https://api.minimax.chat
+```
+
+> **注意**：`command` 中的路径要替换为你机器上 uvx 的实际路径。用 `which uvx` 查看。
+> Hermes 原生支持 MCP，无需安装 mcporter。
 
 ### Step 3：验证配置
 
@@ -86,9 +121,15 @@ for s in d.get('servers', []):
 
 ### Step 4：测试搜索
 
+#### OpenClaw
 ```bash
-# 直接调用搜索
 mcporter call minimax.web_search query="深圳 2026 落户政策"
+```
+
+#### Hermes
+```bash
+hermes chat -q "用 MiniMax web_search 搜索：深圳 2026 落户政策"
+```
 
 # 预期返回 JSON 格式的搜索结果
 ```

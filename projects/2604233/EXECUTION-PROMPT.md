@@ -40,8 +40,9 @@
    - 可选：如果 mcporter 中有 exa 配置，Exa AI 可用于定向搜索（includeDomains: ["gov.cn"]）
 
 2. **页面抓取能力探测**
-   - 用 MiniMax web_search 搜索一条测试查询
-   - 从结果中选一个 gov.cn URL，尝试用 web_fetch 抓取
+   - OpenClaw：用 web_fetch 抓取一个 gov.cn URL
+   - Hermes：优先使用内置 browser 工具（browser_navigate + browser_snapshot），支持 JS 渲染
+   - 通用：用 curl 测试静态抓取
    - 判断 web_fetch 的 JS 渲染能力：
      - 如果能拿到完整正文（>200字）→ web_fetch 可处理 JS 页面
      - 如果拿到空壳或空白 → web_fetch 不支持 JS 渲染，标注为已知限制
@@ -59,7 +60,8 @@
 
 4. **工具选择策略（基于探测结果自动决定）**
    - 搜索：优先 MiniMax → Tavily → Exa → web_fetch → 都不可用则停止
-   - 抓取：使用 web_fetch → 拿到空壳时在缺口表标注「JS 渲染页面，当前工具无法抓取」
+   - 抓取（OpenClaw）：使用 web_fetch → 拿到空壳时标注「JS渲染失败」
+   - 抓取（Hermes）：优先 browser_navigate + browser_snapshot（支持 JS 渲染） → web_extract → 标注缺口
    - 不自行安装额外抓取工具（Playwright 等由运行时环境提供）
 
 === Phase 1：政策采集 ===
