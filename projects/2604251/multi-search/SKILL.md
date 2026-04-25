@@ -4,7 +4,7 @@ description: 多源搜索降级工具包。环境能力探测 + 搜索/抓取降
 skillcode: multi-search
 homepage: https://github.com/evan-zhang/agent-factory
 source: projects/2604251/multi-search
-version: "1.0.0"
+version: "1.1.0"
 ---
 
 # multi-search
@@ -20,7 +20,7 @@ version: "1.0.0"
 
 ## 当前版本
 
-**`1.0.0`**（见 `version.json`）
+**`1.1.0`**（见 `version.json`）
 
 ## 能力概览
 
