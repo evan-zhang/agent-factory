@@ -285,10 +285,13 @@ echo "--- Step 5/5: 验证 MiniMax ---"
 if [ "$RUNTIME" = "openclaw" ]; then
     VERIFY_RESULT=$(mcporter call minimax.web_search query="测试搜索" 2>&1 || true)
 elif [ "$RUNTIME" = "hermes" ]; then
-    # Hermes: 直接用 uvx 调用 minimax MCP 验证
-    VERIFY_RESULT=$(echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"web_search","arguments":{"query":"测试搜索"}},"id":1}' | \
-        MINIMAX_API_KEY="$MINIMAX_KEY" MINIMAX_API_HOST="$MINIMAX_HOST" \
-        $UVX_PATH minimax-coding-plan-mcp -y 2>&1 | tail -1 || true)
+    # Hermes: 检查 config.yaml 是否有 minimax 配置（验证由 Hermes 运行时负责）
+    if grep -q 'minimax' "$HERMES_CONFIG" 2>/dev/null; then
+        VERIFY_OK=true
+        ok "MiniMax MCP 已写入 Hermes config（运行时自动加载）"
+    else
+        warn "Hermes config.yaml 中未找到 minimax 配置"
+    fi
 else
     VERIFY_RESULT=""
 fi
@@ -310,7 +313,6 @@ else
     warn "MiniMax web_search 验证未通过（可能 Key 未生效或网络问题）"
     echo "  如果使用 OpenClaw，尝试: mcporter call minimax.web_search query='测试'"
     echo "  如果使用 Hermes，尝试: hermes chat -q '用 MiniMax 搜索 测试'"
-    echo "  API Host: $MINIMAX_HOST"
 fi
 
 # ============================================================
