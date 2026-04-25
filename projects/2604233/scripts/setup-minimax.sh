@@ -1,7 +1,15 @@
 #!/bin/bash
-# setup-minimax.sh — MiniMax Web Search MCP 一键初始化
-# 用途：检查并配置 MiniMax web_search 所需的 mcporter 环境
+# setup-minimax.sh — 环境初始化 + 能力探测
+# 用途：配置 MiniMax web_search 所需的 mcporter 环境 + 探测采集工具链能力
 # 项目：2604233 七大政策采集 Skill Pack
+#
+# 参数：
+#   --key <API Key>    MiniMax Token Plan API Key（优先级最高）
+#   --host <API Host>  API 地址（默认国内版 api.minimax.chat）
+#
+# 环境变量：
+#   MINIMAX_API_KEY    MiniMax API Key（--key 优先）
+#   MINIMAX_API_HOST   API 地址（--host 优先）
 
 set -e
 
@@ -218,10 +226,67 @@ else
     ok "MiniMax web_search 调用成功"
 fi
 
+# === Step 6: 环境能力探测 ===
+echo ""
+echo "--- Step 6/6: 环境能力探测 ---"
+echo ""
+
+# 6.1 搜索能力
+SEARCH_MINIMAX=false
+SEARCH_EXA=false
+
+if mcporter call minimax.web_search query="探测测试" >/dev/null 2>&1; then
+    SEARCH_MINIMAX=true
+    ok "搜索：MiniMax web_search 已就绪"
+else
+    warn "搜索：MiniMax web_search 不可用"
+fi
+
+if mcporter list 2>/dev/null | grep -q 'exa'; then
+    SEARCH_EXA=true
+    ok "搜索增强：Exa AI 可用"
+else
+    echo "搜索增强：Exa AI 未配置（可选，不影响采集）"
+fi
+
+# 6.2 页面抓取能力探测
+FETCH_JS=false
+# 用一个已知的 gov.cn 页面测试 web_fetch 的 JS 渲染能力
+TEST_URL="https://www.ndrc.gov.cn/"
+TEST_CONTENT=$(web_fetch "$TEST_URL" 2>/dev/null || curl -sL --max-time 10 "$TEST_URL" 2>/dev/null || true)
+if [ -n "$TEST_CONTENT" ] && [ ${#TEST_CONTENT} -gt 200 ]; then
+    # 检查是否为空壳（只有 JS 框架没有实际内容）
+    TEXT_DENSITY=$(echo "$TEST_CONTENT" | sed 's/<[^>]*>//g' | tr -d '[:space:]' | wc -c)
+    if [ "$TEXT_DENSITY" -gt 200 ]; then
+        FETCH_JS=true
+        ok "抓取：web_fetch 可获取页面正文（可能支持 JS 渲染）"
+    else
+        warn "抓取：web_fetch 获取到页面但正文过少（可能不支持 JS 渲染）"
+    fi
+else
+    warn "抓取：web_fetch 无法获取测试页面"
+fi
+
+# 6.3 输出可用工具清单
 echo ""
 echo "========================================"
 ok "初始化完成！环境已就绪。"
 echo "========================================"
+echo ""
+echo "本次采集可用工具："
+echo "  搜索：MiniMax web_search [$([ "$SEARCH_MINIMAX" = true ] && echo '已就绪' || echo '不可用')]"
+echo "  搜索增强：Exa AI [$([ "$SEARCH_EXA" = true ] && echo '可用' || echo '未配置')]"
+echo "  页面抓取：web_fetch [$([ "$FETCH_JS" = true ] && echo '支持JS渲染' || echo '不支持JS渲染')]"
+if [ "$FETCH_JS" = false ]; then
+    echo "  已知限制：web_fetch 不支持 JS 渲染，gov.cn 等动态页面可能抓取失败"
+fi
+echo ""
+echo "工具选择策略："
+echo "  搜索：优先 MiniMax → 不可用回退 web_fetch → 都不可用则停止"
+echo "  抓取：使用 web_fetch → 拿到空壳时在缺口表标注「JS渲染失败」"
+if [ "$SEARCH_EXA" = true ]; then
+    echo "  Exa 定向：gov.cn 页面搜索不到时，用 Exa includeDomains 定向搜索"
+fi
 echo ""
 echo "现在可以使用执行提示词模板启动政策采集："
 echo "  替换 {目标城市} 和 {年份/时间范围} 后发送给 Agent"

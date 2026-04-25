@@ -1,7 +1,7 @@
 # MiniMax Web Search MCP 配置指南
 
 > 适用对象：需要联网搜索能力的 Agent
-> 更新日期：2026-04-23
+> 更新日期：2026-04-25
 
 ---
 
@@ -208,3 +208,54 @@ bash scripts/minimax_web_search.sh --query "搜索内容" --json
 ```
 
 配置完成后运行 `mcporter list --json` 验证 status 为 `ok` 即可。
+
+---
+
+## 八、可选增强：Exa AI 搜索
+
+Exa AI 支持精准的 `includeDomains` 定向搜索，可以专门搜索 gov.cn 官方来源。作为 MiniMax 的补充，非必选。
+
+### 配置步骤
+
+1. 获取 Exa API Key：访问 https://exa.ai 注册，免费额度 1000 次/月
+
+2. 添加 mcporter 配置：
+
+```bash
+mcporter add exa -s user -- npx -y @anthropic-ai/exa-mcp-server
+```
+
+或在 `~/.mcporter/mcporter.json` 中手动添加：
+
+```json
+{
+  "mcpServers": {
+    "minimax": { ... },
+    "exa": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/exa-mcp-server"],
+      "env": {
+        "EXA_API_KEY": "你的Exa Key"
+      }
+    }
+  }
+}
+```
+
+3. 验证：
+
+```bash
+mcporter list --json | grep exa
+```
+
+### 使用场景
+
+- MiniMax 搜索不到 gov.cn 页面时，用 Exa `includeDomains: ["gov.cn"]` 定向搜索
+- 特定城市官网搜索：`includeDomains: ["lanzhou.gov.cn"]`
+- 采集完成后统计来源质量，Exa 搜索到的结果官方占比更高
+
+### 注意事项
+
+- 免费额度 1000 次/月，一次完整采集约消耗 100 次
+- 非必选，不配置不影响基础采集流程
+- setup-minimax.sh 会自动检测 Exa 是否可用
