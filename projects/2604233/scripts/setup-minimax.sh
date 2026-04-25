@@ -282,37 +282,36 @@ fi
 echo ""
 echo "--- Step 5/5: 验证 MiniMax ---"
 
+VERIFY_OK=false
+
 if [ "$RUNTIME" = "openclaw" ]; then
+    # OpenClaw: 用 mcporter 实际调用验证
     VERIFY_RESULT=$(mcporter call minimax.web_search query="测试搜索" 2>&1 || true)
+    if echo "$VERIFY_RESULT" | grep -qi "error\|fail\|timeout\|not found\|login fail"; then
+        if echo "$VERIFY_RESULT" | grep -q '"query_id"\|"search_results"\|"title"'; then
+            VERIFY_OK=true
+        fi
+    else
+        if [ -n "$VERIFY_RESULT" ]; then
+            VERIFY_OK=true
+        fi
+    fi
+    if [ "$VERIFY_OK" = true ]; then
+        ok "MiniMax web_search 验证通过"
+    else
+        warn "MiniMax web_search 验证未通过（可能 Key 未生效或网络问题）"
+        echo "  尝试: mcporter call minimax.web_search query='测试'"
+    fi
+
 elif [ "$RUNTIME" = "hermes" ]; then
-    # Hermes: 检查 config.yaml 是否有 minimax 配置（验证由 Hermes 运行时负责）
+    # Hermes: 检查 config.yaml 配置存在性（实际调用由运行时负责）
     if grep -q 'minimax' "$HERMES_CONFIG" 2>/dev/null; then
         VERIFY_OK=true
-        ok "MiniMax MCP 已写入 Hermes config（运行时自动加载）"
+        ok "MiniMax MCP 已写入 Hermes config（运行时自动加载验证）"
     else
         warn "Hermes config.yaml 中未找到 minimax 配置"
+        echo "  尝试: hermes chat -q '用 MiniMax 搜索 测试'"
     fi
-else
-    VERIFY_RESULT=""
-fi
-
-VERIFY_OK=false
-if echo "$VERIFY_RESULT" | grep -qi "error\|fail\|timeout\|not found\|login fail"; then
-    if echo "$VERIFY_RESULT" | grep -q '"query_id"\|"search_results"\|"title"'; then
-        VERIFY_OK=true
-    fi
-else
-    if [ -n "$VERIFY_RESULT" ]; then
-        VERIFY_OK=true
-    fi
-fi
-
-if [ "$VERIFY_OK" = true ]; then
-    ok "MiniMax web_search 验证通过"
-else
-    warn "MiniMax web_search 验证未通过（可能 Key 未生效或网络问题）"
-    echo "  如果使用 OpenClaw，尝试: mcporter call minimax.web_search query='测试'"
-    echo "  如果使用 Hermes，尝试: hermes chat -q '用 MiniMax 搜索 测试'"
 fi
 
 # ============================================================
