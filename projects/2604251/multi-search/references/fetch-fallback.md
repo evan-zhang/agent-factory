@@ -1,32 +1,123 @@
 # 抓取降级链
 
-## 降级顺序（按运行时）
+## 设计原则
+
+1. **零安装优先**：不需要额外安装的工具排前面
+2. **双运行时兼容**：OpenClaw 和 Hermes 各自有独立的首选工具，但降级链共享中间层
+3. **重量递增**：轻量工具先试，重量级工具放后面
+4. **成本递增**：免费工具先试，付费工具放后面
+
+## 降级链总览
+
+```
+Level 1: 内置工具（最快，零依赖）
+ ├─ OpenClaw: web_fetch
+ └─ Hermes: browser_navigate + browser_snapshot
+ ↓ 空壳/JS渲染页面/正文<200字
+Level 2: Jina Reader（零安装，远程渲染）
+ ↓ 失败/超时/不可用
+Level 3: Crawl4AI CLI（本地浏览器，完整 JS 渲染）
+ ↓ 未安装/失败
+Level 4: curl 兜底（纯静态）
+ ↓ 失败
+标注缺口
+```
+
+**不纳入的方案及原因**：
+- ~~Playwright 原生~~：Crawl4AI 已内置 Playwright，且提供 CLI + Markdown 输出，比裸 Playwright 更适合 Agent 调用
+- ~~Firecrawl API~~：Crawl4AI 开源版已覆盖其核心能力（JS 渲染 + Markdown 输出），且无需付费 API Key
+- ~~远程 Claude Code~~：依赖特定基础设施（SSH + 远程机器），不具备通用性。如果将来有需要可以作为特定项目的扩展，不放进基础层
+
+## 按运行时的降级链
 
 ### OpenClaw 环境
 
 ```
-web_fetch（内置工具）
+web_fetch（内置工具，静态抓取）
  ↓ 空壳/JS渲染页面/正文<200字
-curl（静态抓取）
+Jina Reader（远程渲染，零安装）
  ↓ 失败/超时
+Crawl4AI CLI（本地浏览器，完整 JS 渲染）
+ ↓ 未安装/失败
+curl（纯静态兜底）
+ ↓ 失败
 标注「JS渲染失败」→ 记录在缺口表
 ```
 
-**已知限制**：OpenClaw 的 web_fetch 当前不支持 JS 渲染。遇到动态页面（gov.cn 等）会拿到空壳。等 OpenClaw 内置 Playwright 后补齐。
+**已知限制**：OpenClaw 的 web_fetch 不支持 JS 渲染。遇到动态页面（gov.cn 等）会拿到空壳。等 OpenClaw 内置浏览器后补齐。
 
 ### Hermes 环境
 
 ```
-browser_navigate + browser_snapshot（内置浏览器）
+browser_navigate + browser_snapshot（内置浏览器，支持 JS 渲染）
  ↓ 失败
-web_extract（文本提取）
+Jina Reader（远程渲染，轻量补充）
  ↓ 失败
-curl（静态抓取）
+Crawl4AI CLI（本地浏览器）
+ ↓ 未安装/失败
+curl（静态兜底）
  ↓ 失败
 标注「页面无法抓取」→ 记录在缺口表
 ```
 
-**Hermes 优势**：内置 browser 工具支持 JS 渲染，gov.cn 等动态页面可正常抓取。
+**Hermes 优势**：内置 browser 工具支持 JS 渲染，Level 1 命中率更高。Jina Reader 和 Crawl4AI 作为补充。
+
+## 各级别详细说明
+
+### Level 1: 内置工具
+
+| 运行时 | 工具 | JS 渲染 | 速度 |
+|--------|------|---------|------|
+| OpenClaw | web_fetch | ❌ | 快（<2s）|
+| Hermes | browser_navigate + browser_snapshot | ✅ | 中（2-5s）|
+
+判断：HTTP 200 + 正文纯文本 > 200 字 → 成功，否则进入 Level 2。
+
+### Level 2: Jina Reader
+
+零安装、零成本、远程 JS 渲染。
+
+```bash
+# 基础抓取
+curl -s "https://r.jina.ai/{URL}" -H "Accept: text/markdown"
+
+# 判断成功：HTTP 200 + 正文 > 200 字
+```
+
+优势：`curl` 即可调用，无需安装任何依赖。
+限制：需要网络可达 `r.jina.ai`，某些环境可能需要代理。
+
+### Level 3: Crawl4AI CLI
+
+开源（64k+ stars），内置 Playwright + 自动 JS 渲染 + LLM 友好 Markdown 输出。
+
+```bash
+# 安装
+pip install -U crawl4ai
+crawl4ai-setup  # 首次安装浏览器
+
+# CLI 抓取
+crwl "{URL}" -o markdown
+
+# 判断成功：输出正文 > 200 字
+```
+
+优势：
+- 完整 JS 渲染（内置 Playwright，不需要单独装）
+- 输出干净的 Markdown，无需额外清理
+- CLI 调用，适合 Agent 通过 exec 调用
+- 反爬虫检测 + Shadow DOM 支持（v0.8.5+）
+- 完全离线可用，不依赖外部服务
+
+限制：需要安装（~200MB Chromium），首次 `crawl4ai-setup` 较慢。
+
+### Level 4: curl 兜底
+
+```bash
+curl -sL --max-time 15 "{URL}"
+```
+
+纯静态抓取，最后防线。
 
 ## 抓取成功判断标准
 
@@ -40,7 +131,7 @@ curl（静态抓取）
 ## 来源记录要求
 
 每条抓取结果必须记录：
-- 实际使用的抓取工具
+- 实际使用的抓取工具（web_fetch / jina / crawl4ai / curl / browser）
 - 抓取结果状态（完整/部分/JS渲染失败）
 - 页面标题
 - 完整 URL
@@ -61,7 +152,7 @@ curl（静态抓取）
 
 ```
 缺口原因：JS渲染失败 / 页面无法打开 / 内容不明确 / 其他
-已尝试工具：browser → web_extract → curl
+已尝试工具：web_fetch → jina → crawl4ai → curl
 已尝试 URL：https://xxx.gov.cn/...
 失败原因：HTTP 200 但正文 < 50 字，疑似 JS 渲染页面
 ```

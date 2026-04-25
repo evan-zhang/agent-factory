@@ -360,23 +360,42 @@ fi
 # 页面抓取能力探测
 FETCH_TOOL="未知"
 FETCH_JS=false
+FETCH_JINA=false
+FETCH_CRAWL4AI=false
 
 if [ "$RUNTIME" = "openclaw" ]; then
     # OpenClaw 的 web_fetch 不支持 JS 渲染，强制标记
     FETCH_TOOL="web_fetch（OpenClaw 内置）"
     FETCH_JS=false
-    warn "抓取：$FETCH_TOOL 不支持 JS 渲染（静态页面可用，SPA/动态页面会失败）"
+    info "抓取 L1：$FETCH_TOOL（不支持 JS 渲染，静态页面可用）"
 elif [ "$RUNTIME" = "hermes" ]; then
-    FETCH_TOOL="web_extract / browser（Hermes 内置）"
+    FETCH_TOOL="browser（Hermes 内置）"
     # 只有 Hermes 的 browser 工具才支持 JS 渲染
     if grep -q 'browser' "$HERMES_CONFIG" 2>/dev/null || \
        grep -qi 'toolsets.*browser' "$HERMES_CONFIG" 2>/dev/null; then
         FETCH_JS=true
-        ok "抓取：Hermes 浏览器工具可用（支持 JS 渲染）"
+        ok "抓取 L1：Hermes 浏览器工具可用（支持 JS 渲染）"
     else
         FETCH_JS=false
-        warn "抓取：Hermes 未检测到 browser 工具（JS 渲染不可用）"
+        info "抓取 L1：Hermes 未检测到 browser 工具"
     fi
+fi
+
+# Level 2: Jina Reader（零安装，远程渲染）
+JINA_TEST=$(curl -sL --max-time 10 "https://r.jina.ai/https://example.com" -o /dev/null -w '%{http_code}' 2>/dev/null || true)
+if [ "$JINA_TEST" = "200" ]; then
+    FETCH_JINA=true
+    ok "抓取 L2：Jina Reader 可用（远程 JS 渲染，零安装）"
+else
+    info "抓取 L2：Jina Reader 不可用（网络不通或被墙）"
+fi
+
+# Level 3: Crawl4AI CLI（本地浏览器，完整 JS 渲染）
+if which crwl >/dev/null 2>&1 || python3 -c "import crawl4ai" 2>/dev/null; then
+    FETCH_CRAWL4AI=true
+    ok "抓取 L3：Crawl4AI CLI 可用（本地浏览器，完整 JS 渲染）"
+else
+    info "抓取 L3：Crawl4AI 未安装（可选，pip install -U crawl4ai）"
 fi
 
 # ============================================================
@@ -389,24 +408,20 @@ echo "========================================"
 echo ""
 echo "运行时：$RUNTIME"
 echo ""
-echo "本次采集可用工具："
+echo "本次可用工具："
 echo "  搜索：MiniMax web_search [$([ "$SEARCH_MINIMAX" = true ] && echo '已就绪' || echo '不可用')]"
 if [ "$SEARCH_HERMES_WEB" = true ]; then
     echo "  搜索内置：Hermes web_search/web_extract [可用]"
 fi
 echo "  搜索回退：Tavily search [$([ "$SEARCH_TAVILY" = true ] && echo '可用' || echo '未配置')]"
 echo "  搜索增强：Exa AI [$([ "$SEARCH_EXA" = true ] && echo '可用' || echo '未配置')]"
-echo "  页面抓取：$FETCH_TOOL [$([ "$FETCH_JS" = true ] && echo '支持JS渲染' || echo '不支持JS渲染')]"
-if [ "$FETCH_JS" = false ]; then
-    echo "  已知限制：当前抓取工具不支持 JS 渲染，gov.cn 等动态页面可能抓取失败"
-fi
 echo ""
-echo "工具选择策略："
-echo "  搜索：优先 MiniMax → Tavily → Exa → 内置搜索 → 都不可用则停止"
-echo "  抓取：使用运行时抓取工具 → 拿到空壳时在缺口表标注「JS渲染失败」"
-if [ "$RUNTIME" = "hermes" ] && [ "$FETCH_JS" = true ]; then
-    echo "  浏览器：Hermes 浏览器工具可处理 JS 渲染页面（优先用于 gov.cn）"
-fi
+echo "抓取降级链："
+echo "  L1 内置：$FETCH_TOOL [$([ "$FETCH_JS" = true ] && echo '支持JS渲染' || echo '不支持JS渲染')]"
+echo "  L2 Jina Reader：[$([ "$FETCH_JINA" = true ] && echo '可用' || echo '不可用')]（远程渲染，零安装）"
+echo "  L3 Crawl4AI：[$([ "$FETCH_CRAWL4AI" = true ] && echo '可用' || echo '未安装')]（本地浏览器，完整渲染）"
+echo "  L4 curl：兜底"
 echo ""
-echo "现在可以使用执行提示词模板启动政策采集："
-echo "  直接开始使用搜索能力"
+echo "降级策略："
+echo "  抓取：内置工具 → Jina Reader → Crawl4AI → curl → 标注缺口"
+echo "  搜索：MiniMax → Tavily → Exa → 都不可用则停止"

@@ -28,7 +28,7 @@ version: "1.0.0"
 |------|------|
 | 环境探测 | 自动检测运行时（OpenClaw/Hermes）、搜索工具可用性、抓取工具JS渲染能力 |
 | 搜索降级链 | MiniMax → Tavily → Exa → web_fetch → 停止 |
-| 抓取降级链 | browser（Hermes）→ web_fetch → curl → 标注缺口 |
+| 抓取降级链 | 内置工具 → Jina Reader → Crawl4AI → curl → 标注缺口 |
 | 检索策略 | 三轮递进：精准查询（site:）→ 泛搜补充 → 兜底来源 |
 | 双运行时 | OpenClaw（mcporter MCP）/ Hermes（config.yaml 原生 MCP）|
 
@@ -62,33 +62,52 @@ Exa 支持 `includeDomains` 精准定向搜索：
 
 ## 抓取降级链
 
-### OpenClaw 环境
+### 统一降级链（双运行时）
 
 ```
-web_fetch（内置工具）
- ↓ 空壳/JS渲染页面
-curl（静态抓取）
+Level 1: 内置工具（最快，零依赖）
+ ├─ OpenClaw: web_fetch（不支持 JS 渲染）
+ └─ Hermes: browser_navigate + browser_snapshot（支持 JS 渲染）
+ ↓ 空壳/JS渲染页面/正文<200字
+Level 2: Jina Reader（零安装，远程渲染）
+ ↓ 失败/超时/不可用
+Level 3: Crawl4AI CLI（本地浏览器，完整 JS 渲染）
+ ↓ 未安装/失败
+Level 4: curl 兜底（纯静态）
  ↓ 失败
-标注「JS渲染失败」，记录在缺口表
+标注缺口
 ```
 
-### Hermes 环境
+### 各级别说明
 
-```
-browser_navigate + browser_snapshot（内置浏览器，支持JS渲染）
- ↓ 失败
-web_extract（文本提取）
- ↓ 失败
-curl（静态抓取）
- ↓ 失败
-标注「页面无法抓取」
-```
+| 级别 | 工具 | JS 渲染 | 安装要求 | 适用场景 |
+|------|------|---------|----------|----------|
+| L1 | web_fetch / browser | 视运行时 | 无 | 静态页面、Hermes 的所有页面 |
+| L2 | Jina Reader | ✅ 远程 | 无 | JS 动态页面、gov.cn |
+| L3 | Crawl4AI CLI | ✅ 本地 | pip install | 复杂页面、需要完整渲染 |
+| L4 | curl | ❌ | 无 | 最后兜底 |
 
 ### 抓取成功判断标准
 
 - HTTP 200 + 正文纯文本 > 200 字 → 成功
 - HTTP 200 + 正文 < 200 字 → 可能是 JS 渲染页面，尝试下一级
 - 非 200 / 超时 / 空白 → 尝试下一级
+
+### Jina Reader 用法（L2）
+
+```bash
+curl -s "https://r.jina.ai/{URL}" -H "Accept: text/markdown"
+```
+
+### Crawl4AI 用法（L3）
+
+```bash
+# 安装
+pip install -U crawl4ai && crawl4ai-setup
+
+# 抓取
+crwl "{URL}" -o markdown
+```
 
 ## 检索策略：三轮递进
 
@@ -155,8 +174,8 @@ MINIMAX_API_KEY=sk-cp-j-xxx bash scripts/setup-env.sh
 2. 检查/安装 uv（uvx）
 3. 配置 MiniMax MCP（写入对应位置）
 4. 验证搜索可用性
-5. 探测抓取能力（JS渲染支持）
-6. 输出可用工具清单
+5. 探测 4 级抓取能力（内置 → Jina Reader → Crawl4AI → curl）
+6. 输出完整工具清单
 
 ## 统一规范
 
