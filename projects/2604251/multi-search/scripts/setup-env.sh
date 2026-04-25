@@ -362,28 +362,21 @@ FETCH_TOOL="未知"
 FETCH_JS=false
 
 if [ "$RUNTIME" = "openclaw" ]; then
+    # OpenClaw 的 web_fetch 不支持 JS 渲染，强制标记
     FETCH_TOOL="web_fetch（OpenClaw 内置）"
-    TEST_CONTENT=$(web_fetch "https://www.ndrc.gov.cn/" 2>/dev/null || curl -sL --max-time 10 "https://www.ndrc.gov.cn/" 2>/dev/null || true)
+    FETCH_JS=false
+    warn "抓取：$FETCH_TOOL 不支持 JS 渲染（静态页面可用，SPA/动态页面会失败）"
 elif [ "$RUNTIME" = "hermes" ]; then
     FETCH_TOOL="web_extract / browser（Hermes 内置）"
-    # Hermes 有浏览器工具，JS 渲染能力更强
+    # 只有 Hermes 的 browser 工具才支持 JS 渲染
     if grep -q 'browser' "$HERMES_CONFIG" 2>/dev/null || \
        grep -qi 'toolsets.*browser' "$HERMES_CONFIG" 2>/dev/null; then
         FETCH_JS=true
         ok "抓取：Hermes 浏览器工具可用（支持 JS 渲染）"
-    fi
-    TEST_CONTENT=$(curl -sL --max-time 10 "https://www.ndrc.gov.cn/" 2>/dev/null || true)
-fi
-
-if [ "$FETCH_JS" = false ] && [ -n "$TEST_CONTENT" ] && [ ${#TEST_CONTENT} -gt 200 ]; then
-    TEXT_DENSITY=$(echo "$TEST_CONTENT" | sed 's/<[^>]*>//g' | tr -d '[:space:]' | wc -c)
-    if [ "$TEXT_DENSITY" -gt 200 ]; then
-        ok "抓取：$FETCH_TOOL 可获取静态页面正文"
     else
-        warn "抓取：$FETCH_TOOL 获取到页面但正文过少（可能不支持 JS 渲染）"
+        FETCH_JS=false
+        warn "抓取：Hermes 未检测到 browser 工具（JS 渲染不可用）"
     fi
-elif [ "$FETCH_JS" = false ]; then
-    warn "抓取：$FETCH_TOOL 无法获取测试页面"
 fi
 
 # ============================================================
