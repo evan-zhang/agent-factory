@@ -87,29 +87,60 @@ curl -s "https://r.jina.ai/{URL}" -H "Accept: text/markdown"
 优势：`curl` 即可调用，无需安装任何依赖。
 限制：需要网络可达 `r.jina.ai`，某些环境可能需要代理。
 
-### Level 3: Crawl4AI CLI
+### Level 3: Crawl4AI 或 Scrapling（二选一）
 
-开源（64k+ stars），内置 Playwright + 自动 JS 渲染 + LLM 友好 Markdown 输出。
+探测到哪个用哪个，不需要同时安装。两者都内置 Playwright，能力重叠但有各自优势。
+
+#### Crawl4AI（64k+ stars）— L3 首选
+
+内置 Playwright + 自动 JS 渲染 + LLM 友好 Markdown 输出。
 
 ```bash
 # 安装
-pip install -U crawl4ai
-crawl4ai-setup  # 首次安装浏览器
+pip install -U crawl4ai && crawl4ai-setup
 
 # CLI 抓取
 crwl "{URL}" -o markdown
-
-# 判断成功：输出正文 > 200 字
 ```
 
 优势：
-- 完整 JS 渲染（内置 Playwright，不需要单独装）
-- 输出干净的 Markdown，无需额外清理
-- CLI 调用，适合 Agent 通过 exec 调用
-- 反爬虫检测 + Shadow DOM 支持（v0.8.5+）
-- 完全离线可用，不依赖外部服务
+- JS 渲染成熟，迭代多（v0.8.6）
+- CLI `crwl` 直接输出 Markdown
+- Shadow DOM 支持、反爬虫检测（v0.8.5+）
+- 完全离线可用
 
-限制：需要安装（~200MB Chromium），首次 `crawl4ai-setup` 较慢。
+#### Scrapling（39k+ stars）— L3 备选，反爬场景更强
+
+内置 Playwright + Cloudflare Turnstile 绕过 + TLS 指纹伪装 + Camoufox 隐身浏览器。
+
+```bash
+# 安装
+pip install scrapling
+
+# CLI 抓取（Python 调用）
+python3 -c "from scrapling.fetchers import StealthyFetcher; p = StealthyFetcher.fetch('{URL}', headless=True); print(p.text)"
+```
+
+优势：
+- **反爬虫更强**：Cloudflare Turnstile/Interstitial 绕过、TLS 指纹伪装
+- **MCP 集成**：10 个 MCP 工具（get/fetch/stealthy_fetch/bulk/screenshot/session），可通 mcporter 直接调用
+- **CSS 选择器提取**：精准定位元素，节省 token
+- **并发抓取**：bulk_get/bulk_fetch 并发处理
+- **官方 OpenClaw skill**：`clawhub install scrapling-official`
+
+#### 什么时候用 Scrapling 而不是 Crawl4AI
+
+- 遇到 Cloudflare 防护的页面
+- 需要 TLS 指纹伪装的网站
+- 需要精准 CSS 选择器提取特定元素
+- 通过 MCP 调用而非 CLI
+
+#### L3 安装体积
+
+| 工具 | 安装体积 | 首次配置 |
+|------|----------|----------|
+| Crawl4AI | ~200MB（Chromium） | `crawl4ai-setup` |
+| Scrapling | ~200MB（Playwright Chromium） | 自动安装 |
 
 ### Level 4: curl 兜底
 
@@ -194,3 +225,25 @@ fi
 已尝试 URL：https://xxx.gov.cn/...
 失败原因：HTTP 200 但正文 < 50 字，疑似 JS 渲染页面
 ```
+
+## 未来关注
+
+### Obscura（4.7k stars）— 轻量无头浏览器
+
+Rust 编写的无头浏览器引擎，单二进制 70MB，内存 30MB，启动即时。
+
+**为什么现在不纳入**：
+- 项目年轻（2026 年），生态不成熟
+- 用 V8 引擎跑 JS，不是完整浏览器内核
+- 政务网站（gov.cn 等）JS 复杂，V8 可能不够
+- 没有 MCP 集成，没有 Python API
+
+**什么时候重新评估**：
+- Stars > 10k 或被主要爬虫框架采用
+- 实测通过 gov.cn 复杂页面
+- 提供 MCP 或 Python API
+
+### BeautifulSoup — 不纳入
+
+HTML/XML 解析器，不是爬虫。不发起请求、不渲染 JS、不处理反爬。
+Crawl4AI 和 Scrapling 自带更强的解析能力，无需单独引入。

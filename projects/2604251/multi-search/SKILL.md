@@ -4,7 +4,7 @@ description: 多源搜索降级工具包。环境能力探测 + 搜索/抓取降
 skillcode: multi-search
 homepage: https://github.com/evan-zhang/agent-factory
 source: projects/2604251/multi-search
-version: "1.1.0"
+version: "1.2.0"
 ---
 
 # multi-search
@@ -20,7 +20,7 @@ version: "1.1.0"
 
 ## 当前版本
 
-**`1.1.0`**（见 `version.json`）
+**`1.2.0`**（见 `version.json`）
 
 ## 能力概览
 
@@ -71,7 +71,7 @@ Level 1: 内置工具（最快，零依赖）
  ↓ 空壳/JS渲染页面/正文<200字
 Level 2: Jina Reader（零安装，远程渲染）
  ↓ 失败/超时/不可用
-Level 3: Crawl4AI CLI（本地浏览器，完整 JS 渲染）
+Level 3: Crawl4AI 或 Scrapling（二选一，本地浏览器，完整 JS 渲染）
  ↓ 未安装/失败
 Level 4: curl 兜底（纯静态）
  ↓ 失败
@@ -84,7 +84,7 @@ Level 4: curl 兜底（纯静态）
 |------|------|---------|----------|----------|
 | L1 | web_fetch / browser | 视运行时 | 无 | 静态页面、Hermes 的所有页面 |
 | L2 | Jina Reader | ✅ 远程 | 无 | JS 动态页面、gov.cn |
-| L3 | Crawl4AI CLI | ✅ 本地 | pip install | 复杂页面、需要完整渲染 |
+| L3 | Crawl4AI / Scrapling | ✅ 本地 | pip install | JS 渲染 + 反爬（Scrapling 更强） |
 | L4 | curl | ❌ | 无 | 最后兜底 |
 
 ### 抓取成功判断标准
@@ -99,7 +99,7 @@ Level 4: curl 兜底（纯静态）
 curl -s "https://r.jina.ai/{URL}" -H "Accept: text/markdown"
 ```
 
-### Crawl4AI 用法（L3）
+### Crawl4AI 用法（L3a）
 
 ```bash
 # 安装
@@ -107,6 +107,16 @@ pip install -U crawl4ai && crawl4ai-setup
 
 # 抓取
 crwl "{URL}" -o markdown
+```
+
+### Scrapling 用法（L3b）
+
+```bash
+# 安装
+pip install scrapling
+
+# 抓取
+python3 -c "from scrapling.fetchers import StealthyFetcher; p = StealthyFetcher.fetch('{URL}', headless=True); print(p.text)"
 ```
 
 ## 检索策略：三轮递进
@@ -174,7 +184,7 @@ MINIMAX_API_KEY=sk-cp-j-xxx bash scripts/setup-env.sh
 2. 检查/安装 uv（uvx）
 3. 配置 MiniMax MCP（写入对应位置）
 4. 验证搜索可用性
-5. 探测 4 级抓取能力（内置 → Jina Reader → Crawl4AI → curl）
+5. 探测 4 级抓取能力（内置 → Jina Reader → Crawl4AI/Scrapling → curl）
 6. 输出完整工具清单
 
 ## 数据落盘

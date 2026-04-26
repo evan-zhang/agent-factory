@@ -390,12 +390,22 @@ else
     info "抓取 L2：Jina Reader 不可用（网络不通或被墙）"
 fi
 
-# Level 3: Crawl4AI CLI（本地浏览器，完整 JS 渲染）
+# Level 3: Crawl4AI 或 Scrapling（二选一）
+FETCH_CRAWL4AI=false
+FETCH_SCRAPLING=false
+
 if which crwl >/dev/null 2>&1 || python3 -c "import crawl4ai" 2>/dev/null; then
     FETCH_CRAWL4AI=true
-    ok "抓取 L3：Crawl4AI CLI 可用（本地浏览器，完整 JS 渲染）"
-else
-    info "抓取 L3：Crawl4AI 未安装（可选，pip install -U crawl4ai）"
+    ok "抓取 L3a：Crawl4AI 可用（JS 渲染 + Markdown 输出）"
+fi
+
+if python3 -c "import scrapling" 2>/dev/null; then
+    FETCH_SCRAPLING=true
+    ok "抓取 L3b：Scrapling 可用（反爬 + Cloudflare 绕过）"
+fi
+
+if [ "$FETCH_CRAWL4AI" = false ] && [ "$FETCH_SCRAPLING" = false ]; then
+    info "抓取 L3：Crawl4AI 和 Scrapling 均未安装（可选，装一个即可）"
 fi
 
 # ============================================================
@@ -419,7 +429,8 @@ echo ""
 echo "抓取降级链："
 echo "  L1 内置：$FETCH_TOOL [$([ "$FETCH_JS" = true ] && echo '支持JS渲染' || echo '不支持JS渲染')]"
 echo "  L2 Jina Reader：[$([ "$FETCH_JINA" = true ] && echo '可用' || echo '不可用')]（远程渲染，零安装）"
-echo "  L3 Crawl4AI：[$([ "$FETCH_CRAWL4AI" = true ] && echo '可用' || echo '未安装')]（本地浏览器，完整渲染）"
+echo "  L3 Crawl4AI：[$([ "$FETCH_CRAWL4AI" = true ] && echo '可用' || echo '未安装')]（JS 渲染 + Markdown）"
+echo "  L3 Scrapling：[$([ "$FETCH_SCRAPLING" = true ] && echo '可用' || echo '未安装')]（反爬 + Cloudflare 绕过）"
 echo "  L4 curl：兜底"
 echo ""
 echo "降级策略："
