@@ -121,3 +121,30 @@ python3 scripts/tavily_search.py "<关键词>" [max_results]
 **本 Skill 负责**：抓取 → 判断 → 调研 → 生成报告 → 归档本地 → 同步 Obsidian
 
 **不负责**：渠道发送（Agent 自行决定）、文件解析（PDF/Word/PPT/图片）、知识索引管理（AF-20260413-003）
+
+## 配置与授权
+
+安装后运行 `scripts/init_config.py` 初始化。配置文件：`~/.openclaw/link-archivist-config.json`
+
+| 配置项 | 必填 | 说明 | 获取方式 |
+|--------|------|------|----------|
+| `archive_dir` | ✅ | 本地归档目录 | 自行指定路径 |
+| `obsidian_dir` | ❌ | Obsidian 同步目录 | Obsidian vault 路径 |
+| `xgjk_app_key` | ❌ | 玄关 appKey（AI 慧记转写） | 联系玄关管理员 |
+| `tavily_api_key` | ❌ | Tavily API key（Web Search 交叉验证） | https://tavily.com |
+
+无需配置即可用的能力：r.jina.ai 网页抓取、YouTube 字幕提取、抖音视频 ASR（Token 内置）、GitHub 项目发现。
+
+## 问题反馈
+
+使用中遇到问题，请提交 Issue：
+
+**地址**：https://github.com/evan-zhang/agent-factory/issues/new
+
+**标题格式**：`[BUG] link-archivist: 简短描述` 或 `[FEATURE] link-archivist: 简短描述`
+
+**建议包含**：
+1. 重现步骤
+2. 预期行为 vs 实际行为
+3. 环境信息（OpenClaw 版本、操作系统）
+4. 相关日志或错误信息
