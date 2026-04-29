@@ -18,12 +18,39 @@ def load_json(path: str) -> Dict[str, Any]:
         return json.load(f)
 
 
-def http_post_json(url: str, headers: Dict[str, str], body: Dict[str, Any]) -> Dict[str, Any]:
-    data = json.dumps(body, ensure_ascii=False).encode("utf-8")
-    req = urllib.request.Request(url, data=data, headers=headers, method="POST")
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        raw = resp.read().decode("utf-8")
-    return json.loads(raw)
+TBS_ENV_URLS = {
+    "dev": "https://cwork-web-test.xgjktech.com.cn/tbs-admin",
+    "staging": "https://cwork-web-staging.xgjktech.com.cn/tbs-admin",
+    "prod": "https://cwork-web.xgjktech.com.cn/tbs-admin",
+}
+
+
+def get_base_url() -> str:
+    """Resolve base URL from TBS_ENV or TBS_BASE_URL env vars, fallback to dev."""
+    env = os.getenv("TBS_ENV", "").lower()
+    if env in TBS_ENV_URLS:
+        return TBS_ENV_URLS[env]
+    explicit = os.getenv("TBS_BASE_URL")
+    if explicit:
+        return explicit
+    return TBS_ENV_URLS["dev"]
+
+
+def http_post_json(url: str, headers: Dict[str, str], body: Dict[str, Any], retries: int = 1) -> Dict[str, Any]:
+    last_err = None
+    for attempt in range(retries + 1):
+        try:
+            data = json.dumps(body, ensure_ascii=False).encode("utf-8")
+            req = urllib.request.Request(url, data=data, headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                raw = resp.read().decode("utf-8")
+            return json.loads(raw)
+        except Exception as e:
+            last_err = e
+            if attempt < retries:
+                import time
+                time.sleep(1 * (attempt + 1))
+    raise last_err
 
 
 def pick_list(data: Any) -> List[Dict[str, Any]]:
@@ -140,7 +167,7 @@ def main() -> int:
     ap.add_argument("--params-file", required=False, help="Path to draft.json")
     ap.add_argument("--params-json", required=False, help="Draft JSON string (optional)")
     ap.add_argument("--access-token", required=True, help="TBS access-token")
-    ap.add_argument("--base-url", default=os.getenv("TBS_BASE_URL", "https://cwork-web-test.xgjktech.com.cn/tbs-admin"))
+    ap.add_argument("--base-url", default=get_base_url())
     args = ap.parse_args()
 
     try:

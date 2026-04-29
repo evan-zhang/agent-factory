@@ -1,4 +1,4 @@
-### 产品知识主题生成（Step3 后置，Agent 生成/回显）
+### 产品知识主题生成（Step4.1，Step3 完成后执行）
 
 **步骤**：在 Step3 的“标题 + 场景背景”已生成并经用户确认之后执行。由 Agent 基于 Step3 已确认的 `医生核心顾虑` 与 `代表目标`，推荐 2-4 条“产品知识主题”短语，并回显给用户逐条确认/修改。
 
@@ -35,13 +35,17 @@
 
 #### 4.4.2.1 主题匹配上下文知识（必须）
 基于 `scene.productKnowledgeNeeds` 到 Step1 已写入的 `state.productKnowledges` 中查找：
-- 匹配条件：`drugId + title`
-  - `drugId`：取当前已确认产品对应的 `drugId`
-  - `title`：取每条产品知识主题文本（可做 trim 后的精确匹配）
-- 命中：
-  - 记录对应 `knowledgeId`
-  - 写入 `scene.knowledgeIds`
-- 未命中：
+- **第一轮：精确匹配**
+  - 匹配条件：`drugId + title`
+    - `drugId`：取当前已确认产品对应的 `drugId`
+    - `title`：取每条产品知识主题文本（trim 后精确匹配）
+  - 命中：记录对应 `knowledgeId`，写入 `scene.knowledgeIds`
+- **第二轮：模糊匹配降级**（仅对精确匹配未命中的主题执行）
+  - 匹配条件：`drugId` 一致 + `title` 包含匹配（双向）
+    - 用户主题文本包含知识库 title，或知识库 title 包含用户主题文本
+    - 匹配时忽略空格和标点差异
+  - 命中：记录对应 `knowledgeId`，写入 `scene.knowledgeIds`
+- **仍未命中**：
   - 不写入该条 `knowledgeId`
   - 明确提示用户该主题未找到（并引导用户修改主题或确认缺失处理）
 
