@@ -69,21 +69,16 @@ def parse_args():
 
 def load_config():
     """Load config from standard paths."""
-    config_file = Path.home() / ".config" / "link-archivist-config.json"
-    alt_paths = [
+    for config_file in [
         Path.home() / ".openclaw" / "link-archivist-config.json",
         Path.home() / ".hermes" / "link-archivist-config.json",
-    ]
-    for p in alt_paths:
-        if p.exists():
-            config_file = p
-            break
-
-    if config_file.exists():
-        try:
-            return json.loads(config_file.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, OSError):
-            pass
+        Path.home() / ".config" / "link-archivist-config.json",
+    ]:
+        if config_file.exists():
+            try:
+                return json.loads(config_file.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                pass
     return {}
 
 

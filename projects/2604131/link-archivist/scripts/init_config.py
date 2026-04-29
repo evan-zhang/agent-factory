@@ -41,6 +41,12 @@ CONFIG_FIELDS = {
         "hint": "用于 Web Search 交叉验证，获取：https://tavily.com",
         "example": "tvly-xxxxx",
     },
+    "video_archive_dir": {
+        "label": "视频归档目录",
+        "required": False,
+        "hint": "full 模式下载视频的保存目录，未配置则不保存视频",
+        "example": "/path/to/video-archive",
+    },
 }
 
 
@@ -94,6 +100,10 @@ def check_config(config: dict) -> dict:
     tavily_ok = bool(config.get("tavily_api_key")) or bool(os.getenv("TAVILY_API_KEY"))
     xgjk_ok = bool(config.get("xgjk_app_key"))
 
+    video_archive_ok = False
+    if config.get("video_archive_dir"):
+        video_archive_ok = Path(config["video_archive_dir"]).expanduser().is_dir()
+
     hints = []
     if not archive_ok:
         hints.append("请设置 archive_dir（知识库主目录，必填）")
@@ -103,6 +113,8 @@ def check_config(config: dict) -> dict:
         hints.append("建议配置 tavily_api_key（Web Search 交叉验证，可选）")
     if not xgjk_ok:
         hints.append("建议配置 xgjk_app_key（AI 慧记音频转写，可选）")
+    if not video_archive_ok and config.get("video_archive_dir"):
+        hints.append("video_archive_dir 目录不存在，视频归档将不可用")
 
     configured = archive_ok
     return {
@@ -115,6 +127,8 @@ def check_config(config: dict) -> dict:
         "obsidian_ok": obsidian_ok,
         "tavily_configured": tavily_ok,
         "xgjk_configured": xgjk_ok,
+        "video_archive_dir": config.get("video_archive_dir"),
+        "video_archive_ok": video_archive_ok,
         "hints": hints if not configured else [],
     }
 
