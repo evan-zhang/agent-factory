@@ -1,0 +1,11 @@
+{
+  "projectId": "2604291",
+  "name": "cms-tbs-scene-create",
+  "description": "TBS训战场景创建 Skill",
+  "status": "initialized",
+  "createdAt": "2026-04-29T21:11:00+08:00",
+  "skills": ["cms-tbs-scene-create"],
+  "flow": "L2",
+  "currentPhase": "S1",
+  "source": "external-delivery"
+}
