@@ -1,6 +1,6 @@
 ---
 name: vault-writer
-version: "1.0.0"
+version: "1.0.1"
 skillcode: vault-writer
 github: https://github.com/evan-zhang/agent-factory
 description: 当 Agent 需要将内容（报告、笔记、摘要等）写入 Obsidian vault 时触发。负责路径计算、文件写入、frontmatter 生成和 vault 内组织。

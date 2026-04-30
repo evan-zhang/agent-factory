@@ -39,7 +39,11 @@ def has_frontmatter(content: str) -> bool:
     return content.startswith("---") and "\n---" in content[3:]
 
 
-def inject_frontmatter(content: str, tags: list[str] | None = None) -> str:
+def inject_frontmatter(
+    content: str,
+    tags: list[str] | None = None,
+    default_tags: list[str] | None = None,
+) -> str:
     """
     注入/补充 YAML frontmatter。
     - 没有 frontmatter：添加完整的 frontmatter
@@ -49,15 +53,15 @@ def inject_frontmatter(content: str, tags: list[str] | None = None) -> str:
     date_str = now.strftime("%Y-%m-%d")
     timestamp_str = now.isoformat()
 
+    # 确定 tags：传入 > default_tags > 兜底
+    effective_tags = tags or default_tags or ["agent-output"]
+
     if not has_frontmatter(content):
         # 没有 frontmatter，添加完整的
+        tags_str = ", ".join(effective_tags)
         lines = ["---"]
         lines.append(f"created_at: {timestamp_str}")
-        if tags:
-            tags_str = ", ".join(tags)
-            lines.append(f"tags: [{tags_str}]")
-        else:
-            lines.append("tags: [agent-output]")
+        lines.append(f"tags: [{tags_str}]")
         lines.append("---")
         return "\n".join(lines) + "\n\n" + content
 
@@ -68,15 +72,15 @@ def inject_frontmatter(content: str, tags: list[str] | None = None) -> str:
     additions = []
     if "created_at" not in existing_fm:
         additions.append(f"created_at: {timestamp_str}")
-    if "tags" not in existing_fm and tags:
-        tags_str = ", ".join(tags)
+    if "tags" not in existing_fm:
+        tags_str = ", ".join(effective_tags)
         additions.append(f"tags: [{tags_str}]")
 
     if not additions:
         return content  # 无需补充
 
     insert_pos = end_idx
-    insert_text = "\n".join(additions) + "\n"
+    insert_text = "\n" + "\n".join(additions) + "\n"
     return content[:insert_pos] + insert_text + content[insert_pos:]
 
 
@@ -111,7 +115,8 @@ def write_note(
 
     # 注入 frontmatter
     tag_list = [t.strip() for t in tags.split(",")] if tags else None
-    content = inject_frontmatter(content, tag_list)
+    default_tag_list = config.get("default_tags", ["agent-output"])
+    content = inject_frontmatter(content, tag_list, default_tags=default_tag_list)
 
     # 计算目标路径
     base = Path(vault_path)
