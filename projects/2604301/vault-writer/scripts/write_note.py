@@ -46,42 +46,65 @@ def inject_frontmatter(
 ) -> str:
     """
     注入/补充 YAML frontmatter。
-    - 没有 frontmatter：添加完整的 frontmatter
-    - 已有 frontmatter：只补充缺失字段
+    - 没有 frontmatter：添加 created_at + tags（来自参数 > default > 兜底）
+    - 已有 frontmatter：补充缺失字段（created_at/tags），不覆盖已有值
+    - 已有 tags 时：不传参数 → 保持；传参数 → 替换
     """
     now = datetime.now()
-    date_str = now.strftime("%Y-%m-%d")
     timestamp_str = now.isoformat()
-
-    # 确定 tags：传入 > default_tags > 兜底
     effective_tags = tags or default_tags or ["agent-output"]
+    tags_str = ", ".join(effective_tags)
 
     if not has_frontmatter(content):
-        # 没有 frontmatter，添加完整的
-        tags_str = ", ".join(effective_tags)
-        lines = ["---"]
-        lines.append(f"created_at: {timestamp_str}")
-        lines.append(f"tags: [{tags_str}]")
-        lines.append("---")
-        return "\n".join(lines) + "\n\n" + content
+        # 无 frontmatter，添加完整 frontmatter
+        new_fm = f"created_at: {timestamp_str}\ntags: [{tags_str}]"
+        return f"---\n{new_fm}\n---\n\n{content}"
 
-    # 已有 frontmatter，补充缺失字段
-    end_idx = content.index("\n---", 3)
-    existing_fm = content[3:end_idx]
+    # 有 frontmatter，找到第二个 --- 的位置
+    second_dash = content.index("\n---", 3)
+    # frontmatter 内容：content[3:second_dash]，格式 "key: val\nkey2: val2"
+    fm_content = content[3:second_dash]
+    # 按行拆分
+    fm_lines = []
+    for line in fm_content.split("\n"):
+        stripped = line.strip()
+        if stripped:
+            fm_lines.append(stripped)
 
-    additions = []
-    if "created_at" not in existing_fm:
-        additions.append(f"created_at: {timestamp_str}")
-    if "tags" not in existing_fm:
-        tags_str = ", ".join(effective_tags)
-        additions.append(f"tags: [{tags_str}]")
+    # 解析已有字段
+    has_created_at = False
+    has_tags = False
+    tags_line_content = None
+    tags_line_idx = None
+    for i, line in enumerate(fm_lines):
+        if line.startswith("created_at:"):
+            has_created_at = True
+        elif line.startswith("tags:"):
+            has_tags = True
+            tags_line_content = line
+            tags_line_idx = i
 
-    if not additions:
-        return content  # 无需补充
+    # 补充 created_at（已有则保持）
+    if not has_created_at:
+        fm_lines.insert(0, f"created_at: {timestamp_str}")
 
-    insert_pos = end_idx
-    insert_text = "\n" + "\n".join(additions) + "\n"
-    return content[:insert_pos] + insert_text + content[insert_pos:]
+    # 处理 tags
+    if tags is not None:
+        # 传了 tags 参数：替换或补充
+        if has_tags:
+            fm_lines[tags_line_idx] = f"tags: [{tags_str}]"
+        else:
+            fm_lines.append(f"tags: [{tags_str}]")
+    elif not has_tags:
+        # 未传 tags 且原本无 tags：补充 default_tags
+        fm_lines.append(f"tags: [{tags_str}]")
+    # else: 已已有 tags 且未传参数 → 保持不变
+
+    fm_str = "\n".join(fm_lines)
+    body = content[second_dash + 4:]  # skip "\n---" (3 dashes + 1 newline)
+    return f"---\n{fm_str}\n---\n{body}"
+
+
 
 
 def write_note(
