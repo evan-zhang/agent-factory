@@ -31,14 +31,46 @@
 
 | 优先级 | 方案 | 触发条件 |
 |--------|------|----------|
-| 1st | `curl -sL https://r.jina.ai/{url}` | 通用方案，多数网站有效 |
-| 2nd | BeautifulSoup + requests 直接抓取 | jina.ai 返回空内容或不完整时 |
-| 3rd | 搜索引擎绕行法（见下方） | 中国平台反爬屏蔽时 |
-| 4th | `web_search` 搜索关键信息补充 | 以上全部失败时 |
+| 1st | `python3 scripts/toutiao_fetch.py <url>` | **头条文章专用**（见下方说明） |
+| 2nd | `curl -sL https://r.jina.ai/{url}` | 通用方案，多数网站有效 |
+| 3rd | BeautifulSoup + requests 直接抓取 | jina.ai 返回空内容或不完整时 |
+| 4th | 搜索引擎绕行法（见下方） | 中国平台反爬屏蔽时 |
+| 5th | `web_search` 搜索关键信息补充 | 以上全部失败时 |
+
+### 今日头条专用抓取（2026-05 新增）
+
+**适用 URL**：所有 `m.toutiao.com` 和 `www.toutiao.com` 文章链接
+
+**原理**：头条移动端 SSR 页面在 HTML 的 `<script id="RENDER_DATA">` 中直接嵌入了完整的 `articleInfo` JSON（含标题、正文、作者、发布时间），无需执行 JS。
+
+**使用方法**：
+```bash
+python3 scripts/toutiao_fetch.py "<头条文章URL>" --text-only  # 纯文本摘要（用于 short 模式）
+python3 scripts/toutiao_fetch.py "<头条文章URL>"               # 完整 JSON（用于 full 模式）
+```
+
+**输出字段**：
+- `title`：文章标题
+- `content`：HTML 格式正文
+- `content_text`：纯文本正文
+- `detail_source`：作者/媒体名称
+- `publish_time`：发布时间戳
+- `is_original`：是否原创
+- `keywords`：关键词
+
+**实测效果**（2026-05-07）：
+- 移动端文章页（`m.toutiao.com/i{article_id}/`）：✅ 直接提取成功，完整 6000+ 字文章
+- jina.ai 抓取：❌ 451 拦截（DDoS 保护误杀）
+- 直接 curl HTML + _$jsvmprt JS 解密：❌ 复杂（不建议）
+- 搜索引擎绕行法：⚠️ 可行但信息可能有损失
+
+**注意**：头条短链接（`m.toutiao.com/is/xxx`）会先 302 重定向到带 ID 的 URL，脚本会自动 follow 重定向。
 
 ### 搜索引擎绕行法（中国平台反爬专用）
 
-**适用场景**：今日头条、知乎、微信公众号等有 JS 反爬机制，jina.ai 返回空、curl 拿到 JS 加密页面、浏览器未安装时。
+**适用场景**：知乎、微信公众号等有 JS 反爬机制，jina.ai 返回空、curl 拿到 JS 加密页面时。
+
+> ⚠️ 今日头条已优先使用上方 toutiao_fetch.py，搜索引擎绕行法仅作为头条的保底方案。
 
 **核心思路**：不从目标平台抓内容，而是通过搜索引擎找到**同一主题的原始来源**，直接从原始来源获取。
 
@@ -56,11 +88,9 @@
    - 普通博客：`curl -sL https://r.jina.ai/<url>`
 5. **交叉验证**：多个搜索结果互相印证，确保信息准确
 
-**实测案例**（2026-04-14）：
-- 今日头条链接 → jina.ai 空内容、curl 拿到 JS 加密页 → Playwright + wait_for_timeout 等待动态内容
-- → DuckDuckGo 搜索标题关键词 → 找到 CSDN/知乎/GitHub 上的同题文章
-- → 定位到 Karpathy 的 GitHub Gist 原文 → 直接 raw URL 抓取成功
-- → 获得比头条文章更完整的一手信息
+**实测案例**（2026-05-07）：
+- 今日头条链接 → jina.ai 451拦截 → 直接使用 toutiao_fetch.py 从 SSR RENDER_DATA 提取
+- → 提取 6000+ 字完整文章内容 ✅
 
 **BeautifulSoup 抓取模板**（对不严重反爬的网站仍可用）：
 
@@ -95,13 +125,25 @@ with sync_playwright() as p:
     browser.close()
 ```
 
-> 超时统一设 60s，等待时间设 5s 以上（头条等重 JS 网站可设 10s）。
+> 头条移动端页面无需 Playwright，直接用 toutiao_fetch.py 即可。Playwright 方案仅适用于其他严重 JS 反爬的平台。
 
-**注意**：今日头条移动端短链接（m.toutiao.com/is/xxx）有 _$jsvmprt JS 加密，BeautifulSoup 方案基本无效，请直接使用搜索引擎绕行法。
+> **注意**：头条短链接（m.toutiao.com/is/xxx）会自动重定向到含 ID 的 URL，toutiao_fetch.py 会自动 follow，无需手动处理。
 
 ## 决策树
 
 ```
+收到链接 → 是头条文章（m.toutiao.com 或 www.toutiao.com）？
+ ├─ YES → python3 toutiao_fetch.py（头条专用提取）
+ │         ├─ 成功 → 继续
+ │         └─ 失败 → 降级到 jina.ai / 搜索引擎绕行法
+ └─ NO → r.jina.ai
+         ├─ 成功 → 继续
+         ├─ 空/不完整 → BeautifulSoup 直接抓取
+         │              ├─ 成功 → 继续
+         │              └─ 失败 → 搜索引擎绕行法
+         └─ 拦截/失败 → 搜索引擎绕行法
+                   └─ 失败 → web_search 补充
+
 字幕提取失败？
  ├─ YES → yt-dlp 降级
  │         ├─ 成功 → 继续
