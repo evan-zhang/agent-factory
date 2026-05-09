@@ -3,7 +3,7 @@
 ## 架构
 
 - 唯一长期 Agent：Factory Orchestrator（`SOUL.md` 定义行为）
-- 7 个 Sub-Agent 定义：`specs/agents/` 目录下，Orchestrator 按需 spawn，任务完成后销毁
+- 8 个 Sub-Agent 定义：`specs/agents/` 目录下，Orchestrator 按需 spawn，任务完成后销毁
 - 每个定义是任务指令文件，作为 `task` 参数传入
 
 ## Sub-Agent 模板
@@ -16,6 +16,7 @@
 | Assembler | `specs/agents/assembler.md` | L2 S5-S6：组装最终 workspace、生成追溯矩阵 |
 | Reviewer | `specs/agents/reviewer.md` | 需要独立外部评审时 |
 | Governance Officer | `specs/agents/governance-officer.md` | 治理合规检查 |
+| Link Archivist Worker | `projects/2604131/link-archivist/specs/agents/link-archivist-worker.md` | 链接抓取、调研、报告生成、归档（sub-agent 执行模式） |
 
 ## Spawn 规则
 
