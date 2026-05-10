@@ -7,9 +7,15 @@ from datetime import datetime
 from pathlib import Path
 
 
+def _date_to_nested_path(base_dir: Path, date_str: str) -> Path:
+    """Convert YYYY-MM-DD to YYYY/MM/DD nested path."""
+    parts = date_str.split("-")  # [YYYY, MM, DD]
+    return base_dir / parts[0] / parts[1] / parts[2]
+
+
 def get_next_number(archive_dir: Path, date_str: str) -> int:
     """Scan existing files and return next sequence number."""
-    date_dir = archive_dir / date_str
+    date_dir = _date_to_nested_path(archive_dir, date_str)
     if not date_dir.exists():
         return 1
     max_num = 0
@@ -27,7 +33,7 @@ def get_next_number(archive_dir: Path, date_str: str) -> int:
 
 def get_next_obsidian_number(obsidian_dir: Path, date_str: str) -> int:
     """Scan existing Obsidian files and return next sequence number."""
-    date_dir = obsidian_dir / date_str
+    date_dir = _date_to_nested_path(obsidian_dir, date_str)
     if not date_dir.exists():
         return 1
     max_num = 0
@@ -85,7 +91,7 @@ def load_config():
 def sync_to_obsidian(content_file: Path, obsidian_dir: Path, title: str, date_str: str) -> dict:
     """Sync report to Obsidian directory.
     
-    Obsidian structure: {obsidian_dir}/YYYY-MM-DD/{title}-YYYY-MM-DD.md
+    Obsidian structure: {obsidian_dir}/YYYY/MM/DD/{title}-YYYY-MM-DD.md
     """
     if not obsidian_dir:
         return {"ok": False, "reason": "no obsidian_dir configured"}
@@ -94,7 +100,7 @@ def sync_to_obsidian(content_file: Path, obsidian_dir: Path, title: str, date_st
     if not obsidian_dir.exists():
         return {"ok": False, "reason": f"obsidian dir not found: {obsidian_dir}"}
 
-    date_path = obsidian_dir / date_str
+    date_path = _date_to_nested_path(obsidian_dir, date_str)
     date_path.mkdir(parents=True, exist_ok=True)
 
     safe_title = title.replace(" ", "-").replace("/", "-")[:50]
@@ -145,7 +151,7 @@ def main() -> int:
     # --- Archive to local ---
     seq = get_next_number(archive_dir, today_display)
     archive_id = f"K-{today_code}-{seq:03d}"
-    date_dir = archive_dir / today_display
+    date_dir = _date_to_nested_path(archive_dir, today_display)
     date_dir.mkdir(parents=True, exist_ok=True)
 
     content = content_file.read_text(encoding="utf-8")
