@@ -1,5 +1,6 @@
 ---
 name: doc-viewer
+version: "1.0.0"
 description: 将 Markdown 或 HTML 文件上传到 Doc Viewer 服务，返回在线预览链接。触发条件：用户要求上传文件到网站、预览文件、获取文件链接。
 triggers:
   - 上传文件
