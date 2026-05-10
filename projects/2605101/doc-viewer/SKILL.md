@@ -1,7 +1,7 @@
 ---
 name: doc-viewer
 description: "上传 Markdown/HTML 文件到 Doc Viewer 服务，返回在线预览链接。触发词：上传文件、预览文件、文件链接、上传到网站、生成链接"
-version: "1.0.0"
+version: "1.0.1"
 homepage: https://github.com/evan-zhang/agent-factory/tree/master/projects/2605101/doc-viewer/
 issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=doc-viewer
 ---
@@ -13,8 +13,6 @@ issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=doc-viewer
 > 工厂主页：https://github.com/evan-zhang/agent-factory
 
 将用户提供的 Markdown (.md) 或 HTML (.html/.htm) 文件上传到 Doc Viewer 服务，返回在线预览链接。
-
-> 部署细节见 `references/deployment.md`
 
 ## 支持的文件类型
 

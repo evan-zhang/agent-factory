@@ -28,7 +28,7 @@ HOST = os.getenv("DOC_HOST", "doc.20100706.xyz")
 PORT = int(os.getenv("DOC_PORT", "8080"))
 PUBLIC_PORT = int(os.getenv("DOC_PUBLIC_PORT", "0"))
 MAX_SIZE = 10 * 1024 * 1024  # 10MB
-ALLOWED_EXT = {".md", ".markdown", ".html", ".htm", ".txt"}
+ALLOWED_EXT = {".md", ".markdown", ".html", ".htm"}
 RETENTION_DAYS = int(os.getenv("DOC_RETENTION_DAYS", "30"))
 
 DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -630,6 +630,9 @@ async def upload_doc(
         if len(raw) > MAX_SIZE:
             raise HTTPException(status_code=413, detail="File too large (max 10MB)")
         filename = file.filename or "untitled.md"
+        ext = Path(filename).suffix.lower()
+        if ext not in ALLOWED_EXT:
+            raise HTTPException(status_code=400, detail=f"Unsupported file type: {ext}. Allowed: {', '.join(sorted(ALLOWED_EXT))}")
         meta = _save_doc(raw, filename, file.content_type or "")
     elif content.strip():
         raw = content.encode("utf-8")
@@ -652,6 +655,16 @@ async def view_doc(doc_id: str):
     fmt = meta.get("format", "markdown")
 
     if fmt == "html":
+        toolbar = HTML_TOOLBAR.format(
+            filename=meta.get("filename", "-"),
+            size=_human_size(meta.get("size", 0)),
+            created_at=meta.get("created_at", "-"),
+            doc_id=doc_id,
+        )
+        if "</body>" in text:
+            text = text.replace("</body>", toolbar + "</body>", 1)
+        else:
+            text += toolbar
         return HTMLResponse(text)
 
     # Markdown / Text
@@ -690,17 +703,17 @@ async def raw_doc(doc_id: str):
     return PlainTextResponse(raw, media_type=ct)
 
 
+@app.get("/api/list")
+async def api_list():
+    """获取所有文档列表"""
+    return JSONResponse(_list_all_docs())
+
+
 @app.get("/api/{doc_id}")
 async def api_meta(doc_id: str):
     """获取文档元信息"""
     meta = _load_meta(doc_id)
     return JSONResponse(meta)
-
-
-@app.get("/api/list")
-async def api_list():
-    """获取所有文档列表"""
-    return JSONResponse(_list_all_docs())
 
 
 @app.delete("/api/{doc_id}")
