@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>architect-writer (AW) 工作流</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-bottom: 40px;
+  }
+
+  /* ====== 滚动容器 ====== */
+  .scroll-wrapper {
+    overflow-x: auto;
+    padding-bottom: 40px;
+  }
+  .canvas {
+    min-width: 1400px;
+    position: relative;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  /* ====== 主时间轴 ====== */
+  .timeline {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    padding-top: 40px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 80px;
+    left: 60px;
+    right: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #334155, #475569, #334155);
+    border-radius: 2px;
+  }
+
+  /* ====== Phase 列 ====== */
+  .phase-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Phase 标题圆圈 */
+  .phase-badge {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: 3px solid;
+    background: #0f1117;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    line-height: 1.2;
+  }
+  .phase-badge:hover { transform: scale(1.08); }
+  .phase-badge .phase-num { font-size: 0.7rem; opacity: 0.7; }
+
+  .phase-col[data-phase="0"] .phase-badge { border-color: #60a5fa; color: #60a5fa; }
+  .phase-col[data-phase="1"] .phase-badge { border-color: #a78bfa; color: #a78bfa; }
+  .phase-col[data-phase="2"] .phase-badge { border-color: #34d399; color: #34d399; }
+  .phase-col[data-phase="3"] .phase-badge { border-color: #fbbf24; color: #fbbf24; }
+  .phase-col[data-phase="4"] .phase-badge { border-color: #f87171; color: #f87171; }
+
+  .phase-label {
+    margin-top: 12px;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    text-align: center;
+    max-width: 100px;
+    line-height: 1.4;
+  }
+
+  /* ====== 阶段内容卡片 ====== */
+  .phase-body {
+    width: 200px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .step-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.75rem;
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    line-height: 1.5;
+  }
+  .step-card:hover {
+    border-color: #64748b;
+    background: #263244;
+  }
+  .step-card .step-title {
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .step-card .step-title .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .step-card.sub { background: #1a2436; border-style: dashed; }
+  .step-card.sub .step-title { color: #94a3b8; font-weight: 500; }
+
+  /* ====== CP 节点（红球） ====== */
+  .cp-node {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #dc2626;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 0 3px #7f1d1d;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .cp-node:hover { transform: scale(1.15); box-shadow: 0 0 0 4px #b91c1c; }
+
+  .cp-connector {
+    width: 2px;
+    background: #dc2626;
+    opacity: 0.4;
+  }
+
+  /* ====== 交接条件 ====== */
+  .handover {
+    background: #1c2a1c;
+    border: 1px dashed #22c55e;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.68rem;
+    color: #86efac;
+    text-align: center;
+    line-height: 1.5;
+    width: 180px;
+  }
+
+  /* ====== 模式选择区块（顶部） ====== */
+  .mode-bar {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  .mode-chip {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 2px solid;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .mode-chip:hover { transform: scale(1.05); }
+  .mode-chip span { font-weight: 400; opacity: 0.7; font-size: 0.65rem; display: block; margin-top: 1px; }
+  .mode-chip.mode-a { border-color: #60a5fa; color: #60a5fa; }
+  .mode-chip.mode-b { border-color: #a78bfa; color: #a78bfa; }
+  .mode-chip.mode-c { border-color: #34d399; color: #34d399; }
+  .mode-chip.mode-d { border-color: #fbbf24; color: #fbbf24; }
+  .mode-chip.mode-e { border-color: #f87171; color: #f87171; }
+
+  /* ====== 专家协议 & 文件工程（侧边） ====== */
+  .side-protocol {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin: 30px 0 10px;
+  }
+  .protocol-box {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    max-width: 260px;
+  }
+  .protocol-box:hover { border-color: #60a5fa; }
+  .protocol-box .pb-title {
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 4px;
+    font-size: 0.78rem;
+  }
+  .protocol-box .pb-desc { color: #94a3b8; line-height: 1.5; }
+
+  /* ====== 箭头 ====== */
+  .arrow {
+    color: #475569;
+    font-size: 1.2rem;
+    padding-top: 68px;
+    flex-shrink: 0;
+  }
+
+  /* ====== 弹窗 ====== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    max-width: 640px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 28px;
+  }
+  .modal h2 {
+    font-size: 1.1rem;
+    color: #f1f5f9;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 10px;
+  }
+  .modal h3 {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin: 14px 0 6px;
+  }
+  .modal p, .modal li {
+    font-size: 0.8rem;
+    color: #cbd5e1;
+    line-height: 1.7;
+  }
+  .modal ul { padding-left: 20px; }
+  .modal .tag {
+    display: inline-block;
+    background: #334155;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    color: #94a3b8;
+    margin-right: 4px;
+  }
+  .modal .tag.red { background: #450a0a; color: #fca5a5; border: 1px solid #7f1d1d; }
+  .modal .close-btn {
+    margin-top: 20px;
+    padding: 8px 20px;
+    background: #334155;
+    border: none;
+    border-radius: 6px;
+    color: #e2e8f0;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+  .modal .close-btn:hover { background: #475569; }
+
+  /* ====== CP 不通过 回退箭头（虚线） ====== */
+  .rollback {
+    position: absolute;
+    font-size: 0.65rem;
+    color: #f87171;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  /* ====== 图例 ====== */
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    font-size: 0.72rem;
+    color: #64748b;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .legend-line { width: 24px; height: 2px; border-radius: 1px; }
+</style>
+</head>
+<body>
+
+<h1>AW 工作流全景图</h1>
+<div class="subtitle">architect-writer (AW) · 六阶段 × 六批判性节点 · Best-Minds 专家思维</div>
+
+<!-- 工作模式选择 -->
+<div class="mode-bar">
+  <div class="mode-chip mode-a" onclick="showMode('A')">模式A<span>系统设计模式 · 完整五阶段</span></div>
+  <div class="mode-chip mode-b" onclick="showMode('B')">模式B<span>模板填充模式 · 快速确认模板</span></div>
+  <div class="mode-chip mode-c" onclick="showMode('C')">模式C<span>迭代优化模式 · v1→v2→v3</span></div>
+  <div class="mode-chip mode-d" onclick="showMode('D')">模式D<span>分段交付模式 · 每段可用即交</span></div>
+  <div class="mode-chip mode-e" onclick="showMode('E')">模式E<span>知识工程模式 · 分类→批量→校验</span></div>
+</div>
+
+<!-- 专家协议 & 文件工程 -->
+<div class="side-protocol">
+  <div class="protocol-box" onclick="showProtocol('bestminds')">
+    <div class="pb-title">🧠 Best-Minds 专家思维</div>
+    <div class="pb-desc">Agent 不是打字员，是领域顶级专家。<br>每个关键节点完成内心独白自检，敢于提出反对意见。</div>
+  </div>
+  <div class="protocol-box" onclick="showProtocol('file')">
+    <div class="pb-title">📁 文件工程规范</div>
+    <div class="pb-desc">20KB 安全阀 · 截断即修 · 覆盖备份<br>WORKLOG.md 跨 session 追踪</div>
+  </div>
+  <div class="protocol-box" onclick="showProtocol('nine')">
+    <div class="pb-title">⚖️ 九大关键原则</div>
+    <div class="pb-desc">边读边写 · 当专家不当打字员 · 结构先行<br>一致性优先 · 待确认显式标记 · 文件是记忆</div>
+  </div>
+</div>
+
+<!-- 图例 -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div> Phase 0</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div> Phase 1</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div> Phase 2</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div> Phase 3</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div> Phase 4</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div> 批判性节点 CP</div>
+  <div class="legend-item"><div class="legend-line" style="background:#22c55e"></div> 交接条件</div>
+  <div class="legend-item"><div class="legend-line" style="background:#dc2626; opacity:0.4"></div> CP 不通过回退</div>
+</div>
+
+<div class="scroll-wrapper">
+<div class="canvas">
+
+<!-- ========== 主时间轴 ========== -->
+<div class="timeline">
+
+  <!-- ===== PHASE 0 ===== -->
+  <div class="phase-col" data-phase="0">
+    <div class="phase-badge" onclick="showPhase(0)">
+      <span class="phase-num">Phase</span>0
+    </div>
+    <div class="phase-label">理解吸收</div>
+
+    <!-- CP1 -->
+    <div class="cp-connector" style="height:16px"></div>
+    <div class="cp-node" onclick="showCP(1)">CP1</div>
+
+    <div class="phase-body">
+      <div class="step-card" onclick="showStep('p0s1')">
+        <div class="step-title"><span class="dot" style="background:#60a5fa"></span>批量阅读素材</div>
+        边读边提炼，写入 analysis/ 目录
+      </div>
+      <div class="step-card" onclick="showStep('p0s2')">
+        <div class="step-title"><span class="dot" style="background:#60a5fa"></span>素材提炼</div>
+        按模板记录来源、内容、可用章节、关键数据
+      </div>
+      <div class="step-card" onclick="showStep('p0s3')">
+        <div class="step-title"><span class="dot" style="background:#60a5fa"></span>认知纠偏</div>
+        主动总结理解，列出 3-5 个可能错的地方
+      </div>
+      <div class="step-card sub" onclick="showStep('p0s4')">
+        <div class="step-title">📋 关键人名/术语速查表</div>
+        人名→角色、术语→含义，随时更新
+      </div>
+    </div>
+
+    <div class="handover" onclick="showHandover(0)">
+      ✅ 用户确认"理解基本正确"<br>
+      <span style="opacity:0.6;font-size:0.6rem">→ Phase 1 解锁</span>
+    </div>
+
+    <div style="height:20px"></div>
+    <div class="step-card sub" style="width:180px; text-align:center; background:#1a1a2e; border-color:#334155">
+      <span style="color:#dc2626; font-weight:700">🔴 CP1 失败</span><br>
+      <span style="color:#64748b; font-size:0.65rem">回到 Phase 0 补读素材</span>
+    </div>
+  </div>
+
+  <!-- 箭头 -->
+  <div class="arrow">▶</div>
+
+  <!-- ===== PHASE 1 ===== -->
+  <div class="phase-col" data-phase="1">
+    <div class="phase-badge" onclick="showPhase(1)">
+      <span class="phase-num">Phase</span>1
+    </div>
+    <div class="phase-label">框架搭建</div>
+
+    <!-- CP2 -->
+    <div class="cp-connector" style="height:16px"></div>
+    <div class="cp-node" onclick="showCP(2)">CP2</div>
+
+    <div class="phase-body">
+      <div class="step-card" onclick="showStep('p1s1')">
+        <div class="step-title"><span class="dot" style="background:#a78bfa"></span>提炼框架结构</div>
+        核心层有哪些？层间关系？（并列/递进/支撑/驱动）
+      </div>
+      <div class="step-card" onclick="showStep('p1s2')">
+        <div class="step-title"><span class="dot" style="background:#a78bfa"></span>定义编号体系</div>
+        层级编号（①②③④）+ 口号（如"选品有道…"）
+      </div>
+      <div class="step-card sub" onclick="showStep('p1s3')">
+        <div class="step-title">📁 文件集群结构</div>
+        01-[体系名]/ + 02-SOP规范/ + 03-分析提炼/
+      </div>
+      <div class="step-card" onclick="showStep('p1s4')">
+        <div class="step-title"><span class="dot" style="background:#a78bfa"></span>框架批判审核</div>
+        主动提 3-5 条结构性批判意见，请用户裁决
+      </div>
+      <div class="step-card sub" onclick="showStep('p1s5')">
+        <div class="step-title">📋 框架版本管理</div>
+        v1.0初版→v2.0→…→v4.0审核修订
+      </div>
+    </div>
+
+    <div class="handover" onclick="showHandover(1)">
+      ✅ 用户确认框架终版<br>
+      <span style="opacity:0.6;font-size:0.6rem">→ Phase 2 解锁</span>
+    </div>
+
+    <div style="height:20px"></div>
+    <div class="step-card sub" style="width:180px; text-align:center; background:#1a1a2e; border-color:#334155">
+      <span style="color:#dc2626; font-weight:700">🔴 CP2 失败</span><br>
+      <span style="color:#64748b; font-size:0.65rem">重新生成框架，CP2 重跑</span>
+    </div>
+  </div>
+
+  <!-- 箭头 -->
+  <div class="arrow">▶</div>
+
+  <!-- ===== PHASE 2 ===== -->
+  <div class="phase-col" data-phase="2">
+    <div class="phase-badge" onclick="showPhase(2)">
+      <span class="phase-num">Phase</span>2
+    </div>
+    <div class="phase-label">逐章起草</div>
+
+    <!-- CP3 -->
+    <div class="cp-connector" style="height:16px"></div>
+    <div class="cp-node" onclick="showCP(3)">CP3</div>
+
+    <div class="phase-body">
+      <div class="step-card" onclick="showStep('p2s1')">
+        <div class="step-title"><span class="dot" style="background:#34d399"></span>目录规划</div>
+        每卷启动前先出目录规划，发用户确认后再写
+      </div>
+      <div class="step-card" onclick="showStep('p2s2')">
+        <div class="step-title"><span class="dot" style="background:#34d399"></span>按优先级撰写</div>
+        先核心章节（底层/基础层），后辅助章节
+      </div>
+      <div class="step-card sub" onclick="showStep('p2s3')">
+        <div class="step-title">✍️ 章节撰写五步</div>
+        定义→核心内容→数据支撑→❓待确认→连接其他卷
+      </div>
+      <div class="step-card" onclick="showStep('p2s4')">
+        <div class="step-title"><span class="dot" style="background:#34d399"></span>并行策略</div>
+        主线 agent 写核心章节，副线 sub-agent 并行读素材/写辅助章节
+      </div>
+    </div>
+
+    <!-- CP4 -->
+    <div class="cp-connector" style="height:16px"></div>
+    <div class="cp-node" onclick="showCP(4)">CP4</div>
+
+    <div class="phase-body">
+      <div class="step-card" onclick="showStep('p2s5')">
+        <div class="step-title"><span class="dot" style="background:#34d399"></span>初稿自审</div>
+        专家视角找至少 3 个问题，写入文件末尾"自审记录"
+      </div>
+      <div class="step-card" onclick="showStep('p2s6')">
+        <div class="step-title"><span class="dot" style="background:#34d399"></span>发给用户审核</div>
+        附上"我知道这几个地方还不够好"
+      </div>
+    </div>
+
+    <div class="handover" onclick="showHandover(2)">
+      ✅ 所有分卷初稿完成<br>
+      <span style="opacity:0.6;font-size:0.6rem">→ Phase 3 解锁</span>
+    </div>
+
+    <div style="height:20px"></div>
+    <div class="step-card sub" style="width:180px; text-align:center; background:#1a1a2e; border-color:#334155">
+      <span style="color:#dc2626; font-weight:700">🔴 CP3 失败</span><br>
+      <span style="color:#64748b; font-size:0.65rem">重新规划目录方向</span>
+    </div>
+  </div>
+
+  <!-- 箭头 -->
+  <div class="arrow">▶</div>
+
+  <!-- ===== PHASE 3 ===== -->
+  <div class="phase-col" data-phase="3">
+    <div class="phase-badge" onclick="showPhase(3)">
+      <span class="phase-num">Phase</span>3
+    </div>
+    <div class="phase-label">审核迭代</div>
+
+    <!-- CP5 -->
+    <div class="cp-connector" style="height:16px"></div>
+    <div class="cp-node" onclick="showCP(5)">CP5</div>
+
+    <div class="phase-body">
+      <div class="step-card" onclick="showStep('p3s1')">
+        <div class="step-title"><span class="dot" style="background:#fbbf24"></span>内容审核</div>
+        用户审核分卷→收集反馈→分类处理（事实/结构/内容）
+      </div>
+      <div class="step-card" onclick="showStep('p3s2')">
+        <div class="step-title"><span class="dot" style="background:#fbbf24"></span>文件完整性校验</div>
+        逐章对照·无截断·大小偏差&lt;20%·命名规范·引用一致
+      </div>
+      <div class="step-card" onclick="showStep('p3s3')">
+        <div class="step-title"><span class="dot" style="background:#fbbf24"></span>批量修订</div>
+        逐条确认理解→批量 edit 替换→发修订摘要
+      </div>
+      <div class="step-card sub" onclick="showStep('p3s4')">
+        <div class="step-title">🔍 跨卷一致性检查</div>
+        术语·交叉引用·数据（数字/人名）一致性
+      </div>
+    </div>
+
+    <!-- CP5 嵌入在这里 -->
+    <div style="height:4px"></div>
+
+    <div class="handover" onclick="showHandover(3)">
+      ✅ 用户确认分卷内容可以定稿<br>
+      <span style="opacity:0.6;font-size:0.6rem">→ Phase 4 解锁</span>
+    </div>
+
+    <div style="height:20px"></div>
+    <div class="step-card sub" style="width:180px; text-align:center; background:#1a1a2e; border-color:#334155">
+      <span style="color:#dc2626; font-weight:700">🔴 CP5 失败</span><br>
+      <span style="color:#64748b; font-size:0.65rem">修订执行偏差>20%，退回 Phase 3</span>
+    </div>
+  </div>
+
+  <!-- 箭头 -->
+  <div class="arrow">▶</div>
+
+  <!-- ===== PHASE 4 ===== -->
+  <div class="phase-col" data-phase="4">
+    <div class="phase-badge" onclick="showPhase(4)">
+      <span class="phase-num">Phase</span>4
+    </div>
+    <div class="phase-label">合并交付</div>
+
+    <!-- CP6 -->
+    <div class="cp-connector" style="height:16px"></div>
+    <div class="cp-node" onclick="showCP(6)">CP6</div>
+
+    <div class="phase-body">
+      <div class="step-card" onclick="showStep('p4s1')">
+        <div class="step-title"><span class="dot" style="background:#f87171"></span>总索引更新</div>
+        框架全景图（ASCII+Mermaid）· 分卷索引表 · 数据总览
+      </div>
+      <div class="step-card" onclick="showStep('p4s2')">
+        <div class="step-title"><span class="dot" style="background:#f87171"></span>合并版生成</div>
+        全部内容合并为单文件，保留标题层级，统一 frontmatter
+      </div>
+      <div class="step-card sub" onclick="showStep('p4s3')">
+        <div class="step-title">📋 版本归档</div>
+        每个文件记录版本号、说明、最后更新时间
+      </div>
+      <div class="step-card" onclick="showStep('p4s4')">
+        <div class="step-title"><span class="dot" style="background:#f87171"></span>发送交付</div>
+        分卷逐一发送 + 合并版单独发送 + 交付说明
+      </div>
+    </div>
+
+    <div class="handover" onclick="showHandover(4)">
+      🎉 项目完成<br>
+      <span style="opacity:0.6;font-size:0.6rem">含专家判断摘要·风险点·落地翻车预警</span>
+    </div>
+  </div>
+
+</div><!-- /timeline -->
+</div><!-- /canvas -->
+</div><!-- /scroll-wrapper -->
+
+<!-- ========== 弹窗 ========== -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalContent">
+    <h2 id="modalTitle"></h2>
+    <div id="modalBody"></div>
+    <button class="close-btn" onclick="closeModal()">关闭</button>
+  </div>
+</div>
+
+<script>
+const DATA = {
+  phase: [
+    {
+      title: 'Phase 0：理解吸收',
+      desc: '建立对业务领域的完整认知，形成"可以开始搭框架"的体感。',
+      output: 'analysis/ 目录提炼文件 · 一句话业务全景总结 · 人名表+术语表',
+      color: '#60a5fa'
+    },
+    {
+      title: 'Phase 1：框架搭建',
+      desc: '定义整个报告的骨架：分几层、几卷、每卷写什么、文件怎么存。',
+      output: '00_总索引.md · 框架版本演进记录 · 用户确认的框架终版',
+      color: '#a78bfa'
+    },
+    {
+      title: 'Phase 2：逐章起草',
+      desc: '按框架定义的卷/章节，逐一撰写完整内容。先出草案，审的过程就是深入理解的过程。',
+      output: '各分卷 .md 文件 · 每个文件内含待确认项清单',
+      color: '#34d399'
+    },
+    {
+      title: 'Phase 3：审核迭代',
+      desc: '通过人机协同的审核，将初稿打磨成可交付的终稿。',
+      output: '修订后的各分卷文件 · 修订记录摘要',
+      color: '#fbbf24'
+    },
+    {
+      title: 'Phase 4：合并交付',
+      desc: '将所有分卷合并为完整交付物，建立索引和归档。',
+      output: '完整文件集群（N+ MD）· 总索引+合并版 · 项目 README',
+      color: '#f87171'
+    }
+  ],
+  cp: [
+    null,
+    {
+      title: '🔴 CP1：认知纠偏检查',
+      when: 'Phase 0 结束时，读完第一批核心素材后',
+      how: [
+        '写一份"我对这个业务的理解"（不超过 10 句话）',
+        '主动列出 3-5 个可能理解错的地方',
+        '请用户确认/纠正'
+      ],
+      fail: '用户说"不对"超过 3 处 → 回到 Phase 0 补读素材',
+      case: 'xmt-sop 项目中删掉了"私域运营""中药"等错误理解，把 B2C/O2O/线下药店的本质区别搞对'
+    },
+    {
+      title: '🔴 CP2：框架批判审查',
+      when: 'Phase 1 框架初版完成，用户确认前',
+      how: [
+        'Agent 以"最挑剔的评审者"身份提出至少 5 条批判意见',
+        '每条包含：哪里有问题 + 为什么是问题 + 建议怎么改',
+        '用户逐条裁决：接受 / 拒绝 / 搁置'
+      ],
+      fail: '用户拒绝全部批判意见 → 要么批判不够准（重来），要么框架确实没问题（通过）',
+      case: 'xmt-sop 项目 CP2：5 条批判接受 4 条，拒绝了"数字游戏"那条（用户认为有业务实质）'
+    },
+    {
+      title: '🔴 CP3：章节目录预审',
+      when: 'Phase 2 每卷的目录规划完成后、动笔写内容前',
+      how: [
+        '列出本卷的章节结构',
+        '盘点已有素材基础和缺失项',
+        '标注哪些章节"写出来可能很薄"（素材不足）',
+        '请用户确认方向'
+      ],
+      fail: '用户说"这一卷的定位不对" → 重新规划',
+      case: ''
+    },
+    {
+      title: '🔴 CP4：初稿自我批判',
+      when: 'Phase 2 每卷初稿写完、发给用户审之前',
+      how: [
+        'Agent 以专家视角找出至少 3 个问题：内容浅薄 / 逻辑断点 / 数据缺失 / 可落地性差',
+        '把自我批判结果写在文件末尾"自审记录"里',
+        '发给用户，附上"我知道这几个地方还不够好"'
+      ],
+      fail: '自我批判流于形式 → 重新以更挑剔的视角审视',
+      case: '主动暴露不足比等用户找出来好 100 倍'
+    },
+    {
+      title: '🔴 CP5：修订回溯检查',
+      when: 'Phase 3 批量修订后，用户的修订意见全部执行完毕后',
+      how: [
+        '逐条回溯用户的每条修订意见，确认是否正确执行',
+        '检查批量修改是否引入新问题（术语替换副作用 / 结构调整破坏逻辑链路 / 新增内容矛盾）',
+        '执行一次跨卷一致性快速扫描',
+        '产出"修订回溯报告"：已正确执行项 · 发现的新问题 · 需二次确认项'
+      ],
+      fail: '修订执行偏差 >20%（遗漏或错误超过总数 1/5）→ 回到 Phase 3 重新执行修订',
+      case: '改了 10 个地方但引入了 2 个新 bug，等于没改'
+    },
+    {
+      title: '🔴 CP6：交付前终审',
+      when: 'Phase 4 全部合并版完成、最终交付前',
+      how: [
+        '跨卷一致性扫描：同一概念在不同卷中的表述',
+        '术语统一检查',
+        '数据一致性（目标数字、人名等）',
+        '产出"终审报告"：确认通过的一致性项 · 仍存在的已知问题 · 建议的后续优化方向'
+      ],
+      fail: '发现重大一致性问题 → 退回对应分卷重新修订',
+      case: '交付时不只交付文件，还交付专家判断摘要——最大三个风险点、与行业最佳实践的差距、落地执行时最容易翻车的环节'
+    }
+  ],
+  steps: {
+    p0s1: { title: '批量阅读原始素材', content: '<span class="tag">输入</span> 用户陆续发送的文件（MD/PDF/Word/图片）<br><br>全部接收存档，每份读完立即提炼核心信息。不等"所有材料到齐"才开始——边读边提炼。' },
+    p0s2: { title: '素材提炼模板', content: '<span class="tag">模板</span> 每个素材文件写一条提炼记录：<br><br>• 来源：用户发送/内网/搜索<br>• 核心内容：3-5 句话<br>• 可用章节：初步判断归入哪些章节<br>• 关键数据点：数字/目标/时间线<br>• 待确认：哪些地方有疑问' },
+    p0s3: { title: '认知纠偏（CP1 前置动作）', content: '<span class="tag red">关键</span> 读完第一批素材后主动做认知纠偏：<br><br>• 总结"我对这个业务的理解"<br>• 提出可能理解错的地方，请用户纠正<br>• 这一步不能省——错误理解一旦进入框架就很难改' },
+    p0s4: { title: '人名/术语速查表', content: '<span class="tag">工具</span> 建立两张表，贯穿全过程：<br><br>• 人名→角色映射（如"张总 → 产品负责人"）<br>• 术语→含义映射（如"O2O → 线上线下融合"）<br><br>随时更新，新 session 可直接查阅。' },
+    p1s1: { title: '提炼框架结构', content: '<span class="tag">输入</span> Phase 0 的素材提炼<br><br>归纳三个问题：<br>• 这个业务/体系有哪些<span style="color:#a78bfa">核心层</span>？<br>• 层与层之间的<span style="color:#a78bfa">逻辑关系</span>是什么？（并列/递进/支撑/驱动）<br>• 每层下面有哪些<span style="color:#a78bfa">子模块</span>？' },
+    p1s2: { title: '定义编号体系', content: '<span class="tag">设计</span> 采用层级编号 + 口号的双重标识：<br><br><span style="color:#60a5fa">①</span> 底层：品种体系（1个模块）<br><span style="color:#a78bfa">②</span> 基础层：六大支撑（6个模块）<br><span style="color:#34d399">③</span> 驱动引擎：双驱（2个模块）<br><span style="color:#fbbf24">④</span> 转化出口：三大场景（3个模块）<br><br>口号示例："选品有道，支撑有力，双驱并进，三路变现"' },
+    p1s3: { title: '文件集群结构', content: '<span class="tag">规范</span> 标准目录结构：<br><br><pre style="background:#0f1117;border-radius:6px;padding:10px;margin:8px 0;font-size:0.75rem;overflow-x:auto;color:#94a3b8">projects/[项目名]/\n├── README.md\n├── WORKLOG.md ← 进度追踪\n├── 01-[体系名]/ ← 核心内容\n│   ├── 00_总索引.md\n│   ├── 01_[第一卷].md\n│   └── [体系名]_合并版.md\n├── 02-SOP规范/\n├── 03-分析提炼/ ← Phase 0 提炼\n└── docs/' },
+    p1s4: { title: '框架批判审核（CP2）', content: '<span class="tag red">CP2 执行</span> 框架搭好后主动提批判意见（至少 3-5 条）：<br><br>• 逻辑自洽性：层与层之间有没有矛盾？<br>• 分类完整性：有没有遗漏的重要模块？<br>• 命名准确性：术语是否准确？会不会产生歧义？<br>• 可落地性：框架能不能指导后续逐章撰写？<br><br>请用户逐条裁决：接受 / 拒绝 / 搁置' },
+    p1s5: { title: '框架版本管理', content: '<span class="tag">规范</span> 框架版本演进记录：<br><br><pre style="background:#0f1117;border-radius:6px;padding:10px;margin:8px 0;font-size:0.75rem;color:#94a3b8">| 版本 | 变化 | 时间 |\n|------|------|------|\n| v1.0 | 初版 | XX:XX |\n| v2.0 | 加入XX概念 | XX:XX |\n| v3.0 | 分类调整 | XX:XX |\n| v4.0 | 审核修订 | XX:XX |' },
+    p2s1: { title: '目录规划（CP3）', content: '<span class="tag red">CP3 执行</span> 每卷启动前先做目录规划：<br><br>• 盘点现有素材基础<br>• 列出缺失项（导致无法落地的）<br>• 标注哪些章节"写出来可能很薄"<br>• 优先新增章节排序<br><br><span style="color:#fbbf24">先把目录规划发给用户确认，再动手写。</span>避免写完一整卷才发现方向偏了。' },
+    p2s2: { title: '按优先级撰写', content: '<span class="tag">策略</span> 建议从最核心的章节开始（通常是最底层或最基础的）：<br><br>• 核心章节定义了术语和概念，后续章节会引用<br>• 用户审完核心章节后，认知会进一步对齐<br>• 后续章节可以复用核心章节的素材和理解' },
+    p2s3: { title: '章节撰写五步', content: '<span class="tag">方法</span> 每个章节的撰写顺序：<br><br><span style="color:#60a5fa">1.</span> 先写定义/定位：这一章解决什么问题<br><span style="color:#a78bfa">2.</span> 再写核心内容：主体框架、流程、标准<br><span style="color:#34d399">3.</span> 补充数据支撑：具体数字、目标、时间线<br><span style="color:#fbbf24">4.</span> 标注待确认项：用 ❓ 标记，不猜测不编造<br><span style="color:#f87171">5.</span> 连接其他章节：说明与其他卷的关联' },
+    p2s4: { title: '并行策略', content: '<span class="tag">效率</span> 多章节并行时：<br><br>• <span style="color:#34d399">主线</span>：agent 自己写最核心的章节<br>• <span style="color:#94a3b8">副线</span>：spawn sub-agent 去读剩余素材或写辅助章节<br>• 两条线并行，节省时间<br><br><span style="color:#fbbf24">原则：先出草案，审的过程就是深入理解的过程。不要等所有素材完美再动笔。</span>' },
+    p2s5: { title: '初稿自审（CP4）', content: '<span class="tag red">CP4 执行</span> Agent 以专家视角自我审一遍，找至少 3 个问题：<br><br>• 内容浅薄（只有框架没有实质）<br>• 逻辑断点（前后矛盾或跳跃）<br>• 数据缺失（该有数字的地方没有）<br>• 可落地性差（写了一堆原则但没有操作指引）<br><br>把结果写在文件末尾"自审记录"里，然后发给用户。' },
+    p2s6: { title: '发给用户审核', content: '<span class="tag">交接</span> 每卷初稿完成后发给用户审核：<br><br>• 收集反馈意见<br>• 分类处理：<br>  <span style="color:#60a5fa">事实性错误</span> → 立即修正<br>  <span style="color:#a78bfa">结构优化</span> → 评估后决定<br>  <span style="color:#fbbf24">内容补充</span> → 标记待补充，排入后续计划' },
+    p3s1: { title: '内容审核（用户参与）', content: '<span class="tag">用户审核</span> 每个分卷完成后：<br><br>1. 发给用户审核（直接发文件或核心段落）<br>2. 收集反馈意见<br>3. 分类处理：<br>   • <span style="color:#60a5fa">事实性错误</span> → 立即修正<br>   • <span style="color:#a78bfa">结构优化</span> → 评估后决定是否调整<br>   • <span style="color:#fbbf24">内容补充</span> → 标记待补充，排入后续计划' },
+    p3s2: { title: '文件完整性校验', content: '<span class="tag">工程规范</span> 每卷发审前执行自检：<br><br><pre style="background:#0f1117;border-radius:6px;padding:10px;margin:8px 0;font-size:0.75rem;color:#94a3b8">| 检查项 | 方法 | 通过标准 |\n|--------|------|----------|\n| 完整性 | 逐章对照目录规划 | 每章有实质内容 |\n| 无截断 | tail -20 [file] | 末尾完整非中断 |\n| 文件大小 | wc -c [file] | 偏差 &lt;20% |\n| 命名规范 | 检查文件名 | 符合编号体系 |\n| 引用一致 | 抽查跨文件数据 | 同数据值一致 |' },
+    p3s3: { title: '批量修订', content: '<span class="tag">执行</span> 用户给出一系列修订意见时：<br><br>1. 逐条确认理解是否正确<br>2. 批量执行修改（使用 <code style="background:#334155;padding:2px 6px;border-radius:4px">edit</code> 工具做精确替换）<br>3. 修改完后发修订摘要，<span style="color:#f87171">不转发原始修改记录</span><br><br><span style="color:#fbbf24">CP5 在此之后执行：修订回溯检查</span>' },
+    p3s4: { title: '跨卷一致性检查', content: '<span class="tag">一致性</span> 审核过程中关注：<br><br>• 同一概念在不同卷中的表述是否一致<br>• 术语使用是否统一<br>• 交叉引用是否正确<br>• 数据（目标数字、人名等）是否一致<br><br><span style="color:#64748b;font-size:0.75rem">CP6 终审时做完整的跨卷扫描</span>' },
+    p4s1: { title: '总索引更新', content: '<span class="tag">交付物</span> 更新 00_总索引.md：<br><br>• 框架全景图（纯文本 + Mermaid）<br>• 分卷索引表（编号/名称/核心内容/状态/最后更新）<br>• 数据总览（关键指标汇总）<br>• 口号和核心逻辑' },
+    p4s2: { title: '合并版生成', content: '<span class="tag">交付物</span> 将所有分卷合并为单文件：<br><br>• 保留各卷的标题层级<br>• 统一 frontmatter<br>• 文件可能很大（7000+ 行），这是正常的<br><br><span style="color:#fbbf24">注意 20KB 安全阀：超出时拆分为 part1/part2</span>' },
+    p4s3: { title: '版本归档', content: '<span class="tag">规范</span> 完整版本记录表：<br><br><pre style="background:#0f1117;border-radius:6px;padding:10px;margin:8px 0;font-size:0.75rem;color:#94a3b8">| 文件 | 版本 | 说明 |\n|------|------|------|\n| 00_总索引.md | v5.2 | 最终版 |\n| 01_品种体系.md | v4.1 | 含品种战略 |\n| 合并版 | v5.2 | 13卷完整合并 |' },
+    p4s4: { title: '发送交付', content: '<span class="tag">最终交付</span> 发送方式：<br><br>• 每个分卷文件逐一发送给用户<br>• 合并版单独发送<br>• 附上交付说明：版本号、总行数、待确认项数量<br><br><span style="color:#fbbf24">CP6 终审报告包含：最大三个风险点、与行业最佳实践的差距、落地执行时最容易翻车的环节</span>' }
+  },
+  mode: {
+    A: { title: '模式A：系统设计模式', content: '<span class="tag">适用</span> 复杂体系、多模块框架、需要从头搭建的业务方案<br><br><span class="tag">特征</span> 完整走五阶段 + 全部批判性节点<br><br><span class="tag">典型</span> 院外体系 1+6+2+3 框架<br><br><span style="color:#fbbf24">这是 AW 的默认模式，也是最完整的执行路径。</span>' },
+    B: { title: '模式B：模板填充模式', content: '<span class="tag">适用</span> 有现成模板或明确格式要求，需要填充具体内容<br><br><span class="tag">特征</span> Phase 1 快速确认模板 → 跳到 Phase 2 填充 → Phase 3 校验<br><br><span class="tag">典型</span> 四报告体系、产品介绍<br><br><span style="color:#fbbf24">切换到此模式后，Phase 1 大幅简化，但仍需过 CP2。</span>' },
+    C: { title: '模式C：迭代优化模式', content: '<span class="tag">适用</span> 对现有文档的迭代修改（v1→v2→v3）<br><br><span class="tag">特征</span> 读取旧版本 → 分析变更点 → 生成新版本 → 校验差异<br><br><span class="tag">典型</span> 指标字典更新、方案修订<br><br><span style="color:#fbbf24">核心是差异分析，不是从头搭框架。</span>' },
+    D: { title: '模式D：分段交付模式', content: '<span class="tag">适用</span> 超大型文档（预计 >50KB 或 10+ 分卷）<br><br><span class="tag">特征</span> 不追求一次写完，每段交付可用部分，最后拼接<br><br><span class="tag">典型</span> 大型市场分析报告、全业务线梳理<br><br><span style="color:#fbbf24">每段完成后立即交付，不等完整版。WORKLOG.md 记录每段状态。</span>' },
+    E: { title: '模式E：知识工程模式', content: '<span class="tag">适用</span> 结构化知识体系（分类-分层-标签）<br><br><span class="tag">特征</span> 设计分类框架 → 批量生成内容 → 打标签 → 校验一致性<br><br><span class="tag">典型</span> 问题体系、FAQ 知识库<br><br><span style="color:#fbbf24">输出物是多层级标签体系，不是连续叙事文本。</span>' }
+  },
+  protocol: {
+    bestminds: {
+      title: '🧠 Best-Minds 专家思维协议',
+      content: '<span class="tag">核心原则</span> Agent 不是打字员，是领域顶级专家。不满足于通用浅薄的分析，不以附和用户为目标，以产出经得起同行评审的内容为底线。<br><br><h3>内心独白自检（每个关键节点执行）</h3><ul><li>当前任务涉及的专业领域是什么？</li><li>如果我是这个领域全球 Top 5 的专家，我会怎么定义/处理这个问题？</li><li>用户当前的方案/思路，最大的薄弱环节在哪里？</li><li>这个领域最常见的认知误区是什么？我要主动帮用户避开。</li><li>用户还没意识到但必须考虑的点是什么？</li></ul><br><h3>专家输出标准</h3><ul><li><span style="color:#60a5fa">超出用户认知</span>：每个核心章节至少有一个用户没提到但必须考虑的点</li><li><span style="color:#a78bfa">有据可查</span>：关键论点有行业实践/学术依据，不是拍脑袋</li><li><span style="color:#34d399">承认边界</span>：明确说"这个领域我的理解到此为止，需要 XX 确认"</li><li><span style="color:#fbbf24">提供对标</span>：提到业界类似系统/方案是怎么做的</li><li><span style="color:#f87171">敢于反对</span>：当用户的方向有明确问题时，给出反对意见和理由</li></ul>'
+    },
+    file: {
+      title: '📁 文件工程规范（贯穿全流程）',
+      content: '<h3>20KB 安全阀</h3><ul><li>单次 <code style="background:#334155;padding:2px 6px;border-radius:4px">write</code> 内容不超过 20KB（超出可能截断）</li><li><span style="color:#fbbf24">20KB 是安全阀，不是质量目标</span>——内容该多完整就多完整</li><li>预计 >20KB → 拆分为 part1/part2，或用 <code style="background:#334155;padding:2px 6px;border-radius:4px">exec</code> + Python 脚本生成</li></ul><h3>备份规则</h3><ul><li>覆盖写入 >10KB 文件前先备份：<br><code style="background:#0f1117;padding:4px 8px;border-radius:4px;color:#94a3b8">cp original.md original.md.bak.$(date +%Y%m%d%H%M%S)</code></li></ul><h3>截断处理</h3><ul><li>信号：响应中出现 "truncated"、文件末尾不完整、<code style="background:#334155;padding:2px 6px;border-radius:4px">wc -c</code> 大小远小于预计</li><li>剩余 &lt;20% → 用 <code style="background:#334155;padding:2px 6px;border-radius:4px">edit</code> 补充；≥20% → 重新生成</li></ul><h3>WORKLOG.md</h3><ul><li>每个项目根目录必须有 WORKLOG.md，跨 session 持续更新</li><li>记录：当前进度 · 当前 session 目标 · 待解决问题 · 版本历史</li></ul>'
+    },
+    nine: {
+      title: '⚖️ 九大关键原则（贯穿全流程）',
+      content: '<ol style="padding-left:20px"><li><span style="color:#60a5fa">边读边写，不等完美</span>：先出草案，审的过程就是深入理解的过程</li><li><span style="color:#a78bfa">当专家，不当打字员</span>：主动提批判意见，敢于反对用户的方向</li><li><span style="color:#34d399">结构先行，内容跟进</span>：先定框架和目录，目录确认后再动笔</li><li><span style="color:#fbbf24">一致性优先</span>：术语、编号、格式全文档保持一致</li><li><span style="color:#f87171">待确认项显式标记</span>：不确定的地方用 ❓ 标记，不猜测不编造</li><li><span style="color:#60a5fa">文件是记忆</span>：所有产出存文件，不依赖对话上下文</li><li><span style="color:#a78bfa">写入安全</span>：单次 write 不超 20KB；大文件覆盖前先备份</li><li><span style="color:#34d399">有争论才有好内容</span>：每个 CP 都必须执行，争论不是对抗</li><li><span style="color:#fbbf24">超出预期是底线</span>：每个核心章节至少有一个用户没提到但必须考虑的专业洞察</li></ol>'
+    }
+  }
+};
+
+function showPhase(n) {
+  const d = DATA.phase[n];
+  document.getElementById('modalTitle').textContent = d.title;
+  document.getElementById('modalBody').innerHTML =
+    `<p>${d.desc}</p><h3>输出物</h3><p>${d.output}</p>`;
+  openModal();
+}
+function showCP(n) {
+  const d = DATA.cp[n];
+  document.getElementById('modalTitle').textContent = d.title;
+  document.getElementById('modalBody').innerHTML =
+    `<h3>触发条件</h3><p>${d.when}</p>` +
+    `<h3>执行方式</h3><ul>${d.how.map(x => `<li>${x}</li>`).join('')}</ul>` +
+    `<h3>不通过标准</h3><p style="color:#f87171">${d.fail}</p>` +
+    (d.case ? `<h3>实战案例</h3><p style="color:#94a3b8;font-style:italic">${d.case}</p>` : '');
+  openModal();
+}
+function showStep(key) {
+  const d = DATA.steps[key];
+  if (!d) return;
+  document.getElementById('modalTitle').textContent = d.title;
+  document.getElementById('modalBody').innerHTML = d.content;
+  openModal();
+}
+function showMode(n) {
+  const d = DATA.mode[n];
+  document.getElementById('modalTitle').textContent = d.title;
+  document.getElementById('modalBody').innerHTML = d.content;
+  openModal();
+}
+function showProtocol(n) {
+  const d = DATA.protocol[n];
+  document.getElementById('modalTitle').textContent = d.title;
+  document.getElementById('modalBody').innerHTML = d.content;
+  openModal();
+}
+function showHandover(n) {
+  const labels = [
+    '用户确认"理解基本正确"，Phase 1 框架搭建解锁。',
+    '用户确认框架终版，Phase 2 逐章起草解锁。',
+    '所有分卷初稿完成 + CP4 通过，Phase 3 审核迭代解锁。',
+    '用户确认所有分卷内容可以定稿，Phase 4 合并交付解锁。',
+    '全部交付完成，项目结束。'
+  ];
+  document.getElementById('modalTitle').textContent = '✅ 交接条件';
+  document.getElementById('modalBody').innerHTML = `<p>${labels[n]}</p>`;
+  openModal();
+}
+function openModal() {
+  document.getElementById('modalOverlay').classList.add('active');
+}
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modalOverlay')) {
+    document.getElementById('modalOverlay').classList.remove('active');
+  }
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
