@@ -18,8 +18,45 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from collections import defaultdict
 
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, PlainTextResponse, JSONResponse
+from email.message import Message as _EmailMessage
+import multipart.multipart as _mp_mod
+
+# ── 修补 python-multipart 对非 ASCII filename 的 latin-1 编码错误 ──
+# python-multipart 的 parse_options_header 将所有参数值用 latin-1 编码
+# 中文等 Unicode 字符在 latin-1 编码时触发 UnicodeEncodeError
+# 修复：替换为 utf-8 兼容版本
+
+
+def _utf8_parse_options_header(value):
+    """parse_options_header 的 UTF-8 安全版本"""
+    if not value:
+        return (b"", {})
+    if isinstance(value, bytes):
+        value = value.decode("latin-1")
+    if ";" not in value:
+        return (value.lower().strip().encode("latin-1"), {})
+    message = _EmailMessage()
+    message["content-type"] = value
+    params = message.get_params()
+    if not params:
+        return (value.lower().strip().encode("latin-1"), {})
+    ctype = params.pop(0)[0].encode("latin-1")
+    options = {}
+    for param in params:
+        key, val = param
+        if isinstance(val, tuple):
+            val = val[-1]
+        if key == "filename":
+            if val[1:3] == ":\\" or val[:2] == "\\\\":
+                val = val.split("\\")[-1]
+        # 关键修改：用 utf-8 替代 latin-1，支持中文等 Unicode 字符
+        options[key.encode("latin-1")] = val.encode("utf-8")
+    return ctype, options
+
+
+_mp_mod.parse_options_header = _utf8_parse_options_header
 import markdown as md_lib
 
 # ── 配置 ──
