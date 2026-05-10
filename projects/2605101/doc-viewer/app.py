@@ -43,7 +43,18 @@ def _base_url() -> str:
 
 BASE_URL = _base_url()
 
-app = FastAPI(title="Doc Viewer", version="1.1.0")
+app = FastAPI(title="Doc Viewer", version="1.1.1")
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    """兜底异常处理，避免 multipart 解码等底层错误返回裸 500"""
+    import traceback
+    traceback.print_exc()
+    return JSONResponse(
+        status_code=500,
+        content={"detail": f"Internal error: {type(exc).__name__}: {exc}"},
+    )
 
 
 # ── 工具函数 ──
@@ -629,7 +640,16 @@ async def upload_doc(
         raw = await file.read()
         if len(raw) > MAX_SIZE:
             raise HTTPException(status_code=413, detail="File too large (max 10MB)")
-        filename = file.filename or "untitled.md"
+
+        # 处理文件名编码：兼容中文等非 ASCII 字符
+        try:
+            filename = file.filename or "untitled.md"
+            # 确保 filename 是有效的 str
+            if isinstance(filename, bytes):
+                filename = filename.decode("utf-8", errors="replace")
+        except Exception:
+            filename = "untitled.md"
+
         ext = Path(filename).suffix.lower()
         if ext not in ALLOWED_EXT:
             raise HTTPException(status_code=400, detail=f"Unsupported file type: {ext}. Allowed: {', '.join(sorted(ALLOWED_EXT))}")
