@@ -14,7 +14,7 @@ issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=doc-viewer
 
 将用户提供的 Markdown (.md) 或 HTML (.html/.htm) 文件上传到 Doc Viewer 服务，返回在线预览链接。
 
-> 部署细节见 `references/deployment.md`，维护信息见 `references/maintenance.md`
+> 部署细节见 `references/deployment.md`
 
 ## 支持的文件类型
 
@@ -94,13 +94,7 @@ Agent：✅ 预览链接：http://doc.20100706.xyz/view/897e2d322c8f
 
 ## 配置与授权
 
-安装后无需额外配置即可使用。
-
-| 配置项 | 必填 | 说明 | 获取方式 |
-|--------|------|------|----------|
-| 无 | — | 服务地址已内置（`http://doc.20100706.xyz`） | — |
-
-服务运维需 SSH 到部署服务器（`140.235.37.79`），详见 `references/deployment.md`。
+无需配置即可使用。服务地址已内置（`http://doc.20100706.xyz`），无权限控制。
 
 ## 问题反馈
 
