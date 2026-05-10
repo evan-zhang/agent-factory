@@ -1,4 +1,4 @@
-# architect-writer (AW)
+# architect-writer (AW) · 结构化方案
 
 > 将复杂的业务知识体系，转化为一套结构清晰、多人协作可用的方案报告（多章节、多分卷 Markdown 文件集群）。
 

@@ -1,10 +1,12 @@
 {
   "skillcode": "architect-writer",
   "version": "0.1.0",
-  "name": "architect-writer (AW)",
+  "name": "结构化方案",
+  "name_en": "architect-writer",
+  "abbr": "AW",
   "description": "将复杂的业务知识体系，转化为一套结构清晰、多人协作可用的方案报告（多章节、多分卷 Markdown 文件集群）",
   "triggers": ["写方案", "写报告", "写规划", "梳理体系", "搭框架", "出文档", "写文档", "整理成报告", "形成文档"],
   "phases": ["Phase 0: 理解吸收", "Phase 1: 框架搭建", "Phase 2: 逐章起草", "Phase 3: 审核迭代", "Phase 4: 合并交付"],
-  "checkpoints": ["CP1: 认知纠偏检查", "CP2: 框架批判审查", "CP3: 章节目录预审", "CP4: 初稿自我批判", "CP5: 交付前终审"],
+  "checkpoints": ["CP1: 认知纠偏检查", "CP2: 框架批判审查", "CP3: 章节目录预审", "CP4: 初稿自我批判", "CP5: 修订回溯检查", "CP6: 交付前终审"],
   "project_id": "2604311"
 }
