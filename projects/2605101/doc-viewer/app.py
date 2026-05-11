@@ -2,6 +2,7 @@
 Doc Viewer Service — 上传 Markdown/HTML，返回可查看链接
 API:
   POST /upload       — 上传文件或文本
+  PUT  /api/{id}     — 更新已有文档
   GET  /view/{id}    — 渲染查看
   GET  /raw/{id}     — 原始内容
   GET  /api/{id}     — JSON 元信息
@@ -57,6 +58,27 @@ def _utf8_parse_options_header(value):
 
 
 _mp_mod.parse_options_header = _utf8_parse_options_header
+
+# 同时 patch starlette.formparsers 中的引用
+# Starlette 用 from ... import 导入，创建了本地引用，必须直接替换
+try:
+    import python_multipart.multipart as _pmp
+    _pmp.parse_options_header = _utf8_parse_options_header
+except ImportError:
+    pass
+try:
+    import starlette.formparsers as _sfp
+    _sfp.parse_options_header = _utf8_parse_options_header
+    _orig_user_safe_decode = _sfp._user_safe_decode
+    def _patched_user_safe_decode(src, codec):
+        # codec 为空时优先 utf-8
+        if not codec:
+            codec = "utf-8"
+        return _orig_user_safe_decode(src, codec)
+    _sfp._user_safe_decode = _patched_user_safe_decode
+except ImportError:
+    pass
+
 import markdown as md_lib
 
 # ── 配置 ──
@@ -80,7 +102,7 @@ def _base_url() -> str:
 
 BASE_URL = _base_url()
 
-app = FastAPI(title="Doc Viewer", version="1.1.1")
+app = FastAPI(title="Doc Viewer", version="1.2.0")
 
 
 @app.exception_handler(Exception)
@@ -770,6 +792,59 @@ async def api_list():
 async def api_meta(doc_id: str):
     """获取文档元信息"""
     meta = _load_meta(doc_id)
+    return JSONResponse(meta)
+
+
+@app.put("/api/{doc_id}")
+async def update_doc(
+    doc_id: str,
+    file: UploadFile = File(default=None),
+    content: str = Form(default=""),
+    format: str = Form(default="auto"),
+):
+    """更新已有文档 — 支持文件上传或文本粘贴，保留 doc_id 和链接不变"""
+    meta = _load_meta(doc_id)
+
+    if file and file.filename:
+        raw = await file.read()
+        if len(raw) > MAX_SIZE:
+            raise HTTPException(status_code=413, detail="File too large (max 10MB)")
+        try:
+            filename = file.filename or meta.get("filename", "untitled.md")
+            if isinstance(filename, bytes):
+                filename = filename.decode("utf-8", errors="replace")
+        except Exception:
+            filename = meta.get("filename", "untitled.md")
+    elif content.strip():
+        raw = content.encode("utf-8")
+        filename = meta.get("filename", "paste.md")
+    else:
+        raise HTTPException(status_code=400, detail="No file or content provided")
+
+    # 覆盖内容
+    _doc_content_path(doc_id).write_bytes(raw)
+
+    # 判断格式
+    ext = Path(filename).suffix.lower() if filename else ""
+    if ext in (".md", ".markdown") or format == "markdown":
+        fmt = "markdown"
+    elif ext in (".html", ".htm") or format == "html":
+        fmt = "html"
+    elif ext == ".txt":
+        fmt = "text"
+    else:
+        # 保留原格式
+        fmt = meta.get("format", "markdown")
+
+    # 更新元信息（保留 id、created_at、url、expires_at）
+    now = datetime.utcnow().isoformat() + "Z"
+    meta["filename"] = filename
+    meta["format"] = fmt
+    meta["size"] = len(raw)
+    meta["sha256"] = hashlib.sha256(raw).hexdigest()[:16]
+    meta["updated_at"] = now
+
+    _doc_meta_path(doc_id).write_text(json.dumps(meta, ensure_ascii=False, indent=2))
     return JSONResponse(meta)
 
 

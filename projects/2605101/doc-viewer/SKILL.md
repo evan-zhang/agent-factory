@@ -1,7 +1,7 @@
 ---
 name: doc-viewer
 description: "上传 Markdown/HTML 文件到 Doc Viewer 服务，返回在线预览链接。触发词：上传文件、预览文件、文件链接、上传到网站、生成链接"
-version: "1.0.2"
+version: "1.1.0"
 homepage: https://github.com/evan-zhang/agent-factory/tree/master/projects/2605101/doc-viewer/
 issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=doc-viewer
 ---
@@ -56,6 +56,22 @@ curl -s -X POST http://doc.20100706.xyz/upload \
 
 返回 JSON 中的 `url` 字段：`http://doc.20100706.xyz/view/<doc_id>`
 
+## 更新文件
+
+对已上传的文档进行内容更新，链接保持不变：
+
+```bash
+# 用新文件更新
+curl -X PUT http://doc.20100706.xyz/api/{doc_id} \
+  -F "file=@新文件.md;filename=新文件.md"
+
+# 用文本内容更新
+curl -X PUT http://doc.20100706.xyz/api/{doc_id} \
+  -F "content=新内容" -F "format=markdown"
+```
+
+更新后：doc_id 不变、预览链接不变，元信息中会增加 `updated_at` 字段。
+
 ## 失败处理
 
 | 场景 | 处理 |
@@ -86,6 +102,7 @@ Agent：✅ 预览链接：http://doc.20100706.xyz/view/897e2d322c8f
 | `/upload` | POST | 上传文件（multipart）或文本内容 |
 | `/view/{id}` | GET | 渲染预览 |
 | `/raw/{id}` | GET | 原始文件内容 |
+| `/api/{id}` | PUT | 更新已有文档（文件或文本），保留 doc_id 和链接不变 |
 | `/api/{id}` | GET | 文档 JSON 元信息 |
 | `/api/list` | GET | 所有文档列表（按时间倒序） |
 | `/api/{id}` | DELETE | 删除文档 |
