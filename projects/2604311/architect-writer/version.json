@@ -1,7 +1,7 @@
 {
   "skillcode": "architect-writer",
-  "version": "0.2.0",
-  "changelog": "Phase 1 新增架构图生成步骤（1.3节），生成 00_架构图.html 作为方案封面；文件集群结构新增架构图位置；CP2 补充架构图审查要求"
+  "version": "0.3.0",
+  "changelog": "Best-Minds 扩展协议新增「领域认知扫描」（共识模型+根本性分歧）；Phase 1 新增 1.0 前置扫描步骤；新增主动触发时机规则",
   "name": "结构化方案",
   "name_en": "architect-writer",
   "abbr": "AW",
