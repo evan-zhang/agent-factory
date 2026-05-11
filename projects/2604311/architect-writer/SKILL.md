@@ -497,12 +497,55 @@ AI 默认倾向于给出"通用但浅薄"的回答、倾向于附和用户。但
 - 共识模型 → 方案的**必选章节**（共识 = 必须覆盖）
 - 根本性分歧 → 方案的**立场选择点**（分歧 = 需要明确选择并说明理由）
 
-**主动触发时机**（Agent 应在以下场景主动建议用户执行）：
+#### 联网搜索策略（强制执行）
+
+认知扫描**必须联网验证**，不能纯靠模型记忆。每次执行扫描时，Agent 根据搜索需求的重要性，向用户建议搜索方案：
+
+**三级搜索方案**：
+
+| 级别 | 工具 | 适用场景 | 搜索质量 |
+|------|------|---------|---------|
+| **Level 1：快速验证** | `web_search` + `web_fetch`（OpenClaw 内置） | 搜索需求简单、只需确认常识性共识 | 基础 |
+| **Level 2：深度搜索** | agent-reach Skill（17平台多源搜索） | 需要多平台交叉验证、查证学术/行业来源 | 高 |
+| **Level 3：系统检索** | multi-search Skill（降级链 + 三轮递进） | 高关键度扫描、需要穷尽可能来源、不能有遗漏 | 最高 |
+
+**环境探测**（执行扫描前自动检测）：
+```
+Level 1 可用性：始终可用（web_search 是 OpenClaw 内置工具）
+Level 2 可用性：检查 agent-reach Skill 是否已安装（~/.agents/skills/agent-reach/SKILL.md 是否存在）
+Level 3 可用性：检查 multi-search Skill 是否已安装（~/.agents/skills/multi-search/SKILL.md 是否存在）
+```
+探测完成后，只向用户展示可用的级别。不可用的级别标注"需安装"并附安装命令（见「配置与授权」节）。
+
+**选择规则**：
+- 默认建议 Level 1（快速够用）
+- 当方案涉及重大业务决策、用户明确要求"要权威来源"、或 Level 1 搜索结果不够时，建议升级到 Level 2 或 3
+- Agent 向用户展示可用选项，由用户决定
+
+**向用户展示的提示格式**：
+> "认知扫描需要联网搜索验证。当前搜索需求等级：[低/中/高]。
+> 可用搜索方案：
+> ① Level 1 快速验证（内置搜索）✅ 可用
+> ② Level 2 深度搜索（多平台）[✅ 可用 / ⚠️ 需安装：clawhub install agent-reach]
+> ③ Level 3 系统检索（降级链全覆盖）[✅ 可用 / ⚠️ 需安装：见配置与授权]
+> 请选择。"
+
+**执行方式**：
+- Level 1：直接调用 `web_search` + `web_fetch`
+- Level 2：调用 `mcporter call 'exa.web_search_exa(query: "...", numResults: 5)'` 或其他 agent-reach 支持的平台
+- Level 3：按 multi-search 降级链策略执行（MiniMax → Tavily → Exa → web_fetch → 停止）
+
+**搜索结果引用**：所有扫描结论必须标注信息来源（搜索关键词 + 来源URL/平台）。无法联网验证的结论标注为"未验证"。
+
+#### 主动触发时机
+
+Agent 应在以下场景主动建议用户执行领域认知扫描：
 1. **Phase 0→Phase 1 过渡时**：当方案涉及有成熟方法论体系的业务领域
 2. **框架讨论中**：用户在框架结构上出现犹豫或反复
 3. **用户提及领域术语**：如"最佳实践"、"行业标准"、"方法论"等
 
 **用户可以拒绝**。拒绝后直接进入框架搭建，不强制。
+用户也可以只拒绝联网搜索（接受扫描但不联网），此时扫描结果全部标注为"未验证"。
 
 ---
 
@@ -921,3 +964,42 @@ projects/[项目代号]/
 |------|------|----------|
 | structured-report-writer 草案 | 五阶段工作流 + CP1-CP6 + Best-Minds 协议 + 模板 | 核心内容，完整保留 |
 | doc-quality-assist (DQA) v1.0 | 文件工程规范 + WORKLOG + 五种工作模式 + 截断处理 | 选取操作层规范，整合进对应章节 |
+
+
+---
+
+## 配置与授权
+
+### 搜索能力配置（认知扫描依赖）
+
+本 Skill 的「领域认知扫描」功能需要联网搜索。搜索能力分三级，Level 1 零配置即用：
+
+| 级别 | 工具 | 搜索质量 | 安装方式 |
+|------|------|---------|---------|
+| Level 1 | `web_search` + `web_fetch`（OpenClaw 内置） | 基础 | 无需安装 |
+| Level 2 | agent-reach Skill（17平台多源搜索，Exa AI） | 高 | `clawhub install agent-reach` |
+| Level 3 | multi-search Skill（降级链 + 三轮递进检索） | 最高 | `git clone --depth 1 --sparse https://github.com/evan-zhang/agent-factory.git && cd agent-factory && git sparse-checkout set projects/2604251/multi-search` |
+
+**环境探测**：执行认知扫描时，Agent 自动检测已安装的搜索工具，只展示可用的级别。
+
+**无配置可用**：不安装任何额外工具，Level 1 始终可用（OpenClaw 内置 `web_search` + `web_fetch`）。
+
+### 无需配置即可用的能力
+
+- 五阶段工作流（Phase 0-4）
+- Best-Minds 专家思维协议
+- 六个批判性节点（CP1-CP6）
+- 文件集群管理
+- 架构图生成
+
+---
+
+## 问题反馈
+
+- **Issue 地址**：https://github.com/evan-zhang/agent-factory/issues
+- **标题格式**：`[AW] 简要描述问题`
+- **建议包含的信息**：
+  - Skill 版本号（见 `version.json`）
+  - 复现步骤
+  - 期望行为 vs 实际行为
+  - 使用的搜索级别（如涉及认知扫描）

@@ -1,7 +1,7 @@
 {
   "skillcode": "architect-writer",
-  "version": "0.3.2",
-  "changelog": "分卷文件模板：口号→概述（只有总索引保留口号）；修复 #49",
+  "version": "0.4.0",
+  "changelog": "三级联网搜索策略（Level 1 内置/Level 2 agent-reach/Level 3 multi-search）；环境探测+用户选择提示；新增配置与授权节、问题反馈节",
   "name": "结构化方案",
   "name_en": "architect-writer",
   "abbr": "AW",
