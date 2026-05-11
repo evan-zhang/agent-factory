@@ -102,7 +102,7 @@ def _base_url() -> str:
 
 BASE_URL = _base_url()
 
-app = FastAPI(title="Doc Viewer", version="1.2.0")
+app = FastAPI(title="Doc Viewer", version="1.2.1")
 
 
 @app.exception_handler(Exception)
@@ -117,6 +117,25 @@ async def global_exception_handler(request, exc):
 
 
 # ── 工具函数 ──
+def _fix_filename(filename: str) -> str:
+    """修复 multipart 传输中中文文件名被 latin-1 误编码的问题。
+    curl 等客户端发送中文 filename 时，UTF-8 字节被当成 latin-1 解码，
+    导致 '测试' 变成 'æµè¯'。这里尝试 reverse 回正确的 UTF-8。"""
+    if not filename:
+        return filename
+    try:
+        # 尝试 latin-1 → bytes → utf-8 还原
+        raw_bytes = filename.encode("latin-1")
+        fixed = raw_bytes.decode("utf-8")
+        # 如果还原后的字符串包含常见中文字符范围，说明修复成功
+        if any("\u4e00" <= c <= "\u9fff" for c in fixed):
+            return fixed
+    except (UnicodeDecodeError, UnicodeEncodeError):
+        pass
+    # 检查是否包含乱码特征（latin-1 范围内的非 ASCII 连续字节）
+    return filename
+
+
 def _doc_path(doc_id: str, suffix: str = "") -> Path:
     safe_id = doc_id.replace("/", "").replace("..", "")
     return DATA_DIR / f"{safe_id}{suffix}"
@@ -161,7 +180,7 @@ def _save_doc(content: bytes, filename: str, content_type: str) -> dict:
         "url": f"{BASE_URL}/view/{doc_id}",
         "raw_url": f"{BASE_URL}/raw/{doc_id}",
     }
-    _doc_meta_path(doc_id).write_text(json.dumps(meta, ensure_ascii=False, indent=2))
+    _doc_meta_path(doc_id).write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
     return meta
 
 
@@ -174,7 +193,7 @@ def _load_meta(doc_id: str) -> dict:
     p = _doc_meta_path(doc_id)
     if not p.exists():
         raise HTTPException(status_code=404, detail=f"Document '{doc_id}' not found")
-    return json.loads(p.read_text())
+    return json.loads(p.read_text(encoding="utf-8"))
 
 
 def _human_size(n: int) -> str:
@@ -190,7 +209,7 @@ def _list_all_docs() -> list:
     docs = []
     for p in DATA_DIR.glob("*.meta.json"):
         try:
-            meta = json.loads(p.read_text())
+            meta = json.loads(p.read_text(encoding="utf-8"))
             docs.append(meta)
         except Exception:
             pass
@@ -700,12 +719,12 @@ async def upload_doc(
         if len(raw) > MAX_SIZE:
             raise HTTPException(status_code=413, detail="File too large (max 10MB)")
 
-        # 处理文件名编码：兼容中文等非 ASCII 字符
+        # 处理文件名编码：修复中文等非 ASCII 字符的 latin-1 误编码
         try:
             filename = file.filename or "untitled.md"
-            # 确保 filename 是有效的 str
             if isinstance(filename, bytes):
                 filename = filename.decode("utf-8", errors="replace")
+            filename = _fix_filename(filename)
         except Exception:
             filename = "untitled.md"
 
@@ -813,6 +832,7 @@ async def update_doc(
             filename = file.filename or meta.get("filename", "untitled.md")
             if isinstance(filename, bytes):
                 filename = filename.decode("utf-8", errors="replace")
+            filename = _fix_filename(filename)
         except Exception:
             filename = meta.get("filename", "untitled.md")
     elif content.strip():
@@ -844,7 +864,7 @@ async def update_doc(
     meta["sha256"] = hashlib.sha256(raw).hexdigest()[:16]
     meta["updated_at"] = now
 
-    _doc_meta_path(doc_id).write_text(json.dumps(meta, ensure_ascii=False, indent=2))
+    _doc_meta_path(doc_id).write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
     return JSONResponse(meta)
 
 
