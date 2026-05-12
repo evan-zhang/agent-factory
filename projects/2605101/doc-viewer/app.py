@@ -1032,11 +1032,10 @@ def _render_home_page() -> str:
   <!-- 文件上传 -->
   <div id="file-tab">
     <form id="upload-form" enctype="multipart/form-data">
-      <div class="upload-section" id="dropzone">
-        <div class="upload-icon">⬆️</div>
-        <div class="upload-title">点击选择文件，或直接提交（使用上次选择的文件）</div>
-        <div class="upload-hint">支持 .md .html .htm .txt · 最大 10MB</div>
-        <input type="file" name="file" id="file-input" accept=".md,.markdown,.html,.htm,.txt" style="display:none">
+      <div style="text-align:center;margin-bottom:20px;">
+        <input type="file" name="file" id="file-input" accept=".md,.markdown,.html,.htm,.txt" style="display:none" onchange="handleFileSelect(this.files[0])">
+        <button type="button" class="btn" onclick="document.getElementById('file-input').click()">📤 选择文件</button>
+        <span id="selected-filename" style="margin-left:12px;color:var(--muted);font-size:13px;"></span>
       </div>
       <div class="btn-row">
         <button type="submit" class="btn" id="upload-btn">🚀 上传并获取链接</button>
@@ -1088,6 +1087,10 @@ function switchTab(tab) {{
 
 const fileInput = document.getElementById('file-input');
 document.getElementById('dropzone').onclick = () => fileInput.click();
+
+function handleFileSelect(file) {{
+  document.getElementById('selected-filename').textContent = file ? file.name : '';
+}}
 
 async function handleUpload(formData) {{
   const btn = document.querySelector('.btn[disabled]') || document.getElementById('upload-btn');
