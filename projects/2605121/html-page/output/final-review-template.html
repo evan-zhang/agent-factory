@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>产品引进终审报告书模板</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-blue': '#4285F4',
+            'brand-blue-dark': '#2F6FE4',
+            'brand-green': '#34A853',
+            'brand-green-dark': '#2FA24A',
+            'brand-yellow': '#FBBC05',
+            'brand-yellow-dark': '#F4B400',
+            'brand-red': '#EA4335',
+            'brand-red-dark': '#E8453C',
+            'bg-white': '#FFFFFF',
+            'bg-gray': '#F5F6F7',
+            'bg-gray-dark': '#EFEFEF',
+            'text-primary': '#1F2937',
+            'text-secondary': '#5F6368',
+            'text-muted': '#9CA3AF',
+          },
+          fontFamily: { 'display': ['Inter', 'Helvetica Neue', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Inter, "Helvetica Neue", sans-serif; color: #1F2937; background: #fff; -webkit-font-smoothing: antialiased; }
+    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .counter { font-variant-numeric: tabular-nums; }
+    .veto-badge { background: #FEE2E2; border: 2px solid #EA4335; color: #EA4335; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 12px; }
+    .ai-badge { background: #EFF6FF; border: 2px dashed #4285F4; color: #4285F4; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; }
+    .table-header { background: #F5F6F7; font-weight: 700; }
+    .table-row-alt { background: #FAFAFA; }
+    .chapter-num { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 0; font-weight: 800; font-size: 20px; color: white; flex-shrink: 0; }
+    .metric-circle { width: 140px; height: 140px; border-radius: 999px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .toc-line { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+    .toc-dots { flex: 1; border-bottom: 1px dotted #9CA3AF; margin: 0 8px; position: relative; top: -3px; }
+    table { border-collapse: collapse; width: 100%; font-size: 14px; }
+    th, td { border: 1px solid #E5E7EB; padding: 10px 12px; text-align: left; }
+    th { background: #F5F6F7; font-weight: 600; color: #374151; }
+    .section-divider { height: 2px; background: linear-gradient(90deg, #4285F4, #34A853, #FBBC05, #EA4335); margin: 0; }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="relative min-h-screen flex items-center overflow-hidden">
+  <div class="absolute inset-0" style="background: linear-gradient(135deg, #4285F4 0%, #2F6FE4 100%);"></div>
+  <div class="relative z-10 w-full max-w-6xl mx-auto px-8 md:px-16 py-24">
+    <p class="text-white/70 text-sm tracking-widest uppercase mb-6 fade-up">PHARMA PRODUCT IN-LICENSING</p>
+    <h1 class="text-white text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-8 fade-up" style="letter-spacing:-2px;">
+      产品引进<br>终审报告书
+    </h1>
+    <p class="text-white/80 text-xl md:text-2xl leading-relaxed max-w-3xl mb-12 fade-up">
+      十四维评估体系 × 六大战略标准 × 风险闭环管理
+    </p>
+    <p class="text-white/60 text-base max-w-2xl mb-16 fade-up">
+      药企产品引进全流程终审模板，从科学评估到投资决策的完整框架
+    </p>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 fade-up">
+      <div class="bg-white/20 backdrop-blur-sm p-5" style="border-top:4px solid #4285F4;">
+        <p class="text-white font-bold text-sm">科学医学端</p>
+        <p class="text-white/60 text-xs mt-1">生物学 · 医学</p>
+      </div>
+      <div class="bg-white/20 backdrop-blur-sm p-5" style="border-top:4px solid #34A853;">
+        <p class="text-white font-bold text-sm">开发注册端</p>
+        <p class="text-white/60 text-xs mt-1">法规 · CMC · 供应链</p>
+      </div>
+      <div class="bg-white/20 backdrop-blur-sm p-5" style="border-top:4px solid #FBBC05;">
+        <p class="text-white font-bold text-sm">商业市场端</p>
+        <p class="text-white/60 text-xs mt-1">市场 · 竞争 · 销售 · 患者</p>
+      </div>
+      <div class="bg-white/20 backdrop-blur-sm p-5" style="border-top:4px solid #EA4335;">
+        <p class="text-white font-bold text-sm">综合风险端</p>
+        <p class="text-white/60 text-xs mt-1">IP · 财务 · 模式 · 投资</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 文档信息总览 -->
+<section class="py-20 px-8 md:px-16">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-center gap-4 mb-10">
+      <div class="chapter-num bg-brand-blue">ℹ</div>
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900">文档信息总览</h2>
+        <p class="text-text-secondary mt-1">模板基础属性与编号规则说明</p>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-bg-gray p-5">
+        <p class="text-text-muted text-xs uppercase tracking-wider mb-1">文档版本</p>
+        <p class="font-bold text-lg">V1.0</p>
+      </div>
+      <div class="bg-bg-gray p-5">
+        <p class="text-text-muted text-xs uppercase tracking-wider mb-1">报告编号</p>
+        <p class="font-bold text-lg">PI-FR-年度-序号</p>
+      </div>
+      <div class="bg-bg-gray p-5">
+        <p class="text-text-muted text-xs uppercase tracking-wider mb-1">文档密级</p>
+        <p class="font-bold text-lg">机密 / 内部</p>
+      </div>
+      <div class="bg-bg-gray p-5">
+        <p class="text-text-muted text-xs uppercase tracking-wider mb-1">报告状态</p>
+        <p class="font-bold text-lg">初稿 / 终稿</p>
+      </div>
+    </div>
+    <div class="bg-bg-gray p-6">
+      <p class="font-semibold text-sm text-text-secondary mb-4">模板核心字段</p>
+      <div class="grid grid-cols-3 md:grid-cols-5 gap-3">
+        <div class="bg-white p-3 text-sm"><span class="text-text-muted">产品名称</span></div>
+        <div class="bg-white p-3 text-sm"><span class="text-text-muted">引进来源</span></div>
+        <div class="bg-white p-3 text-sm"><span class="text-text-muted">产品类型</span></div>
+        <div class="bg-white p-3 text-sm"><span class="text-text-muted">适应症领域</span></div>
+        <div class="bg-white p-3 text-sm"><span class="text-text-muted">研发阶段</span></div>
+        <div class="bg-white p-3 text-sm"><span class="text-text-muted">项目编号</span></div>
+        <div class="bg-white p-3 text-sm"><span class="text-text-muted">评估小组</span></div>
+        <div class="bg-white p-3 text-sm"><span class="text-text-muted">报告撰写人</span></div>
+        <div class="bg-white p-3 text-sm"><span class="text-text-muted">报告审核人</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- 目录导航 -->
+<section class="py-20 px-8 md:px-16 bg-bg-gray">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold text-gray-900 mb-10">报告目录</h2>
+    <div class="space-y-2">
+      <div class="toc-line bg-white p-4 hover:bg-gray-50 transition">
+        <span class="font-black text-lg w-8 text-brand-blue">1</span>
+        <span class="font-semibold text-sm flex-shrink-0">执行摘要</span>
+        <span class="toc-dots"></span>
+        <span class="text-text-muted text-xs flex-shrink-0">关键指标速览与终审建议</span>
+      </div>
+      <div class="toc-line bg-white p-4 hover:bg-gray-50 transition">
+        <span class="font-black text-lg w-8 text-brand-green">2</span>
+        <span class="font-semibold text-sm flex-shrink-0">项目背景与立项依据</span>
+        <span class="toc-dots"></span>
+        <span class="text-text-muted text-xs flex-shrink-0">战略契合度与产品基本信息</span>
+      </div>
+      <div class="toc-line bg-white p-4 hover:bg-gray-50 transition">
+        <span class="font-black text-lg w-8 text-brand-blue">3</span>
+        <span class="font-semibold text-sm flex-shrink-0">十四维评估结论</span>
+        <span class="toc-dots"></span>
+        <span class="text-text-muted text-xs flex-shrink-0">四大端全面评估与综合评分</span>
+      </div>
+      <div class="toc-line bg-white p-4 hover:bg-gray-50 transition">
+        <span class="font-black text-lg w-8 text-brand-green">4</span>
+        <span class="font-semibold text-sm flex-shrink-0">六大战略标准合规性审查</span>
+        <span class="toc-dots"></span>
+        <span class="text-text-muted text-xs flex-shrink-0">YES/NO 结构化合规判断</span>
+      </div>
+      <div class="toc-line bg-white p-4 hover:bg-gray-50 transition">
+        <span class="font-black text-lg w-8 text-brand-yellow">5</span>
+        <span class="font-semibold text-sm flex-shrink-0">风险评估与闭环管理</span>
+        <span class="toc-dots"></span>
+        <span class="text-text-muted text-xs flex-shrink-0">风险登记册与闭环追踪</span>
+      </div>
+      <div class="toc-line bg-white p-4 hover:bg-gray-50 transition">
+        <span class="font-black text-lg w-8 text-brand-yellow">6</span>
+        <span class="font-semibold text-sm flex-shrink-0">财务分析</span>
+        <span class="toc-dots"></span>
+        <span class="text-text-muted text-xs flex-shrink-0">投资回报预测与敏感性分析</span>
+      </div>
+      <div class="toc-line bg-white p-4 hover:bg-gray-50 transition">
+        <span class="font-black text-lg w-8 text-brand-red">7</span>
+        <span class="font-semibold text-sm flex-shrink-0">投资决策建议</span>
+        <span class="toc-dots"></span>
+        <span class="text-text-muted text-xs flex-shrink-0">MAC评审框架与决策矩阵</span>
+      </div>
+      <div class="toc-line bg-white p-4 hover:bg-gray-50 transition">
+        <span class="font-black text-lg w-8 text-brand-red">8</span>
+        <span class="font-semibold text-sm flex-shrink-0">终审决议</span>
+        <span class="toc-dots"></span>
+        <span class="text-text-muted text-xs flex-shrink-0">会议记录与签署页</span>
+      </div>
+      <div class="toc-line bg-white p-4 hover:bg-gray-50 transition">
+        <span class="font-black text-lg w-8 text-brand-blue">9</span>
+        <span class="font-semibold text-sm flex-shrink-0">附件清单</span>
+        <span class="toc-dots"></span>
+        <span class="text-text-muted text-xs flex-shrink-0">五大类完整附件索引</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- 第1章 执行摘要 -->
+<section class="py-20 px-8 md:px-16" id="ch1">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-center gap-4 mb-12">
+      <div class="chapter-num bg-brand-blue">1</div>
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900">执行摘要</h2>
+        <p class="text-text-secondary mt-1">关键指标速览与终审建议 · AI 自动汇总生成</p>
+      </div>
+      <span class="ai-badge ml-auto">AI 汇总</span>
+    </div>
+    <p class="text-text-secondary mb-8 text-base leading-relaxed">
+      本节为自动生成内容，由 AI 汇总第 2-7 节核心结论后填入。建议在完成全文后再生成本节。
+    </p>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">关键指标速览</h3>
+    <div class="overflow-x-auto mb-10">
+      <table>
+        <thead><tr class="table-header"><th>指标类别</th><th>指标名称</th><th>阈值要求</th><th>实际值</th><th>结论</th></tr></thead>
+        <tbody>
+          <tr><td>临床价值</td><td>差异化评分</td><td>≥8/10</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>市场潜力</td><td>峰值销售预估</td><td>≥10亿</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>财务回报</td><td>IRR</td><td>>25%</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>财务回报</td><td>NPV</td><td>≥3亿</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>财务回报</td><td>第5年利润率</td><td>≥20%</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>注册路径</td><td>许可引进周期</td><td><4年</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>供应链</td><td>本土化路径</td><td>明确可行</td><td>【待填充】</td><td><strong class="text-brand-red">【必须明确】</strong></td></tr>
+          <tr class="table-row-alt"><td>风险等级</td><td>综合风险评级</td><td>可控</td><td>【待填充】</td><td>【待填充】</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">评估小组一致性意见</h3>
+    <div class="bg-bg-gray p-6 mb-6 border-l-4 border-brand-blue">
+      <p class="text-text-secondary italic">【待填充：评估小组对项目的整体意见，200字以内】</p>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">终审建议</h3>
+    <div class="overflow-x-auto">
+      <table>
+        <thead><tr class="table-header"><th>建议类型</th><th>建议内容</th></tr></thead>
+        <tbody>
+          <tr><td class="font-semibold w-40">决议建议</td><td>【通过 / 有条件通过 / 搁置 / 否决】</td></tr>
+          <tr class="table-row-alt"><td class="font-semibold">条件说明</td><td>【如为"有条件通过"，列明所需满足的条件】</td></tr>
+          <tr><td class="font-semibold">后续行动</td><td>【待填充：下一步工作建议】</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- 第2章 项目背景 -->
+<section class="py-20 px-8 md:px-16 bg-bg-gray" id="ch2">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-center gap-4 mb-12">
+      <div class="chapter-num bg-brand-green">2</div>
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900">项目背景与立项依据</h2>
+        <p class="text-text-secondary mt-1">战略契合度分析与项目历程</p>
+      </div>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">2.1 产品基本信息</h3>
+    <div class="overflow-x-auto mb-10">
+      <table>
+        <thead><tr class="table-header"><th>信息项</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>产品名称（中文）</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>产品名称（英文）</td><td>【待填充】</td></tr>
+          <tr><td>活性成分</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>给药途径</td><td>【待填充】</td></tr>
+          <tr><td>剂型/规格</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>适应症</td><td>【待填充】</td></tr>
+          <tr><td>目标患者人群</td><td>【待填充：适应症流行病学数据 + 目标渗透率假设】</td></tr>
+          <tr class="table-row-alt"><td>合作方/许可方</td><td>【待填充：公司全称、国别、合作关系概述】</td></tr>
+          <tr><td>许可类型</td><td>【待填充：独占/非独占；地区范围；是否含生产权】</td></tr>
+          <tr class="table-row-alt"><td>许可期限</td><td>【待填充：起始日期、终止日期、自动续期条款】</td></tr>
+          <tr><td>现有注册状态</td><td>【待填充：目标市场的注册批件/临床试验许可情况】</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">2.2 立项背景与战略契合度</h3>
+    <div class="grid md:grid-cols-3 gap-6 mb-10">
+      <div class="bg-white p-6" style="border-top:4px solid #4285F4;">
+        <p class="font-bold mb-2">公司战略定位</p>
+        <p class="text-text-secondary text-sm">【描述公司当前战略重点，本项目如何契合公司战略方向，150-300字】</p>
+      </div>
+      <div class="bg-white p-6" style="border-top:4px solid #34A853;">
+        <p class="font-bold mb-2">市场需求驱动</p>
+        <p class="text-text-secondary text-sm">【目标适应症领域的市场需求缺口、未满足的临床需求，150-300字】</p>
+      </div>
+      <div class="bg-white p-6" style="border-top:4px solid #FBBC05;">
+        <p class="font-bold mb-2">竞争格局优化</p>
+        <p class="text-text-secondary text-sm">【本产品如何填补公司产品线空白或强化竞争优势，100-200字】</p>
+      </div>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">2.3 项目历程</h3>
+    <div class="overflow-x-auto">
+      <table>
+        <thead><tr class="table-header"><th>里程碑</th><th>计划日期</th><th>实际日期</th><th>状态</th><th>备注</th></tr></thead>
+        <tbody>
+          <tr><td>立项启动</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>跨职能评估小组组建</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>子阶段一（意向深化）</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>子阶段二（全面验证）</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>子阶段三（收尾定型）</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>内部预审会</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>终审会（MAC评审）</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- 第3章 十四维评估 - 科学医学端 -->
+<section class="py-20 px-8 md:px-16" id="ch3">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-center gap-4 mb-12">
+      <div class="chapter-num bg-brand-blue">3</div>
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900">十四维评估结论</h2>
+        <p class="text-text-secondary mt-1">四大端 × 十四个维度 × 10分制评分</p>
+      </div>
+    </div>
+
+    <!-- 科学医学端 -->
+    <div class="mb-16">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-3 h-8" style="background:#4285F4;"></div>
+        <h3 class="text-2xl font-bold text-gray-900">3.1 科学医学端</h3>
+        <span class="text-text-muted text-sm">生物学评估 · 医学评估</span>
+      </div>
+
+      <h4 class="font-semibold text-base mb-3 text-gray-800">3.1.1 生物学评估</h4>
+      <div class="overflow-x-auto mb-8">
+        <table>
+          <thead><tr class="table-header"><th>评估维度</th><th>评估要点</th><th>结论</th><th>评分</th><th>证据来源</th></tr></thead>
+          <tbody>
+            <tr><td>靶点/机制</td><td>靶点创新性、机制明确性</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>临床前数据</td><td>药效学、药代动力学、安全性</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr><td>差异化优势</td><td>与同靶点竞品的生物学优势</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>联合用药潜力</td><td>能否与现有管线形成联用方案</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="bg-bg-gray p-4 mb-6 border-l-4 border-gray-400">
+        <p class="text-text-secondary text-sm">【待填充：生物学评估综合结论，100-200字】</p>
+      </div>
+
+      <h4 class="font-semibold text-base mb-3 text-gray-800">3.1.2 医学评估</h4>
+      <div class="overflow-x-auto">
+        <table>
+          <thead><tr class="table-header"><th>评估维度</th><th>评估要点</th><th>结论</th><th>评分</th><th>证据来源</th></tr></thead>
+          <tbody>
+            <tr><td>临床数据质量</td><td>已有人体临床数据的完整性、科学性</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>疗效优势</td><td>与现有标准治疗相比的疗效数据</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr><td>安全性特征</td><td>不良反应发生率、严重程度、可控性</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>精准医疗标记</td><td>生物标志物、伴随诊断可能性</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr><td>医学策略</td><td>临床开发路径、医学推广策略</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 开发注册端 -->
+    <div class="mb-16">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-3 h-8" style="background:#34A853;"></div>
+        <h3 class="text-2xl font-bold text-gray-900">3.2 开发注册端</h3>
+        <span class="text-text-muted text-sm">法规评估 · CMC评估 · 供应链评估</span>
+      </div>
+
+      <h4 class="font-semibold text-base mb-3 text-gray-800">3.2.1 法规评估</h4>
+      <div class="overflow-x-auto mb-8">
+        <table>
+          <thead><tr class="table-header"><th>评估维度</th><th>评估要点</th><th>结论</th><th>评分</th><th>证据来源</th></tr></thead>
+          <tbody>
+            <tr><td>注册路径</td><td>目标市场的注册路径与策略</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>法规风险</td><td>各国法规差异带来的合规风险</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr><td>数据要求</td><td>桥接/验证性临床试验的数据要求</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>专利悬崖</td><td>核心专利到期时间、补充保护证书</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4 class="font-semibold text-base mb-3 text-gray-800">3.2.2 CMC评估（药学研究）</h4>
+      <div class="overflow-x-auto mb-8">
+        <table>
+          <thead><tr class="table-header"><th>评估维度</th><th>评估要点</th><th>结论</th><th>评分</th><th>证据来源</th></tr></thead>
+          <tbody>
+            <tr><td>处方工艺</td><td>制剂处方、生产工艺成熟度</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>质量标准</td><td>质量标准、检验方法、稳定性数据</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr><td>放大可行性</td><td>商业化规模放大的技术可行性</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>GMP状态</td><td>现有生产场地的GMP符合性</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="bg-red-50 border-2 border-brand-red p-6 mb-6">
+        <div class="flex items-center gap-2 mb-3">
+          <h4 class="font-semibold text-base text-brand-red">3.2.3 供应链评估</h4>
+          <span class="veto-badge">⭐ 一票否决项</span>
+        </div>
+        <p class="text-brand-red text-sm mb-4">⚠️ 重要提示：供应链为【一票否决项】。本土化路径必须明确，否则项目不得通过终审。</p>
+        <div class="overflow-x-auto">
+          <table>
+            <thead><tr class="table-header"><th>评估维度</th><th>评估要点</th><th>结论</th><th>评分</th><th>证据来源</th></tr></thead>
+            <tbody>
+              <tr><td>原料药供应</td><td>API来源、供应商资质、供应稳定性</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+              <tr class="table-row-alt"><td>辅料/包材</td><td>关键辅料和包材的供应保障</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+              <tr style="background:#FEE2E2;"><td class="font-bold text-brand-red">本土化路径 <span class="veto-badge" style="font-size:10px;">必须明确</span></td><td class="text-brand-red">原料药/制剂本土化计划、时间表、技术可行性</td><td>【待填充】</td><td class="font-bold text-brand-red">【/10】</td><td>【待填充】</td></tr>
+              <tr class="table-row-alt"><td>成本优化空间</td><td>本土化后的成本下降预期</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+              <tr><td>供应链韧性</td><td>单一来源风险、多元化备份</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+              <tr class="table-row-alt"><td>环保合规</td><td>EHS要求、废弃物处理能力</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 商业市场端 -->
+    <div class="mb-16">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-3 h-8" style="background:#FBBC05;"></div>
+        <h3 class="text-2xl font-bold text-gray-900">3.3 商业市场端</h3>
+        <span class="text-text-muted text-sm">市场评估 · 竞争评估 · 销售协同 · 患者服务</span>
+      </div>
+
+      <h4 class="font-semibold text-base mb-3 text-gray-800">3.3.1 市场评估</h4>
+      <div class="overflow-x-auto mb-8">
+        <table>
+          <thead><tr class="table-header"><th>评估维度</th><th>评估要点</th><th>结论</th><th>评分</th><th>证据来源</th></tr></thead>
+          <tbody>
+            <tr><td>市场规模</td><td>目标市场的整体容量（TAM、SAM、SOM）</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>增长趋势</td><td>市场年复合增长率、驱动因素</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr><td>准入环境</td><td>医保目录、招标采购、定价政策</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>患者可及性</td><td>支付能力、商保覆盖、患者援助项目</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4 class="font-semibold text-base mb-3 text-gray-800">3.3.2 竞争评估</h4>
+      <div class="overflow-x-auto mb-8">
+        <table>
+          <thead><tr class="table-header"><th>评估维度</th><th>评估要点</th><th>结论</th><th>评分</th><th>证据来源</th></tr></thead>
+          <tbody>
+            <tr><td>现有竞品</td><td>已上市同领域产品的市场份额、疗效/安全性对比</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>在研竞品</td><td>临床阶段的潜在竞品、预计上市时间</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr><td>竞争壁垒</td><td>技术壁垒、专利布局、品牌优势</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>渗透策略</td><td>差异化竞争策略、市场准入计划</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4 class="font-semibold text-base mb-3 text-gray-800">3.3.3 销售协同评估</h4>
+      <div class="overflow-x-auto mb-8">
+        <table>
+          <thead><tr class="table-header"><th>评估维度</th><th>评估要点</th><th>结论</th><th>评分</th><th>证据来源</th></tr></thead>
+          <tbody>
+            <tr><td>渠道协同</td><td>与现有销售网络的协同效应</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>团队能力</td><td>销售团队的专业能力、培训需求</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr><td>医院覆盖</td><td>目标医院的覆盖策略、进院计划</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>商业化成本</td><td>商业化团队建设成本、时间周期</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4 class="font-semibold text-base mb-3 text-gray-800">3.3.4 患者服务评估</h4>
+      <div class="overflow-x-auto">
+        <table>
+          <thead><tr class="table-header"><th>评估维度</th><th>评估要点</th><th>结论</th><th>评分</th><th>证据来源</th></tr></thead>
+          <tbody>
+            <tr><td>患者旅程</td><td>患者诊断、治疗、随访全流程支持</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>依从性管理</td><td>用药依从性提升方案</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr><td>患者社群</td><td>患者组织、疾病教育项目</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>数字化支持</td><td>数字化患者管理工具、远程随访</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 综合风险端 -->
+    <div class="mb-16">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-3 h-8" style="background:#EA4335;"></div>
+        <h3 class="text-2xl font-bold text-gray-900">3.4 综合风险端</h3>
+        <span class="text-text-muted text-sm">知识产权 · 财务 · 商业模式 · 投资风险</span>
+      </div>
+
+      <h4 class="font-semibold text-base mb-3 text-gray-800">3.4.1 知识产权评估</h4>
+      <div class="overflow-x-auto mb-8">
+        <table>
+          <thead><tr class="table-header"><th>评估维度</th><th>评估要点</th><th>结论</th><th>评分</th><th>证据来源</th></tr></thead>
+          <tbody>
+            <tr><td>专利布局</td><td>核心专利、布局完整性、保护范围</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>侵权风险</td><td>是否存在侵犯第三方专利的风险</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr><td>许可条款</td><td>许可协议中的IP保护、改进权归属</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>自由实施</td><td>FTO分析结论</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4 class="font-semibold text-base mb-3 text-gray-800">3.4.2 财务评估 <span class="ai-badge ml-2">详见第6节</span></h4>
+
+      <h4 class="font-semibold text-base mb-3 text-gray-800">3.4.3 商业模式评估</h4>
+      <div class="overflow-x-auto mb-8">
+        <table>
+          <thead><tr class="table-header"><th>评估维度</th><th>评估要点</th><th>结论</th><th>评分</th><th>证据来源</th></tr></thead>
+          <tbody>
+            <tr><td>商业模式</td><td>产品定位、价格策略、收入模式</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>盈利模型</td><td>成本结构、边际利润、盈亏平衡点</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr><td>现金流</td><td>投入产出节奏、现金流预测</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>可扩展性</td><td>适应症拓展、产品线延伸潜力</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4 class="font-semibold text-base mb-3 text-gray-800">3.4.4 投资风险评估</h4>
+      <div class="overflow-x-auto">
+        <table>
+          <thead><tr class="table-header"><th>评估维度</th><th>评估要点</th><th>结论</th><th>评分</th><th>证据来源</th></tr></thead>
+          <tbody>
+            <tr><td>执行风险</td><td>关键里程碑的完成确定性</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>监管风险</td><td>注册审批的不确定性</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr><td>市场风险</td><td>市场渗透率、销售额达成的不确定性</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td>合作风险</td><td>许可方履约能力、合作稳定性</td><td>【待填充】</td><td class="font-bold">【/10】</td><td>【待填充】</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3.5 十四维综合评分汇总 -->
+    <div class="mb-16">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="ai-badge">AI 汇总</span>
+        <h3 class="text-2xl font-bold text-gray-900">3.5 十四维综合评分汇总</h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table>
+          <thead><tr class="table-header">
+            <th>维度类别</th><th>维度名称</th><th>评分</th><th>权重</th><th>加权得分</th><th>状态</th>
+          </tr></thead>
+          <tbody>
+            <tr><td rowspan="2" class="font-semibold align-middle" style="background:#EFF6FF;color:#4285F4;">科学医学端</td><td>生物学</td><td class="font-bold">【/10】</td><td>15%</td><td>【】</td><td>【强项/合格/风险项】</td></tr>
+            <tr style="background:#EFF6FF;color:#4285F4;"><td>医学</td><td class="font-bold">【/10】</td><td>15%</td><td>【】</td><td>【强项/合格/风险项】</td></tr>
+            <tr><td rowspan="3" class="font-semibold align-middle" style="background:#ECFDF5;color:#34A853;">开发注册端</td><td>法规</td><td class="font-bold">【/10】</td><td>10%</td><td>【】</td><td>【强项/合格/风险项】</td></tr>
+            <tr style="background:#ECFDF5;color:#34A853;"><td>CMC</td><td class="font-bold">【/10】</td><td>10%</td><td>【】</td><td>【强项/合格/风险项】</td></tr>
+            <tr style="background:#FEE2E2;color:#EA4335;"><td>供应链 ⭐否决</td><td class="font-bold">【/10】</td><td>15%</td><td>【】</td><td><strong>⚠️一票否决</strong></td></tr>
+            <tr><td rowspan="4" class="font-semibold align-middle" style="background:#FFFBEB;color:#B45309;">商业市场端</td><td>市场</td><td class="font-bold">【/10】</td><td>10%</td><td>【】</td><td>【强项/合格/风险项】</td></tr>
+            <tr style="background:#FFFBEB;color:#B45309;"><td>竞争</td><td class="font-bold">【/10】</td><td>8%</td><td>【】</td><td>【强项/合格/风险项】</td></tr>
+            <tr style="background:#FFFBEB;color:#B45309;"><td>销售协同</td><td class="font-bold">【/10】</td><td>7%</td><td>【】</td><td>【强项/合格/风险项】</td></tr>
+            <tr style="background:#FFFBEB;color:#B45309;"><td>患者服务</td><td class="font-bold">【/10】</td><td>5%</td><td>【】</td><td>【强项/合格/风险项】</td></tr>
+            <tr><td rowspan="4" class="font-semibold align-middle" style="background:#FEF2F2;color:#DC2626;">综合风险端</td><td>知识产权</td><td class="font-bold">【/10】</td><td>5%</td><td>【】</td><td>【强项/合格/风险项】</td></tr>
+            <tr style="background:#FEF2F2;color:#DC2626;"><td>财务</td><td class="font-bold">【/10】</td><td>—</td><td>【见第6节】</td><td>【见第6节】</td></tr>
+            <tr style="background:#FEF2F2;color:#DC2626;"><td>商业模式</td><td class="font-bold">【/10】</td><td>5%</td><td>【】</td><td>【强项/合格/风险项】</td></tr>
+            <tr style="background:#FEF2F2;color:#DC2626;"><td>投资风险</td><td class="font-bold">【/10】</td><td>5%</td><td>【】</td><td>【强项/合格/风险项】</td></tr>
+            <tr style="background:#1F2937;color:white;"><td colspan="2" class="font-black">综合加权得分</td><td>—</td><td>100%</td><td class="font-black text-xl">【/10】</td><td>【强项/合格/风险项】</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-text-muted text-sm mt-3">说明：供应链为一票否决项，如评分&lt;6分或本土化路径不明确，项目应直接否决。评分等级：≥8.0为强项，6.0-7.9为合格，&lt;6.0为风险项。</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- 第4章 六大战略标准 -->
+<section class="py-20 px-8 md:px-16 bg-bg-gray" id="ch4">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-center gap-4 mb-12">
+      <div class="chapter-num bg-brand-green">4</div>
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900">六大战略标准合规性审查</h2>
+        <p class="text-text-secondary mt-1">YES / NO 结构化合规判断</p>
+      </div>
+    </div>
+
+    <!-- 标准一 -->
+    <div class="bg-white p-6 mb-6" style="border-top:4px solid #4285F4;">
+      <div class="flex items-center gap-3 mb-4">
+        <h3 class="font-bold text-lg">标准一：临床价值与差异化</h3>
+      </div>
+      <div class="overflow-x-auto mb-4">
+        <table>
+          <thead><tr class="table-header"><th>审查项</th><th>要求</th><th>实际</th><th>结论</th></tr></thead>
+          <tbody>
+            <tr><td>差异化机制</td><td>具备明确的差异化创新点</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+            <tr class="table-row-alt"><td>临床优势</td><td>与现有治疗手段相比有明确临床获益</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+            <tr><td>未满足需求</td><td>针对未满足的临床需求</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+            <tr class="table-row-alt"><td>患者受益</td><td>患者使用后可获得明确的健康收益</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-text-secondary text-sm bg-bg-gray p-3">【待填充：标准一合规性说明，100-150字】</p>
+    </div>
+
+    <!-- 标准二 -->
+    <div class="bg-white p-6 mb-6" style="border-top:4px solid #34A853;">
+      <h3 class="font-bold text-lg mb-4">标准二：市场潜力与商业化协同</h3>
+      <div class="overflow-x-auto mb-4">
+        <table>
+          <thead><tr class="table-header"><th>审查项</th><th>要求</th><th>实际</th><th>结论</th></tr></thead>
+          <tbody>
+            <tr><td>市场规模</td><td>目标市场足够支撑商业化投入</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+            <tr class="table-row-alt"><td>增长潜力</td><td>市场处于增长阶段或有增长驱动因素</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+            <tr><td>渠道协同</td><td>可借助现有销售网络快速准入</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+            <tr class="table-row-alt"><td>品牌协同</td><td>与公司品牌形象契合</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-text-secondary text-sm bg-bg-gray p-3">【待填充：标准二合规性说明，100-150字】</p>
+    </div>
+
+    <!-- 标准三 -->
+    <div class="bg-white p-6 mb-6" style="border-top:4px solid #FBBC05;">
+      <h3 class="font-bold text-lg mb-4">标准三：财务纪律</h3>
+      <div class="overflow-x-auto mb-4">
+        <table>
+          <thead><tr class="table-header"><th>审查项</th><th>阈值要求</th><th>实际值</th><th>结论</th></tr></thead>
+          <tbody>
+            <tr><td>IRR（内部收益率）</td><td>>25%</td><td>【待填充：XX%】</td><td>【✅/❌】</td></tr>
+            <tr class="table-row-alt"><td>第5年利润率</td><td>≥20%</td><td>【待填充：XX%】</td><td>【✅/❌】</td></tr>
+            <tr><td>NPV（净现值）</td><td>≥3亿</td><td>【待填充：X亿】</td><td>【✅/❌】</td></tr>
+            <tr class="table-row-alt"><td>投资回收期</td><td>【待填充：设定阈值】</td><td>【待填充】</td><td>【✅/❌】</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-text-secondary text-sm bg-bg-gray p-3">【待填充：标准三合规性说明，100-150字】</p>
+    </div>
+
+    <!-- 标准四 一票否决 -->
+    <div class="bg-red-50 border-2 border-brand-red p-6 mb-6">
+      <div class="flex items-center gap-3 mb-4">
+        <h3 class="font-bold text-lg text-brand-red">标准四：供应链成本竞争力</h3>
+        <span class="veto-badge">⭐ 一票否决项</span>
+      </div>
+      <p class="text-brand-red text-sm mb-4 font-semibold">⚠️ 重要提示：如本土化路径不明确或不可行，项目【必须否决】。</p>
+      <div class="overflow-x-auto mb-4">
+        <table>
+          <thead><tr class="table-header"><th>审查项</th><th>要求</th><th>实际</th><th>结论</th></tr></thead>
+          <tbody>
+            <tr style="background:#FEE2E2;"><td class="font-bold text-brand-red">本土化路径明确性</td><td>必须明确原料药/制剂本土化方案</td><td>【待填充：是/否】</td><td><strong>【✅/❌】</strong></td></tr>
+            <tr style="background:#FEE2E2;" class="table-row-alt"><td>技术可行性</td><td>本土化方案技术可行</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+            <tr style="background:#FEE2E2;"><td>成本优化目标</td><td>本土化后成本下降≥【待填充：XX】%</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+            <tr style="background:#FEE2E2;" class="table-row-alt"><td>供应稳定性</td><td>本土化后供应有保障</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-text-secondary text-sm bg-white p-3">【待填充：标准四合规性说明，重点说明本土化路径，150-200字】</p>
+    </div>
+
+    <!-- 标准五 -->
+    <div class="bg-white p-6 mb-6" style="border-top:4px solid #4285F4;">
+      <h3 class="font-bold text-lg mb-4">标准五：注册路径可行性</h3>
+      <div class="overflow-x-auto mb-4">
+        <table>
+          <thead><tr class="table-header"><th>审查项</th><th>要求</th><th>实际</th><th>结论</th></tr></thead>
+          <tbody>
+            <tr><td>许可引进周期</td><td><4年</td><td>【待填充：X年X月】</td><td>【✅/❌】</td></tr>
+            <tr class="table-row-alt"><td>注册路径清晰度</td><td>注册路径明确、无重大法规障碍</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+            <tr><td>临床数据要求</td><td>桥接/验证性临床可行且成本可控</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+            <tr class="table-row-alt"><td>罕见病/优先审评</td><td>是否符合优先审评通道条件</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-text-secondary text-sm bg-bg-gray p-3">【待填充：标准五合规性说明，100-150字】</p>
+    </div>
+
+    <!-- 标准六 -->
+    <div class="bg-white p-6 mb-8" style="border-top:4px solid #EA4335;">
+      <h3 class="font-bold text-lg mb-4">标准六：风险可控性</h3>
+      <div class="overflow-x-auto mb-4">
+        <table>
+          <thead><tr class="table-header"><th>审查项</th><th>要求</th><th>实际</th><th>结论</th></tr></thead>
+          <tbody>
+            <tr><td>风险识别完整性</td><td>所有重大风险已识别</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+            <tr class="table-row-alt"><td>风险缓解措施</td><td>每项风险均有明确的缓解措施</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+            <tr><td>风险闭环状态</td><td>所有风险均已关闭或可控</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+            <tr class="table-row-alt"><td>应急预案</td><td>关键风险有应急预案</td><td>【待填充：是/否】</td><td>【✅/❌】</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-text-secondary text-sm bg-bg-gray p-3">【待填充：标准六合规性说明，100-150字】</p>
+    </div>
+
+    <!-- 4.7 汇总表 -->
+    <div class="bg-white p-6">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="ai-badge">AI 汇总</span>
+        <h3 class="font-bold text-lg">4.7 六大战略标准合规性汇总</h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table>
+          <thead><tr class="table-header"><th>战略标准</th><th>合规结论</th><th>关键支撑/风险点</th></tr></thead>
+          <tbody>
+            <tr><td class="font-semibold">标准一：临床价值与差异化</td><td>【✅通过 / ❌不通过】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td class="font-semibold">标准二：市场潜力与商业化协同</td><td>【✅通过 / ❌不通过】</td><td>【待填充】</td></tr>
+            <tr><td class="font-semibold">标准三：财务纪律</td><td>【✅通过 / ❌不通过】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td class="font-semibold text-brand-red">标准四：供应链成本竞争力 ⭐否决</td><td><strong>【✅通过 / ❌不通过】</strong></td><td>【待填充】</td></tr>
+            <tr><td class="font-semibold">标准五：注册路径可行性</td><td>【✅通过 / ❌不通过】</td><td>【待填充】</td></tr>
+            <tr class="table-row-alt"><td class="font-semibold">标准六：风险可控性</td><td>【✅通过 / ❌不通过】</td><td>【待填充】</td></tr>
+            <tr style="background:#1F2937;color:white;"><td colspan="2" class="font-black">整体合规性</td><td class="font-black">【✅全部通过 / ⚠️有条件通过 / ❌存在否决项】</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- 第5章 风险评估 -->
+<section class="py-20 px-8 md:px-16" id="ch5">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-center gap-4 mb-12">
+      <div class="chapter-num bg-brand-yellow">5</div>
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900">风险评估与闭环管理</h2>
+        <p class="text-text-secondary mt-1">风险登记册与投后整合计划</p>
+      </div>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">5.1 风险登记册</h3>
+    <div class="overflow-x-auto mb-10">
+      <table style="font-size:12px;">
+        <thead><tr class="table-header">
+          <th>编号</th><th>类别</th><th>风险描述</th><th>可能性</th><th>影响</th><th>等级</th><th>缓解措施</th><th>责任人</th><th>状态</th><th>关闭日期</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>R-001</td><td>【待填充】</td><td>【待填充】</td><td>【高/中/低】</td><td>【高/中/低】</td><td>【高/中/低】</td><td>【待填充】</td><td>【待填充】</td><td>【开放/已关闭】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>R-002</td><td>【待填充】</td><td>【待填充】</td><td>【高/中/低】</td><td>【高/中/低】</td><td>【高/中/低】</td><td>【待填充】</td><td>【待填充】</td><td>【开放/已关闭】</td><td>【待填充】</td></tr>
+          <tr><td>R-003</td><td>【待填充】</td><td>【待填充】</td><td>【高/中/低】</td><td>【高/中/低】</td><td>【高/中/低】</td><td>【待填充】</td><td>【待填充】</td><td>【开放/已关闭】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>R-004</td><td>【待填充】</td><td>【待填充】</td><td>【高/中/低】</td><td>【高/中/低】</td><td>【高/中/低】</td><td>【待填充】</td><td>【待填充】</td><td>【开放/已关闭】</td><td>【待填充】</td></tr>
+          <tr><td>R-005</td><td>【待填充】</td><td>【待填充】</td><td>【高/中/低】</td><td>【高/中/低】</td><td>【高/中/低】</td><td>【待填充】</td><td>【待填充】</td><td>【开放/已关闭】</td><td>【待填充】</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">5.2 重大风险详情</h3>
+    <div class="grid md:grid-cols-3 gap-6 mb-10">
+      <div class="bg-bg-gray p-5 border-l-4 border-brand-red">
+        <p class="font-bold text-sm mb-2">5.2.1 重大风险一</p>
+        <p class="text-text-muted text-xs mb-2">类别：【科学医学/开发注册/商业市场/综合风险】</p>
+        <p class="text-text-secondary text-xs">【风险描述、可能性、影响程度、缓解措施、应急预案、闭环状态、验证证据】</p>
+      </div>
+      <div class="bg-bg-gray p-5 border-l-4 border-brand-red">
+        <p class="font-bold text-sm mb-2">5.2.2 重大风险二</p>
+        <p class="text-text-muted text-xs mb-2">类别：【科学医学/开发注册/商业市场/综合风险】</p>
+        <p class="text-text-secondary text-xs">【风险描述、可能性、影响程度、缓解措施、应急预案、闭环状态、验证证据】</p>
+      </div>
+      <div class="bg-bg-gray p-5 border-l-4 border-brand-red">
+        <p class="font-bold text-sm mb-2">5.2.3 重大风险三</p>
+        <p class="text-text-muted text-xs mb-2">类别：【科学医学/开发注册/商业市场/综合风险】</p>
+        <p class="text-text-secondary text-xs">【风险描述、可能性、影响程度、缓解措施、应急预案、闭环状态、验证证据】</p>
+      </div>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">5.3 风险闭环汇总 <span class="ai-badge ml-2">AI 汇总</span></h3>
+    <div class="grid grid-cols-3 gap-6 mb-10">
+      <div class="bg-brand-green text-white p-6 text-center">
+        <p class="text-4xl font-black counter" data-target="0" data-suffix="项">0</p>
+        <p class="text-sm mt-2 opacity-80">已关闭风险</p>
+      </div>
+      <div class="bg-brand-yellow text-white p-6 text-center">
+        <p class="text-4xl font-black counter" data-target="0" data-suffix="项">0</p>
+        <p class="text-sm mt-2 opacity-80">开放中风险</p>
+      </div>
+      <div class="bg-brand-blue text-white p-6 text-center">
+        <p class="text-4xl font-black counter" data-target="0" data-suffix="项">0</p>
+        <p class="text-sm mt-2 opacity-80">风险总数</p>
+      </div>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">5.4 投后整合初步计划</h3>
+    <div class="overflow-x-auto">
+      <table>
+        <thead><tr class="table-header"><th>整合领域</th><th>整合事项</th><th>时间节点</th><th>责任人</th><th>完成标准</th></tr></thead>
+        <tbody>
+          <tr><td>研发整合</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>生产整合</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>市场整合</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>财务整合</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>人力整合</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- 第6章 财务分析 -->
+<section class="py-20 px-8 md:px-16 bg-bg-gray" id="ch6">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-center gap-4 mb-12">
+      <div class="chapter-num bg-brand-yellow">6</div>
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900">财务分析</h2>
+        <p class="text-text-secondary mt-1">投资回报预测与敏感性分析</p>
+      </div>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">6.1 投资规模与资金使用计划</h3>
+    <div class="overflow-x-auto mb-10">
+      <table>
+        <thead><tr class="table-header"><th>投资阶段</th><th>金额（万元）</th><th>占比</th><th>时间计划</th><th>备注</th></tr></thead>
+        <tbody>
+          <tr><td>预付款</td><td>【待填充】</td><td>【】%</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>里程碑付款</td><td>【待填充】</td><td>【】%</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>研发投入</td><td>【待填充】</td><td>【】%</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>商业化投入</td><td>【待填充】</td><td>【】%</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr style="background:#1F2937;color:white;font-weight:700;"><td>投资总额</td><td>【待填充】</td><td>100%</td><td>【待填充-待填充】</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">6.2 收入预测（10年）</h3>
+    <div class="overflow-x-auto mb-10">
+      <table style="font-size:13px;">
+        <thead><tr class="table-header"><th>年度</th><th>渗透率</th><th>患者数量</th><th>单价（元/年）</th><th>收入（万元）</th><th>累计收入</th></tr></thead>
+        <tbody>
+          <tr><td>第1年</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>第2年</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>第3年</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>第4年</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>第5年</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>第6年</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>第7年</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>第8年</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>第9年</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>第10年</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">6.3 成本结构与利润预测（5年）</h3>
+    <div class="overflow-x-auto mb-10">
+      <table style="font-size:13px;">
+        <thead><tr class="table-header"><th>成本/利润项目</th><th>第1年</th><th>第2年</th><th>第3年</th><th>第4年</th><th>第5年</th></tr></thead>
+        <tbody>
+          <tr><td>收入</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>销售成本</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>毛利</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>毛利率</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>销售费用</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>管理费用</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>研发费用</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>营业利润</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr style="background:#ECFDF5;font-weight:700;"><td class="text-brand-green">营业利润率</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td><td class="text-brand-green font-bold">【≥20%】</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">6.4 核心财务指标</h3>
+    <div class="overflow-x-auto mb-10">
+      <table>
+        <thead><tr class="table-header"><th>财务指标</th><th>阈值要求</th><th>实际预测值</th><th>结论</th></tr></thead>
+        <tbody>
+          <tr><td>IRR（内部收益率）</td><td>>25%</td><td>【待填充：XX%】</td><td>【✅/❌】</td></tr>
+          <tr class="table-row-alt"><td>NPV（净现值）</td><td>≥3亿</td><td>【待填充：X亿】</td><td>【✅/❌】</td></tr>
+          <tr><td>第5年营业利润率</td><td>≥20%</td><td>【待填充：XX%】</td><td>【✅/❌】</td></tr>
+          <tr class="table-row-alt"><td>投资回收期</td><td>【待填充】</td><td>【待填充：X年】</td><td>【✅/❌】</td></tr>
+          <tr><td>峰值年销售</td><td>【待填充】</td><td>【待填充：X亿】</td><td>【✅/❌】</td></tr>
+          <tr class="table-row-alt"><td>峰值年达成时间</td><td>【待填充】</td><td>【待填充：第X年】</td><td>【✅/❌】</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">6.5 敏感性分析</h3>
+    <div class="overflow-x-auto mb-10">
+      <table>
+        <thead><tr class="table-header"><th>变动因素</th><th>变动幅度</th><th>IRR变化</th><th>NPV变化</th><th>结论</th></tr></thead>
+        <tbody>
+          <tr><td>收入下降</td><td>-10%</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>收入下降</td><td>-20%</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>成本上升</td><td>+10%</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>成本上升</td><td>+20%</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td>上市延迟</td><td>1年</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td>峰值渗透率下调</td><td>-30%</td><td>【待填充】</td><td>【待填充】</td><td>【待填充】</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="font-bold text-lg mb-3 text-gray-800">6.6 财务分析结论 <span class="ai-badge ml-2">AI 汇总</span></h3>
+    <div class="bg-bg-gray p-6 border-l-4 border-gray-400">
+      <p class="text-text-secondary text-sm leading-relaxed">【财务分析整体结论，200-300字。需明确说明：1）项目是否满足财务纪律要求；2）主要盈利驱动因素；3）主要财务风险；4）在不同情景下的财务表现。】</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- 第7章 投资决策建议 -->
+<section class="py-20 px-8 md:px-16" id="ch7">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-center gap-4 mb-12">
+      <div class="chapter-num bg-brand-red">7</div>
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900">投资决策建议</h2>
+        <p class="text-text-secondary mt-1">MAC评审框架与决策矩阵</p>
+      </div>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">7.1 评估小组综合意见</h3>
+    <div class="bg-bg-gray p-6 mb-8 border-l-4 border-brand-blue">
+      <p class="text-text-secondary leading-relaxed">【评估小组对项目的综合评价，200-300字。包含：项目亮点、主要关切、条件建议、最终建议。】</p>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">7.2 决策建议框架（MAC评审用）</h3>
+
+    <div class="bg-white border p-6 mb-6">
+      <p class="font-semibold text-sm text-text-muted mb-2">7.2.1 项目定位声明</p>
+      <p class="text-text-secondary italic">【一句话说明项目定位，格式如："本项目是一款针对【适应症】的【产品类型】，旨在【核心价值主张】"】</p>
+    </div>
+
+    <h4 class="font-semibold text-base mb-3">7.2.2 关键价值驱动因素（Top 3）</h4>
+    <div class="overflow-x-auto mb-8">
+      <table>
+        <thead><tr class="table-header"><th>优先级</th><th>价值驱动因素</th><th>支撑依据</th></tr></thead>
+        <tbody>
+          <tr><td class="font-black text-brand-blue w-16">1</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td class="font-black text-brand-blue w-16">2</td><td>【待填充】</td><td>【待填充】</td></tr>
+          <tr><td class="font-black text-brand-blue w-16">3</td><td>【待填充】</td><td>【待填充】</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 class="font-semibold text-base mb-3">7.2.3 MAC评审核心问题回答</h4>
+    <div class="overflow-x-auto mb-8">
+      <table>
+        <thead><tr class="table-header"><th>MAC关注问题</th><th>回答要点</th></tr></thead>
+        <tbody>
+          <tr><td class="font-semibold w-48">为什么现在引进这个产品？</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td class="font-semibold">为什么选择这个合作伙伴？</td><td>【待填充】</td></tr>
+          <tr><td class="font-semibold">与现有管线如何协同？</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td class="font-semibold">主要风险是什么？如何管控？</td><td>【待填充】</td></tr>
+          <tr><td class="font-semibold">财务回报是否满足公司标准？</td><td>【待填充】</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 class="font-semibold text-base mb-3">7.2.4 决策建议矩阵</h4>
+    <div class="overflow-x-auto mb-8">
+      <table>
+        <thead><tr class="table-header"><th>决议类型</th><th>适用条件</th><th>需满足的前提条件</th></tr></thead>
+        <tbody>
+          <tr><td class="font-bold text-brand-green">通过</td><td>所有否决项通过 + 六大标准全部满足</td><td>无附加条件</td></tr>
+          <tr class="table-row-alt"><td class="font-bold text-brand-yellow">有条件通过</td><td>存在可整改的非否决项问题</td><td>列明需要整改的条件及时间节点</td></tr>
+          <tr><td class="font-bold text-brand-blue">搁置</td><td>存在重大不确定性但有潜力</td><td>列明需进一步验证的事项</td></tr>
+          <tr class="table-row-alt"><td class="font-bold text-brand-red">否决</td><td>存在一票否决项或核心标准不满足</td><td>列明否决原因</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 class="font-semibold text-base mb-3">7.2.5 建议决议</h4>
+    <div class="bg-bg-gray p-6 space-y-3">
+      <label class="flex items-start gap-3 p-3 bg-white cursor-pointer hover:bg-gray-50"><input type="radio" name="decision" class="mt-1"> <div><strong class="text-brand-green">☐ 通过</strong> — 项目满足所有要求，建议立即启动合同谈判</div></label>
+      <label class="flex items-start gap-3 p-3 bg-white cursor-pointer hover:bg-gray-50"><input type="radio" name="decision" class="mt-1"> <div><strong class="text-brand-yellow">☐ 有条件通过</strong> — 项目满足基本要求，但需满足以下条件后方可推进：<br>1. 【待填充】<br>2. 【待填充】</div></label>
+      <label class="flex items-start gap-3 p-3 bg-white cursor-pointer hover:bg-gray-50"><input type="radio" name="decision" class="mt-1"> <div><strong class="text-brand-blue">☐ 搁置</strong> — 项目存在重大不确定性，建议在以下事项明确后重新上会：<br>1. 【待填充】<br>2. 【待填充】</div></label>
+      <label class="flex items-start gap-3 p-3 bg-white cursor-pointer hover:bg-gray-50"><input type="radio" name="decision" class="mt-1"> <div><strong class="text-brand-red">☐ 否决</strong> — 项目存在以下否决因素，建议不引进：<br>1. 【待填充】<br>2. 【待填充】</div></label>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- 第8章 终审决议 -->
+<section class="py-20 px-8 md:px-16 bg-bg-gray" id="ch8">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-center gap-4 mb-12">
+      <div class="chapter-num bg-brand-red">8</div>
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900">终审决议</h2>
+        <p class="text-text-secondary mt-1">会议记录与签署页</p>
+      </div>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">8.1 终审会议信息</h3>
+    <div class="overflow-x-auto mb-8">
+      <table>
+        <thead><tr class="table-header"><th>会议要素</th><th>信息</th></tr></thead>
+        <tbody>
+          <tr><td class="w-40 font-semibold">会议日期</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td class="w-40 font-semibold">会议地点</td><td>【待填充】</td></tr>
+          <tr><td class="w-40 font-semibold">主持人</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td class="w-40 font-semibold">与会人员</td><td>【待填充】</td></tr>
+          <tr><td class="w-40 font-semibold">缺席人员</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td class="w-40 font-semibold">记录人</td><td>【待填充】</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">8.2 终审决议记录</h3>
+    <div class="bg-white p-6 mb-8">
+      <p class="font-semibold mb-3">决议结果：</p>
+      <div class="flex gap-6 mb-4">
+        <label class="flex items-center gap-2"><input type="checkbox"> 通过</label>
+        <label class="flex items-center gap-2"><input type="checkbox"> 有条件通过</label>
+        <label class="flex items-center gap-2"><input type="checkbox"> 搁置</label>
+        <label class="flex items-center gap-2"><input type="checkbox"> 否决</label>
+      </div>
+      <p class="font-semibold mb-2 mt-4">条件说明（如适用）：</p>
+      <div class="bg-bg-gray p-4 text-text-secondary text-sm mb-4">【待填充：列明需要满足的条件】</div>
+      <p class="font-semibold mb-2">补充意见：</p>
+      <div class="bg-bg-gray p-4 text-text-secondary text-sm mb-4">【待填充：MAC提出的其他意见和建议】</div>
+      <p class="font-semibold mb-2">投票结果：</p>
+      <div class="grid grid-cols-3 gap-4 text-sm">
+        <div class="bg-bg-gray p-3">赞成票：<strong>【】票</strong></div>
+        <div class="bg-bg-gray p-3">反对票：<strong>【】票</strong></div>
+        <div class="bg-bg-gray p-3">弃权票：<strong>【】票</strong></div>
+      </div>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4 text-gray-800">8.3 签署页</h3>
+    <div class="overflow-x-auto">
+      <table>
+        <thead><tr class="table-header"><th>角色</th><th>姓名</th><th>签名</th><th>日期</th></tr></thead>
+        <tbody>
+          <tr><td class="font-semibold">主持人</td><td>【待填充】</td><td>________________</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td class="font-semibold">评估小组组长</td><td>【待填充】</td><td>________________</td><td>【待填充】</td></tr>
+          <tr><td class="font-semibold">医学负责人</td><td>【待填充】</td><td>________________</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td class="font-semibold">商务/BD负责人</td><td>【待填充】</td><td>________________</td><td>【待填充】</td></tr>
+          <tr><td class="font-semibold">财务负责人</td><td>【待填充】</td><td>________________</td><td>【待填充】</td></tr>
+          <tr class="table-row-alt"><td class="font-semibold">法务负责人</td><td>【待填充】</td><td>________________</td><td>【待填充】</td></tr>
+          <tr><td class="font-semibold">项目经理</td><td>【待填充】</td><td>________________</td><td>【待填充】</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- 第9章 附件清单 -->
+<section class="py-20 px-8 md:px-16" id="ch9">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-center gap-4 mb-12">
+      <div class="chapter-num bg-brand-blue">9</div>
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900">附件清单</h2>
+        <p class="text-text-secondary mt-1">五大类完整附件索引</p>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 mb-8">
+      <div>
+        <h4 class="font-bold text-base mb-3 flex items-center gap-2"><span class="w-6 h-6 bg-brand-blue text-white text-xs font-black flex items-center justify-center rounded-none">A</span> 评估类（Annex-A）</h4>
+        <div class="overflow-x-auto">
+          <table style="font-size:12px;">
+            <thead><tr class="table-header"><th>编号</th><th>附件名称</th></tr></thead>
+            <tbody>
+              <tr><td class="w-20">A-001</td><td>投资决策建议书（终版）</td></tr>
+              <tr class="table-row-alt"><td class="w-20">A-002</td><td>十四维评估报告</td></tr>
+              <tr><td class="w-20">A-003</td><td>现场尽调报告</td></tr>
+              <tr class="table-row-alt"><td class="w-20">A-004</td><td>关键假设验证报告</td></tr>
+              <tr><td class="w-20">A-005</td><td>风险评估与缓解计划表（已关闭版）</td></tr>
+              <tr class="table-row-alt"><td class="w-20">A-006</td><td>内部预审会纪要</td></tr>
+              <tr><td class="w-20">A-007</td><td>医学评估报告</td></tr>
+              <tr class="table-row-alt"><td class="w-20">A-008</td><td>市场评估报告</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-bold text-base mb-3 flex items-center gap-2"><span class="w-6 h-6 bg-brand-green text-white text-xs font-black flex items-center justify-center rounded-none">B</span> 商业类（Annex-B）</h4>
+        <div class="overflow-x-auto">
+          <table style="font-size:12px;">
+            <thead><tr class="table-header"><th>编号</th><th>附件名称</th></tr></thead>
+            <tbody>
+              <tr><td class="w-20">B-001</td><td>产品介绍资料（Partner提供）</td></tr>
+              <tr class="table-row-alt"><td class="w-20">B-002</td><td>市场调研报告</td></tr>
+              <tr><td class="w-20">B-003</td><td>竞争分析报告</td></tr>
+              <tr class="table-row-alt"><td class="w-20">B-004</td><td>商业化计划</td></tr>
+              <tr><td class="w-20">B-005</td><td>销售协同分析</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-bold text-base mb-3 flex items-center gap-2"><span class="w-6 h-6 bg-brand-yellow text-white text-xs font-black flex items-center justify-center rounded-none">C</span> 财务类（Annex-C）</h4>
+        <div class="overflow-x-auto">
+          <table style="font-size:12px;">
+            <thead><tr class="table-header"><th>编号</th><th>附件名称</th></tr></thead>
+            <tbody>
+              <tr><td class="w-20">C-001</td><td>财务模型（Excel）</td></tr>
+              <tr class="table-row-alt"><td class="w-20">C-002</td><td>投资回报分析报告</td></tr>
+              <tr><td class="w-20">C-003</td><td>敏感性分析报告</td></tr>
+              <tr class="table-row-alt"><td class="w-20">C-004</td><td>尽职调查财务报告</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-bold text-base mb-3 flex items-center gap-2"><span class="w-6 h-6 bg-brand-red text-white text-xs font-black flex items-center justify-center rounded-none">D</span> 法务类（Annex-D）</h4>
+        <div class="overflow-x-auto">
+          <table style="font-size:12px;">
+            <thead><tr class="table-header"><th>编号</th><th>附件名称</th></tr></thead>
+            <tbody>
+              <tr><td class="w-20">D-001</td><td>最终版许可/合作协议</td></tr>
+              <tr class="table-row-alt"><td class="w-20">D-002</td><td>知识产权尽职调查报告</td></tr>
+              <tr><td class="w-20">D-003</td><td>FTO分析报告</td></tr>
+              <tr class="table-row-alt"><td class="w-20">D-004</td><td>法规合规评估报告</td></tr>
+              <tr><td class="w-20">D-005</td><td>本土化承诺书/协议</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <h4 class="font-bold text-base mb-3 flex items-center gap-2"><span class="w-6 h-6 bg-gray-500 text-white text-xs font-black flex items-center justify-center rounded-none">E</span> 其他类（Annex-E）</h4>
+    <div class="overflow-x-auto mb-8">
+      <table style="font-size:12px;">
+        <thead><tr class="table-header"><th>编号</th><th>附件名称</th></tr></thead>
+        <tbody>
+          <tr><td class="w-20">E-001</td><td>项目移交确认单</td></tr>
+          <tr class="table-row-alt"><td class="w-20">E-002</td><td>投后整合初步计划</td></tr>
+          <tr><td class="w-20">E-003</td><td>跨职能评估小组名单及职责</td></tr>
+          <tr class="table-row-alt"><td class="w-20">E-004</td><td>其他补充材料</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- AI辅助说明 -->
+<section class="py-20 px-8 md:px-16 bg-bg-gray">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-center gap-4 mb-10">
+      <span class="ai-badge text-base px-4 py-1">AI 智能辅助</span>
+      <h2 class="text-3xl font-bold text-gray-900">AI 辅助使用指南</h2>
+    </div>
+    <p class="text-text-secondary mb-8">模板中以下节点可由 AI 自动汇总生成，大幅提升报告撰写效率：</p>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="bg-white p-5 border-l-4 border-brand-blue">
+        <p class="font-bold text-sm mb-1">执行摘要 <span class="ai-badge ml-1">AI汇总</span></p>
+        <p class="text-text-muted text-xs">第1节</p>
+        <p class="text-text-secondary text-xs mt-2">汇总第2-7节核心结论，自动生成项目一句话结论</p>
+      </div>
+      <div class="bg-white p-5 border-l-4 border-brand-green">
+        <p class="font-bold text-sm mb-1">十四维评分汇总 <span class="ai-badge ml-1">AI汇总</span></p>
+        <p class="text-text-muted text-xs">第3.5节</p>
+        <p class="text-text-secondary text-xs mt-2">收集所有评分后自动计算加权得分</p>
+      </div>
+      <div class="bg-white p-5 border-l-4 border-brand-yellow">
+        <p class="font-bold text-sm mb-1">六大标准汇总 <span class="ai-badge ml-1">AI汇总</span></p>
+        <p class="text-text-muted text-xs">第4.7节</p>
+        <p class="text-text-secondary text-xs mt-2">基于4.1-4.6节结论自动生成汇总表</p>
+      </div>
+      <div class="bg-white p-5 border-l-4 border-brand-red">
+        <p class="font-bold text-sm mb-1">风险闭环汇总 <span class="ai-badge ml-1">AI汇总</span></p>
+        <p class="text-text-muted text-xs">第5节</p>
+        <p class="text-text-secondary text-xs mt-2">基于风险登记册自动统计闭环数据</p>
+      </div>
+      <div class="bg-white p-5 border-l-4 border-brand-blue">
+        <p class="font-bold text-sm mb-1">财务分析结论 <span class="ai-badge ml-1">AI汇总</span></p>
+        <p class="text-text-muted text-xs">第6.6节</p>
+        <p class="text-text-secondary text-xs mt-2">基于6.1-6.5节数据自动生成分析结论</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- 使用说明 -->
+<section class="py-20 px-8 md:px-16">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-bold text-gray-900 mb-10">模板使用说明</h2>
+    <div class="grid md:grid-cols-2 gap-8 mb-10">
+      <div>
+        <h4 class="font-bold text-base mb-4">文档填写规范</h4>
+        <div class="space-y-3">
+          <div class="flex items-start gap-3">
+            <span class="bg-brand-blue text-white text-xs font-bold px-2 py-1 flex-shrink-0 mt-0.5">待填充</span>
+            <p class="text-text-secondary text-sm">需要项目团队手动填写具体内容</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="ai-badge flex-shrink-0 mt-0.5">AI汇总</span>
+            <p class="text-text-secondary text-sm">由AI自动汇总生成，建议在完成全文后触发</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="bg-gray-300 text-gray-700 text-xs font-bold px-2 py-1 flex-shrink-0 mt-0.5">说明</span>
+            <p class="text-text-secondary text-sm">模板说明文字，正式报告中应删除或转化为具体内容</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-bold text-base mb-4">版本历史</h4>
+        <div class="overflow-x-auto">
+          <table style="font-size:13px;">
+            <thead><tr class="table-header"><th>版本</th><th>日期</th><th>修改内容</th><th>修改人</th></tr></thead>
+            <tbody>
+              <tr><td class="font-bold">V1.0</td><td>【待填充】</td><td>初始版本创建</td><td>【待填充】</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 一票否决提醒 -->
+    <div class="bg-red-50 border-2 border-brand-red p-6 mt-6">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="veto-badge text-sm px-3 py-1">⚠️ 一票否决项</span>
+        <h4 class="font-bold text-lg text-brand-red">供应链本土化路径 — 重要提醒</h4>
+      </div>
+      <p class="text-brand-red font-semibold mb-3">在进入终审会前，必须确保以下条件全部满足：</p>
+      <ol class="text-text-secondary text-sm space-y-2 list-decimal list-inside">
+        <li>本土化路径方案已明确且技术可行</li>
+        <li>成本优化目标已量化（建议≥<strong class="text-brand-red">XX</strong>%）</li>
+        <li>已获得供应商或合作方的书面承诺</li>
+        <li>如本土化路径不明确，项目<strong class="text-brand-red font-bold">必须搁置或否决</strong></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- 流程图区 -->
+<section class="py-20 px-8 md:px-16 bg-bg-gray">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-bold text-gray-900 mb-10 text-center">从评估到决策的完整路径</h2>
+    <div class="flex items-center justify-between gap-2 overflow-x-auto pb-4">
+      <div class="flex-shrink-0 text-center">
+        <div class="w-12 h-12 bg-brand-blue text-white font-black text-lg flex items-center justify-center mb-2 mx-auto rounded-none">①</div>
+        <p class="text-xs font-semibold">立项启动</p>
+      </div>
+      <div class="flex-shrink-0 text-text-muted text-2xl">→</div>
+      <div class="flex-shrink-0 text-center">
+        <div class="w-12 h-12 bg-brand-blue text-white font-black text-lg flex items-center justify-center mb-2 mx-auto rounded-none">②</div>
+        <p class="text-xs font-semibold">评估小组组建</p>
+      </div>
+      <div class="flex-shrink-0 text-text-muted text-2xl">→</div>
+      <div class="flex-shrink-0 text-center">
+        <div class="w-12 h-12 bg-brand-green text-white font-black text-lg flex items-center justify-center mb-2 mx-auto rounded-none">③</div>
+        <p class="text-xs font-semibold">意向深化</p>
+      </div>
+      <div class="flex-shrink-0 text-text-muted text-2xl">→</div>
+      <div class="flex-shrink-0 text-center">
+        <div class="w-12 h-12 bg-brand-green text-white font-black text-lg flex items-center justify-center mb-2 mx-auto rounded-none">④</div>
+        <p class="text-xs font-semibold">全面验证</p>
+      </div>
+      <div class="flex-shrink-0 text-text-muted text-2xl">→</div>
+      <div class="flex-shrink-0 text-center">
+        <div class="w-12 h-12 bg-brand-yellow text-white font-black text-lg flex items-center justify-center mb-2 mx-auto rounded-none">⑤</div>
+        <p class="text-xs font-semibold">收尾定型</p>
+      </div>
+      <div class="flex-shrink-0 text-text-muted text-2xl">→</div>
+      <div class="flex-shrink-0 text-center">
+        <div class="w-12 h-12 bg-brand-yellow text-white font-black text-lg flex items-center justify-center mb-2 mx-auto rounded-none">⑥</div>
+        <p class="text-xs font-semibold">内部预审会</p>
+      </div>
+      <div class="flex-shrink-0 text-text-muted text-2xl">→</div>
+      <div class="flex-shrink-0 text-center">
+        <div class="w-12 h-12 bg-brand-red text-white font-black text-lg flex items-center justify-center mb-2 mx-auto rounded-none">⑦</div>
+        <p class="text-xs font-semibold">终审会<br>MAC评审</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 核心指标速览 -->
+<section class="py-20 px-8 md:px-16">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-bold text-gray-900 mb-2 text-center">核心决策指标</h2>
+    <p class="text-text-secondary text-center mb-12">关键阈值要求一览</p>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="text-center p-6 bg-bg-gray">
+        <p class="text-4xl font-black text-brand-blue counter" data-target="8" data-suffix="/10">0</p>
+        <p class="text-sm text-text-muted mt-2">差异化评分阈值</p>
+        <p class="text-xs text-text-muted mt-1">≥8/10 为强项</p>
+      </div>
+      <div class="text-center p-6 bg-bg-gray">
+        <p class="text-4xl font-black text-brand-green">10<span class="text-xl">亿+</span></p>
+        <p class="text-sm text-text-muted mt-2">峰值销售门槛</p>
+        <p class="text-xs text-text-muted mt-1">TAM/SAM/SOM</p>
+      </div>
+      <div class="text-center p-6 bg-bg-gray">
+        <p class="text-4xl font-black text-brand-red counter" data-target="25" data-suffix="%">0</p>
+        <p class="text-sm text-text-muted mt-2">IRR 最低要求</p>
+        <p class="text-xs text-text-muted mt-1">>25% 通过</p>
+      </div>
+      <div class="text-center p-6 bg-bg-gray">
+        <p class="text-4xl font-black text-brand-yellow">3<span class="text-xl">亿+</span></p>
+        <p class="text-sm text-text-muted mt-2">NPV 最低门槛</p>
+        <p class="text-xs text-text-muted mt-1">≥3亿 通过</p>
+      </div>
+      <div class="text-center p-6 bg-bg-gray">
+        <p class="text-4xl font-black text-brand-blue counter" data-target="20" data-suffix="%">0</p>
+        <p class="text-sm text-text-muted mt-2">第5年利润率</p>
+        <p class="text-xs text-text-muted mt-1">≥20% 通过</p>
+      </div>
+      <div class="text-center p-6 bg-bg-gray">
+        <p class="text-4xl font-black text-brand-green">&lt;4<span class="text-xl">年</span></p>
+        <p class="text-sm text-text-muted mt-2">许可引进周期</p>
+        <p class="text-xs text-text-muted mt-1">全周期上限</p>
+      </div>
+      <div class="text-center p-6 border-2 border-brand-red">
+        <p class="text-4xl font-black text-brand-red">✅</p>
+        <p class="text-sm text-text-muted mt-2">本土化路径</p>
+        <p class="text-xs text-text-muted mt-1">必须明确可行</p>
+      </div>
+      <div class="text-center p-6 bg-bg-gray">
+        <p class="text-4xl font-black text-brand-blue">✓</p>
+        <p class="text-sm text-text-muted mt-2">综合风险评级</p>
+        <p class="text-xs text-text-muted mt-1">可控 即可接受</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 页脚 -->
+<footer class="bg-gray-900 text-white py-12 px-8 md:px-16">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-center justify-between flex-wrap gap-6">
+      <div>
+        <p class="font-bold text-lg">产品引进终审报告书模板</p>
+        <p class="text-gray-400 text-sm mt-1">基于药企产品引进内审评估阶段业务流程 V1.0</p>
+        <p class="text-gray-500 text-xs mt-1">品种AI全流程管理大纲 V1.0</p>
+      </div>
+      <div class="text-right">
+        <p class="text-gray-400 text-sm">模板编号：PI-FR-Template-V1.0</p>
+        <p class="text-gray-500 text-xs mt-1">文档密级：机密 / 内部</p>
+      </div>
+    </div>
+    <div class="border-t border-gray-700 mt-8 pt-6 text-center">
+      <p class="text-gray-500 text-xs">如有问题或建议，请联系文档管理员</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ANIMATION SCRIPT -->
+<script>
+  // Intersection Observer for fade-up
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.05, rootMargin: '0px 0px -30px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Counter animation
+  function animateCounter(el) {
+    const target = parseInt(el.dataset.target);
+    const suffix = el.dataset.suffix || '';
+    const duration = 2000;
+    const start = performance.now();
+    function update(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(target * eased) + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !entry.target.dataset.animated) {
+        entry.target.dataset.animated = 'true';
+        animateCounter(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el));
+</script>
+
+</body>
+</html>
