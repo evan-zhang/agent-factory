@@ -634,7 +634,7 @@ function filterTag(tag) {{
 }}
 
 async function loadFavorites() {{
-  const url = currentTag ? `/api/favorites?tag=${encodeURIComponent(currentTag)}` : '/api/favorites';
+  const url = currentTag ? `/api/favorites?tag=${{encodeURIComponent(currentTag)}}` : '/api/favorites';
   const resp = await fetch(url);
   const data = await resp.json();
   const docs = data.docs || [];
