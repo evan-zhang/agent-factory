@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Link Archivist — Skill 流程文档</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1A73E8;
+    --green: #34A853;
+    --yellow: #FBBC05;
+    --red: #EA4335;
+    --black: #202124;
+    --muted: #5F6368;
+    --light-bg: #F8F9FA;
+  }
+  body { font-family: 'Inter', 'Helvetica Neue', sans-serif; color: var(--black); background: #fff; }
+  .phase-num { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 3px; font-size: 0.7rem; font-weight: 600; }
+  .tag-blue { background: rgba(26,115,232,0.1); color: var(--blue); }
+  .tag-green { background: rgba(52,168,83,0.1); color: var(--green); }
+  .tag-yellow { background: rgba(251,188,5,0.1); color: #e8a800; }
+  .tag-red { background: rgba(234,67,53,0.1); color: var(--red); }
+  .phase-card { border-left: 3px solid transparent; transition: all 0.2s; }
+  .phase-card:hover { border-left-color: var(--blue); background: var(--light-bg); }
+  .flow-arrow { color: var(--blue); font-size: 1.2rem; }
+  .gate-badge { background: var(--black); color: white; padding: 1px 8px; border-radius: 2px; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; }
+  .branch-box { border: 1.5px solid #e0e0e0; border-radius: 4px; }
+  .degrade-item { display: flex; align-items: center; gap: 8px; }
+  .step-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; }
+  .highlight { color: var(--blue); font-weight: 600; }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-in { animation: fadeInUp 0.5s ease both; }
+  .section-title { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; }
+  .phase-title { font-size: 1rem; font-weight: 700; color: var(--black); }
+  .phase-subtitle { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+  code { background: var(--light-bg); padding: 1px 5px; border-radius: 3px; font-size: 0.8em; color: var(--blue); font-family: 'Courier New', monospace; }
+  pre { background: var(--light-bg); padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-size: 0.8em; line-height: 1.6; }
+  .matrix-card { border: 1.5px solid #e8e8e8; padding: 16px 20px; border-radius: 4px; min-width: 180px; flex: 1; }
+  .matrix-card-blue { border-top: 3px solid var(--blue); }
+  .matrix-card-green { border-top: 3px solid var(--green); }
+  .matrix-card-yellow { border-top: 3px solid var(--yellow); }
+  .matrix-card-red { border-top: 3px solid var(--red); }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header style="background: var(--black); color: white; padding: 48px 72px;">
+  <div style="max-width: 1100px; margin: 0 auto;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+      <span style="background: var(--blue); color: white; padding: 3px 10px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; border-radius: 2px;">SKILL v1.9.0</span>
+      <span style="color: rgba(255,255,255,0.5); font-size: 0.75rem;">Link Archivist</span>
+    </div>
+    <h1 style="font-size: 2.4rem; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 12px 0; line-height: 1.2;">
+      链接内容归档工作流
+    </h1>
+    <p style="color: rgba(255,255,255,0.6); font-size: 0.95rem; margin: 0; max-width: 600px; line-height: 1.6;">
+      接收链接 / 文本 / 文件 → 内容抓取 → 模式判断 → 调研报告生成 → 本地归档 + Obsidian 同步
+    </p>
+  </div>
+</header>
+
+<!-- Footer bar -->
+<div style="height: 4px; background: linear-gradient(to right, var(--blue), var(--green), var(--yellow), var(--red));"></div>
+
+<main style="max-width: 1100px; margin: 0 auto; padding: 56px 72px;">
+
+  <!-- 执行模式概览 -->
+  <section style="margin-bottom: 64px;" class="animate-in">
+    <h2 class="section-title" style="margin-bottom: 24px;">执行模式</h2>
+    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+      <div class="matrix-card matrix-card-blue" style="flex: 1.5;">
+        <div class="phase-num" style="color: var(--blue); margin-bottom: 8px;">MODE 01</div>
+        <div style="font-weight: 700; font-size: 1rem; margin-bottom: 6px;">Sub-Agent 模式（推荐）</div>
+        <div style="font-size: 0.8rem; color: var(--muted); line-height: 1.6;">
+          主 Agent 识别链接后 spawn sub-agent 执行，不阻塞主对话。适合日常使用，用户可同时进行其他交互。
+        </div>
+        <div style="margin-top: 12px; font-size: 0.75rem; color: var(--blue); font-weight: 600;">spawn worker → 后台处理 → announce 结果 → 汇报用户</div>
+      </div>
+      <div class="matrix-card matrix-card-green" style="flex: 1;">
+        <div class="phase-num" style="color: var(--green); margin-bottom: 8px;">MODE 02</div>
+        <div style="font-weight: 700; font-size: 1rem; margin-bottom: 6px;">直接执行模式</div>
+        <div style="font-size: 0.8rem; color: var(--muted); line-height: 1.6;">
+          主 Agent 自己按 Phase 1–5 直接执行。适用于调试、快速测试、sub-agent 不可用时。
+        </div>
+        <div style="margin-top: 12px; font-size: 0.75rem; color: var(--green); font-weight: 600;">Phase 1 → 2 → 3 → 4 → 5</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 五阶段主流程 -->
+  <section style="margin-bottom: 64px;" class="animate-in">
+    <h2 class="section-title" style="margin-bottom: 8px;">五阶段主流程</h2>
+    <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 32px;">门控规则：未完成 Phase N 禁止进入 Phase N+1。每阶段必须完成才能推进。</p>
+
+    <!-- Phase 1 -->
+    <div class="phase-card" style="padding: 20px 24px; margin-bottom: 12px; border-radius: 4px; background: white;">
+      <div style="display: flex; align-items: flex-start; gap: 20px;">
+        <div style="width: 36px; height: 36px; background: var(--blue); color: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; flex-shrink: 0;">1</div>
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+            <span class="phase-title">初始化与配置检测</span>
+            <span class="tag tag-blue">MUST</span>
+          </div>
+          <div class="phase-subtitle">Phase 1 — 配置校验，确保归档环境就绪</div>
+          <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+            <span class="gate-badge">门控</span>
+            <span style="font-size: 0.78rem; color: var(--muted);">archive_dir 已配置且目录可写</span>
+          </div>
+          <div style="margin-top: 10px;">
+            <code>python3 scripts/init_config.py</code>
+          </div>
+          <div style="margin-top: 8px; font-size: 0.78rem; color: var(--muted);">未通过 → 引导用户配置 archive_dir，流程暂停</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; color: var(--blue); font-size: 1.2rem; margin: 4px 0;">↓</div>
+
+    <!-- Phase 2 -->
+    <div class="phase-card" style="padding: 20px 24px; margin-bottom: 12px; border-radius: 4px; background: white;">
+      <div style="display: flex; align-items: flex-start; gap: 20px;">
+        <div style="width: 36px; height: 36px; background: var(--blue); color: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; flex-shrink: 0;">2</div>
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+            <span class="phase-title">内容抓取 + 模式判断</span>
+            <span class="tag tag-blue">MUST</span>
+          </div>
+          <div class="phase-subtitle">Phase 2 — 根据 URL 类型选择抓取策略，判断执行模式</div>
+
+          <!-- URL 类型分支 -->
+          <div style="margin-top: 14px;">
+            <div style="font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">URL 类型分支</div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <div style="background: rgba(26,115,232,0.06); border: 1px solid rgba(26,115,232,0.2); padding: 6px 12px; border-radius: 3px; font-size: 0.78rem;">
+                <span style="color: var(--blue); font-weight: 600;">头条</span>
+                <span style="color: var(--muted);"> m.toutiao.com / www.toutiao.com → toutiao_fetch.py</span>
+              </div>
+              <div style="background: rgba(234,67,53,0.06); border: 1px solid rgba(234,67,53,0.2); padding: 6px 12px; border-radius: 3px; font-size: 0.78rem;">
+                <span style="color: var(--red); font-weight: 600;">抖音</span>
+                <span style="color: var(--muted);"> v.douyin.com → douyin_process.py</span>
+              </div>
+              <div style="background: rgba(52,168,83,0.06); border: 1px solid rgba(52,168,83,0.2); padding: 6px 12px; border-radius: 3px; font-size: 0.78rem;">
+                <span style="color: var(--green); font-weight: 600;">YouTube</span>
+                <span style="color: var(--muted);"> → youtube_subtitle.py</span>
+              </div>
+              <div style="background: rgba(251,188,5,0.06); border: 1px solid rgba(251,188,5,0.2); padding: 6px 12px; border-radius: 3px; font-size: 0.78rem;">
+                <span style="color: #d4a000; font-weight: 600;">通用</span>
+                <span style="color: var(--muted);"> → r.jina.ai/{url}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 模式判断 -->
+          <div style="margin-top: 14px;">
+            <div style="font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">模式判断（decide_mode.py）</div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <div style="border: 1.5px solid rgba(52,168,83,0.4); padding: 5px 12px; border-radius: 3px; font-size: 0.78rem;">
+                <span style="color: var(--green); font-weight: 700;">FULL</span>
+                <span style="color: var(--muted);"> GitHub / YouTube / 开源/框架/论文</span>
+              </div>
+              <div style="border: 1.5px solid rgba(251,188,5,0.4); padding: 5px 12px; border-radius: 3px; font-size: 0.78rem;">
+                <span style="color: #d4a000; font-weight: 700;">SHORT</span>
+                <span style="color: var(--muted);"> 新闻资讯/快讯/公告</span>
+              </div>
+              <div style="border: 1.5px solid rgba(26,115,232,0.4); padding: 5px 12px; border-radius: 3px; font-size: 0.78rem;">
+                <span style="color: var(--blue); font-weight: 700;">ASK</span>
+                <span style="color: var(--muted);"> 不确定时询问用户</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <span class="gate-badge">门控</span>
+            <span style="font-size: 0.78rem; color: var(--muted);">内容已抓取 + 模式已确定</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; color: var(--blue); font-size: 1.2rem; margin: 4px 0;">↓</div>
+
+    <!-- Phase 3 -->
+    <div class="phase-card" style="padding: 20px 24px; margin-bottom: 12px; border-radius: 4px; background: white;">
+      <div style="display: flex; align-items: flex-start; gap: 20px;">
+        <div style="width: 36px; height: 36px; background: var(--blue); color: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; flex-shrink: 0;">3</div>
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+            <span class="phase-title">执行调研 + 生成报告</span>
+            <span class="tag tag-blue">MUST</span>
+          </div>
+          <div class="phase-subtitle">Phase 3 — 按模式执行调研 checklist，生成结构化报告</div>
+          <div style="margin-top: 14px; display: flex; gap: 16px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--green); margin-bottom: 6px;">FULL 模式子步骤</div>
+              <div style="font-size: 0.78rem; color: var(--muted); line-height: 2;">
+                1. 内容分析<br>
+                2. GitHub 项目发现<br>
+                3. Web Search 交叉验证<br>
+                4. Claim 验证<br>
+                5. 生成个性化洞察<br>
+                6. 搜历史会话 + 本地知识库
+              </div>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <div style="font-size: 0.75rem; font-weight: 700; color: #d4a000; margin-bottom: 6px;">SHORT 模式</div>
+              <div style="font-size: 0.78rem; color: var(--muted); line-height: 2;">
+                生成 2–3 句话摘要<br>
+                无需 Web Search / Claim 验证<br>
+                直接进入 Phase 4
+              </div>
+            </div>
+          </div>
+          <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <span class="gate-badge">门控</span>
+            <span style="font-size: 0.78rem; color: var(--muted);">报告文件已生成（full 须含 Claim 验证表）</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; color: var(--blue); font-size: 1.2rem; margin: 4px 0;">↓</div>
+
+    <!-- Phase 4 -->
+    <div class="phase-card" style="padding: 20px 24px; margin-bottom: 12px; border-radius: 4px; background: white;">
+      <div style="display: flex; align-items: flex-start; gap: 20px;">
+        <div style="width: 36px; height: 36px; background: var(--blue); color: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; flex-shrink: 0;">4</div>
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+            <span class="phase-title">报告验证</span>
+            <span class="tag tag-blue">MUST</span>
+          </div>
+          <div class="phase-subtitle">Phase 4 — 自动化验证报告完整性，缺失则循环补充</div>
+          <div style="margin-top: 10px;">
+            <code>python3 scripts/validate_report.py &lt;报告文件&gt; --mode full|short</code>
+          </div>
+          <div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <span class="gate-badge">门控</span>
+            <span style="font-size: 0.78rem; color: var(--muted);">validate_report.py 返回 ok: true → 进入 Phase 5</span>
+          </div>
+          <div style="margin-top: 6px; font-size: 0.78rem; color: var(--muted);">循环直到通过，不得跳过</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; color: var(--blue); font-size: 1.2rem; margin: 4px 0;">↓</div>
+
+    <!-- Phase 5 -->
+    <div class="phase-card" style="padding: 20px 24px; margin-bottom: 12px; border-radius: 4px; background: white;">
+      <div style="display: flex; align-items: flex-start; gap: 20px;">
+        <div style="width: 36px; height: 36px; background: var(--blue); color: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; flex-shrink: 0;">5</div>
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+            <span class="phase-title">归档 + 同步</span>
+            <span class="tag tag-blue">MUST</span>
+            <span style="background: rgba(52,168,83,0.1); color: var(--green); padding: 1px 8px; border-radius: 2px; font-size: 0.7rem; font-weight: 600;">禁止直接写文件</span>
+          </div>
+          <div class="phase-subtitle">Phase 5 — 必须通过脚本归档，手动 rename 视频</div>
+          <div style="margin-top: 12px;">
+            <code>python3 scripts/archive_report.py &lt;content_file&gt; [--dir &lt;dir&gt;] [--title &lt;title&gt;] [--obsidian &lt;path&gt;] [--no-obsidian]</code>
+          </div>
+          <div style="margin-top: 10px; display: flex; gap: 16px; flex-wrap: wrap;">
+            <div style="min-width: 200px;">
+              <div style="font-size: 0.72rem; font-weight: 700; color: var(--muted); margin-bottom: 4px;">本地归档</div>
+              <div style="font-size: 0.78rem; color: var(--blue); font-family: monospace;">{archive_dir}/YYYY/MM/</div>
+              <div style="font-size: 0.75rem; color: var(--muted);">K-{YYMMDD}-{NNN}-{标题}.md</div>
+            </div>
+            <div style="min-width: 200px;">
+              <div style="font-size: 0.72rem; font-weight: 700; color: var(--muted); margin-bottom: 4px;">Obsidian 同步</div>
+              <div style="font-size: 0.78rem; color: var(--green); font-family: monospace;">{obsidian_dir}/YYYY/MM/</div>
+              <div style="font-size: 0.75rem; color: var(--muted);">{标题}-YYYY-MM-DD.md</div>
+            </div>
+            <div style="min-width: 200px;">
+              <div style="font-size: 0.72rem; font-weight: 700; color: var(--muted); margin-bottom: 4px;">视频归档</div>
+              <div style="font-size: 0.78rem; color: var(--red); font-family: monospace;">{video_archive_dir}/YYYY/MM/</div>
+              <div style="font-size: 0.75rem; color: var(--muted);">{archive_id}.mp4</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- 模式判断详细规则 -->
+  <section style="margin-bottom: 64px;" class="animate-in">
+    <h2 class="section-title" style="margin-bottom: 24px;">模式判断规则</h2>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+      <div class="matrix-card matrix-card-green" style="flex: 1; min-width: 260px;">
+        <div class="phase-num" style="color: var(--green); margin-bottom: 10px;">FULL</div>
+        <div style="font-weight: 700; font-size: 0.9rem; margin-bottom: 10px;">完整调研报告</div>
+        <div style="font-size: 0.75rem; color: var(--muted); line-height: 1.9;">
+          触发关键词：<br>
+          github, open source, repo, tutorial, 对比, 教程, 开源, 框架, 工具, 模型, 论文, architecture, benchmark, deep dive, agent, llm, 大模型, 智能体, 字节跳动, 火山引擎
+        </div>
+        <div style="margin-top: 10px; font-size: 0.75rem;">
+          <span style="color: var(--green); font-weight: 600;">✓</span>
+          <span style="color: var(--muted);"> YouTube / GitHub 链接直接 full</span>
+        </div>
+      </div>
+      <div class="matrix-card matrix-card-yellow" style="flex: 1; min-width: 260px;">
+        <div class="phase-num" style="color: #d4a000; margin-bottom: 10px;">SHORT</div>
+        <div style="font-weight: 700; font-size: 0.9rem; margin-bottom: 10px;">简短摘要</div>
+        <div style="font-size: 0.75rem; color: var(--muted); line-height: 1.9;">
+          触发关键词：<br>
+          news, 新闻, 热点, 观点, 快讯, 简讯, 公告, 通知, 更新, 涨价, 降价
+        </div>
+        <div style="margin-top: 10px; font-size: 0.75rem;">
+          <span style="color: #d4a000; font-weight: 600;">✓</span>
+          <span style="color: var(--muted);"> 用户说"简单说"</span>
+        </div>
+      </div>
+      <div class="matrix-card matrix-card-blue" style="flex: 1; min-width: 260px;">
+        <div class="phase-num" style="color: var(--blue); margin-bottom: 10px;">ASK</div>
+        <div style="font-weight: 700; font-size: 0.9rem; margin-bottom: 10px;">询问用户</div>
+        <div style="font-size: 0.75rem; color: var(--muted); line-height: 1.9;">
+          关键词不满足 full / short 条件时触发，询问用户期望的报告深度。
+        </div>
+        <div style="margin-top: 10px; font-size: 0.75rem;">
+          <span style="color: var(--blue); font-weight: 600;">✓</span>
+          <span style="color: var(--muted);"> 用户说"详细看看" → 强制 full</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 降级策略 -->
+  <section style="margin-bottom: 64px;" class="animate-in">
+    <h2 class="section-title" style="margin-bottom: 24px;">降级策略</h2>
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+
+      <!-- 网页抓取降级 -->
+      <div style="border: 1.5px solid #e0e0e0; border-radius: 4px; padding: 20px 24px;">
+        <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 12px;">🌐 网页抓取降级</div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="degrade-item">
+            <div class="step-num" style="background: var(--green); color: white;">1</div>
+            <div style="font-size: 0.82rem;">头条文章（m.toutiao.com / www.toutiao.com）→ <code>toutiao_fetch.py</code> 从 SSR RENDER_DATA 提取</div>
+          </div>
+          <div class="degrade-item">
+            <div class="step-num" style="background: var(--blue); color: white;">2</div>
+            <div style="font-size: 0.82rem;">通用 URL → <code>curl -sL https://r.jina.ai/{url}</code></div>
+          </div>
+          <div class="degrade-item">
+            <div class="step-num" style="background: #d4a000; color: white;">3</div>
+            <div style="font-size: 0.82rem;">jina.ai 返回空 → BeautifulSoup 直接抓取</div>
+          </div>
+          <div class="degrade-item">
+            <div class="step-num" style="background: var(--red); color: white;">4</div>
+            <div style="font-size: 0.82rem;">严重反爬 → 搜索引擎绕行法（搜索关键词，找原始来源）</div>
+          </div>
+          <div class="degrade-item">
+            <div class="step-num" style="background: var(--muted); color: white;">5</div>
+            <div style="font-size: 0.82rem;">全部失败 → <code>web_search</code> 补充关键信息</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- YouTube 字幕降级 -->
+      <div style="border: 1.5px solid #e0e0e0; border-radius: 4px; padding: 20px 24px;">
+        <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 12px;">🎬 YouTube 字幕降级</div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="degrade-item">
+            <div class="step-num" style="background: var(--green); color: white;">1</div>
+            <div style="font-size: 0.82rem;"><code>youtube_subtitle.py</code>（首选）</div>
+          </div>
+          <div class="degrade-item">
+            <div class="step-num" style="background: var(--blue); color: white;">2</div>
+            <div style="font-size: 0.82rem;"><code>yt-dlp --write-subs --sub-lang zh --skip-download</code></div>
+          </div>
+          <div class="degrade-item">
+            <div class="step-num" style="background: #d4a000; color: white;">3</div>
+            <div style="font-size: 0.82rem;">抓标题+描述，跳过转录</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Web Search 降级 -->
+      <div style="border: 1.5px solid #e0e0e0; border-radius: 4px; padding: 20px 24px;">
+        <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 12px;">🔍 Web Search 降级</div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="degrade-item">
+            <div class="step-num" style="background: var(--green); color: white;">1</div>
+            <div style="font-size: 0.82rem;">OpenClaw 内置 <code>web_search</code>（Perplexity API）</div>
+          </div>
+          <div class="degrade-item">
+            <div class="step-num" style="background: var(--blue); color: white;">2</div>
+            <div style="font-size: 0.82rem;"><code>tavily_search.py</code>（需配置 tavily_api_key）</div>
+          </div>
+          <div class="degrade-item">
+            <div class="step-num" style="background: #d4a000; color: white;">3</div>
+            <div style="font-size: 0.82rem;"><code>session_search</code> 搜历史会话</div>
+          </div>
+          <div class="degrade-item">
+            <div class="step-num" style="background: var(--muted); color: white;">4</div>
+            <div style="font-size: 0.82rem;">跳过，报告中注明"未进行交叉验证"</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 音频转录降级 -->
+      <div style="border: 1.5px solid #e0e0e0; border-radius: 4px; padding: 20px 24px;">
+        <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 12px;">🎙️ 音频转录降级</div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="degrade-item">
+            <div class="step-num" style="background: var(--green); color: white;">1</div>
+            <div style="font-size: 0.82rem;"><code>transcribe_audio.py</code>（需配置 xgjk_app_key）</div>
+          </div>
+          <div class="degrade-item">
+            <div class="step-num" style="background: var(--muted); color: white;">2</div>
+            <div style="font-size: 0.82rem;">跳过转录，只用标题+描述</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 目录结构 -->
+  <section style="margin-bottom: 64px;" class="animate-in">
+    <h2 class="section-title" style="margin-bottom: 24px;">归档目录结构</h2>
+    <div style="background: var(--light-bg); padding: 24px 28px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.85rem; line-height: 2;">
+      <div style="color: var(--muted);">{archive_dir}/</div>
+      <div style="color: var(--muted); padding-left: 1.5em;">2026/</div>
+      <div style="color: var(--blue); font-weight: 700; padding-left: 3em;">04/</div>
+      <div style="padding-left: 4.5em; color: var(--black);">K-260413-001-{标题简称}.md</div>
+      <div style="padding-left: 4.5em; color: var(--black);">K-260413-002-{标题简称}.md</div>
+      <div style="color: var(--blue); font-weight: 700; padding-left: 3em;">05/</div>
+      <div style="padding-left: 4.5em; color: var(--black);">K-260512-001-{标题简称}.md</div>
+      <div style="padding-left: 1.5em; color: var(--muted);">videos/</div>
+      <div style="color: var(--muted); padding-left: 1.5em;">2026/</div>
+      <div style="color: var(--red); font-weight: 700; padding-left: 3em;">04/</div>
+      <div style="padding-left: 4.5em; color: var(--black);">K-260413-001.mp4</div>
+      <div style="color: var(--red); font-weight: 700; padding-left: 3em;">05/</div>
+      <div style="padding-left: 4.5em; color: var(--black);">K-260512-001.mp4</div>
+    </div>
+    <div style="margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap;">
+      <span class="tag tag-blue">年/月二级结构</span>
+      <span class="tag tag-green">编号格式 K-YYMMDD-NNN</span>
+      <span class="tag tag-yellow">Obsidian 同步可选</span>
+      <span class="tag tag-red">视频归档可选</span>
+    </div>
+  </section>
+
+  <!-- 脚本清单 -->
+  <section style="margin-bottom: 48px;" class="animate-in">
+    <h2 class="section-title" style="margin-bottom: 24px;">脚本清单</h2>
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem;">
+        <thead>
+          <tr style="border-bottom: 2px solid #e0e0e0;">
+            <th style="text-align: left; padding: 8px 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.7rem;">脚本</th>
+            <th style="text-align: left; padding: 8px 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.7rem;">用途</th>
+          </tr>
+        </thead>
+        <tbody style="color: var(--black);">
+          <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 9px 12px; font-family: monospace; color: var(--blue);">init_config.py</td>
+            <td style="padding: 9px 12px; color: var(--muted);">检测/创建配置文件</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 9px 12px; font-family: monospace; color: var(--blue);">decide_mode.py</td>
+            <td style="padding: 9px 12px; color: var(--muted);">判断 short/full/ask 模式</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 9px 12px; font-family: monospace; color: var(--blue);">toutiao_fetch.py</td>
+            <td style="padding: 9px 12px; color: var(--muted);">头条文章专用抓取（SSR RENDER_DATA）</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 9px 12px; font-family: monospace; color: var(--blue);">youtube_subtitle.py</td>
+            <td style="padding: 9px 12px; color: var(--muted);">YouTube 字幕提取</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 9px 12px; font-family: monospace; color: var(--blue);">douyin_process.py</td>
+            <td style="padding: 9px 12px; color: var(--muted);">抖音视频：解析→下载→音频提取</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 9px 12px; font-family: monospace; color: var(--blue);">tavily_search.py</td>
+            <td style="padding: 9px 12px; color: var(--muted);">Tavily Web Search（需配置 key）</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 9px 12px; font-family: monospace; color: var(--blue);">video_archive.py</td>
+            <td style="padding: 9px 12px; color: var(--muted);">视频归档：下载 / rename / check</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 9px 12px; font-family: monospace; color: var(--blue);">archive_report.py</td>
+            <td style="padding: 9px 12px; color: var(--muted);">报告归档（本地 + Obsidian）</td>
+          </tr>
+          <tr>
+            <td style="padding: 9px 12px; font-family: monospace; color: var(--blue);">validate_report.py</td>
+            <td style="padding: 9px 12px; color: var(--muted);">归档前报告完整性验证</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<div style="height: 4px; background: linear-gradient(to right, var(--blue), var(--green), var(--yellow), var(--red)); margin-top: 48px;"></div>
+<div style="background: var(--black); color: rgba(255,255,255,0.4); padding: 20px 72px; font-size: 0.75rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+  <span>Link Archivist v1.9.0 — Agent Factory 项目 #2604131</span>
+  <span>yyyy/mm 归档格式 · 禁止跳过门控 · 必须通过脚本归档</span>
+</div>
+
+</body>
+</html>

@@ -148,8 +148,10 @@ def do_download(url: str, platform: str, config: dict) -> dict:
     if not archive_dir:
         return {"ok": False, "error": "video_archive_dir not configured or not a directory"}
 
-    today = datetime.now().strftime("%Y-%m-%d")
-    date_dir = archive_dir / today
+    now = datetime.now()
+    year = now.strftime("%Y")
+    month = now.strftime("%m")
+    date_dir = archive_dir / year / month
     date_dir.mkdir(parents=True, exist_ok=True)
 
     # Temp filename
@@ -185,10 +187,14 @@ def do_rename(temp_path: str, archive_id: str, config: dict) -> dict:
     if not src.exists():
         return {"ok": False, "error": f"Temp file not found: {temp_path}"}
 
-    # Extract date from path (parent dir name is YYYY-MM-DD)
-    date_str = src.parent.name
+    now = datetime.now()
+    year = now.strftime("%Y")
+    month = now.strftime("%m")
+    date_dir = archive_dir / year / month
+    date_dir.mkdir(parents=True, exist_ok=True)
+
     final_name = f"{archive_id}.mp4"
-    final_path = src.parent / final_name
+    final_path = date_dir / final_name
 
     shutil.move(str(src), str(final_path))
 

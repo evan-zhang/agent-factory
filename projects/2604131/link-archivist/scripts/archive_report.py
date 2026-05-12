@@ -8,9 +8,9 @@ from pathlib import Path
 
 
 def _date_to_nested_path(base_dir: Path, date_str: str) -> Path:
-    """Convert YYYY-MM-DD to YYYY/MM/DD nested path."""
+    """Convert YYYY-MM-DD to YYYY/MM nested path."""
     parts = date_str.split("-")  # [YYYY, MM, DD]
-    return base_dir / parts[0] / parts[1] / parts[2]
+    return base_dir / parts[0] / parts[1]
 
 
 def get_next_number(archive_dir: Path, date_str: str) -> int:
@@ -91,7 +91,7 @@ def load_config():
 def sync_to_obsidian(content_file: Path, obsidian_dir: Path, title: str, date_str: str) -> dict:
     """Sync report to Obsidian directory.
     
-    Obsidian structure: {obsidian_dir}/YYYY/MM/DD/{title}-YYYY-MM-DD.md
+    Obsidian structure: {obsidian_dir}/YYYY/MM/{title}-YYYY-MM-DD.md
     """
     if not obsidian_dir:
         return {"ok": False, "reason": "no obsidian_dir configured"}

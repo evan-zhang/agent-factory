@@ -41,7 +41,7 @@ tags: [AI, 开源, Agent]
 
 1. 生成报告内容
 2. 确定编号（扫描当日目录）
-3. 写入 `{archive_dir}/{YYYY-MM-DD}/K-{YYMMDD}-{NNN}-{标题简称}.md`
+3. 写入 `{archive_dir}/{YYYY/MM}/K-{YYMMDD}-{NNN}-{标题简称}.md`
 4. 索引更新由 LLM Wiki 项目（AF-20260413-003）负责
 
 ## 关联项目
