@@ -306,6 +306,7 @@ VIEW_TEMPLATE = """<!DOCTYPE html>
     <button id="tb-star" onclick="toggleTbStar()" style="background:none;border:none;cursor:pointer;font-size:1em;padding:0 4px;vertical-align:middle;" title="{'取消收藏' if starred else '收藏'}">{star_icon}</button>
     <a href="/raw/{doc_id}">原始文件</a> ·
     <a href="/api/{doc_id}">API</a> ·
+    <button onclick="copyDocLink()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;padding:0;vertical-align:middle;" title="复制链接">🔗 复制</button> ·
     <a href="/favorites">⭐收藏</a> ·
     <a href="/">首页</a>
   </div>
@@ -329,6 +330,15 @@ async function toggleTbStar() {{
     }}
   }} catch(e) {{}}
 }}
+function copyDocLink() {{
+  var docId = '{doc_id}';
+  navigator.clipboard.writeText(location.origin + '/view/' + docId).then(() => {{
+    var btn = event.target;
+    var orig = btn.textContent;
+    btn.textContent = '已复制!';
+    setTimeout(function() {{ btn.textContent = orig; }}, 1500);
+  }});
+}}
 </script>
 </body>
 </html>"""
@@ -340,7 +350,7 @@ HTML_TOOLBAR = """
   var bar = document.createElement('div');
   bar.id = 'dv-toolbar';
   bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid #e5e5e5;padding:8px 20px;font:13px -apple-system,BlinkMacSystemFont,sans-serif;color:#888;display:flex;justify-content:space-between;align-items:center;transition:transform 0.3s ease,opacity 0.3s ease;';
-  bar.innerHTML = '<span>📄 {filename} <span style="color:#bbb;margin:0 8px;">·</span> {size} <span style="color:#bbb;margin:0 8px;">·</span> {created_at}</span><div><button id="tb-star" onclick="toggleTbStar()" style="background:none;border:none;cursor:pointer;font-size:1em;padding:0 4px;" title="收藏">{star_icon}</button><a href="/raw/{doc_id}" style="color:#888;text-decoration:none;margin-left:12px;">原始文件</a><a href="/favorites" style="color:#888;text-decoration:none;margin-left:12px;">⭐收藏</a><a href="/" style="color:#888;text-decoration:none;margin-left:12px;">首页</a></div>';
+  bar.innerHTML = '<span>📄 {filename} <span style="color:#bbb;margin:0 8px;">·</span> {size} <span style="color:#bbb;margin:0 8px;">·</span> {created_at}</span><div><button id="tb-star" onclick="toggleTbStar()" style="background:none;border:none;cursor:pointer;font-size:1em;padding:0 4px;" title="收藏">{star_icon}</button><button onclick="copyDocLink()" style="background:none;border:none;cursor:pointer;font-size:1em;padding:0 4px;" title="复制链接">🔗</button><a href="/raw/{doc_id}" style="color:#888;text-decoration:none;margin-left:8px;">原始文件</a><a href="/favorites" style="color:#888;text-decoration:none;margin-left:8px;">⭐收藏</a><a href="/" style="color:#888;text-decoration:none;margin-left:8px;">首页</a></div>';
   document.body.prepend(bar);
   document.body.style.paddingTop = '44px';
 
@@ -387,6 +397,18 @@ HTML_TOOLBAR = """
     }}
   }});
 }})();
+
+async function copyDocLink() {{
+  var docId = '{doc_id}';
+  navigator.clipboard.writeText(location.origin + '/view/' + docId).then(function() {{
+    var btn = document.querySelector('[onclick="copyDocLink()"]');
+    if (btn) {{
+      var orig = btn.textContent;
+      btn.textContent = '已复制!';
+      setTimeout(function() {{ btn.textContent = orig; }}, 1500);
+    }}
+  }});
+}}
 
 async function toggleTbStar() {{
   var docId = '{doc_id}';
@@ -595,6 +617,12 @@ def _render_favorites_page() -> str:
     transition: transform 0.15s; flex-shrink: 0;
   }}
   .star-btn:hover {{ transform: scale(1.2); }}
+  .icon-btn {{
+    background: none; border: none; font-size: 1.1em;
+    cursor: pointer; padding: 4px 6px; border-radius: 6px;
+    transition: transform 0.15s; flex-shrink: 0;
+  }}
+  .icon-btn:hover {{ transform: scale(1.2); }}
 
   .empty {{
     text-align: center; color: var(--muted); padding: 48px 32px; font-size: 0.95em;
@@ -769,6 +797,7 @@ def _render_home_page() -> str:
       <div class="file-meta">{size} · {fmt} · {time_str}</div>
       {tags_html}
     </div>
+    <button class="icon-btn" onclick="copyUrl('/raw/{doc_id}', this)" title="复制链接">🔗</button>
     <button class="star-btn {star_class}" onclick="toggleStar(event, '{doc_id}')" title="{'取消收藏' if starred else '收藏'}">{star_icon}</button>
   </a>''')
             parts.append('</div>')
@@ -1081,11 +1110,21 @@ document.getElementById('text-form').onsubmit = (e) => {{
   handleUpload(new FormData(e.target));
 }};
 
+function copyUrl(url, btn) {{
+  navigator.clipboard.writeText(url).then(() => {{
+    const orig = btn.textContent;
+    btn.textContent = '已复制!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  }});
+}}
+
 function copyLink() {{
   const link = document.getElementById('view-link').href;
+  const btn = document.querySelector('.copy-btn');
   navigator.clipboard.writeText(link).then(() => {{
-    const btn = document.querySelector('.copy-btn');
-    btn.textContent = '已复制!'; setTimeout(() => btn.textContent = '复制', 1500);
+    const orig = btn.textContent;
+    btn.textContent = '已复制!';
+    setTimeout(() => btn.textContent = orig, 1500);
   }});
 }}
 
