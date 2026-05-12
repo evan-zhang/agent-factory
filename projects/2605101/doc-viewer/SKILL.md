@@ -1,7 +1,7 @@
 ---
 name: doc-viewer
 description: "上传 Markdown/HTML 文件到 Doc Viewer 服务，返回在线预览链接。触发词：上传文件、预览文件、文件链接、上传到网站、生成链接"
-version: "1.1.1"
+version: "1.3.0"
 homepage: https://github.com/evan-zhang/agent-factory/tree/master/projects/2605101/doc-viewer/
 issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=doc-viewer
 ---

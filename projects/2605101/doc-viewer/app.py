@@ -15,11 +15,13 @@ import hashlib
 import json
 import re
 import uuid
+import asyncio
+import httpx
 from pathlib import Path
 from datetime import datetime, timedelta
 from collections import defaultdict
 
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request, Query
 from fastapi.responses import HTMLResponse, PlainTextResponse, JSONResponse
 from email.message import Message as _EmailMessage
 import multipart.multipart as _mp_mod
@@ -90,6 +92,11 @@ MAX_SIZE = 10 * 1024 * 1024  # 10MB
 ALLOWED_EXT = {".md", ".markdown", ".html", ".htm"}
 RETENTION_DAYS = int(os.getenv("DOC_RETENTION_DAYS", "30"))
 
+# AI 标签配置
+AI_BASE_URL = os.getenv("DOC_AI_BASE_URL", "https://api.z.ai/v1")
+AI_KEY = os.getenv("DOC_AI_KEY", "")
+AI_MODEL = os.getenv("DOC_AI_MODEL", "evanModel")
+
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -102,7 +109,7 @@ def _base_url() -> str:
 
 BASE_URL = _base_url()
 
-app = FastAPI(title="Doc Viewer", version="1.2.1")
+app = FastAPI(title="Doc Viewer", version="1.3.0")
 
 
 @app.exception_handler(Exception)
@@ -117,25 +124,6 @@ async def global_exception_handler(request, exc):
 
 
 # ── 工具函数 ──
-def _fix_filename(filename: str) -> str:
-    """修复 multipart 传输中中文文件名被 latin-1 误编码的问题。
-    curl 等客户端发送中文 filename 时，UTF-8 字节被当成 latin-1 解码，
-    导致 '测试' 变成 'æµè¯'。这里尝试 reverse 回正确的 UTF-8。"""
-    if not filename:
-        return filename
-    try:
-        # 尝试 latin-1 → bytes → utf-8 还原
-        raw_bytes = filename.encode("latin-1")
-        fixed = raw_bytes.decode("utf-8")
-        # 如果还原后的字符串包含常见中文字符范围，说明修复成功
-        if any("\u4e00" <= c <= "\u9fff" for c in fixed):
-            return fixed
-    except (UnicodeDecodeError, UnicodeEncodeError):
-        pass
-    # 检查是否包含乱码特征（latin-1 范围内的非 ASCII 连续字节）
-    return filename
-
-
 def _doc_path(doc_id: str, suffix: str = "") -> Path:
     safe_id = doc_id.replace("/", "").replace("..", "")
     return DATA_DIR / f"{safe_id}{suffix}"
@@ -179,9 +167,60 @@ def _save_doc(content: bytes, filename: str, content_type: str) -> dict:
         "expires_at": _expiry_time(now, RETENTION_DAYS),
         "url": f"{BASE_URL}/view/{doc_id}",
         "raw_url": f"{BASE_URL}/raw/{doc_id}",
+        "starred": False,
+        "tags": [],
     }
-    _doc_meta_path(doc_id).write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+    _doc_meta_path(doc_id).write_text(json.dumps(meta, ensure_ascii=False, indent=2))
+
+    # 异步 AI 标签生成（不阻塞上传响应）
+    try:
+        text_preview = content.decode("utf-8", errors="ignore")[:800]
+        asyncio.create_task(_generate_tags(doc_id, filename, text_preview))
+    except Exception:
+        pass
+
     return meta
+
+
+async def _generate_tags(doc_id: str, filename: str, content_preview: str) -> None:
+    """异步生成 AI 标签，写入 meta.json"""
+    if not AI_KEY:
+        return
+    try:
+        prompt = (
+            f"请为以下文档生成 2-5 个简短的中文标签（每个标签不超过6个字）。"
+            f"只返回标签，用逗号分隔，不要其他内容。\n\n"
+            f"文件名：{filename}\n内容摘要：{content_preview[:500]}"
+        )
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(
+                f"{AI_BASE_URL}/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {AI_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": AI_MODEL,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "max_tokens": 60,
+                    "temperature": 0.3,
+                },
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            content_text = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+            # 解析标签：按逗号/换行分割，过滤空标签
+            tags = [t.strip() for t in re.split(r"[，,、\n]", content_text) if t.strip()]
+            tags = [t for t in tags if len(t) <= 6][:5]
+            if not tags:
+                return
+            # 写回 meta
+            meta = _load_meta(doc_id)
+            meta["tags"] = tags
+            _doc_meta_path(doc_id).write_text(json.dumps(meta, ensure_ascii=False, indent=2))
+    except Exception:
+        # AI 生成失败静默忽略，不影响主流程
+        pass
 
 
 def _expiry_time(iso_now: str, days: int) -> str:
@@ -193,7 +232,7 @@ def _load_meta(doc_id: str) -> dict:
     p = _doc_meta_path(doc_id)
     if not p.exists():
         raise HTTPException(status_code=404, detail=f"Document '{doc_id}' not found")
-    return json.loads(p.read_text(encoding="utf-8"))
+    return json.loads(p.read_text())
 
 
 def _human_size(n: int) -> str:
@@ -209,7 +248,7 @@ def _list_all_docs() -> list:
     docs = []
     for p in DATA_DIR.glob("*.meta.json"):
         try:
-            meta = json.loads(p.read_text(encoding="utf-8"))
+            meta = json.loads(p.read_text())
             docs.append(meta)
         except Exception:
             pass
@@ -264,8 +303,10 @@ VIEW_TEMPLATE = """<!DOCTYPE html>
 <div class="header">
   <span>📄 {title}</span>
   <div>
+    <button id="tb-star" onclick="toggleTbStar()" style="background:none;border:none;cursor:pointer;font-size:1em;padding:0 4px;vertical-align:middle;" title="{'取消收藏' if starred else '收藏'}">{star_icon}</button>
     <a href="/raw/{doc_id}">原始文件</a> ·
     <a href="/api/{doc_id}">API</a> ·
+    <a href="/favorites">⭐收藏</a> ·
     <a href="/">首页</a>
   </div>
 </div>
@@ -275,6 +316,20 @@ VIEW_TEMPLATE = """<!DOCTYPE html>
 <div class="content meta">
   文件: {filename} · 大小: {size} · 格式: {format} · 上传: {created_at}
 </div>
+<script>
+async function toggleTbStar() {{
+  var docId = '{doc_id}';
+  try {{
+    var resp = await fetch('/api/' + docId + '/star', {{ method: 'PUT' }});
+    var data = await resp.json();
+    var btn = document.getElementById('tb-star');
+    if (btn) {{
+      btn.textContent = data.starred ? '⭐' : '☆';
+      btn.title = data.starred ? '取消收藏' : '收藏';
+    }}
+  }} catch(e) {{}}
+}}
+</script>
 </body>
 </html>"""
 
@@ -285,7 +340,7 @@ HTML_TOOLBAR = """
   var bar = document.createElement('div');
   bar.id = 'dv-toolbar';
   bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid #e5e5e5;padding:8px 20px;font:13px -apple-system,BlinkMacSystemFont,sans-serif;color:#888;display:flex;justify-content:space-between;align-items:center;transition:transform 0.3s ease,opacity 0.3s ease;';
-  bar.innerHTML = '<span>📄 {filename} <span style="color:#bbb;margin:0 8px;">·</span> {size} <span style="color:#bbb;margin:0 8px;">·</span> {created_at}</span><div><a href="/raw/{doc_id}" style="color:#888;text-decoration:none;margin-left:16px;">原始文件</a><a href="/" style="color:#888;text-decoration:none;margin-left:16px;">首页</a></div>';
+  bar.innerHTML = '<span>📄 {filename} <span style="color:#bbb;margin:0 8px;">·</span> {size} <span style="color:#bbb;margin:0 8px;">·</span> {created_at}</span><div><button id="tb-star" onclick="toggleTbStar()" style="background:none;border:none;cursor:pointer;font-size:1em;padding:0 4px;" title="收藏">{star_icon}</button><a href="/raw/{doc_id}" style="color:#888;text-decoration:none;margin-left:12px;">原始文件</a><a href="/favorites" style="color:#888;text-decoration:none;margin-left:12px;">⭐收藏</a><a href="/" style="color:#888;text-decoration:none;margin-left:12px;">首页</a></div>';
   document.body.prepend(bar);
   document.body.style.paddingTop = '44px';
 
@@ -332,12 +387,324 @@ HTML_TOOLBAR = """
     }}
   }});
 }})();
+
+async function toggleTbStar() {{
+  var docId = '{doc_id}';
+  try {{
+    var resp = await fetch('/api/' + docId + '/star', {{ method: 'PUT' }});
+    var data = await resp.json();
+    var btn = document.getElementById('tb-star');
+    if (btn) {{
+      btn.textContent = data.starred ? '⭐' : '☆';
+      btn.title = data.starred ? '取消收藏' : '收藏';
+    }}
+  }} catch(e) {{}}
+}}
 </script>
 """
 
 
+def _render_favorites_page() -> str:
+    """生成收藏页 HTML"""
+    docs = _list_all_docs()
+    starred = [d for d in docs if d.get("starred", False)]
+    starred.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+
+    # 聚合所有标签及出现次数
+    tag_counts = defaultdict(int)
+    for d in starred:
+        for t in d.get("tags", []):
+            tag_counts[t] += 1
+    all_tags = sorted(tag_counts.items(), key=lambda x: -x[1])
+
+    # 生成分组列表 HTML
+    def file_card(doc, show_tags=True):
+        fmt = doc.get("format", "text")
+        icon = "📝" if fmt == "markdown" else "🌐" if fmt == "html" else "📄"
+        fname = doc.get("filename", doc["id"])
+        size = _human_size(doc.get("size", 0))
+        try:
+            dt = datetime.fromisoformat(doc["created_at"].rstrip("Z"))
+            time_str = dt.strftime("%Y-%m-%d %H:%M")
+        except Exception:
+            time_str = ""
+        doc_id = doc["id"]
+        tags_html = ""
+        if show_tags and doc.get("tags"):
+            tags_html = "<div class=\"file-tags\">" + "".join(
+                f'<span class="tag">{t}</span>' for t in doc["tags"]
+            ) + "</div>"
+        return f'''
+  <a href="/view/{doc_id}" class="file-card">
+    <div class="file-icon">{icon}</div>
+    <div class="file-info">
+      <div class="file-name">{fname}</div>
+      <div class="file-meta">{size} · {time_str}</div>
+      {tags_html}
+    </div>
+    <button class="star-btn starred" onclick="toggleStar(event, '{doc_id}', false)" title="取消收藏">⭐</button>
+  </a>'''
+
+    list_html = ""
+    if not starred:
+        list_html = '<div class="empty">暂无收藏内容，给文档点个星标吧 ↑</div>'
+    else:
+        # 按天分组
+        groups = defaultdict(list)
+        for doc in starred:
+            date_key = doc.get("created_at", "")[:10]
+            groups[date_key].append(doc)
+        for date_key in sorted(groups.keys(), reverse=True):
+            items = groups[date_key]
+            today_s = datetime.utcnow().strftime("%Y-%m-%d")
+            yesterday_s = (datetime.utcnow() - timedelta(days=1)).strftime("%Y-%m-%d")
+            if date_key == today_s:
+                label = "今天"
+            elif date_key == yesterday_s:
+                label = "昨天"
+            else:
+                label = date_key
+            list_html += f'<div class="date-group">'
+            list_html += f'  <div class="date-label">{label}</div>'
+            for doc in items:
+                list_html += file_card(doc)
+            list_html += '</div>'
+
+    # 标签云 HTML
+    if all_tags:
+        tags_cloud_html = '<div class="tags-cloud">'
+        tags_cloud_html += f'<button class="tag-btn active" onclick="filterTag('')">全部</button>'
+        for tag, count in all_tags:
+            tags_cloud_html += f'<button class="tag-btn" onclick="filterTag(\'{tag}\')">{tag} <span class="tag-count">{count}</span></button>'
+        tags_cloud_html += '</div>'
+    else:
+        tags_cloud_html = ''
+
+    total = len(starred)
+
+    return f'''<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⭐ 收藏 — Doc Viewer</title>
+<style>
+  :root {{
+    --bg: #f5f7fa;
+    --card: #fff;
+    --border: #e8ecf1;
+    --text: #1a1a2e;
+    --muted: #8892a4;
+    --accent: #4361ee;
+    --accent-light: rgba(67,97,238,0.08);
+    --accent-hover: #3a56d4;
+    --star-color: #f59e0b;
+    --green: #10b981;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+    --radius: 12px;
+  }}
+  @media (prefers-color-scheme: dark) {{
+    :root {{
+      --bg: #0f1117;
+      --card: #1a1d27;
+      --border: #2a2e3a;
+      --text: #e4e6ed;
+      --muted: #6b7280;
+      --accent: #6381ff;
+      --accent-light: rgba(99,129,255,0.1);
+      --accent-hover: #7a94ff;
+      --star-color: #f59e0b;
+      --green: #34d399;
+      --shadow: 0 1px 3px rgba(0,0,0,0.2);
+      --shadow-lg: 0 4px 16px rgba(0,0,0,0.3);
+    }}
+  }}
+  * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+  body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }}
+
+  .navbar {{
+    background: var(--card); border-bottom: 1px solid var(--border);
+    padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; z-index: 100;
+  }}
+  .navbar h1 {{ font-size: 1.15em; font-weight: 600; }}
+  .navbar h1 span {{ color: var(--star-color); }}
+  .stats {{ color: var(--muted); font-size: 13px; }}
+
+  .main {{ max-width: 720px; margin: 0 auto; padding: 24px 16px; }}
+
+  .tags-cloud {{
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;
+    padding: 16px; background: var(--card); border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }}
+  .tag-btn {{
+    padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border);
+    background: var(--card); color: var(--text); font-size: 13px; cursor: pointer;
+    transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px;
+  }}
+  .tag-btn:hover {{ border-color: var(--accent); color: var(--accent); }}
+  .tag-btn.active {{ background: var(--accent); color: #fff; border-color: var(--accent); }}
+  .tag-count {{ font-size: 11px; opacity: 0.7; }}
+
+  .section-title {{
+    font-size: 0.8em; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }}
+
+  .date-group {{ margin-bottom: 24px; }}
+  .date-label {{
+    font-size: 0.85em; font-weight: 600; color: var(--muted);
+    margin-bottom: 8px; padding-left: 4px;
+  }}
+
+  .file-card {{
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px; background: var(--card);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    margin-bottom: 6px; text-decoration: none; color: var(--text);
+    transition: all 0.15s ease; box-shadow: var(--shadow);
+  }}
+  .file-card:hover {{
+    border-color: var(--accent); transform: translateX(4px);
+    box-shadow: var(--shadow-lg);
+  }}
+  .file-icon {{
+    width: 40px; height: 40px; border-radius: 10px;
+    background: var(--accent-light); display: flex; align-items: center;
+    justify-content: center; font-size: 1.3em; flex-shrink: 0;
+  }}
+  .file-info {{ flex: 1; min-width: 0; }}
+  .file-name {{
+    font-size: 0.95em; font-weight: 500; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }}
+  .file-meta {{ font-size: 0.8em; color: var(--muted); margin-top: 2px; }}
+  .file-tags {{ display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }}
+  .tag {{
+    padding: 2px 8px; border-radius: 10px;
+    background: var(--accent-light); color: var(--accent);
+    font-size: 0.75em;
+  }}
+  .star-btn {{
+    background: none; border: none; font-size: 1.1em;
+    cursor: pointer; padding: 4px 6px; border-radius: 6px;
+    transition: transform 0.15s; flex-shrink: 0;
+  }}
+  .star-btn:hover {{ transform: scale(1.2); }}
+
+  .empty {{
+    text-align: center; color: var(--muted); padding: 48px 32px; font-size: 0.95em;
+  }}
+
+  @media (max-width: 600px) {{
+    .main {{ padding: 16px 12px; }}
+    .navbar {{ padding: 12px 16px; }}
+  }}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <h1>⭐ <span>收藏</span></h1>
+  <div class="stats">{total} 个收藏</div>
+</div>
+
+<div class="main">
+  {tags_cloud_html}
+
+  <div id="file-list">
+    {list_html}
+  </div>
+</div>
+
+<script>
+let currentTag = '';
+
+function filterTag(tag) {{
+  currentTag = tag;
+  document.querySelectorAll('.tag-btn').forEach(btn => {{
+    const isActive = (tag === '' && btn.textContent.includes('全部')) || btn.textContent.startsWith(tag + ' ');
+    btn.classList.toggle('active', tag === '' ? btn.textContent.includes('全部') : btn.textContent.startsWith(tag + ' '));
+  }});
+  loadFavorites();
+}}
+
+async function loadFavorites() {{
+  const url = currentTag ? `/api/favorites?tag=${encodeURIComponent(currentTag)}` : '/api/favorites';
+  const resp = await fetch(url);
+  const data = await resp.json();
+  const docs = data.docs || [];
+  const listEl = document.getElementById('file-list');
+  if (!docs.length) {{
+    listEl.innerHTML = '<div class="empty">该标签下暂无收藏内容</div>';
+    return;
+  }}
+  // 按天分组
+  const groups = {{}};
+  docs.forEach(doc => {{
+    const dk = doc.created_at ? doc.created_at.slice(0, 10) : '';
+    if (!groups[dk]) groups[dk] = [];
+    groups[dk].push(doc);
+  }});
+  let html = '';
+  const today = new Date().toISOString().slice(0, 10);
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  Object.keys(groups).sort().reverse().forEach(dateKey => {{
+    const label = dateKey === today ? '今天' : dateKey === yesterday ? '昨天' : dateKey;
+    html += `<div class="date-group"><div class="date-label">${{label}}</div>`;
+    groups[dateKey].forEach(doc => {{
+      const icon = doc.format === 'markdown' ? '📝' : doc.format === 'html' ? '🌐' : '📄';
+      const size = doc.size ? formatSize(doc.size) : '';
+      const time = doc.created_at ? doc.created_at.slice(0, 16).replace('T', ' ') : '';
+      const tagsHtml = doc.tags && doc.tags.length
+        ? `<div class="file-tags">${{doc.tags.map(t => `<span class="tag">${{t}}</span>`).join('')}}</div>`
+        : '';
+      html += `<a href="/view/${{doc.id}}" class="file-card">
+        <div class="file-icon">${{icon}}</div>
+        <div class="file-info">
+          <div class="file-name">${{doc.filename || doc.id}}</div>
+          <div class="file-meta">${{size}} · ${{time}}</div>
+          ${{tagsHtml}}
+        </div>
+        <button class="star-btn starred" onclick="toggleStar(event, '${{doc.id}}', false)" title="取消收藏">⭐</button>
+      </a>`;
+    }});
+    html += '</div>';
+  }});
+  listEl.innerHTML = html;
+}}
+
+function formatSize(n) {{
+  if (n < 1024) return n + ' B';
+  if (n < 1024*1024) return (n/1024).toFixed(1) + ' KB';
+  return (n/1024/1024).toFixed(1) + ' MB';
+}}
+
+async function toggleStar(event, docId, reload=true) {{
+  event.preventDefault();
+  event.stopPropagation();
+  try {{
+    const resp = await fetch(`/api/${{docId}}/star`, {{ method: 'PUT' }});
+    const data = await resp.json();
+    if (reload && !data.starred) {{
+      // 取消收藏后刷新列表
+      loadFavorites();
+    }} else if (reload) {{
+      loadFavorites();
+    }}
+  }} catch(err) {{ console.error(err); }}
+}}
+</script>
+</body>
+</html>'''
+
+
 def _render_home_page() -> str:
-    """生成主页 HTML（含文件列表）"""
+    """生成主页 HTML（含文件列表，默认显示最近3天）"""
     docs = _list_all_docs()
 
     # 按天分组
@@ -350,13 +717,21 @@ def _render_home_page() -> str:
             date_key = "未知日期"
         groups[date_key].append(doc)
 
-    # 生成文件列表 HTML
-    if not groups:
+    sorted_dates = sorted(groups.keys(), reverse=True)
+    # 默认显示最近3天
+    initial_dates = sorted_dates[:3]
+    initial_docs = []
+    for dk in initial_dates:
+        initial_docs.extend(groups[dk])
+    has_more = len(sorted_dates) > 3
+
+    # 生成文件列表 HTML（只显示初始3天）
+    if not initial_docs:
         list_html = '<div class="empty">暂无文档，上传第一个文件吧 ↑</div>'
     else:
         parts = []
-        for date_key in sorted(groups.keys(), reverse=True):
-            items = groups[date_key]
+        for date_key in initial_dates:
+            items = groups.get(date_key, [])
             # 日期标题
             today = datetime.utcnow().strftime("%Y-%m-%d")
             yesterday = (datetime.utcnow() - timedelta(days=1)).strftime("%Y-%m-%d")
@@ -380,13 +755,22 @@ def _render_home_page() -> str:
                 except Exception:
                     time_str = ""
                 doc_id = doc["id"]
-                parts.append(f"""  <a href="/view/{doc_id}" class="file-card">
+                starred = doc.get("starred", False)
+                star_icon = "⭐" if starred else "☆"
+                star_class = "starred" if starred else ""
+                tags = doc.get("tags", [])
+                tags_html = ""
+                if tags:
+                    tags_html = "<div class=\"file-tags\">" + "".join(f'<span class=\"tag\">{t}</span>' for t in tags) + "</div>"
+                parts.append(f'''<a href="/view/{doc_id}" class="file-card">
     <div class="file-icon">{icon}</div>
     <div class="file-info">
       <div class="file-name">{fname}</div>
       <div class="file-meta">{size} · {fmt} · {time_str}</div>
+      {tags_html}
     </div>
-  </a>""")
+    <button class="star-btn {star_class}" onclick="toggleStar(event, '{doc_id}')" title="{'取消收藏' if starred else '收藏'}">{star_icon}</button>
+  </a>''')
             parts.append('</div>')
         list_html = "\n".join(parts)
 
@@ -410,6 +794,7 @@ def _render_home_page() -> str:
     --accent: #4361ee;
     --accent-light: rgba(67,97,238,0.08);
     --accent-hover: #3a56d4;
+    --star-color: #f59e0b;
     --green: #10b981;
     --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
     --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
@@ -425,6 +810,7 @@ def _render_home_page() -> str:
       --accent: #6381ff;
       --accent-light: rgba(99,129,255,0.1);
       --accent-hover: #7a94ff;
+      --star-color: #f59e0b;
       --green: #34d399;
       --shadow: 0 1px 3px rgba(0,0,0,0.2);
       --shadow-lg: 0 4px 16px rgba(0,0,0,0.3);
@@ -584,7 +970,10 @@ def _render_home_page() -> str:
 <!-- 顶部导航 -->
 <div class="navbar">
   <h1>📄 <span>Doc</span> Viewer</h1>
-  <div class="stats">{total} 个文档 · {_human_size(total_size)}</div>
+  <div>
+    <a href="/favorites" style="color: var(--star-color, #f59e0b); text-decoration: none; font-size: 13px; margin-right: 12px;">⭐ 收藏</a>
+    <span class="stats">{total} 个文档 · {_human_size(total_size)}</span>
+  </div>
 </div>
 
 <div class="main">
@@ -636,6 +1025,9 @@ def _render_home_page() -> str:
   <div style="margin-top: 36px;">
     <div class="section-title">📂 所有文档</div>
     {list_html}
+    <div id="load-more-wrap" style="text-align:center;margin-top:16px;{('' if has_more else ' display:none')}">
+      <button class="btn" id="load-more-btn" onclick="loadMore()">📜 查看更多</button>
+    </div>
   </div>
 
 </div>
@@ -696,6 +1088,89 @@ function copyLink() {{
     btn.textContent = '已复制!'; setTimeout(() => btn.textContent = '复制', 1500);
   }});
 }}
+
+// 加载更多
+let offsetDays = 3;
+let hasMore = {str(has_more).lower()};
+
+async function loadMore() {{
+  const btn = document.getElementById('load-more-btn');
+  btn.textContent = '⏳ 加载中...';
+  btn.disabled = true;
+  try {{
+    const resp = await fetch(`/api/list/page?days=7&offset_days=${{offsetDays}}`);
+    const data = await resp.json();
+    const groups = data.groups || [];
+    if (!groups.length) {{
+      document.getElementById('load-more-wrap').style.display = 'none';
+      hasMore = false;
+      return;
+    }}
+    // 追加到文件列表
+    let html = '';
+    groups.forEach(g => {{
+      html += `<div class="date-group"><div class="date-label">${{g.date}}</div>`;
+      g.items.forEach(doc => {{
+        const icon = doc.format === 'markdown' ? '📝' : doc.format === 'html' ? '🌐' : '📄';
+        const size = doc.size ? formatSize(doc.size) : '';
+        const time = doc.created_at ? new Date(doc.created_at).toLocaleTimeString('zh-CN', {{hour:'2-digit',minute:'2-digit'}}) : '';
+        const starred = doc.starred || false;
+        const starIcon = starred ? '⭐' : '☆';
+        const starClass = starred ? 'starred' : '';
+        const tags = doc.tags || [];
+        const tagsHtml = tags.length ? `<div class="file-tags">${{tags.map(t => `<span class="tag">${{t}}</span>`).join('')}}</div>` : '';
+        html += `<a href="/view/${{doc.id}}" class="file-card">
+  <div class="file-icon">${{icon}}</div>
+  <div class="file-info">
+    <div class="file-name">${{doc.filename || doc.id}}</div>
+    <div class="file-meta">${{size}} · ${{doc.format}} · ${{time}}</div>
+    ${{tagsHtml}}
+  </div>
+  <button class="star-btn ${{starClass}}" onclick="toggleStar(event, '${{doc.id}}')" title="${{starred ? '取消收藏' : '收藏'}}">${{starIcon}}</button>
+</a>`;
+      }});
+      html += '</div>';
+    }});
+    // 插入到加载更多按钮之前
+    const wrap = document.getElementById('load-more-wrap');
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    wrap.parentNode.insertBefore(div, wrap);
+    offsetDays += 7;
+    if (!data.has_more) {{
+      wrap.style.display = 'none';
+      hasMore = false;
+    }} else {{
+      btn.textContent = '📜 查看更多';
+      btn.disabled = false;
+    }}
+  }} catch(err) {{
+    alert('加载失败: ' + err.message);
+    btn.textContent = '📜 查看更多';
+    btn.disabled = false;
+  }}
+}}
+
+function formatSize(n) {{
+  if (n < 1024) return n + ' B';
+  if (n < 1024*1024) return (n/1024).toFixed(1) + ' KB';
+  return (n/1024/1024).toFixed(1) + ' MB';
+}}
+
+async function toggleStar(event, docId) {{
+  event.preventDefault();
+  event.stopPropagation();
+  try {{
+    const resp = await fetch(`/api/${{docId}}/star`, {{ method: 'PUT' }});
+    const data = await resp.json();
+    // 更新当前页面中的星标按钮
+    document.querySelectorAll(`.star-btn[onclick*="${{docId}}"]`).forEach(btn => {{
+      btn.textContent = data.starred ? '⭐' : '☆';
+      btn.className = `star-btn ${{data.starred ? 'starred' : ''}}`;
+      btn.title = data.starred ? '取消收藏' : '收藏';
+    }});
+  }} catch(err) {{ console.error(err); }}
+}}
 </script>
 </body>
 </html>"""
@@ -719,12 +1194,12 @@ async def upload_doc(
         if len(raw) > MAX_SIZE:
             raise HTTPException(status_code=413, detail="File too large (max 10MB)")
 
-        # 处理文件名编码：修复中文等非 ASCII 字符的 latin-1 误编码
+        # 处理文件名编码：兼容中文等非 ASCII 字符
         try:
             filename = file.filename or "untitled.md"
+            # 确保 filename 是有效的 str
             if isinstance(filename, bytes):
                 filename = filename.decode("utf-8", errors="replace")
-            filename = _fix_filename(filename)
         except Exception:
             filename = "untitled.md"
 
@@ -753,11 +1228,13 @@ async def view_doc(doc_id: str):
     fmt = meta.get("format", "markdown")
 
     if fmt == "html":
+        starred = meta.get("starred", False)
         toolbar = HTML_TOOLBAR.format(
             filename=meta.get("filename", "-"),
             size=_human_size(meta.get("size", 0)),
             created_at=meta.get("created_at", "-"),
             doc_id=doc_id,
+            star_icon="⭐" if starred else "☆",
         )
         if "</body>" in text:
             text = text.replace("</body>", toolbar + "</body>", 1)
@@ -772,6 +1249,7 @@ async def view_doc(doc_id: str):
         body = f"<pre>{text}</pre>"
 
     title = meta.get("filename", doc_id)
+    starred = meta.get("starred", False)
     return VIEW_TEMPLATE.format(
         title=title,
         doc_id=doc_id,
@@ -780,6 +1258,8 @@ async def view_doc(doc_id: str):
         size=_human_size(meta.get("size", 0)),
         format=fmt,
         created_at=meta.get("created_at", "-"),
+        starred="取消收藏" if starred else "收藏",
+        star_icon="⭐" if starred else "☆",
     )
 
 
@@ -832,7 +1312,6 @@ async def update_doc(
             filename = file.filename or meta.get("filename", "untitled.md")
             if isinstance(filename, bytes):
                 filename = filename.decode("utf-8", errors="replace")
-            filename = _fix_filename(filename)
         except Exception:
             filename = meta.get("filename", "untitled.md")
     elif content.strip():
@@ -864,7 +1343,7 @@ async def update_doc(
     meta["sha256"] = hashlib.sha256(raw).hexdigest()[:16]
     meta["updated_at"] = now
 
-    _doc_meta_path(doc_id).write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+    _doc_meta_path(doc_id).write_text(json.dumps(meta, ensure_ascii=False, indent=2))
     return JSONResponse(meta)
 
 
@@ -875,6 +1354,76 @@ async def delete_doc(doc_id: str):
     _doc_content_path(doc_id).unlink(missing_ok=True)
     _doc_meta_path(doc_id).unlink(missing_ok=True)
     return JSONResponse({"status": "deleted", "id": doc_id})
+
+
+@app.put("/api/{doc_id}/star")
+async def toggle_star(doc_id: str):
+    """切换星标状态"""
+    meta = _load_meta(doc_id)
+    meta["starred"] = not meta.get("starred", False)
+    _doc_meta_path(doc_id).write_text(json.dumps(meta, ensure_ascii=False, indent=2))
+    return JSONResponse(meta)
+
+
+@app.get("/api/list/page")
+async def api_list_page(
+    days: int = Query(default=3),
+    offset_days: int = Query(default=0),
+):
+    """
+    分页获取文档列表。
+    - offset_days: 从今天往前偏移多少天开始
+    - days: 取多少天的数据
+    """
+    all_docs = _list_all_docs()
+    today = datetime.utcnow().date()
+    cutoff = (today - timedelta(days=offset_days)).isoformat()
+    cutoff_prev = (today - timedelta(days=offset_days + days)).isoformat()
+
+    # 取在 [cutoff_prev, cutoff) 区间内的文档
+    window = [d for d in all_docs if cutoff_prev <= d.get("created_at", "")[:10] < cutoff]
+    # 判断是否还有更多（是否有文档不在当前窗口内）
+    window_ids = {d["id"] for d in window}
+    has_more = any(d["id"] not in window_ids for d in all_docs)
+
+    # 按天分组
+    groups = defaultdict(list)
+    for doc in window:
+        date_key = doc["created_at"][:10]
+        groups[date_key].append(doc)
+
+    result_parts = []
+    for date_key in sorted(groups.keys(), reverse=True):
+        items = groups[date_key]
+        today_s = datetime.utcnow().strftime("%Y-%m-%d")
+        yesterday_s = (datetime.utcnow() - timedelta(days=1)).strftime("%Y-%m-%d")
+        if date_key == today_s:
+            label = "今天"
+        elif date_key == yesterday_s:
+            label = "昨天"
+        else:
+            label = date_key
+        result_parts.append({"date": label, "date_key": date_key, "items": items})
+
+    return JSONResponse({"groups": result_parts, "has_more": has_more})
+
+
+@app.get("/api/favorites")
+async def api_favorites(tag: str = Query(default="")):
+    """获取星标文件列表，可按标签过滤"""
+    all_docs = _list_all_docs()
+    starred = [d for d in all_docs if d.get("starred", False)]
+    if tag:
+        starred = [d for d in starred if tag in d.get("tags", [])]
+    # 按时间倒序
+    starred.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+    return JSONResponse({"docs": starred})
+
+
+@app.get("/favorites", response_class=HTMLResponse)
+async def favorites_page():
+    """收藏页 HTML"""
+    return _render_favorites_page()
 
 
 # ── 启动入口 ──
