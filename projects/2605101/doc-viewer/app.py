@@ -18,7 +18,7 @@ import uuid
 import asyncio
 import httpx
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from collections import defaultdict
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request, Query
@@ -89,6 +89,22 @@ HOST = os.getenv("DOC_HOST", "doc.20100706.xyz")
 PORT = int(os.getenv("DOC_PORT", "8080"))
 PUBLIC_PORT = int(os.getenv("DOC_PUBLIC_PORT", "0"))
 MAX_SIZE = 10 * 1024 * 1024  # 10MB
+
+# 北京时区 (UTC+8)
+BJ_TZ = timezone(timedelta(hours=8))
+
+def _bj(dt: datetime) -> datetime:
+    """把 UTC datetime 转换为北京时区"""
+    return dt.replace(tzinfo=timezone.utc).astimezone(BJ_TZ)
+
+def _fmt_bj(iso_str: str) -> str:
+    """把 UTC ISO 字符串转为北京时区格式化字符串"""
+    try:
+        dt = datetime.fromisoformat(iso_str.rstrip("Z"))
+        return _bj(dt).strftime("%Y-%m-%d %H:%M")
+    except Exception:
+        return iso_str[:19].replace("T", " ") if iso_str else "-"
+
 ALLOWED_EXT = {".md", ".markdown", ".html", ".htm"}
 RETENTION_DAYS = int(os.getenv("DOC_RETENTION_DAYS", "30"))
 
@@ -249,6 +265,7 @@ def _list_all_docs() -> list:
     for p in DATA_DIR.glob("*.meta.json"):
         try:
             meta = json.loads(p.read_text())
+            meta["bj_time"] = _fmt_bj(meta.get("created_at", ""))
             docs.append(meta)
         except Exception:
             pass
@@ -303,7 +320,7 @@ VIEW_TEMPLATE = """<!DOCTYPE html>
 <div class="header">
   <span>📄 {title}</span>
   <div>
-    <button id="tb-star" onclick="toggleTbStar()" style="background:none;border:none;cursor:pointer;font-size:1em;padding:0 4px;vertical-align:middle;" title="{'取消收藏' if starred else '收藏'}">{star_icon}</button>
+    <button id="tb-star" onclick="toggleTbStar()" style="background:none;border:none;cursor:pointer;font-size:1em;padding:0 4px;vertical-align:middle;" title="{starred_label}">{star_icon}</button>
     <a href="/raw/{doc_id}">原始文件</a> ·
     <a href="/api/{doc_id}">API</a> ·
     <button onclick="copyDocLink()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;padding:0;vertical-align:middle;" title="复制链接">🔗 复制</button> ·
@@ -447,7 +464,7 @@ def _render_favorites_page() -> str:
         size = _human_size(doc.get("size", 0))
         try:
             dt = datetime.fromisoformat(doc["created_at"].rstrip("Z"))
-            time_str = dt.strftime("%Y-%m-%d %H:%M")
+            time_str = _bj(dt).strftime("%Y-%m-%d %H:%M")
         except Exception:
             time_str = ""
         doc_id = doc["id"]
@@ -662,7 +679,7 @@ function filterTag(tag) {{
 }}
 
 async function loadFavorites() {{
-  const url = currentTag ? `/api/favorites?tag=${{encodeURIComponent(currentTag)}}` : '/api/favorites';
+  const url = currentTag ? '/api/favorites?tag=' + encodeURIComponent(currentTag) : '/api/favorites';
   const resp = await fetch(url);
   const data = await resp.json();
   const docs = data.docs || [];
@@ -674,7 +691,7 @@ async function loadFavorites() {{
   // 按天分组
   const groups = {{}};
   docs.forEach(doc => {{
-    const dk = doc.created_at ? doc.created_at.slice(0, 10) : '';
+    const dk = doc.bj_time ? doc.bj_time.slice(0, 10) : '';
     if (!groups[dk]) groups[dk] = [];
     groups[dk].push(doc);
   }});
@@ -687,7 +704,7 @@ async function loadFavorites() {{
     groups[dateKey].forEach(doc => {{
       const icon = doc.format === 'markdown' ? '📝' : doc.format === 'html' ? '🌐' : '📄';
       const size = doc.size ? formatSize(doc.size) : '';
-      const time = doc.created_at ? doc.created_at.slice(0, 16).replace('T', ' ') : '';
+      const time = doc.bj_time ? doc.bj_time.slice(11) : '';
       const tagsHtml = doc.tags && doc.tags.length
         ? `<div class="file-tags">${{doc.tags.map(t => `<span class="tag">${{t}}</span>`).join('')}}</div>`
         : '';
@@ -698,7 +715,7 @@ async function loadFavorites() {{
           <div class="file-meta">${{size}} · ${{time}}</div>
           ${{tagsHtml}}
         </div>
-        <button class="star-btn starred" onclick="toggleStar(event, '${{doc.id}}', false)" title="取消收藏">⭐</button>
+        <button class="star-btn starred" onclick="toggleStar(event, doc.id, false)" title="取消收藏">⭐</button>
       </a>`;
     }});
     html += '</div>';
@@ -716,7 +733,7 @@ async function toggleStar(event, docId, reload=true) {{
   event.preventDefault();
   event.stopPropagation();
   try {{
-    const resp = await fetch(`/api/${{docId}}/star`, {{ method: 'PUT' }});
+    const resp = await fetch('/api/' + docId + '/star', {{ method: 'PUT' }});
     const data = await resp.json();
     if (reload && !data.starred) {{
       // 取消收藏后刷新列表
@@ -740,7 +757,7 @@ def _render_home_page() -> str:
     for doc in docs:
         try:
             dt = datetime.fromisoformat(doc["created_at"].rstrip("Z"))
-            date_key = dt.strftime("%Y-%m-%d")
+            date_key = _bj(dt).strftime("%Y-%m-%d")
         except Exception:
             date_key = "未知日期"
         groups[date_key].append(doc)
@@ -761,8 +778,8 @@ def _render_home_page() -> str:
         for date_key in initial_dates:
             items = groups.get(date_key, [])
             # 日期标题
-            today = datetime.utcnow().strftime("%Y-%m-%d")
-            yesterday = (datetime.utcnow() - timedelta(days=1)).strftime("%Y-%m-%d")
+            today = datetime.now(BJ_TZ).strftime("%Y-%m-%d")
+            yesterday = (datetime.now(BJ_TZ) - timedelta(days=1)).strftime("%Y-%m-%d")
             if date_key == today:
                 label = "今天"
             elif date_key == yesterday:
@@ -779,13 +796,14 @@ def _render_home_page() -> str:
                 size = _human_size(doc.get("size", 0))
                 try:
                     dt = datetime.fromisoformat(doc["created_at"].rstrip("Z"))
-                    time_str = dt.strftime("%H:%M")
+                    time_str = _bj(dt).strftime("%H:%M")
                 except Exception:
                     time_str = ""
                 doc_id = doc["id"]
                 starred = doc.get("starred", False)
                 star_icon = "⭐" if starred else "☆"
                 star_class = "starred" if starred else ""
+                starred_label = "取消收藏" if starred else "收藏"
                 tags = doc.get("tags", [])
                 tags_html = ""
                 if tags:
@@ -797,8 +815,9 @@ def _render_home_page() -> str:
       <div class="file-meta">{size} · {fmt} · {time_str}</div>
       {tags_html}
     </div>
+    <input type="file" id="update-file-{doc_id}" style="display:none" onchange="doUpdate('{doc_id}', this.files[0])"><button class="icon-btn" onclick="openUpdate('{doc_id}')" title="更新文件">📤</button>
     <button class="icon-btn" onclick="copyUrl('/raw/{doc_id}', this)" title="复制链接">🔗</button>
-    <button class="star-btn {star_class}" onclick="toggleStar(event, '{doc_id}')" title="{'取消收藏' if starred else '收藏'}">{star_icon}</button>
+    <button class="star-btn {star_class}" onclick="toggleStar(event, '{doc_id}')" title="{starred_label}">{star_icon}</button>
   </a>''')
             parts.append('</div>')
         list_html = "\n".join(parts)
@@ -1137,7 +1156,7 @@ async function loadMore() {{
   btn.textContent = '⏳ 加载中...';
   btn.disabled = true;
   try {{
-    const resp = await fetch(`/api/list/page?days=7&offset_days=${{offsetDays}}`);
+    const resp = await fetch(`/api/list/page?days=7&' + offsetDays`);
     const data = await resp.json();
     const groups = data.groups || [];
     if (!groups.length) {{
@@ -1165,7 +1184,9 @@ async function loadMore() {{
     <div class="file-meta">${{size}} · ${{doc.format}} · ${{time}}</div>
     ${{tagsHtml}}
   </div>
-  <button class="star-btn ${{starClass}}" onclick="toggleStar(event, '${{doc.id}}')" title="${{starred ? '取消收藏' : '收藏'}}">${{starIcon}}</button>
+  <input type="file" id="update-file-${{doc.id}}" style="display:none" onchange="doUpdate(doc.id, this.files[0])"><button class="icon-btn" onclick="openUpdate(doc.id)" title="更新文件">📤</button>
+  <button class="icon-btn" onclick="copyUrl('/raw/' + doc.id, this)" title="复制链接">🔗</button>
+  <button class="star-btn" onclick="toggleStar(event, doc.id)" title="{{starIcon ? '取消收藏' : '收藏'}}">{{starIcon}}</button>
 </a>`;
       }});
       html += '</div>';
@@ -1200,17 +1221,38 @@ async function toggleStar(event, docId) {{
   event.preventDefault();
   event.stopPropagation();
   try {{
-    const resp = await fetch(`/api/${{docId}}/star`, {{ method: 'PUT' }});
+    const resp = await fetch('/api/' + docId + '/star', {{ method: 'PUT' }});
     const data = await resp.json();
-    // 更新当前页面中的星标按钮
-    document.querySelectorAll(`.star-btn[onclick*="${{docId}}"]`).forEach(btn => {{
+    document.querySelectorAll(`.star-btn[onclick*="' + docId + '"]`).forEach(btn => {{
       btn.textContent = data.starred ? '⭐' : '☆';
       btn.className = `star-btn ${{data.starred ? 'starred' : ''}}`;
       btn.title = data.starred ? '取消收藏' : '收藏';
     }});
   }} catch(err) {{ console.error(err); }}
 }}
+
+// ── 更新上传 ──
+function openUpdate(docId) {{
+  console.log('openUpdate clicked:', docId);
+  const input = document.getElementById('update-file-' + docId);
+  if (input) {{ input.click(); }} else {{ console.error('input not found'); }}
+}}
+async function doUpdate(docId, file) {{
+  if (!file) return;
+  try {{
+    const form = new FormData();
+    form.append('file', file);
+    const resp = await fetch('/api/' + docId, {{ method: 'PUT', body: form }});
+    if (!resp.ok) throw new Error(await resp.text());
+    alert('更新成功！');
+    location.reload();
+  }} catch(e) {{
+    alert('更新失败: ' + e.message);
+  }}
+}}
 </script>
+
+<!-- 动态生成的更新上传 input（通过 JS 插入每个卡片） -->
 </body>
 </html>"""
 
@@ -1272,7 +1314,7 @@ async def view_doc(doc_id: str):
         toolbar = HTML_TOOLBAR.format(
             filename=meta.get("filename", "-"),
             size=_human_size(meta.get("size", 0)),
-            created_at=meta.get("created_at", "-"),
+            created_at=_fmt_bj(meta.get("created_at", "")),
             doc_id=doc_id,
             star_icon="⭐" if starred else "☆",
         )
@@ -1297,9 +1339,9 @@ async def view_doc(doc_id: str):
         filename=meta.get("filename", "-"),
         size=_human_size(meta.get("size", 0)),
         format=fmt,
-        created_at=meta.get("created_at", "-"),
-        starred="取消收藏" if starred else "收藏",
-        star_icon="⭐" if starred else "☆",
+        created_at=_fmt_bj(meta.get("created_at", "")),
+        starred_label=("取消收藏" if starred else "收藏"),
+        star_icon=("⭐" if starred else "☆"),
     )
     return Response(content=html.encode("utf-8"), media_type="text/html")
 
@@ -1417,7 +1459,7 @@ async def api_list_page(
     - days: 取多少天的数据
     """
     all_docs = _list_all_docs()
-    today = datetime.utcnow().date()
+    today = datetime.now(BJ_TZ).date()
     cutoff = (today - timedelta(days=offset_days)).isoformat()
     cutoff_prev = (today - timedelta(days=offset_days + days)).isoformat()
 
