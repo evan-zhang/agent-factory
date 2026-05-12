@@ -897,10 +897,7 @@ def _render_home_page() -> str:
     margin-bottom: 32px;
     box-shadow: var(--shadow);
   }}
-  .upload-section:hover, .upload-section.dragover {{
-    border-color: var(--accent);
-    background: var(--accent-light);
-  }}
+  .upload-section:hover {{ border-color: var(--accent); }}
   .upload-icon {{ font-size: 2em; margin-bottom: 8px; }}
   .upload-title {{ font-size: 1em; font-weight: 500; margin-bottom: 4px; }}
   .upload-hint {{ color: var(--muted); font-size: 13px; }}
@@ -1037,7 +1034,7 @@ def _render_home_page() -> str:
     <form id="upload-form" enctype="multipart/form-data">
       <div class="upload-section" id="dropzone">
         <div class="upload-icon">⬆️</div>
-        <div class="upload-title">拖拽文件到此处，或点击选择</div>
+        <div class="upload-title">点击选择文件，或直接提交（使用上次选择的文件）</div>
         <div class="upload-hint">支持 .md .html .htm .txt · 最大 10MB</div>
         <input type="file" name="file" id="file-input" accept=".md,.markdown,.html,.htm,.txt" style="display:none">
       </div>
@@ -1089,15 +1086,8 @@ function switchTab(tab) {{
   document.getElementById('text-tab').classList.toggle('hidden', tab !== 'text');
 }}
 
-const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('file-input');
-dropzone.onclick = () => fileInput.click();
-dropzone.ondragover = (e) => {{ e.preventDefault(); dropzone.classList.add('dragover'); }};
-dropzone.ondragleave = () => dropzone.classList.remove('dragover');
-dropzone.ondrop = (e) => {{
-  e.preventDefault(); dropzone.classList.remove('dragover');
-  fileInput.files = e.dataTransfer.files;
-}};
+document.getElementById('dropzone').onclick = () => fileInput.click();
 
 async function handleUpload(formData) {{
   const btn = document.querySelector('.btn[disabled]') || document.getElementById('upload-btn');
