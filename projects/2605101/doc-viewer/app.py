@@ -22,7 +22,7 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request, Query
-from fastapi.responses import HTMLResponse, PlainTextResponse, JSONResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse, JSONResponse, Response
 from email.message import Message as _EmailMessage
 import multipart.multipart as _mp_mod
 
@@ -1218,7 +1218,8 @@ async function toggleStar(event, docId) {{
 # ── 路由 ──
 @app.get("/", response_class=HTMLResponse)
 async def index():
-    return _render_home_page()
+    html = _render_home_page()
+    return Response(content=html.encode("utf-8"), media_type="text/html")
 
 
 @app.post("/upload")
@@ -1279,7 +1280,7 @@ async def view_doc(doc_id: str):
             text = text.replace("</body>", toolbar + "</body>", 1)
         else:
             text += toolbar
-        return HTMLResponse(text)
+        return Response(content=text.encode("utf-8"), media_type="text/html")
 
     # Markdown / Text
     if fmt == "markdown":
@@ -1289,7 +1290,7 @@ async def view_doc(doc_id: str):
 
     title = meta.get("filename", doc_id)
     starred = meta.get("starred", False)
-    return VIEW_TEMPLATE.format(
+    html = VIEW_TEMPLATE.format(
         title=title,
         doc_id=doc_id,
         body=body,
@@ -1300,6 +1301,7 @@ async def view_doc(doc_id: str):
         starred="取消收藏" if starred else "收藏",
         star_icon="⭐" if starred else "☆",
     )
+    return Response(content=html.encode("utf-8"), media_type="text/html")
 
 
 @app.get("/raw/{doc_id}")
@@ -1462,7 +1464,8 @@ async def api_favorites(tag: str = Query(default="")):
 @app.get("/favorites", response_class=HTMLResponse)
 async def favorites_page():
     """收藏页 HTML"""
-    return _render_favorites_page()
+    html = _render_favorites_page()
+    return Response(content=html.encode("utf-8"), media_type="text/html")
 
 
 # ── 启动入口 ──
