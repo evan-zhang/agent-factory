@@ -1,7 +1,7 @@
 ---
 name: doc-viewer
 description: "文件上传预览 + HTML 内容页面生成器。提供现成文件可直接上传预览；描述内容需求可自动生成风格化 HTML 页面并上传。触发词：上传文件、预览文件、生成链接、生成页面、HTML页面、宣传页、报告页面"
-version: "2.1.0"
+version: "2.2.0"
 homepage: https://github.com/evan-zhang/agent-factory/tree/master/projects/2605101/doc-viewer/
 issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=doc-viewer
 ---
@@ -58,15 +58,9 @@ curl -s -X POST https://doc.20100706.xyz/upload \
   -F "file=@<文件路径>;filename=<原始文件名>"
 ```
 
-或上传文本内容：
-```bash
-curl -s -X POST https://doc.20100706.xyz/upload \
-  -F "content=<文本内容>" -F "format=markdown"
-```
-
 ### Step 4: 返回链接
 
-上传成功后，从返回 JSON 中取 `url` 字段（预览页）和 `raw_url` 字段（原始文件），**返回 raw_url** 给用户：
+上传成功后，从返回 JSON 取 `raw_url` 字段返回给用户：
 
 ```
 https://doc.20100706.xyz/raw/<doc_id>
@@ -78,7 +72,7 @@ https://doc.20100706.xyz/raw/<doc_id>
 
 ### Step 1：风格选择
 
-根据用户意图推荐风格（不罗列所有选项，只推荐最匹配的）：
+根据用户意图推荐风格：
 
 **推荐规则**：
 - 用户说「报告」「BD」「评估」「尽调」「投前」「文档」「分析」→ 推荐 **风格 03**
@@ -99,30 +93,56 @@ https://doc.20100706.xyz/raw/<doc_id>
 
 **可选项**（用户不提供则用模板默认值）：
 - 副标题
-- 数据点（如 "73% 的企业已采用 AI"）
+- 数据点
 - 图片（用户发送附件，或使用占位图）
 - 作者/来源信息
 - 页脚信息
 
-### Step 3：读取设计规范
+### Step 3：读取规范（必须按顺序）
 
-1. 读取风格对应的 **Design Token** 文件（`templates/design-tokens/style-XX-DESIGN.md`）
-2. 读取风格对应的 **HTML 骨架**（`templates/style-XX-base.html`）
-3. 按 Token 中的精确值生成 HTML，不凭感觉猜颜色/字号/间距
+Agent 生成 HTML 前必须读取以下文件：
 
-Design Token 文件包含：
+**第一步 — 读取通用设计规范（所有模板共享）**：
+
+| 文件 | 说明 |
+|------|------|
+| `design-standards/base-html-rules.md` | HTML/CSS 基础规则，必须读 |
+| `design-standards/table-spec.md` | 表格规范，必须读 |
+| `design-standards/responsive-spec.md` | 多端适配规范，必须读 |
+| `design-standards/print-spec.md` | 打印/PDF 规范（报告类必须读） |
+
+**第二步 — 读取所选风格的 Token 和骨架**：
+
+| 风格 | Token 文件 | 骨架文件 |
+|------|-----------|---------|
+| 风格 01 | `templates/style-01/design-token.md` | `templates/style-01/skeleton.html` |
+| 风格 02 | `templates/style-02/design-token.md` | `templates/style-02/skeleton.html` |
+| 风格 03 | `templates/style-03/design-token.md` | `templates/style-03/skeleton.html` |
+| 风格 04 | `templates/style-04/design-token.md` | `templates/style-04/skeleton.html` |
+| 风格 05 | `templates/style-05/design-token.md` | `templates/style-05/skeleton.html` |
+| 风格 06 | `templates/style-06/design-token.md` | `templates/style-06/skeleton.html` |
+
+Design Token 包含：
 - **YAML front matter**：机器可读的 tokens（颜色、字体、间距、圆角）
-- **Markdown body**：设计理念、布局说明、Do's and Don'ts
+- **Markdown body**：设计理念、组件规范、Do's and Don'ts
+
+Skeleton 包含：
+- 该风格的完整 HTML 骨架参考（表格结构、卡片结构等）
 
 ### Step 4：生成 HTML
 
+**核心原则：**
+- 风格 Token 的颜色/字号 → 直接使用，不自行调整
+- 通用规范的表格/响应式/打印要求 → 必须遵守
+
 **HTML 规范**：
 - 单文件，内联 CSS
-- 字体：PingFang SC / Microsoft YaHei / Noto Sans CJK SC（中文友好）
-- 响应式设计：mobile-first（移动端优先）
-- 表格：PC 端 `width:100%`，移动端外层包裹 `.table-wrap{overflow-x:auto}`
-- 图片使用用户提供的 URL 或占位图
-- 不使用 JavaScript 框架，纯 HTML + CSS
+- 字体：PingFang SC / Microsoft YaHei / Noto Sans CJK SC（中文友好，**禁止 Inter/Roboto**）
+- 表格：PC 端 `width:100%`，外层包裹 `.table-wrap{overflow-x:auto}`（见 table-spec.md）
+- 响应式：至少覆盖 480px / 768px 断点（见 responsive-spec.md）
+- 打印报告类：正文字号用 `pt` 单位，`@page` 边距固定（见 print-spec.md）
+- 图片：外链 URL 或占位图，禁止 base64
+- 不使用 JS 框架，纯 HTML + CSS
 - 文件大小 < 1MB
 
 ### Step 5：上传与交付
@@ -132,7 +152,7 @@ curl -s -X POST https://doc.20100706.xyz/upload \
   -F "file=@output.html;filename=<标题>.html"
 ```
 
-返回后**返回 raw_url** 给用户：
+返回后返回 `raw_url` 给用户：
 ```
 https://doc.20100706.xyz/raw/<doc_id>
 ```
@@ -141,14 +161,12 @@ https://doc.20100706.xyz/raw/<doc_id>
 
 ## 更新已有文档（路径 A/B 通用）
 
-对已上传的文档进行内容更新，链接保持不变：
-
 ```bash
 curl -X PUT https://doc.20100706.xyz/api/{doc_id} \
   -F "file=@新文件.html;filename=<标题>.html"
 ```
 
-更新后：doc_id 不变、链接不变，元信息中会增加 `updated_at` 字段。
+更新后：doc_id 不变、链接不变。
 
 ---
 
@@ -182,7 +200,7 @@ curl -X PUT https://doc.20100706.xyz/api/{doc_id} \
 
 - 最大文件 10MB，保留 30 天
 - 上传时必须用原始文件名（`filename=` 参数）
-- **返回链接统一给 raw 路径**（用户可直接打开看到最终效果）
+- **返回链接统一给 raw 路径**
 - HTML 直接渲染，无工具栏；Markdown 转换后渲染
 
 ---
@@ -195,9 +213,9 @@ curl -X PUT https://doc.20100706.xyz/api/{doc_id} \
 
 | 文件 | 说明 |
 |------|------|
-| `templates/design-tokens/style-01-DESIGN.md` | Design Token（颜色/字体/间距） |
-| `templates/style-01-base.html` | HTML 骨架参考 |
-| `templates/style-01-data-ai-report.md` | 视觉说明与内容结构 |
+| `templates/style-01/design-token.md` | Design Token（颜色/字体/间距） |
+| `templates/style-01/skeleton.html` | HTML 骨架参考 |
+| `templates/style-01/style-01-data-ai-report.md` | 视觉说明与内容结构 |
 
 ### 风格 02 — Google Cloud / IDC 企业报告视觉系统（6 套变体）
 
@@ -212,38 +230,57 @@ curl -X PUT https://doc.20100706.xyz/api/{doc_id} \
 | 02-E | 数据洞察大数字风 | 指标页/数据页 |
 | 02-F | 案例/行业卡片风 | 场景页/案例页 |
 
-**Token 文件**：`templates/design-tokens/style-02*-DESIGN.md`
+**Token 文件**：`templates/style-02/style-02*-DESIGN.md`
 
 ### 风格 03 — BD 投前评估报告（文档输出型）
 
-深蓝商务风，A4 纵向，章节密集，表格整齐。专为导出 PDF/Word 设计，不适合网页展示。
+深蓝商务风，A4 纵向，章节密集，表格整齐。专为导出 PDF/Word 设计。
 
 | 文件 | 说明 |
 |------|------|
-| `templates/design-tokens/style-03-DESIGN.md` | Design Token |
-| `templates/style-03-base.html` | HTML 骨架参考 |
-| `templates/style-03-bd-report.md` | 视觉说明与内容结构 |
+| `templates/style-03/design-token.md` | Design Token |
+| `templates/style-03/skeleton.html` | HTML 骨架参考 |
+| `templates/style-03/style-03-bd-report.md` | 视觉说明与内容结构 |
 
 ### 风格 04 — 情报日报风（新闻/资讯列表）
 
 大日期 + 小标题，报告名称收敛。适合每日情报汇总、动态速览。
 
-**Token 文件**：`templates/design-tokens/style-04-DESIGN.md`
-**骨架**：`templates/style-04-base.html`
+| 文件 | 说明 |
+|------|------|
+| `templates/style-04/design-token.md` | Design Token |
+| `templates/style-04/skeleton.html` | HTML 骨架参考 |
 
 ### 风格 05 — 数据看板/指标卡风格
 
 大数字 + 图表，适合 KPI 展示、数据概览。
 
-**Token 文件**：`templates/design-tokens/style-05-DESIGN.md`
-**骨架**：`templates/style-05-base.html`
+| 文件 | 说明 |
+|------|------|
+| `templates/style-05/design-token.md` | Design Token |
+| `templates/style-05/skeleton.html` | HTML 骨架参考 |
 
 ### 风格 06 — 产品介绍页
 
-多 section + hero，适合产品/服务介绍页。
+多 section + Hero，适合产品/服务介绍页。
 
-**Token 文件**：`templates/design-tokens/style-06-DESIGN.md`
-**骨架**：`templates/style-06-base.html`
+| 文件 | 说明 |
+|------|------|
+| `templates/style-06/design-token.md` | Design Token |
+| `templates/style-06/skeleton.html` | HTML 骨架参考 |
+
+---
+
+## 通用设计规范（design-standards/）
+
+所有风格共享，Agent 生成 HTML 前必须读取：
+
+| 文件 | 职责 |
+|------|------|
+| `design-standards/base-html-rules.md` | HTML/CSS 基础规则：字体/颜色变量/间距/圆角/动画 |
+| `design-standards/table-spec.md` | 表格规范：`.table-wrap`包裹、`width:100%`、移动端横向滚动 |
+| `design-standards/responsive-spec.md` | 多端适配：480px/768px 断点、三端字号对照 |
+| `design-standards/print-spec.md` | 打印/PDF：@page 边距、`pt` 单位、page-break |
 
 ---
 
@@ -258,9 +295,3 @@ curl -X PUT https://doc.20100706.xyz/api/{doc_id} \
 **地址**：https://github.com/evan-zhang/agent-factory/issues/new?labels=doc-viewer
 
 **标题格式**：`[BUG] doc-viewer: 简短描述` 或 `[FEATURE] doc-viewer: 简短描述`
-
-**建议包含**：
-1. 重现步骤
-2. 预期行为 vs 实际行为
-3. 环境信息（OpenClaw 版本、操作系统）
-4. 相关日志或错误信息
