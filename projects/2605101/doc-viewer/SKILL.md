@@ -109,7 +109,7 @@ Agent 生成 HTML 前必须读取以下文件：
 | `design-standards/base-html-rules.md` | HTML/CSS 基础规则，必须读 |
 | `design-standards/table-spec.md` | 表格规范，必须读 |
 | `design-standards/responsive-spec.md` | 多端适配规范，必须读 |
-| `design-standards/print-spec.md` | 打印/PDF 规范（报告类必须读） |
+| `design-standards/print-spec.md` | 打印优化规范（报告类必须读）：CSS @media print / @page / page-break（**HTML转PDF由独立skill负责，不在本skill范围内**） |
 
 **第二步 — 读取所选风格的 Token 和骨架**：
 
