@@ -1,0 +1,21 @@
+{
+  "project_id": "2605151",
+  "skill_name": "file2voice",
+  "display_name": "File2Voice",
+  "description": "读取文件内容，AI 改写为口播稿，调用 MiniMax Speech 2.8 TTS 生成音频文件",
+  "created": "2026-05-15",
+  "l2_stage": "S5",
+  "stage_status": {
+    "S1": "skip",
+    "S2": "skip",
+    "S3": "completed",
+    "S4": "completed",
+    "S5": "completed",
+    "S6": "pending",
+    "S7": "pending",
+    "S8": "pending"
+  },
+  "version": "1.0.0",
+  "repo": "evan-zhang/agent-factory",
+  "path": "projects/2605151/file2voice/"
+}

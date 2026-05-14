@@ -1,0 +1,67 @@
+{
+  "name": "file2voice",
+  "version": "1.0.0",
+  "requires": [
+    "ffmpeg"
+  ],
+  "env": {
+    "MINIMAX_API_KEY": "required"
+  },
+  "api": {
+    "base_url": "https://api.minimax.io/v1/t2a_v2",
+    "model": "speech-2.8-hd",
+    "max_text_length": 10000,
+    "segment_length": 2000
+  },
+  "defaults": {
+    "voice": "Chinese (Mandarin)_Male_Announcer",
+    "format": "mp3",
+    "sample_rate": 32000,
+    "speed": 1,
+    "max_duration": 5
+  },
+  "voices": {
+    "Chinese (Mandarin)_Male_Announcer": "男声-播音员（默认，适合讲解/播报/专业）",
+    "Chinese (Mandarin)_News_Anchor": "男声-新闻主播",
+    "Chinese (Mandarin)_Reliable_Executive": "男声-可靠主管",
+    "Chinese (Mandarin)_Gentleman": "男声-绅士",
+    "Chinese (Mandarin)_Warm_Girl": "女声-温暖少女",
+    "Chinese (Mandarin)_Sweet_Lady": "女声-甜美女声",
+    "Chinese (Mandarin)_Mature_Woman": "女声-成熟女性",
+    "Chinese (Mandarin)_Crisp_Girl": "女声-清脆少女",
+    "Chinese (Mandarin)_Radio_Host": "男声-电台主持人",
+    "Chinese (Mandarin)_Kind-hearted_Antie": "女声-善良阿姨"
+  },
+  "styles": {
+    "讲解风": {
+      "voice": "Chinese (Mandarin)_Male_Announcer",
+      "description": "结构清晰、术语准确、节奏平缓"
+    },
+    "播报风": {
+      "voice": "Chinese (Mandarin)_News_Anchor",
+      "description": "简洁有力、信息密度高"
+    },
+    "叙事风": {
+      "voice": "Chinese (Mandarin)_Warm_Girl",
+      "description": "有情感起伏、节奏变化"
+    },
+    "专业风": {
+      "voice": "Chinese (Mandarin)_Reliable_Executive",
+      "description": "正式、数据驱动、逻辑清晰"
+    },
+    "轻松风": {
+      "voice": "Chinese (Mandarin)_Sweet_Lady",
+      "description": "口语化、亲和力强"
+    }
+  },
+  "supported_formats": [
+    ".txt",
+    ".md",
+    ".markdown",
+    ".html",
+    ".htm",
+    ".pdf",
+    ".doc",
+    ".docx"
+  ]
+}
