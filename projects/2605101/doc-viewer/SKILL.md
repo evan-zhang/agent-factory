@@ -155,7 +155,46 @@ Skeleton 包含：
 - 不使用 JS 框架，纯 HTML + CSS
 - 文件大小 < 1MB
 
-### Step 5：上传与交付
+**风格 03（BD报告）生成流程（必须严格遵循）**：
+
+⚠️ 风格 03 的 `skeleton.html` 包含 `{{占位符}}` 模板变量，**不能直接使用 skeleton.html 作为输出**。
+
+正确流程：
+1. 读取 `reference-amber.html` 或 `reference-yellow.html`（根据配色选择）作为基底
+2. 保留其中的完整 CSS 样式（已替换好所有颜色值，不要修改）
+3. 只替换 body 部分的内容（封面信息、章节内容、目录）
+4. 如果必须从 skeleton.html 生成，**必须**将 `color-themes/*.yml` 中的所有值替换到 CSS 的 `{{变量}}` 中，再将内容填入 body 占位符
+
+禁止事项：
+- 禁止输出包含 `{{` 或 `}}` 的 HTML 文件
+- 禁止跳过模板变量替换直接上传
+- 禁止混用深蓝色（#0068A8）和琥珀金（#C9920A）配色
+
+### Step 5：质量验证（上传前必须执行）
+
+**验证命令**：
+```bash
+# 检查是否有未替换的模板变量
+TEMPLATE_COUNT=$(grep -c '{{' output.html 2>/dev/null || echo 0)
+if [ "$TEMPLATE_COUNT" -gt 0 ]; then
+  echo "❌ FAIL: 发现 $TEMPLATE_COUNT 个未替换的模板变量，禁止上传"
+  grep -n '{{' output.html | head -10
+  exit 1
+fi
+
+echo "✅ PASS: 无未替换变量"
+```
+
+**验证清单**（上传前逐项确认）：
+- [ ] HTML 文件中 `grep -c '{{'` 结果为 0（无残留模板变量）
+- [ ] 封面页包含实际产品名称、公司名称、日期（不是占位符文本）
+- [ ] CSS 样式中有具体的颜色值（如 `#C9920A`），不是 `{{变量名}}`
+- [ ] 表格表头有背景色（不是透明/白色）
+- [ ] 文件大小 > 10KB（内容确实已填充）
+
+**任何一项不通过，禁止上传，必须修复后重新验证。**
+
+### Step 6：上传与交付
 
 ```bash
 curl -s -X POST https://doc.20100706.xyz/upload \
