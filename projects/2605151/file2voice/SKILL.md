@@ -113,7 +113,6 @@ issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=file2voice
 - 认证: `Authorization: Bearer <MINIMAX_API_KEY>`
 - 模型: `speech-2.8-hd`（Max-Highspeed 套餐，19,000字/天 HD 额度）
 - 响应: JSON 格式，音频在 `data.audio` 字段，hex 编码
-- 响应: JSON 格式，音频在 `data.audio` 字段，hex 编码
 
 **文本分段**：
 - API 单次最长 10,000 字符
@@ -128,7 +127,7 @@ issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=file2voice
 - `format`: mp3
 - `sample_rate`: 32000
 - `output_format`: hex
-- `model`: speech-02-turbo
+- `model`: speech-2.8-hd
 
 **风格→音色映射**：
 

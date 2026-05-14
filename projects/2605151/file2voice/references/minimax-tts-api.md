@@ -18,7 +18,7 @@ Content-Type: application/json
 **请求体**：
 ```json
 {
-  "model": "speech-02-turbo",
+  "model": "speech-2.8-hd",
   "text": "要转换的文本",
   "stream": false,
   "output_format": "hex",
