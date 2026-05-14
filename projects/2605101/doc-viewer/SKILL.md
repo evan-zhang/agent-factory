@@ -60,11 +60,20 @@ curl -s -X POST https://doc.20100706.xyz/upload \
 
 ### Step 4: 返回链接
 
-上传成功后，从返回 JSON 取 `raw_url` 字段返回给用户：
+上传成功后，根据文件类型返回对应链接：
 
+- **HTML 文件** → 取 `raw_url`，浏览器直接渲染 HTML 内容
+- **PDF 文件** → 取 `url`（view），浏览器内嵌 PDF 阅读器在线查看
+
+```bash
+# HTML → raw URL
+URL=$(echo "$UPLOAD_RESP" | python3 -c "import sys,json; print(json.load(sys.stdin)['raw_url'])")
+
+# PDF → view URL
+URL=$(echo "$UPLOAD_RESP" | python3 -c "import sys,json; print(json.load(sys.stdin)['url'])")
 ```
-https://doc.20100706.xyz/raw/<doc_id>
-```
+
+**常见错误**：给 PDF 也返回 raw 链接，这样浏览器会下载而不是在线查看。
 
 ---
 
@@ -152,10 +161,11 @@ curl -s -X POST https://doc.20100706.xyz/upload \
   -F "file=@output.html;filename=<标题>.html"
 ```
 
-返回后返回 `raw_url` 给用户：
-```
-https://doc.20100706.xyz/raw/<doc_id>
-```
+返回后：
+- HTML → 返回 `raw_url`
+- PDF → 返回 `url`（view）
+
+不要给 PDF 返回 raw 链接。
 
 ---
 
@@ -200,7 +210,7 @@ curl -X PUT https://doc.20100706.xyz/api/{doc_id} \
 
 - 最大文件 10MB，保留 30 天
 - 上传时必须用原始文件名（`filename=` 参数）
-- **返回链接统一给 raw 路径**
+- **HTML 返回 raw 链接，PDF 返回 view 链接**
 - HTML 直接渲染，无工具栏；Markdown 转换后渲染
 
 ---

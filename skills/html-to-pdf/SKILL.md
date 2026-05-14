@@ -64,6 +64,8 @@ curl -s -X POST https://doc.20100706.xyz/upload \
   -F "file=@$OUTPUT;filename=report.pdf"
 ```
 
+返回后取 `url`（view 链接）返回给用户，**不要取 raw 链接**（PDF raw 链接会触发下载而不是在线阅读）。
+
 ## 选项说明
 
 | 参数 | 默认值 | 说明 |
