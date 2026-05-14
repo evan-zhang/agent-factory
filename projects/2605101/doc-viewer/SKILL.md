@@ -1,7 +1,7 @@
 ---
 name: doc-viewer
 description: "文件上传预览 + HTML 内容页面生成器。提供现成文件可直接上传预览；描述内容需求可自动生成风格化 HTML 页面并上传。触发词：上传文件、预览文件、生成链接、生成页面、HTML页面、宣传页、报告页面"
-version: "2.2.0"
+version: "2.3.0"
 homepage: https://github.com/evan-zhang/agent-factory/tree/master/projects/2605101/doc-viewer/
 issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=doc-viewer
 ---
@@ -85,6 +85,7 @@ URL=$(echo "$UPLOAD_RESP" | python3 -c "import sys,json; print(json.load(sys.std
 
 **推荐规则**：
 - 用户说「报告」「BD」「评估」「尽调」「投前」「文档」「分析」→ 推荐 **风格 03**
+  - 进一步判断配色：「琥珀金」「金色」→ amber（默认）；「阳光黄」「黄色」→ yellow
 - 用户说「情报」「日报」「动态」「资讯」「新闻」→ 推荐 **风格 04**
 - 用户说「指标」「KPI」「数据」「数字」「看板」→ 推荐 **风格 05**
 - 用户说「产品介绍」「产品页」「服务页」→ 推荐 **风格 06**
@@ -122,14 +123,14 @@ Agent 生成 HTML 前必须读取以下文件：
 
 **第二步 — 读取所选风格的 Token 和骨架**：
 
-| 风格 | Token 文件 | 骨架文件 |
+| 风格 | Token 文件 | 骨架文件 | 配色方案 |
 |------|-----------|---------|
-| 风格 01 | `templates/style-01/design-token.md` | `templates/style-01/skeleton.html` |
-| 风格 02 | `templates/style-02/design-token.md` | `templates/style-02/skeleton.html` |
-| 风格 03 | `templates/style-03/design-token.md` | `templates/style-03/skeleton.html` |
-| 风格 04 | `templates/style-04/design-token.md` | `templates/style-04/skeleton.html` |
-| 风格 05 | `templates/style-05/design-token.md` | `templates/style-05/skeleton.html` |
-| 风格 06 | `templates/style-06/design-token.md` | `templates/style-06/skeleton.html` |
+| 风格 01 | `templates/style-01/design-token.md` | `templates/style-01/skeleton.html` | — |
+| 风格 02 | `templates/style-02/design-token.md` | `templates/style-02/skeleton.html` | — |
+| 风格 03 | `templates/style-03/design-token.md` | `templates/style-03/skeleton.html` | `templates/style-03/color-themes/amber.yml`（琥珀金）或 `yellow.yml`（阳光黄） |
+| 风格 04 | `templates/style-04/design-token.md` | `templates/style-04/skeleton.html` | — |
+| 风格 05 | `templates/style-05/design-token.md` | `templates/style-05/skeleton.html` | — |
+| 风格 06 | `templates/style-06/design-token.md` | `templates/style-06/skeleton.html` | — |
 
 Design Token 包含：
 - **YAML front matter**：机器可读的 tokens（颜色、字体、间距、圆角）
@@ -244,13 +245,30 @@ curl -X PUT https://doc.20100706.xyz/api/{doc_id} \
 
 ### 风格 03 — BD 投前评估报告（文档输出型）
 
-深蓝商务风，A4 纵向，章节密集，表格整齐。专为导出 PDF/Word 设计。
+A4 纵向，章节密集，表格整齐。专为导出 PDF/Word 设计。
+
+**配色方案（color-themes/）**：
+- **琥珀金（amber）**：深金 #C9920A，沉稳高端，适合高管/投资人对接（默认）
+- **阳光黄（yellow）**：亮黄 #F4B400，现代活力，适合内部审阅
+
+用户说「琥珀金」「金色」→ amber；说「阳光黄」「黄色」→ yellow；未指定 → amber。
 
 | 文件 | 说明 |
 |------|------|
 | `templates/style-03/design-token.md` | Design Token |
-| `templates/style-03/skeleton.html` | HTML 骨架参考 |
+| `templates/style-03/skeleton.html` | HTML 骨架（含 {{TOKEN}} 占位符） |
 | `templates/style-03/style-03-bd-report.md` | 视觉说明与内容结构 |
+| `templates/style-03/color-themes/amber.yml` | 琥珀金配色 Token |
+| `templates/style-03/color-themes/yellow.yml` | 阳光黄配色 Token |
+| `templates/style-03/reference-amber.html` | 琥珀金版完整参考范例（CG-0255） |
+| `templates/style-03/reference-yellow.html` | 阳光黄版完整参考范例（CG-0255） |
+
+**生成流程**：
+1. 读取 `skeleton.html`（骨架含 {{TOKEN}} 占位符）
+2. 根据用户指定的配色读取对应 `color-themes/*.yml`
+3. 将 Token 值替换到骨架 CSS 中
+4. 将报告内容填入 body 占位符（{{PRODUCT_CODE}}、{{CHAPTERS}} 等）
+5. 生成完整 HTML 并上传
 
 ### 风格 04 — 情报日报风（新闻/资讯列表）
 
