@@ -1,5 +1,8 @@
 # File2Voice 使用手册
 
+> 产品介绍页：https://doc.20100706.xyz/raw/cd90970cb901
+> GitHub 仓库：https://github.com/evan-zhang/agent-factory/tree/master/projects/2605151/file2voice/
+
 ## 概述
 
 File2Voice 将文件内容转为口播语音。不是简单地朗读文字，而是先由 AI 改写成口语化的口播稿，再调用 MiniMax Speech TTS 生成音频。

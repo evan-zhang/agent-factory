@@ -1,5 +1,8 @@
 # File2Voice 安装说明
 
+> 产品介绍页：https://doc.20100706.xyz/raw/cd90970cb901
+> GitHub 仓库：https://github.com/evan-zhang/agent-factory/tree/master/projects/2605151/file2voice/
+
 ## 前置条件
 
 - macOS 或 Linux

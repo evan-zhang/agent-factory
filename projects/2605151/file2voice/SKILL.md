@@ -2,7 +2,7 @@
 name: file2voice
 description: "文件转口播语音。读取文件内容，AI 改写为口播稿，调用 MiniMax Speech 2.8 TTS 生成音频文件。触发词：转口播、生成口播、文件转语音、朗读、转音频"
 version: "1.1.0"
-homepage: https://github.com/evan-zhang/agent-factory/tree/master/projects/2605151/file2voice/
+homepage: https://doc.20100706.xyz/raw/cd90970cb901
 issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=file2voice
 ---
 
@@ -11,6 +11,7 @@ issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=file2voice
 > ⚠️ **由 Agent Factory 维护**
 > 所属项目编号：`2605151`
 > 工厂主页：https://github.com/evan-zhang/agent-factory
+> 产品介绍页：https://doc.20100706.xyz/raw/cd90970cb901
 
 读取文件内容，AI 智能改写为口播稿，调用 MiniMax Speech 2.8 TTS 生成音频文件。
 
