@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{TITLE}}</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 26mm 24mm 22mm 24mm;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "SimSun", Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.65;
+      color: #1F2933;
+      background: #FFFFFF;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* === COVER === */
+    .cover {
+      min-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40mm 24mm;
+    }
+    .cover-title {
+      font-size: 24pt;
+      font-weight: 700;
+      color: #004B7A;
+      letter-spacing: 0.15em;
+      margin-bottom: 24px;
+    }
+    .cover-product {
+      font-size: 18pt;
+      font-weight: 600;
+      color: #0068A8;
+      margin-bottom: 8px;
+    }
+    .cover-company {
+      font-size: 14pt;
+      color: #5F6B7A;
+      margin-bottom: 32px;
+    }
+    .cover-meta {
+      font-size: 11pt;
+      line-height: 2.2;
+      color: #1F2933;
+    }
+    .cover-meta .label {
+      color: #5F6B7A;
+    }
+    .cover-confidential {
+      margin-top: 48px;
+      font-size: 9pt;
+      color: #C94C4C;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    /* === HEADINGS === */
+    h1 {
+      font-size: 20pt;
+      font-weight: 700;
+      color: #004B7A;
+      border-bottom: 2px solid #0068A8;
+      padding-bottom: 8px;
+      margin-top: 28px;
+      margin-bottom: 22px;
+    }
+    h2 {
+      font-size: 14pt;
+      font-weight: 700;
+      color: #0068A8;
+      border-left: 4px solid #0068A8;
+      padding-left: 10px;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h3 {
+      font-size: 12pt;
+      font-weight: 700;
+      color: #1F2933;
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+
+    /* === BODY TEXT === */
+    p {
+      margin: 0 0 10px 0;
+    }
+    ul, ol {
+      margin-top: 6px;
+      margin-bottom: 12px;
+      padding-left: 22px;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+
+    /* === TABLES === */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 22px 0;
+      font-size: 9.5pt;
+    }
+    th {
+      background: #0068A8;
+      color: #FFFFFF;
+      font-weight: 700;
+      text-align: left;
+      padding: 9px 10px;
+      border: 1px solid #0068A8;
+    }
+    td {
+      padding: 9px 10px;
+      border: 1px solid #D6DEE8;
+      vertical-align: top;
+      line-height: 1.55;
+    }
+    tr:nth-child(even) td {
+      background: #F3F6FA;
+    }
+
+    /* Acceptance table variants */
+    .acceptance-table th:nth-child(2) { background: #4F9D69; border-color: #4F9D69; }
+    .acceptance-table th:nth-child(3) { background: #0068A8; border-color: #0068A8; }
+    .acceptance-table th:nth-child(4) { background: #C94C4C; border-color: #C94C4C; }
+    .acceptance-table td:nth-child(2) { background: #EAF6EF; }
+    .acceptance-table td:nth-child(4) { background: #FDECEA; }
+
+    /* === BLOCKQUOTES === */
+    blockquote {
+      border-left: 5px solid #0068A8;
+      background: #F3F6FA;
+      padding: 10px 14px;
+      margin: 14px 0;
+      color: #1F2933;
+    }
+
+    /* === VETO BOX === */
+    .veto-box {
+      border-left: 5px solid #C94C4C;
+      background: #FDECEA;
+      padding: 12px 14px;
+      margin: 14px 0;
+      line-height: 1.6;
+    }
+
+    /* === PENDING LABEL === */
+    .pending {
+      color: #C8792A;
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    /* === SUMMARY TAGS === */
+    .summary-tag {
+      font-weight: 700;
+      color: #004B7A;
+    }
+
+    /* === PAGE BREAK === */
+    .page-break {
+      page-break-after: always;
+    }
+
+    /* === FOOTER === */
+    .report-footer {
+      font-size: 8.5pt;
+      color: #5F6B7A;
+      border-top: 1px solid #D6DEE8;
+      padding-top: 6px;
+      margin-top: 30px;
+    }
+
+    /* === EXECUTIVE SUMMARY TABLE === */
+    .summary-table {
+      margin-bottom: 20px;
+    }
+    .summary-table td:first-child {
+      font-weight: 600;
+      white-space: nowrap;
+      width: 140px;
+      background: #EEF4FA;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COVER PAGE -->
+  <div class="cover">
+    <div class="cover-title">{{COVER_TITLE}}</div>
+    <div class="cover-product">{{PRODUCT_NAME}}</div>
+    <div class="cover-company">{{COMPANY_NAME}}</div>
+    <div class="cover-meta">
+      <div><span class="label">评估日期：</span>{{DATE}}</div>
+      <div><span class="label">适用模板：</span>{{TEMPLATE}}</div>
+      <div><span class="label">版本：</span>{{VERSION}}</div>
+      <div><span class="label">评估视角：</span>{{PERSPECTIVE}}</div>
+    </div>
+    <div class="cover-confidential">{{CONFIDENTIAL_LEVEL}}</div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- EXECUTIVE SUMMARY -->
+  <h1>执行摘要（EXECUTIVE SUMMARY）</h1>
+
+  <table class="summary-table">
+    {{SUMMARY_TABLE_ROWS}}
+  </table>
+
+  <p><span class="summary-tag">核心结论：</span>{{CORE_CONCLUSION}}</p>
+  <p><span class="summary-tag">主要关注：</span>{{KEY_CONCERNS}}</p>
+  <p><span class="summary-tag">建议：</span>{{RECOMMENDATION}}</p>
+
+  <div class="page-break"></div>
+
+  <!-- CONTENT CHAPTERS -->
+  {{CONTENT_CHAPTERS}}
+
+  <!-- FOOTER -->
+  <div class="report-footer">
+    {{PROJECT_NAME}} BD投前评估报告 {{VERSION}} | {{DATE}} | 产品中心内部机密文件 | {{COMPANY_NAME}}
+  </div>
+
+</body>
+</html>

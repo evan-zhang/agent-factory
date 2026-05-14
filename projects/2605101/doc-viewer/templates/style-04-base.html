@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>情报日报</title>
+<style>
+@page { size:A4; margin:20mm; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+  background:#FAFAFA; color:#111827; line-height:1.6;
+}
+a { color:#1A56DB; text-decoration:none; }
+
+/* ===== RESPONSIVE ===== */
+@media screen and (max-width:768px){
+  .page-wrap{padding:16px}
+  .date-block{padding:16px 20px}
+  .date-number{font-size:32pt !important}
+  .card-grid{grid-template-columns:1fr !important}
+}
+@media screen and (max-width:480px){
+  body{font-size:9pt}
+  .date-number{font-size:28pt !important}
+}
+
+/* ===== PAGE WRAP ===== */
+.page-wrap { max-width:900px; margin:0 auto; padding:40px 48px; }
+
+/* ===== DATE BLOCK ===== */
+.date-block {
+  background:#FFF4E0; border-radius:12px;
+  padding:24px 32px; margin-bottom:32px;
+  display:inline-block; width:100%;
+}
+.report-label {
+  font-size:12pt; color:#9A6800; margin-bottom:6px;
+  letter-spacing:0.05em;
+}
+.date-number {
+  font-size:48pt; font-weight:800; color:#E07B00;
+  line-height:1; letter-spacing:-0.02em;
+}
+.report-title {
+  font-size:13pt; color:#374151; margin-top:10px;
+}
+
+/* ===== FILTER BAR ===== */
+.filter-bar {
+  display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;
+}
+.filter-tag {
+  font-size:11pt; padding:4px 12px; border-radius:20px;
+  background:#fff; border:1px solid #E5E7EB; color:#6B7280;
+  cursor:pointer; transition:all 0.2s;
+}
+.filter-tag.active {
+  background:#1A56DB; color:#fff; border-color:#1A56DB;
+}
+
+/* ===== CARD GRID ===== */
+.card-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; margin-bottom:32px; }
+.card {
+  background:#fff; border-radius:10px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.08);
+  padding:20px; transition:all 0.2s; cursor:pointer;
+  border:1px solid #E5E7EB;
+}
+.card:hover {
+  box-shadow:0 4px 12px rgba(0,0,0,0.12);
+  transform:translateY(-2px);
+}
+.card-tag {
+  display:inline-block; font-size:10pt; font-weight:600;
+  color:#1A56DB; background:#EEF3FD;
+  padding:2px 8px; border-radius:4px; margin-bottom:10px;
+}
+.card-title {
+  font-size:15pt; font-weight:600; color:#111827;
+  line-height:1.4; margin-bottom:8px;
+}
+.card-meta { font-size:12pt; color:#6B7280; margin-bottom:10px; }
+.card-summary {
+  font-size:13pt; color:#4B5563; line-height:1.65;
+  display:-webkit-box; -webkit-line-clamp:2;
+  -webkit-box-orient:vertical; overflow:hidden;
+}
+
+/* ===== FOOTER ===== */
+.page-footer {
+  border-top:1px solid #E5E7EB; padding-top:16px;
+  font-size:11pt; color:#9CA3AF; text-align:center;
+  margin-top:40px;
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- DATE BLOCK -->
+  <div class="date-block">
+    <div class="report-label">每日情报</div>
+    <div class="date-number">05.15</div>
+    <div class="report-title">2026年5月15日 星期四</div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <span class="filter-tag active">全部</span>
+    <span class="filter-tag">行业动态</span>
+    <span class="filter-tag">政策解读</span>
+    <span class="filter-tag">竞品情报</span>
+    <span class="filter-tag">技术前沿</span>
+  </div>
+
+  <!-- CARD GRID -->
+  <div class="card-grid">
+    <div class="card">
+      <span class="card-tag">行业动态</span>
+      <div class="card-title">某跨国药企宣布收购创新靶点公司，进军ADC赛道</div>
+      <div class="card-meta">今天 14:32 · 医药魔方</div>
+      <div class="card-summary">该公司今日宣布以12亿美元预付款收购X公司，获得其ADC平台和3条临床前管线，正式进入抗体偶联药物领域。</div>
+    </div>
+    <div class="card">
+      <span class="card-tag">政策解读</span>
+      <div class="card-title">CDE发布《创新药罕见病药物研发技术指导原则》</div>
+      <div class="card-meta">今天 10:15 · 医药观澜</div>
+      <div class="card-summary">指导原则明确罕见病药物可采用单臂试验支持附条件批准，样本量要求从300例降至30例。</div>
+    </div>
+    <div class="card">
+      <span class="card-tag">竞品情报</span>
+      <div class="card-title">Selatogrel III期临床入组顺利，诺华公布最新进展</div>
+      <div class="card-meta">昨天 18:40 · FiercePharma</div>
+      <div class="card-summary">Selatogrel作为首个P2Y12皮下注射剂，III期临床试验已完成60%入组，预计2027年提交NDA。</div>
+    </div>
+    <div class="card">
+      <span class="card-tag">技术前沿</span>
+      <div class="card-title">AlphaFold3预测精度再提升，药物设计成本有望降低40%</div>
+      <div class="card-meta">昨天 09:20 · Nature Biotech</div>
+      <div class="card-summary">DeepMind发布AlphaFold3版本，预测精度平均提升15%，对小分子-蛋白复合物的预测精度提升最为显著。</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    数据来源：公开信息整理 · 仅供参考 · 内部使用
+  </div>
+</div>
+</body>
+</html>
