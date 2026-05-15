@@ -1,9 +1,18 @@
 {
   "skillcode": "bd-eval",
-  "version": "1.2.0",
-  "sopVersion": "5.2",
+  "version": "1.2.1",
+  "sopVersion": "5.3",
   "lastUpdated": "2026-05-15",
   "changelog": [
+    {
+      "version": "1.2.1",
+      "date": "2026-05-15",
+      "changes": [
+        "P0修复: Phase 5 前置条件检查（防 Battle 修正未执行就合并）",
+        "P1修复: Phase 1 标的方画像确认（不强制阻塞）",
+        "P2/P3: 验证后不修（P2根本原因是超时，P3属于审查层判断范畴）"
+      ]
+    },
     {
       "version": "1.2.0",
       "date": "2026-05-15",
