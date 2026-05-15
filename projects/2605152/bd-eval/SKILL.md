@@ -1,7 +1,7 @@
 ---
 name: bd-eval
 description: "BD品种评估 TPR 自动化流水线 — 从品种名称到在线报告的完整执行链路。触发词：BD评估、跑品种、评估新药、BD品种筛选"
-version: "1.3.0"
+version: "1.2.0"
 homepage: projects/bd-eval/SOP.md
 dependencies:
   - tpr-framework (optional, for battle protocol reference)
@@ -146,16 +146,6 @@ HTML生成（整体报告 + Battle报告）
 TPR Orchestrator（主会话）
 
 ### 操作步骤
-
-**0. 标的方画像确认（v5.3 新增）**
-
-在开始搜索之前，向用户确认标的方信息：
-- 标的方是谁？（公司/机构名称）
-- 合作模式是什么？（自研/License-in/代理权/技术平台/其他）
-- 标的方现有产能？（有/无/计划中）
-- 标的方核心优势？（成本控制/渠道/注册能力/其他）
-
-用户回复后写入 `00-target-profile.md`。如用户说"先跑吧"，标记"待确认"，但财务模型必须标注"⚠️ 基于行业平均"。
 
 **1. 创建品种目录**
 ```bash
