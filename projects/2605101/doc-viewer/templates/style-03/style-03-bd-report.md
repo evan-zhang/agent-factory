@@ -8,8 +8,8 @@
 ## 1. 整体风格定位
 
 - 风格关键词：专业、审慎、医药BD、投前尽调、内部评估、咨询报告感。
-- 主色调：深蓝 + 浅蓝灰 + 白色。
-- 视觉基调：克制、清晰、留白充足，不使用花哨装饰。
+- 主色调：琥珀金（#C9920A）/ 阳光黄（#F4B400），根据 color-themes 选择。
+- 视觉基调：沉稳、高端、留白充足，不使用花哨装饰。
 - 页面适合导出为 PDF，A4 纵向。
 
 ---
@@ -38,7 +38,7 @@ font:
   english: "Arial, Helvetica, sans-serif"
   body_size: 10.5pt
   line_height: 1.65
-  color: "#1F2933"
+  color: "#2C1810"
 ```
 
 ### 字体使用
@@ -52,22 +52,39 @@ font:
 
 ---
 
-## 4. 颜色系统
+## 4. 颜色系统（琥珀金版 / 阳光黄版）
+
+> ⚠️ **重要**：本文件原始版本使用深蓝色配色（#0068A8），现已更新为琥珀金/阳光黄双主题。
+> 具体颜色值以 `color-themes/amber.yml` 和 `color-themes/yellow.yml` 为准。
+> 下面列出的 CSS 样式规则仅供参考结构，实际颜色值请使用 color-themes 中的值。
+
+### 琥珀金版（amber，默认）
 
 ```yaml
 colors:
-  primary_blue: "#0068A8"
-  dark_blue: "#004B7A"
-  header_blue: "#0066A6"
-  light_blue_bg: "#EEF4FA"
-  table_alt_bg: "#F3F6FA"
-  table_border: "#D6DEE8"
-  text_main: "#1F2933"
-  text_muted: "#5F6B7A"
-  warning_red_bg: "#FDECEA"
-  success_green_bg: "#EAF6EF"
-  pending_orange: "#C8792A"
+  primary: "#C9920A"          # 深金主色
+  body-bg: "#FFFDF7"          # 暖白背景
+  body-color: "#2C1810"       # 深棕文字
+  cover-gradient: "linear-gradient(160deg, #FFF8E7 0%, #FFF3CC 55%, #FFE8A0 100%)"
+  cover-border: "6px solid #C9920A"
+  th-bg: "#C9920A"
+  th-color: "#FFFDF7"
+  td-border: "1px solid #E0C060"
+  td-alt-bg: "#FFF8E7"
+  pass-color: "#3A7010"
+  cond-color: "#C8792A"
+  fail-color: "#B84040"
+  h1-color: "#5C3D0A"
+  h1-border: "3px solid #C9920A"
+  h2-color: "#8B6914"
+  h2-border: "5px solid #C9920A"
 ```
+
+完整 Token 值见 `color-themes/amber.yml`。
+
+### 阳光黄版（yellow）
+
+完整 Token 值见 `color-themes/yellow.yml`。
 
 ---
 
@@ -112,13 +129,12 @@ Sound Pharmaceuticals, Inc.
 
 ```css
 h1 {
-  font-size: 20pt;
+  font-size: 17pt;
   font-weight: 700;
-  color: #004B7A;
-  border-bottom: 2px solid #0068A8;
-  padding-bottom: 8px;
-  margin-top: 28px;
-  margin-bottom: 22px;
+  color: #5C3D0A;
+  border-bottom: 3px solid #C9920A;
+  padding: 10px 14px 8px;
+  margin: 24px 0 14px;
 }
 ```
 
@@ -132,13 +148,12 @@ h1 {
 
 ```css
 h2 {
-  font-size: 14pt;
+  font-size: 12.5pt;
   font-weight: 700;
-  color: #0068A8;
-  border-left: 4px solid #0068A8;
-  padding-left: 10px;
-  margin-top: 24px;
-  margin-bottom: 12px;
+  color: #8B6914;
+  border-left: 5px solid #C9920A;
+  padding: 6px 10px;
+  margin: 20px 0 10px;
 }
 ```
 
@@ -152,11 +167,10 @@ h2 {
 
 ```css
 h3 {
-  font-size: 12pt;
+  font-size: 11pt;
   font-weight: 700;
-  color: #1F2933;
-  margin-top: 16px;
-  margin-bottom: 8px;
+  color: #5C3D0A;
+  margin: 14px 0 7px;
 }
 ```
 
@@ -198,8 +212,8 @@ h3 {
 p {
   font-size: 10.5pt;
   line-height: 1.65;
-  margin: 0 0 10px 0;
-  color: #1F2933;
+  margin: 0 0 8px 0;
+  color: #2C1810;
 }
 ```
 
@@ -257,28 +271,28 @@ p {
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 14px 0 22px 0;
+  margin: 12px 0 18px 0;
   font-size: 9.5pt;
 }
 
 th {
-  background: #0068A8;
-  color: #FFFFFF;
+  background: #C9920A;
+  color: #FFFDF7;
   font-weight: 700;
   text-align: left;
-  padding: 9px 10px;
-  border: 1px solid #0068A8;
+  padding: 8px 10px;
+  border: 1px solid #C9920A;
 }
 
 td {
-  padding: 9px 10px;
-  border: 1px solid #D6DEE8;
+  padding: 7px 10px;
+  border: 1px solid #E0C060;
   vertical-align: top;
-  line-height: 1.55;
+  line-height: 1.5;
 }
 
 tr:nth-child(even) td {
-  background: #F3F6FA;
+  background: #FFF8E7;
 }
 ```
 
@@ -298,11 +312,11 @@ tr:nth-child(even) td {
 样式规则：
 
 ```css
-.acceptance-table th:nth-child(2) { background: #4F9D69; }
-.acceptance-table th:nth-child(3) { background: #0068A8; }
-.acceptance-table th:nth-child(4) { background: #C94C4C; }
-.acceptance-table td:nth-child(2) { background: #EAF6EF; }
-.acceptance-table td:nth-child(4) { background: #FDECEA; }
+.acceptance-table th:nth-child(2) { background: #3A7010; }
+.acceptance-table th:nth-child(3) { background: #C9920A; }
+.acceptance-table th:nth-child(4) { background: #B84040; }
+.acceptance-table td:nth-child(2) { background: #EDF5E8; }
+.acceptance-table td:nth-child(4) { background: #FDEEEE; }
 ```
 
 ---
@@ -320,29 +334,29 @@ tr:nth-child(even) td {
 
 ```css
 blockquote {
-  border-left: 5px solid #0068A8;
-  background: #F3F6FA;
+  border-left: 5px solid #C9920A;
+  background: #FFF8E7;
   padding: 10px 14px;
   margin: 14px 0;
-  color: #1F2933;
+  color: #2C1810;
 }
 ```
 
 高风险否决项可使用：
 
 ```html
-<div class="veto-box">
+<div class="veto-fail">
 <strong>V1 — 活性成分安全性黑盒警告</strong><br>
 III期 CSR 或数据包中存在系统性严重安全性信号，且无明确风险缓解措施。
 </div>
 ```
 
 ```css
-.veto-box {
-  border-left: 5px solid #C94C4C;
-  background: #FDECEA;
-  padding: 12px 14px;
-  margin: 14px 0;
+.veto-fail {
+  border-left: 5px solid #B84040;
+  background: #FDEEEE;
+  padding: 10px 14px;
+  margin: 10px 0;
   line-height: 1.6;
 }
 ```
@@ -387,8 +401,8 @@ status_terms:
 ```css
 footer {
   font-size: 8.5pt;
-  color: #5F6B7A;
-  border-top: 1px solid #D6DEE8;
+  color: #9A7840;
+  border-top: 1px solid #E0C060;
   padding-top: 6px;
 }
 ```
@@ -484,123 +498,45 @@ footer {
 
 ---
 
-## 17. 可直接使用的 HTML/CSS 样式骨架
+## 17. 琥珀金版 CSS 参考（摘自 reference-amber.html）
 
-```html
-<style>
-@page {
-  size: A4;
-  margin: 26mm 24mm 22mm 24mm;
-}
+> ⚠️ 以下 CSS 仅供参考结构。**实际生成时请直接使用 `reference-amber.html` 作为基底**，
+> 其中包含完整的、已替换好所有颜色值的 CSS。不要从零手写 CSS。
+
+```css
+/* 琥珀金配色核心值（摘自 amber.yml） */
+/* 完整参考：reference-amber.html */
+
+@page { size: A4; margin: 0; }
 
 body {
   font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif;
-  font-size: 10.5pt;
-  line-height: 1.65;
-  color: #1F2933;
-  background: #FFFFFF;
+  font-size: 10.5pt; line-height: 1.7; color: #2C1810;
+  background: #FFFDF7;
 }
 
 h1 {
-  font-size: 20pt;
-  font-weight: 700;
-  color: #004B7A;
-  border-bottom: 2px solid #0068A8;
-  padding-bottom: 8px;
-  margin-top: 28px;
-  margin-bottom: 22px;
+  font-size: 17pt; font-weight: 700; color: #5C3D0A;
+  background: linear-gradient(to right, #FFF8E7, #FFFDF7);
+  border-bottom: 3px solid #C9920A;
+  padding: 10px 14px 8px; margin: 24px 0 14px;
 }
 
 h2 {
-  font-size: 14pt;
-  font-weight: 700;
-  color: #0068A8;
-  border-left: 4px solid #0068A8;
-  padding-left: 10px;
-  margin-top: 24px;
-  margin-bottom: 12px;
+  font-size: 12.5pt; font-weight: 700; color: #8B6914;
+  border-left: 5px solid #C9920A; padding: 6px 10px;
+  margin: 20px 0 10px; background: #FFFDF7;
 }
 
-h3 {
-  font-size: 12pt;
-  font-weight: 700;
-  color: #1F2933;
-  margin-top: 16px;
-  margin-bottom: 8px;
-}
+h3 { font-size: 11pt; font-weight: 700; color: #5C3D0A; margin: 14px 0 7px; }
 
-p {
-  margin: 0 0 10px 0;
-}
+table { width: 100%; border-collapse: collapse; margin: 12px 0 18px; font-size: 9.5pt; }
+th { background: #C9920A; color: #FFFDF7; font-weight: 700; padding: 8px 10px; border: 1px solid #C9920A; }
+td { padding: 7px 10px; border: 1px solid #E0C060; vertical-align: top; line-height: 1.5; }
+tr:nth-child(even) td { background: #FFF8E7; }
 
-ul, ol {
-  margin-top: 6px;
-  margin-bottom: 12px;
-  padding-left: 22px;
-}
-
-li {
-  margin-bottom: 6px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 14px 0 22px 0;
-  font-size: 9.5pt;
-}
-
-th {
-  background: #0068A8;
-  color: #FFFFFF;
-  font-weight: 700;
-  text-align: left;
-  padding: 9px 10px;
-  border: 1px solid #0068A8;
-}
-
-td {
-  padding: 9px 10px;
-  border: 1px solid #D6DEE8;
-  vertical-align: top;
-  line-height: 1.55;
-}
-
-tr:nth-child(even) td {
-  background: #F3F6FA;
-}
-
-blockquote {
-  border-left: 5px solid #0068A8;
-  background: #F3F6FA;
-  padding: 10px 14px;
-  margin: 14px 0;
-}
-
-.veto-box {
-  border-left: 5px solid #C94C4C;
-  background: #FDECEA;
-  padding: 12px 14px;
-  margin: 14px 0;
-  line-height: 1.6;
-}
-
-.pending {
-  color: #C8792A;
-  font-style: italic;
-  font-weight: 600;
-}
-
-.page-break {
-  page-break-after: always;
-}
-
-.footer {
-  font-size: 8.5pt;
-  color: #5F6B7A;
-  border-top: 1px solid #D6DEE8;
-  padding-top: 6px;
-  margin-top: 30px;
-}
-</style>
+.pass { color: #3A7010; font-weight: 700; }
+.cond { color: #C8792A; font-weight: 700; }
+.fail { color: #B84040; font-weight: 700; }
+.page-break { page-break-after: always; }
 ```
