@@ -163,7 +163,7 @@ Skeleton 包含：
 1. 读取 `reference-amber.html` 或 `reference-yellow.html`（根据配色选择）作为基底
 2. 保留其中的完整 CSS 样式（已替换好所有颜色值，不要修改）
 3. 只替换 body 部分的内容（封面信息、章节内容、目录）
-4. 如果必须从 skeleton.html 生成，**必须**将 `color-themes/*.yml` 中的所有值替换到 CSS 的 `{{变量}}` 中，再将内容填入 body 占位符
+4. 如果必须从 skeleton.html 生成，**必须**将 `color-themes/*.yml` 中的所有值替换到 CSS 的 `{{变量}}` 中，再将内容填入 body 占位符。**注意**：YAML 中的双引号是 YAML 语法需要的，注入 CSS 变量前必须去掉值两端的引号，例如 `"#C9920A"` → `#C9920A`，`"6px solid #C9920A"` → `6px solid #C9920A`。
 
 禁止事项：
 - 禁止输出包含 `{{` 或 `}}` 的 HTML 文件
