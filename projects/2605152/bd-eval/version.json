@@ -1,9 +1,21 @@
 {
   "skillcode": "bd-eval",
-  "version": "1.2.0",
-  "sopVersion": "5.2",
+  "version": "1.3.0",
+  "sopVersion": "5.3",
   "lastUpdated": "2026-05-15",
   "changelog": [
+    {
+      "version": "1.3.0",
+      "date": "2026-05-15",
+      "changes": [
+        "P0修复: Phase 5 前置条件检查，防止 Battle 修正未执行就合并报告",
+        "P1修复: Phase 1 增加标的方画像确认步骤（Step 0）",
+        "P2修复: GRV 章节深度要求（≥2000字 + 3个数据表格 + 5个数据点）",
+        "P3修复: 假设降权规则（待核实超50%的情景IRR标注低置信度）",
+        "子Agent prompt 模板增加质量标准",
+        "SOP 升级到 v5.3"
+      ]
+    },
     {
       "version": "1.2.0",
       "date": "2026-05-15",
