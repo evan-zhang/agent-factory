@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{TITLE}}</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg: #08090A;
+  --bg-alt: #191B1F;
+  --bg-card: #121416;
+  --accent: #C97842;
+  --text: #E8E4DF;
+  --text-secondary: #6B5E54;
+  --border: #2A2520;
+  --shadow: rgba(0,0,0,0.4);
+}
+body {
+  font-family:-apple-system,"PingFang SC","Inter","SF Pro Text",sans-serif;
+  color:var(--text); background:var(--bg); -webkit-font-smoothing:antialiased;
+}
+a { color:var(--accent); text-decoration:none; }
+
+/* ===== HERO ===== */
+.hero {
+  padding:100px 80px; text-align:center; background:var(--bg);
+}
+.hero-title {
+  font-size:48pt; font-weight:800; color:var(--text);
+  line-height:1.1; letter-spacing:-1px; margin-bottom:20px; max-width:900px; margin-left:auto; margin-right:auto;
+}
+.hero-desc {
+  font-size:17pt; color:var(--text-secondary);
+  line-height:1.6; margin-bottom:32px; max-width:720px; margin-left:auto; margin-right:auto;
+}
+.hero-cta .btn-hero {
+  display:inline-block; font-size:14pt; font-weight:600; color:var(--text);
+  background:var(--accent); padding:14px 32px; border-radius:8px;
+  border:none; cursor:pointer; transition:background 0.2s,transform 0.2s;
+}
+.hero-cta .btn-hero:hover { background:#D98B52; transform:translateY(-2px); }
+
+/* ===== FEATURES ===== */
+.features {
+  padding:80px 80px; background:var(--bg-alt);
+}
+.features-header {
+  text-align:center; margin-bottom:56px;
+}
+.features-header h2 {
+  font-size:30pt; font-weight:800; color:var(--text); letter-spacing:-0.5px;
+  margin-bottom:12px;
+}
+.features-header p {
+  font-size:15pt; color:var(--text-secondary);
+}
+.features-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+  max-width:1200px; margin:0 auto;
+}
+.feature-card {
+  background:var(--bg-card); border:1px solid var(--border); border-radius:12px;
+  padding:32px 24px; transition:transform 0.2s,border-color 0.2s;
+}
+.feature-card:hover { transform:translateY(-4px); border-color:var(--accent); }
+.feature-icon {
+  width:48px; height:48px; background:rgba(201,120,66,0.15);
+  border-radius:12px; display:flex; align-items:center; justify-content:center;
+  font-size:22pt; color:var(--accent); margin-bottom:20px;
+}
+.feature-card h3 {
+  font-size:17pt; font-weight:700; color:var(--text); margin-bottom:12px;
+}
+.feature-card p {
+  font-size:13pt; line-height:1.6; color:var(--text-secondary);
+}
+
+/* ===== METRICS ===== */
+.metrics {
+  padding:80px 80px; background:var(--bg);
+}
+.metrics-header {
+  text-align:center; margin-bottom:48px;
+}
+.metrics-header h2 {
+  font-size:30pt; font-weight:800; color:var(--text); letter-spacing:-0.5px;
+  margin-bottom:12px;
+}
+.metrics-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:24px;
+  max-width:1200px; margin:0 auto;
+}
+.metric-card {
+  background:var(--bg-card); border:1px solid var(--border); border-radius:12px;
+  padding:28px 20px; text-align:center;
+}
+.metric-value {
+  font-size:32pt; font-weight:800; color:var(--accent);
+  letter-spacing:-0.5px; margin-bottom:8px;
+}
+.metric-label {
+  font-size:13pt; color:var(--text-secondary);
+}
+
+/* ===== CTA ===== */
+.cta {
+  text-align:center; padding:100px 80px; background:linear-gradient(180deg,var(--bg-alt),var(--bg));
+}
+.cta-title {
+  font-size:34pt; font-weight:800; color:var(--text); letter-spacing:-0.5px;
+  margin-bottom:16px; max-width:800px; margin-left:auto; margin-right:auto;
+}
+.cta-desc {
+  font-size:15pt; color:var(--text-secondary); margin-bottom:36px;
+  max-width:640px; margin-left:auto; margin-right:auto;
+}
+.cta-button .btn-cta {
+  display:inline-block; font-size:14pt; font-weight:600; color:var(--text);
+  background:var(--accent); padding:14px 36px; border-radius:8px;
+  border:none; cursor:pointer; transition:background 0.2s,transform 0.2s;
+}
+.cta-button .btn-cta:hover { background:#D98B52; transform:translateY(-2px); }
+
+/* ===== FOOTER ===== */
+.footer {
+  padding:28px 80px; border-top:1px solid var(--border);
+  font-size:12pt; color:var(--text-secondary); text-align:center;
+}
+
+/* ===== RESPONSIVE ===== */
+@media screen and (max-width:768px){
+  .hero { padding:60px 40px; }
+  .hero-title { font-size:32pt; }
+  .hero-desc { font-size:14pt; }
+  .features, .metrics { padding:60px 40px; }
+  .features-grid, .metrics-grid { grid-template-columns:1fr; gap:20px; }
+  .features-header h2, .metrics-header h2 { font-size:22pt; }
+  .cta { padding:60px 40px; }
+  .cta-title { font-size:24pt; }
+  .footer { padding:20px 40px; }
+}
+@media screen and (max-width:480px){
+  .hero { padding:40px 24px; }
+  .hero-title { font-size:26pt; }
+  .hero-desc { font-size:13pt; }
+  .features, .metrics { padding:40px 24px; }
+  .features-header h2, .metrics-header h2 { font-size:18pt; }
+  .features-header p { font-size:13pt; }
+  .feature-card, .metric-card { padding:24px 16px; }
+  .cta { padding:40px 24px; }
+  .cta-title { font-size:20pt; }
+  .cta-desc { font-size:13pt; }
+  .footer { padding:16px 24px; }
+}
+@media print{
+  body { background:#FFF; color:#000; }
+  .hero, .features, .metrics, .cta { padding:20px; }
+  .feature-card, .metric-card { page-break-inside:avoid; border:1px solid #CCC; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+  <h1 class="hero-title">{{HERO_TITLE}}</h1>
+  <p class="hero-desc">{{HERO_DESC}}</p>
+  <div class="hero-cta">{{HERO_CTA}}</div>
+</section>
+
+<!-- ==================== FEATURES ==================== -->
+<section class="features">
+  <div class="features-header">
+    <h2>{{FEATURES_TITLE}}</h2>
+    <p>{{FEATURES_SUBTITLE}}</p>
+  </div>
+  <div class="features-grid">{{FEATURES}}</div>
+</section>
+
+<!-- ==================== METRICS ==================== -->
+<section class="metrics">
+  <div class="metrics-header">
+    <h2>{{METRICS_TITLE}}</h2>
+  </div>
+  <div class="metrics-grid">{{METRICS}}</div>
+</section>
+
+<!-- ==================== CTA ==================== -->
+<section class="cta">
+  <h2 class="cta-title">{{CTA_TITLE}}</h2>
+  <p class="cta-desc">{{CTA_DESC}}</p>
+  <div class="cta-button">{{CTA_BUTTON}}</div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<div class="footer">
+  {{FOOTER_TEXT}}
+</div>
+
+</body>
+</html>

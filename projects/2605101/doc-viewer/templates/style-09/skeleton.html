@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{TITLE}}</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg: #FFFFFF;
+  --bg-alt: #F7F6F3;
+  --accent: #C97842;
+  --text: #37352F;
+  --text-secondary: #9B9A97;
+  --border: #E9E9E7;
+  --code-bg: #F7F6F3;
+}
+body {
+  font-family:-apple-system,"PingFang SC","Inter","SF Pro Text",sans-serif;
+  color:var(--text); background:var(--bg); -webkit-font-smoothing:antialiased;
+}
+a { color:var(--accent); text-decoration:none; }
+
+/* ===== LAYOUT ===== */
+.container {
+  display:flex; min-height:100vh;
+}
+.sidebar {
+  width:280px; padding:40px 20px; border-right:1px solid var(--border);
+  flex-shrink:0;
+}
+.main {
+  flex:1; padding:80px 40px;
+  background:var(--bg);
+}
+.content {
+  max-width:720px; margin:0 auto;
+}
+
+/* ===== HEADER ===== */
+.page-header {
+  margin-bottom:40px;
+}
+.page-icon {
+  font-size:48pt; margin-bottom:16px;
+}
+.page-title {
+  font-size:40pt; font-weight:700; color:var(--text);
+  line-height:1.2; letter-spacing:-0.5px; margin-bottom:12px;
+}
+.page-subtitle {
+  font-size:15pt; color:var(--text-secondary); line-height:1.5;
+}
+
+/* ===== CONTENT ===== */
+.content h1 {
+  font-size:32pt; font-weight:700; color:var(--text);
+  margin:48px 0 20px; letter-spacing:-0.3px;
+}
+.content h2 {
+  font-size:24pt; font-weight:700; color:var(--text);
+  margin:40px 0 16px; letter-spacing:-0.2px;
+}
+.content h3 {
+  font-size:20pt; font-weight:600; color:var(--text);
+  margin:32px 0 12px;
+}
+.content p {
+  font-size:15pt; line-height:1.7; color:var(--text);
+  margin-bottom:16px;
+}
+.content ul, .content ol {
+  margin:16px 0 16px 24px;
+}
+.content li {
+  font-size:15pt; line-height:1.7; color:var(--text);
+  margin-bottom:8px;
+}
+
+/* ===== CODE BLOCK ===== */
+.content pre {
+  background:var(--code-bg); border-radius:8px;
+  padding:20px; margin:20px 0; overflow-x:auto;
+}
+.content code {
+  font-family:"Menlo","Consolas","Monaco",monospace;
+  font-size:13pt; color:var(--text);
+}
+.content p code {
+  background:var(--code-bg); padding:2px 6px;
+  border-radius:4px; font-size:14pt;
+}
+
+/* ===== BLOCKQUOTE ===== */
+.content blockquote {
+  border-left:3px solid var(--text-secondary);
+  padding-left:20px; margin:20px 0;
+  color:var(--text-secondary); font-style:italic;
+}
+
+/* ===== TABLE ===== */
+.content table {
+  width:100%; border-collapse:collapse; margin:24px 0;
+}
+.content th, .content td {
+  padding:12px 16px; text-align:left;
+  border-bottom:1px solid var(--border);
+}
+.content th {
+  font-weight:600; color:var(--text);
+}
+.content tr:nth-child(even) {
+  background:var(--bg-alt);
+}
+
+/* ===== SEPARATOR ===== */
+.content hr {
+  border:none; border-top:1px solid var(--border);
+  margin:32px 0;
+}
+
+/* ===== SIDEBAR NAV ===== */
+.nav-item {
+  padding:8px 12px; font-size:13pt; color:var(--text-secondary);
+  cursor:pointer; border-radius:6px; margin-bottom:4px;
+  transition:background 0.2s;
+}
+.nav-item:hover { background:var(--bg-alt); color:var(--text); }
+.nav-item.active { background:var(--bg-alt); color:var(--text); font-weight:600; }
+
+/* ===== FOOTER ===== */
+.footer {
+  padding:40px; text-align:center;
+  border-top:1px solid var(--border);
+  font-size:13pt; color:var(--text-secondary);
+}
+
+/* ===== RESPONSIVE ===== */
+@media screen and (max-width:768px){
+  .container { flex-direction:column; }
+  .sidebar { width:100%; border-right:none; border-bottom:1px solid var(--border); padding:24px 20px; }
+  .main { padding:40px 20px; }
+  .page-title { font-size:28pt; }
+  .content h1 { font-size:24pt; }
+  .content h2 { font-size:20pt; }
+  .content h3 { font-size:17pt; }
+  .content p, .content li { font-size:14pt; }
+}
+@media screen and (max-width:480px){
+  .main { padding:28px 16px; }
+  .page-title { font-size:24pt; }
+  .content h1 { font-size:22pt; }
+  .content h2 { font-size:18pt; }
+  .content h3 { font-size:16pt; }
+  .content p, .content li { font-size:13pt; }
+  .content pre { padding:16px; }
+}
+@media print{
+  body { background:#FFF; }
+  .sidebar { display:none; }
+  .main { padding:20px; }
+  .content { max-width:100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside class="sidebar">
+    {{SIDEBAR}}
+  </aside>
+
+  <!-- ==================== MAIN ==================== -->
+  <main class="main">
+    <div class="content">
+      <header class="page-header">
+        <div class="page-icon">{{PAGE_ICON}}</div>
+        <h1 class="page-title">{{PAGE_TITLE}}</h1>
+        <p class="page-subtitle">{{PAGE_SUBTITLE}}</p>
+      </header>
+
+      <!-- ==================== CONTENT ==================== -->
+      {{CONTENT}}
+    </div>
+  </main>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<div class="footer">
+  {{FOOTER_TEXT}}
+</div>
+
+</body>
+</html>
