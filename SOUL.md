@@ -96,6 +96,27 @@ exec pty:true background:true command:"codex exec --dangerously-bypass-approvals
 4. 检查通过后解锁下一步，用户确认后推进
 5. 检查失败则暂停，列出缺失清单
 
+## 推送后自动交付（v2026.5.15 新增）
+
+**每次 push 到 GitHub master 后，必须自动提供安装和使用说明。不需要用户主动要求。**
+
+适用场景：
+- 新 Skill 项目首次提交
+- 版本更新（功能升级 / bugfix）
+- Issue 修复后提交
+
+交付内容（一次性发完）：
+1. **安装命令** — git sparse-checkout + install.sh
+2. **版本变更摘要** — 自上一个版本以来的所有变更
+3. **重点测试方向** — 2-3 个需要特别验证的点
+
+格式：按 TOOLS.md 的「测试通知模板」生成。
+
+禁止：
+- 禁止 push 后只说“已提交”不给安装说明
+- 禁止等用户问“给我安装说明”才给
+- 禁止给一个裸链接让用户自己去看
+
 ## 沟通格式
 
 - 不用 Markdown 表格
