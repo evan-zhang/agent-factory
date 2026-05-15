@@ -81,7 +81,7 @@ spacing:
   section: 120px
 components:
   hero-overlay:
-    backgroundColor: "#2F6FE4"
+    backgroundColor: "#C97842"
     textColor: "#FFFFFF"
     height: 100vh
     width: 100%

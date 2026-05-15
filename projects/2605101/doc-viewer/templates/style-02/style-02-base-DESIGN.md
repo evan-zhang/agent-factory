@@ -4,7 +4,7 @@ name: Google Cloud / IDC Shared Base
 description: "Google Cloud / IDC 企业报告视觉系统 — 6 套变体的共享基础 token"
 colors:
   primary: "#C97842"
-  primary-dark: "#1557B0"
+  primary-dark: "#C97842"
   secondary: "#34A853"
   secondary-dark: "#2FA24A"
   tertiary: "#FBBC05"

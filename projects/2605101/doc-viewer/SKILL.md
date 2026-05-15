@@ -1,7 +1,7 @@
 ---
 name: doc-viewer
 description: "文件上传预览 + HTML 内容页面生成器。提供现成文件可直接上传预览；描述内容需求可自动生成风格化 HTML 页面并上传。触发词：上传文件、预览文件、生成链接、生成页面、HTML页面、宣传页、报告页面"
-version: "2.5.0"
+version: "2.5.1"
 homepage: https://github.com/evan-zhang/agent-factory/tree/master/projects/2605101/doc-viewer/
 issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=doc-viewer
 ---
@@ -89,6 +89,11 @@ URL=$(echo "$UPLOAD_RESP" | python3 -c "import sys,json; print(json.load(sys.std
 - 用户说「情报」「日报」「动态」「资讯」「新闻」→ 推荐 **风格 04**
 - 用户说「指标」「KPI」「数据」「数字」「看板」→ 推荐 **风格 05**
 - 用户说「产品介绍」「产品页」「服务页」→ 推荐 **风格 06**
+- 用户说「日系」「暖色」「极简」「Claude」「Arc」「Notion」「创作」「AI 产品页」→ 推荐 **风格 07**
+- 用户说「苹果」「Apple」「极简」「电影感」「keynote」→ 推荐 **风格 08**
+- 用户说「文档」「编辑器」「Notion」「笔记」「知识库」→ 推荐 **风格 09**
+- 用户说「开发者」「Stripe」「API」「代码」「开发者平台」→ 推荐 **风格 10**
+- 用户说「暗色」「Linear」「SaaS」「暗色主题」「高级感」→ 推荐 **风格 11**
 - 用户说「封面」「首页」→ 推荐 **风格 02-A** 或 **02-B**
 - 用户说「案例」「客户案例」→ 推荐 **风格 02-F**
 - 用户没明确偏好 → 推荐 **风格 01**
@@ -131,6 +136,11 @@ Agent 生成 HTML 前必须读取以下文件：
 | 风格 04 | `templates/style-04/design-token.md` | `templates/style-04/skeleton.html` | — |
 | 风格 05 | `templates/style-05/design-token.md` | `templates/style-05/skeleton.html` | — |
 | 风格 06 | `templates/style-06/design-token.md` | `templates/style-06/skeleton.html` | — |
+| 风格 07 | `templates/style-07/design-token.md` | `templates/style-07/skeleton.html` | — |
+| 风格 08 | `templates/style-08/design-token.md` | `templates/style-08/skeleton.html` | — |
+| 风格 09 | `templates/style-09/design-token.md` | `templates/style-09/skeleton.html` | — |
+| 风格 10 | `templates/style-10/design-token.md` | `templates/style-10/skeleton.html` | — |
+| 风格 11 | `templates/style-11/design-token.md` | `templates/style-11/skeleton.html` | — |
 
 Design Token 包含：
 - **YAML front matter**：机器可读的 tokens（颜色、字体、间距、圆角）
