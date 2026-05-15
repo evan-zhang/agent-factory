@@ -1,0 +1,60 @@
+{
+  "name": "bd-eval",
+  "version": "1.1.0",
+  "displayName": "BD品种评估流水线",
+  "description": "BD品种投前评估 TPR 自动化流水线 — 从品种名称到在线报告的完整执行链路",
+  "author": "evan",
+  "license": "private",
+
+  "triggers": [
+    "BD评估",
+    "跑品种",
+    "评估新药",
+    "BD品种筛选",
+    "新批次"
+  ],
+
+  "openclaw": {
+    "minVersion": ">=0.9.0"
+  },
+
+  "requiredTools": [
+    "web_search",
+    "sessions_spawn",
+    "exec",
+    "message"
+  ],
+
+  "skills": {
+    "bd-eval": {
+      "path": "skills/bd-eval",
+      "role": "main",
+      "required": true,
+      "description": "主流水线 Skill，包含 SOP + 子Agent模板 + 7套评估模板"
+    },
+    "doc-viewer": {
+      "path": "skills/doc-viewer",
+      "role": "main",
+      "required": true,
+      "description": "生成风格03琥珀金整体报告 HTML（Phase 5.5 必须）"
+    },
+    "multi-search": {
+      "path": "skills/multi-search",
+      "role": "main",
+      "required": true,
+      "description": "多源搜索基础设施（Phase 1/3 web_search 依赖）"
+    },
+    "tpr-framework": {
+      "path": "skills/tpr-framework",
+      "role": "reference",
+      "required": false,
+      "description": "Battle/GRV 规范参考（Phase 2/4，建议安装）"
+    }
+  },
+
+  "installation": {
+    "method": "copy",
+    "target": "~/.openclaw/skills/",
+    "skipExisting": true
+  }
+}

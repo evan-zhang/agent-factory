@@ -1,0 +1,39 @@
+{
+  "projectId": "2605152",
+  "name": "BD品种评估流水线",
+  "skill": "bd-eval",
+  "version": "1.2.0",
+  "sopVersion": "5.2",
+  "createdAt": "2026-05-15T11:37:00+08:00",
+  "normalizedAt": "2026-05-15T11:55:00+08:00",
+  "status": "normalized",
+  "description": "BD品种投前评估 TPR 自动化流水线 — 从品种名称到在线报告的完整执行链路",
+  "phases": {
+    "onboarding": "completed",
+    "normalization": "completed",
+    "development": "completed",
+    "testing": "completed",
+    "release": "pending"
+  },
+  "currentPhase": "release",
+  "dependencies": {
+    "required": ["doc-viewer", "multi-search"],
+    "optional": ["tpr-framework"]
+  },
+  "apiKeys": {
+    "required": ["MINIMAX_API_KEY"],
+    "recommended": ["TAVILY_API_KEY"],
+    "optional": ["EXA_API_KEY"]
+  },
+  "files": {
+    "skill": "bd-eval/SKILL.md",
+    "sop": "bd-eval/references/SOP.md",
+    "templates": "bd-eval/references/bd_report_templates_full.md",
+    "subAgentPrompt": "bd-eval/references/sub-agent-prompt-template.md",
+    "healthCheck": "bd-eval/scripts/bd-eval-health-check.sh",
+    "archiveScript": "bd-eval/scripts/archive-links.sh",
+    "quickRef": "bd-eval/QUICKREF.md",
+    "version": "bd-eval/version.json"
+  },
+  "triggers": ["BD评估", "跑品种", "评估新药", "BD品种筛选", "新批次", "检测skill", "配置skill", "健康检查"]
+}

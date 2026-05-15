@@ -1,0 +1,38 @@
+{
+  "skillcode": "bd-eval",
+  "version": "1.2.0",
+  "sopVersion": "5.2",
+  "lastUpdated": "2026-05-15",
+  "changelog": [
+    {
+      "version": "1.2.0",
+      "date": "2026-05-15",
+      "changes": [
+        "新增健康检测脚本（5大类检测 + --fix 自动修复指引）",
+        "触发词三：重新生成 HTML / 更新链接",
+        "Key 依赖修正：MINIMAX_API_KEY / TAVILY_API_KEY / EXA_API_KEY",
+        "Skill 路径双检测（~/.openclaw/skills + ~/.agents/skills）"
+      ]
+    },
+    {
+      "version": "1.1.0",
+      "date": "2026-05-15",
+      "changes": [
+        "依赖盘点：doc-viewer（必须）、multi-search（必须）、tpr-framework（可选）",
+        "安装说明完善：三层 Skill 结构",
+        "install.sh 支持 4 个 skill 安装"
+      ]
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-05-14",
+      "changes": [
+        "初始版本",
+        "完整 Phase 1-5.5 流水线",
+        "7 套 BD 评估模板",
+        "子 Agent Prompt 模板",
+        "归档脚本"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "V1",
+  "name": "TPR Governance V1",
+  "description": "The first version of the TPR and TSOR integrated methodology.",
+  "modes": {
+    "complex": {
+      "name": "Complex Mode",
+      "wbs_layers": ["P", "G", "R", "A"],
+      "stages": ["01-discovery", "02-planning", "03-battle", "04-execution", "05-closure"],
+      "sub_agents": ["策划层", "审查层", "执行层"],
+      "required_docs": [
+        "P-IDX-01_项目主索引.md",
+        "P-IDX-02_任务与状态索引.md",
+        "P-IDX-03_用户确认与决策索引.md",
+        "01-discovery/P-REQ-01_原始需求.md",
+        "01-discovery/TRANSCRIPT.md",
+        "01-discovery/DISCOVERY.md",
+        "02-planning/GRV.md",
+        "03-battle/BATTLE-R1-AUDITOR.md",
+        "03-battle/BATTLE-R1-EXECUTOR.md",
+        "03-battle/DECISION.md",
+        "04-execution/A-LOG-01_执行日志.md",
+        "04-execution/A-OUT-01_产出交付.md",
+        "05-closure/P-LOG-01_项目日志.md",
+        "05-closure/P-ACPT-01_项目验收.md"
+      ]
+    },
+    "standard": {
+      "name": "Standard Mode",
+      "wbs_layers": ["P", "R", "A"],
+      "stages": ["01-discovery", "02-planning", "03-review", "04-execution", "05-closure"],
+      "sub_agents": ["策划层", "执行层"],
+      "required_docs": [
+        "P-IDX-01_项目主索引.md",
+        "01-discovery/DISCOVERY.md",
+        "02-planning/GRV.md",
+        "03-review/REVIEW-01_内部评审记录.md",
+        "04-execution/A-LOG-01.md",
+        "04-execution/A-OUT-01.md",
+        "05-closure/P-ACPT-01.md"
+      ]
+    },
+    "simple": {
+      "name": "Simple Mode",
+      "wbs_layers": ["P", "A"],
+      "stages": ["01-discovery", "02-planning", "04-execution", "05-closure"],
+      "sub_agents": ["执行层"],
+      "required_docs": [
+        "01-discovery/DISCOVERY.md",
+        "02-planning/GRV.md",
+        "04-execution/A-OUT-01.md",
+        "05-closure/P-ACPT-01.md"
+      ]
+    }
+  },
+  "gate_conditions": {
+    "planning_complete": {
+      "complex": "Requires GRV.md to have G, R, A definitions and Battle approval.",
+      "standard": "Requires GRV.md to have P and R definitions and Orchestrator review.",
+      "simple": "Requires GRV.md to have P, R, and A definitions."
+    },
+    "execution_complete": {
+      "all": "Requires A-OUT-01 to have evidence of delivery."
+    }
+  }
+}
