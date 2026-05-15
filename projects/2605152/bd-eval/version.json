@@ -1,9 +1,18 @@
 {
   "skillcode": "bd-eval",
-  "version": "1.2.1",
-  "sopVersion": "5.3",
+  "version": "1.3.0",
+  "sopVersion": "5.4",
   "lastUpdated": "2026-05-15",
   "changelog": [
+    {
+      "version": "1.3.0",
+      "date": "2026-05-15",
+      "changes": [
+        "Phase 3 改为批次并行执行（章0先跑 + 后续每3章一批并行）",
+        "预计提速 40-50%（串行 16-24min → 并行 10-15min）",
+        "SOP v5.4"
+      ]
+    },
     {
       "version": "1.2.1",
       "date": "2026-05-15",

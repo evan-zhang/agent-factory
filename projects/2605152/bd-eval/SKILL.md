@@ -1,7 +1,7 @@
 ---
 name: bd-eval
 description: "BD品种评估 TPR 自动化流水线 — 从品种名称到在线报告的完整执行链路。触发词：BD评估、跑品种、评估新药、BD品种筛选"
-version: "1.2.1"
+version: "1.3.0"
 homepage: projects/bd-eval/SOP.md
 dependencies:
   - tpr-framework (optional, for battle protocol reference)
@@ -213,23 +213,39 @@ TPR Orchestrator 调度独立子Agent
 ## Phase 3: GRV 逐章节深度评估
 
 ### 执行者
-GRV子Agent（Sessions Spawn，并行或串行）
+GRV子Agent（Sessions Spawn，批次并行）
 
-### 子Agent超时问题（已知风险）
-- 默认超时对逐章搜索任务严重不足
-- **解决方案A**：每个品种按模板选择章节数（如模板一只做8-10章，模板三做13章）
-- **解决方案B**：子Agent自主判断次要章节并跳过（保留记录）
+### 执行策略（v1.3.0 改为批次并行）
+
+**章0先跑，后续章节每3章一批并行。**
+
+```
+第0章: 品种概述与模板说明（必须先跑完）
+    ↓
+批次1: 章1 | 章2 | 章3（3个子Agent并行）
+    ↓
+批次2: 章4 | 章5 | 章6（3个子Agent并行）
+    ↓
+批次N: 剩余章节
+    ↓
+验证: 批量交叉检查
+    ↓
+修正
+```
+
+**并行约束：**
+- 最大并发 3 个子Agent（留 2 个给验证和主会话）
+- 并行章节各自独立搜索
+- Phase 4 Battle 重点检查跨章节矛盾
+
+**预计耗时：** 串行 16-24 min → 并行 10-15 min（提速 40-50%）
 
 ### 操作步骤
 
 1. 读取 `sub-agent-prompt-template.md` 作为子Agent prompt 模板
-2. **第0章必写**：品种概述 + 模板选择理由 + 投资视角
-3. 对模板的每个章节：
-   - web_search ≥3 次（每次必须记录搜索词和结果URL）
-   - 写章节内容（中文）
-   - 正文关键数据标注 [1] [2]，章节末尾附参考来源（含完整URL）
-   - 写入 `02-grv-by-chapter/{序号}-{章节名}.md`
-4. 每完成3-5章，派验证子Agent批量交叉检查
+2. **第0章必写**：品种概述 + 模板选择理由 + 投资视角（先跑完）
+3. 后续章节每 3 章一批，spawn 3 个子Agent 并行执行
+4. 每批完成后，派验证子Agent批量交叉检查
 5. 根据验证结果修正
 
 **✅ Phase 3 完成标志**：模板规定的全部章节文件存在于 `02-grv-by-chapter/`
