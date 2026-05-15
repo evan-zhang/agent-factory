@@ -3,7 +3,7 @@ version: alpha
 name: "02-A: Color Block Editorial Cover"
 description: "Google 四色拼贴封面风 — 报告首页、专题入口页、年度趋势报告封面"
 colors:
-  primary: "#1A73E8"
+  primary: "#C97842"
   secondary: "#34A853"
   tertiary: "#FBBC05"
   accent: "#EA4335"
@@ -65,7 +65,7 @@ components:
 
 ## Colors
 
-使用 Google 四色作为色块：蓝 #1A73E8、绿 #34A853、黄 #FBBC05、红 #EA4335。标题使用 #202124 深黑。背景纯白。
+使用 Google 四色作为色块：暖橙 #C97842、绿 #34A853、黄 #FBBC05、红 #EA4335。标题使用 #202124 深黑。背景纯白。
 
 ## Components
 

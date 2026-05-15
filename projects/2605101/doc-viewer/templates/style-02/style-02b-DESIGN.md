@@ -3,7 +3,7 @@ version: alpha
 name: "02-B: Full-bleed Chapter Hero"
 description: "大图 Hero 章节封面风 — 章节首页、趋势介绍页、核心观点展示页"
 colors:
-  primary: "#1A73E8"
+  primary: "#C97842"
   secondary: "#34A853"
   tertiary: "#FBBC05"
   accent: "#EA4335"
@@ -61,7 +61,7 @@ components:
 
 ## Colors
 
-底部色条按章节切换主题色：蓝 #1A73E8、绿 #34A853、黄 #FBBC05、红 #EA4335。
+底部色条按章节切换主题色：暖橙 #C97842、绿 #34A853、黄 #FBBC05、红 #EA4335。
 
 遮罩层使用 rgba(0,0,0,0.25) 保持图片可读性。标题使用白色。
 
@@ -74,7 +74,7 @@ components:
 ## Components
 
 **Hero Overlay：** 全屏暗色遮罩层，承载白色文字。
-**Bottom Bar：** 6px 主题色横条，随章节变色。通过改变 backgroundColor 切换蓝/绿/黄/红。
+**Bottom Bar：** 6px 主题色横条，随章节变色。通过改变 backgroundColor 切换暖橙/绿/黄/红。
 
 ## Do's and Don'ts
 

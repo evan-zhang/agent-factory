@@ -3,9 +3,9 @@ version: alpha
 name: Data & AI Report
 description: "企业数据智能白皮书 — Google Cloud / IDC 风格综合报告页面"
 colors:
-  primary: "#4285F4"
-  primary-dark: "#2F6FE4"
-  primary-light: "#5B8DEF"
+  primary: "#C97842"
+  primary-dark: "#9A6736"
+  primary-light: "#D98B52"
   secondary: "#34A853"
   secondary-dark: "#2FA24A"
   secondary-light: "#43B866"
@@ -120,9 +120,9 @@ components:
 
 ## Colors
 
-使用 Google 四色作为核心品牌色，配合中性灰和白底。
+使用暖色四色作为核心品牌色，配合中性灰和白底。
 
-- **Primary (#4285F4)：** 科技蓝，用于 Hero Banner、主标题区、核心交互
+- **Primary (#C97842)：** 暖橙色，用于 Hero Banner、主标题区、核心交互
 - **Secondary (#34A853)：** 数据绿，用于数据治理、正反馈、安全议题
 - **Tertiary (#FBBC05)：** 分析黄，用于 Analytics、BI、强调模块
 - **Accent (#EA4335)：** 风险红，用于警告、风险议题、重点突出
@@ -159,8 +159,8 @@ Hero 标题 64px/700，数据数字 72px/700，正文 16px/400。通过字号和
 
 ## Components
 
-**Hero Overlay：** 全屏高度，蓝色渐变遮罩（#2F6FE4 到 #4285F4），承载白色大标题。
-**Color Card：** 深蓝背景 + 白色文字 + 无圆角 + 无阴影。用于方法论矩阵和重点模块。背景使用 primary-dark (#2F6FE4) 而非 primary，确保与白色文字的 WCAG AA 对比度。
+**Hero Overlay：** 全屏高度，暖橙色渐变遮罩（#9A6736 到 #C97842），承载白色大标题。
+**Color Card：** 深暖橙背景 + 白色文字 + 无圆角 + 无阴影。用于方法论矩阵和重点模块。背景使用 primary-dark (#9A6736) 而非 primary，确保与白色文字的 WCAG AA 对比度。
 **Image Card Bottom：** 8px 绿色底部色条，作为图片卡片的视觉锚点。
 **Data Circle：** 240px 正圆、浅绿色底、绿色数字。用于数据洞察展示。
 **Section Content：** 白底主内容区，统一内边距。

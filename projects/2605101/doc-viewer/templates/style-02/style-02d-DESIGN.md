@@ -3,7 +3,7 @@ version: alpha
 name: "02-D: Color Tile Matrix"
 description: "彩色模块矩阵风 — 方法论总览、模块清单、趋势列表、产品矩阵"
 colors:
-  primary: "#1A73E8"
+  primary: "#C97842"
   secondary: "#34A853"
   tertiary: "#FBBC05"
   accent: "#EA4335"
@@ -91,7 +91,7 @@ components:
 
 ## Components
 
-**Tile 1-6：** 六个彩色模块，分别使用蓝/绿/黄/红/浅蓝/浅绿。每个内含编号和标题。编号使用 14px 白色半透明（rgba(255,255,255,0.7)），标题使用 22px 白色粗体。
+**Tile 1-6：** 六个彩色模块，分别使用暖橙/绿/黄/红/浅暖橙/浅绿。每个内含编号和标题。编号使用 14px 白色半透明（rgba(255,255,255,0.7)），标题使用 22px 白色粗体。
 
 ## Do's and Don'ts
 

@@ -22,10 +22,10 @@
 
 ## 2. 色彩体系
 
-### 主蓝色（核心科技色）
-- `#4285F4` / `#2F6FE4` / `#5B8DEF`
+### 主暖橙色（核心科技色）
+- `#C97842` / `#9A6736` / `#D98B52`
 - 用途：主标题区、Hero Banner、科技感背景、核心数据区
-- 视觉感受：Google Enterprise, Cloud / AI / Data
+- 视觉感受：温暖企业风格, AI / Data / Enterprise
 
 ### 主绿色（数据治理色）
 - `#34A853` / `#2FA24A` / `#43B866`
@@ -132,7 +132,7 @@ font-family: "Google Sans", "Inter", "Helvetica Neue", "Segoe UI", sans-serif;
 - 大标题、少量文字、杂志化排版
 
 颜色体系：
-- 蓝色 #4285F4
+- 暖橙色 #C97842
 - 绿色 #34A853
 - 黄色 #FBBC05
 - 红色 #EA4335

@@ -3,7 +3,7 @@ version: alpha
 name: "02-C: Consulting Report Content Page"
 description: "白底咨询报告内容页 — 正文分析页、趋势解释页、方案说明页"
 colors:
-  primary: "#1A73E8"
+  primary: "#C97842"
   secondary: "#34A853"
   tertiary: "#FBBC05"
   accent: "#EA4335"
@@ -74,11 +74,11 @@ components:
 
 ## Colors
 
-标题使用主题色 #1A73E8。正文使用中灰 #5F6368。背景纯白 #FFFFFF。
+标题使用主题色 #C97842。正文使用中灰 #5F6368。背景纯白 #FFFFFF。
 
 ## Components
 
-**Content Title Block：** 标题区，文字使用主题蓝色。
+**Content Title Block：** 标题区，文字使用主题暖橙色。
 **Footer Bar：** 底部 4px 色条，比封面的 6px 更细，保持轻盈感。
 **Inline Tag：** 正文中的小标签，蓝色大写字母，用于标注类别或来源。
 

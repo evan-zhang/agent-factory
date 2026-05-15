@@ -3,7 +3,7 @@ version: alpha
 name: Google Cloud / IDC Shared Base
 description: "Google Cloud / IDC 企业报告视觉系统 — 6 套变体的共享基础 token"
 colors:
-  primary: "#1A73E8"
+  primary: "#C97842"
   primary-dark: "#1557B0"
   secondary: "#34A853"
   secondary-dark: "#2FA24A"
@@ -122,9 +122,9 @@ Google Cloud / IDC 企业报告视觉系统。6 套变体的统一底层。
 
 ## Colors
 
-Google 四色为核心品牌色。蓝色主导科技感，绿色数据可信，黄色分析强调，红色风险警示。
+Google 四色为核心品牌色。暖橙色主导科技感，绿色数据可信，黄色分析强调，红色风险警示。
 
-- **Primary (#1A73E8)：** 主蓝色，科技核心
+- **Primary (#C97842)：** 主暖橙色，科技核心
 - **Secondary (#34A853)：** 数据绿，治理与正反馈
 - **Tertiary (#FBBC05)：** 分析黄，BI 与强调
 - **Accent (#EA4335)：** 风险红，警示与突出

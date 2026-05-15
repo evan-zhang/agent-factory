@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{TITLE}}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #EFE4D6;
+      --bg-alt: #E6D9CA;
+      --bg-card: #F7EFE7;
+      --accent: #C97842;
+      --accent-light: #D98B52;
+      --text: #1E1715;
+      --text-secondary: ##2B211D;
+      --muted: #9C8F84;
+      --border: #C8BCB2;
+      --border-light: #D9D0C6;
+    }
+
+    body {
+      font-family: "Inter", "SF Pro Display", "Helvetica Neue", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+
+    /* Hero section */
+    .hero-section {
+      min-height: 100vh;
+      padding: 80px 120px;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      gap: 80px;
+    }
+
+    .hero-content {
+      flex: 1;
+      max-width: 600px;
+    }
+
+    .hero-tag {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .hero-title {
+      font-size: 72px;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+
+    .hero-title span {
+      color: var(--accent);
+    }
+
+    .hero-desc {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      max-width: 480px;
+      line-height: 1.7;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+    }
+
+    .btn {
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-alt);
+    }
+
+    .hero-mockup {
+      flex: 1;
+      background: var(--bg-card);
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      padding: 40px;
+      min-height: 400px;
+    }
+
+    /* Features section */
+    .features-section {
+      padding: 80px 120px;
+      background: var(--bg);
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 60px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+    }
+
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--bg-alt);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      font-size: 28px;
+      color: var(--accent);
+    }
+
+    .feature-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .feature-desc {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* CTA section */
+    .cta-section {
+      padding: 120px;
+      background: linear-gradient(135deg, var(--bg) 0%, var(--bg-alt) 100%);
+      text-align: center;
+    }
+
+    .cta-title {
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: -2px;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .cta-desc {
+      font-size: 20px;
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 18px 48px;
+      background: var(--accent);
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .cta-button:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    /* Footer */
+    .footer-section {
+      padding: 60px 120px;
+      background: var(--bg-alt);
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-section {
+        flex-direction: column;
+        padding: 40px;
+        gap: 40px;
+      }
+
+      .hero-title {
+        font-size: 48px;
+      }
+
+      .hero-mockup {
+        width: 100%;
+      }
+
+      .features-section {
+        padding: 40px;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cta-section {
+        padding: 60px 40px;
+      }
+
+      .cta-title {
+        font-size: 32px;
+      }
+
+      .footer-section {
+        padding: 40px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-section {
+        padding: 20px;
+      }
+
+      .hero-title {
+        font-size: 36px;
+      }
+
+      .hero-desc {
+        font-size: 16px;
+      }
+
+      .feature-card {
+        padding: 24px;
+      }
+
+      .cta-section {
+        padding: 40px 20px;
+      }
+
+      .cta-button {
+        width: 100%;
+        text-align: center;
+      }
+
+      .footer-section {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO SECTION -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <p class="hero-tag">{{HERO_TAG}}</p>
+      <h1 class="hero-title">{{HERO_TITLE}}</h1>
+      <p class="hero-desc">{{HERO_DESC}}</p>
+      <div class="hero-cta">
+        <a href="#" class="btn btn-primary">{{HERO_CTA}}</a>
+        <a href="#" class="btn btn-secondary">Learn More</a>
+      </div>
+    </div>
+    <div class="hero-mockup">
+      <!-- UI mockup will be inserted here -->
+    </div>
+  </section>
+
+  <!-- FEATURES SECTION -->
+  <section class="features-section">
+    <h2 style="font-size: 36px; font-weight: 700; letter-spacing: -1px; color: var(--text);">Features</h2>
+    <div class="feature-grid">
+      {{FEATURES}}
+    </div>
+  </section>
+
+  <!-- CTA SECTION -->
+  <section class="cta-section">
+    <h2 class="cta-title">{{CTA_TITLE}}</h2>
+    <p class="cta-desc">{{CTA_DESC}}</p>
+    <a href="#" class="cta-button">Get Started</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer-section">
+    {{FOOTER_TEXT}}
+  </footer>
+
+</body>
+</html>

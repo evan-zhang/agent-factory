@@ -3,7 +3,7 @@ version: alpha
 name: "02-E: Insight Metrics Bubble"
 description: "数据洞察大数字风 — 数据洞察页、关键指标页、统计结论页"
 colors:
-  primary: "#1A73E8"
+  primary: "#C97842"
   secondary: "#34A853"
   tertiary: "#FBBC05"
   accent: "#EA4335"

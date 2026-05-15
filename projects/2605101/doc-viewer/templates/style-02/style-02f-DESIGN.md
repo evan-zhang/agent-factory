@@ -3,7 +3,7 @@ version: alpha
 name: "02-F: Industry Case Cards"
 description: "案例/行业卡片风 — 行业案例页、解决方案场景页、客户应用页"
 colors:
-  primary: "#1A73E8"
+  primary: "#C97842"
   secondary: "#34A853"
   tertiary: "#FBBC05"
   accent: "#EA4335"
@@ -76,7 +76,7 @@ components:
 
 ## Components
 
-**Case Card：** 白底卡片，无圆角，底部 4px 蓝色线（#1A73E8）。图片统一滤镜处理（brightness(0.95) contrast(1.02) saturate(0.9)），保持视觉一致性。
+**Case Card：** 白底卡片，无圆角，底部 4px 蓝色线（#C97842）。图片统一滤镜处理（brightness(0.95) contrast(1.02) saturate(0.9)），保持视觉一致性。
 
 ## Do's and Don'ts
 
