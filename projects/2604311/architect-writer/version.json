@@ -1,7 +1,7 @@
 {
   "skillcode": "architect-writer",
-  "version": "0.5.0",
-  "changelog": "模式B溯源机制（行内标注+末尾清单+缺失标注+素材清单+Phase3溯源检查）；集中Personality块；集中Stop Rules块；YAML description改Outcome-first",
+  "version": "0.5.1",
+  "changelog": "Phase 4 新增 4.2.5 结构化清洗工序（编号统一/HTML清理/分隔线规范/章节头尾统一/清洗验证）；CP6 新增结构化清洗检查项；Phase 2 新增编号约束规则（修复 Issue #57）",
   "name": "结构化方案",
   "name_en": "architect-writer",
   "abbr": "AW",
