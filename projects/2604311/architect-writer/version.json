@@ -1,11 +1,11 @@
 {
   "skillcode": "architect-writer",
-  "version": "0.4.0",
-  "changelog": "三级联网搜索策略（Level 1 内置/Level 2 agent-reach/Level 3 multi-search）；环境探测+用户选择提示；新增配置与授权节、问题反馈节",
+  "version": "0.5.0",
+  "changelog": "模式B溯源机制（行内标注+末尾清单+缺失标注+素材清单+Phase3溯源检查）；集中Personality块；集中Stop Rules块；YAML description改Outcome-first",
   "name": "结构化方案",
   "name_en": "architect-writer",
   "abbr": "AW",
-  "description": "将复杂的业务知识体系，转化为一套结构清晰、多人协作可用的方案报告（多章节、多分卷 Markdown 文件集群）",
+  "description": "将复杂业务知识转化为结构化方案报告集群。成功标准：用户仅通过总索引和架构图即可理解全貌，每个分卷可独立阅读和修订，整体方案经得起同行评审。",
   "triggers": [
     "写方案",
     "写报告",
