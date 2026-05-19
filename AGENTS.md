@@ -16,7 +16,8 @@
 | Assembler | `specs/agents/assembler.md` | L2 S5-S6：组装最终 workspace、生成追溯矩阵 |
 | Reviewer | `specs/agents/reviewer.md` | 需要独立外部评审时 |
 | Governance Officer | `specs/agents/governance-officer.md` | 治理合规检查 |
-| Link Archivist Worker | `projects/2604131/link-archivist/specs/agents/link-archivist-worker.md` | 链接抓取、调研、报告生成、归档（sub-agent 执行模式） |
+| Orchestrator | `specs/agents/link-archivist-orchestrator.md` | Depth 1：编排单个链接的 Phase 1-5 流程，可 spawn depth 2 worker |
+| Worker | `specs/agents/link-archivist-worker.md` | Depth 2 叶子：执行具体子任务（抓取、调研、归档），不能 spawn |
 
 ## Spawn 规则
 
