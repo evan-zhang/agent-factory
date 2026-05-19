@@ -2,10 +2,10 @@
 """Migrate archive directories from flat YYYY-MM-DD to nested YYYY/MM/DD.
 
 Usage (dry-run, default):
-    python3 scripts/migrate_nested_dirs.py --local /path/to/archived [--obsidian /path/to/obsidian]
+    python3 scripts/migrate_nested_dirs.py --local /path/to/archived
 
 Usage (execute):
-    python3 scripts/migrate_nested_dirs.py --local /path/to/archived --obsidian /path/to/obsidian --execute
+    python3 scripts/migrate_nested_dirs.py --local /path/to/archived --execute
 
 This script handles:
 1. Directories named YYYY-MM-DD → move to YYYY/MM/DD
@@ -103,40 +103,36 @@ def migrate_loose_files(base_dir: Path, dry_run: bool = True) -> list[dict]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Migrate flat date dirs to nested YYYY/MM/DD")
     parser.add_argument("--local", required=True, help="Local archive_dir path")
-    parser.add_argument("--obsidian", help="Obsidian sync directory path")
     parser.add_argument("--execute", action="store_true", help="Actually move files (default: dry-run)")
     args = parser.parse_args()
 
     mode = "EXECUTE" if args.execute else "DRY RUN"
+    base = Path(args.local).expanduser()
 
-    for label, path_str in [("local", args.local), ("obsidian", args.obsidian)]:
-        if not path_str:
-            continue
-        base = Path(path_str).expanduser()
-        if not base.exists():
-            print(f"[{label}] Directory not found: {base}")
-            continue
+    if not base.exists():
+        print(f"Directory not found: {base}")
+        return 1
 
-        print(f"\n{'='*60}")
-        print(f"[{label}] {mode}: {base}")
-        print(f"{'='*60}")
+    print(f"\n{'='*60}")
+    print(f"[local] {mode}: {base}")
+    print(f"{'='*60}")
 
-        # 1. Migrate flat date directories
-        dir_results = migrate_flat_dirs(base, dry_run=not args.execute)
-        print(f"\nDate directories: {len(dir_results)}")
-        for r in dir_results:
-            flag = "✓" if r["status"] == "ok" else ("!" if r["status"] == "conflict" else "→")
-            print(f"  {flag} {r['status']:8s} | {Path(r['from']).name} → {Path(r['to']).relative_to(base)} ({r.get('files', '?')} files)")
+    # 1. Migrate flat date directories
+    dir_results = migrate_flat_dirs(base, dry_run=not args.execute)
+    print(f"\nDate directories: {len(dir_results)}")
+    for r in dir_results:
+        flag = "✓" if r["status"] == "ok" else ("!" if r["status"] == "conflict" else "→")
+        print(f"  {flag} {r['status']:8s} | {Path(r['from']).name} → {Path(r['to']).relative_to(base)} ({r.get('files', '?')} files)")
 
-        # 2. Migrate loose files
-        file_results = migrate_loose_files(base, dry_run=not args.execute)
-        print(f"\nLoose files: {len(file_results)}")
-        for r in file_results:
-            flag = "✓" if r["status"] == "ok" else ("!" if r["status"] == "conflict" else "→")
-            print(f"  {flag} {r['status']:8s} | {Path(r['from']).name} → {Path(r['to']).relative_to(base)}")
+    # 2. Migrate loose files
+    file_results = migrate_loose_files(base, dry_run=not args.execute)
+    print(f"\nLoose files: {len(file_results)}")
+    for r in file_results:
+        flag = "✓" if r["status"] == "ok" else ("!" if r["status"] == "conflict" else "→")
+        print(f"  {flag} {r['status']:8s} | {Path(r['from']).name} → {Path(r['to']).relative_to(base)}")
 
-        if not args.execute:
-            print(f"\n⚠️  DRY RUN — no files were moved. Add --execute to apply.")
+    if not args.execute:
+        print(f"\n⚠️  DRY RUN — no files were moved. Add --execute to apply.")
 
     return 0
 

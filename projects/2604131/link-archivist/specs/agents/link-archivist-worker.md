@@ -32,7 +32,6 @@ LINK_ARCHIVIST_RESULT
 mode: full|short
 status: success|partial|failed
 archive_path: /path/to/archived/file (成功时)
-obsidian_path: /path/to/obsidian/file (如已同步)
 video_path: /path/to/video (如已归档)
 summary: 一段话摘要（full 模式不超过 200 字，short 模式即正文）
 warnings: 任何需要注意的问题（无则留空）

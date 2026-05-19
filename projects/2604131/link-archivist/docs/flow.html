@@ -260,18 +260,13 @@
           </div>
           <div class="phase-subtitle">Phase 5 — 必须通过脚本归档，手动 rename 视频</div>
           <div style="margin-top: 12px;">
-            <code>python3 scripts/archive_report.py &lt;content_file&gt; [--dir &lt;dir&gt;] [--title &lt;title&gt;] [--obsidian &lt;path&gt;] [--no-obsidian]</code>
+            <code>python3 scripts/archive_report.py &lt;content_file&gt; [--dir &lt;dir&gt;] [--title &lt;title&gt;]</code>
           </div>
           <div style="margin-top: 10px; display: flex; gap: 16px; flex-wrap: wrap;">
             <div style="min-width: 200px;">
               <div style="font-size: 0.72rem; font-weight: 700; color: var(--muted); margin-bottom: 4px;">本地归档</div>
               <div style="font-size: 0.78rem; color: var(--blue); font-family: monospace;">{archive_dir}/YYYY/MM/</div>
               <div style="font-size: 0.75rem; color: var(--muted);">K-{YYMMDD}-{NNN}-{标题}.md</div>
-            </div>
-            <div style="min-width: 200px;">
-              <div style="font-size: 0.72rem; font-weight: 700; color: var(--muted); margin-bottom: 4px;">Obsidian 同步</div>
-              <div style="font-size: 0.78rem; color: var(--green); font-family: monospace;">{obsidian_dir}/YYYY/MM/</div>
-              <div style="font-size: 0.75rem; color: var(--muted);">{标题}-YYYY-MM-DD.md</div>
             </div>
             <div style="min-width: 200px;">
               <div style="font-size: 0.72rem; font-weight: 700; color: var(--muted); margin-bottom: 4px;">视频归档</div>

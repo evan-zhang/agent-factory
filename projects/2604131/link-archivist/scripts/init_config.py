@@ -23,12 +23,6 @@ CONFIG_FIELDS = {
         "hint": "报告存放的根目录，按日期自动分子目录",
         "example": "/path/to/knowledge-base",
     },
-    "obsidian_dir": {
-        "label": "Obsidian 同步目录",
-        "required": False,
-        "hint": "留空则跳过 Obsidian 同步",
-        "example": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/AI调研",
-    },
     "xgjk_app_key": {
         "label": "玄关 appKey（AI 慧记转写）",
         "required": False,
@@ -92,11 +86,6 @@ def check_config(config: dict) -> dict:
         archive = Path(config["archive_dir"]).expanduser()
         archive_ok = archive.is_dir()
 
-    obsidian_ok = False
-    if config.get("obsidian_dir"):
-        obsidian = Path(config["obsidian_dir"]).expanduser()
-        obsidian_ok = obsidian.is_dir()
-
     tavily_ok = bool(config.get("tavily_api_key")) or bool(os.getenv("TAVILY_API_KEY"))
     xgjk_ok = bool(config.get("xgjk_app_key"))
 
@@ -107,8 +96,6 @@ def check_config(config: dict) -> dict:
     hints = []
     if not archive_ok:
         hints.append("请设置 archive_dir（知识库主目录，必填）")
-    if not obsidian_ok:
-        hints.append("建议设置 obsidian_dir（Obsidian 同步目录，可选）")
     if not tavily_ok:
         hints.append("建议配置 tavily_api_key（Web Search 交叉验证，可选）")
     if not xgjk_ok:
@@ -123,8 +110,6 @@ def check_config(config: dict) -> dict:
         "config_path": str(get_config_path()),
         "archive_dir": config.get("archive_dir"),
         "archive_ok": archive_ok,
-        "obsidian_dir": config.get("obsidian_dir"),
-        "obsidian_ok": obsidian_ok,
         "tavily_configured": tavily_ok,
         "xgjk_configured": xgjk_ok,
         "video_archive_dir": config.get("video_archive_dir"),
