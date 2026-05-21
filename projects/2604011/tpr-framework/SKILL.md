@@ -179,11 +179,7 @@ Shangshu省 executes. Menxi省 reviews. Orchestrator dispatches tasks and coordi
 
 > Ralph Loop skill 地址：`projects/2605211/ralph/SKILL.md`
 > 
-> **如果未安装 Ralph Loop**：
-> 1. 从 agent-factory 仓库获取：`projects/2605211/ralph/`（含 SKILL.md、scripts/、references/）
-> 2. 将整个 `ralph/` 目录复制到你的 `projects/` 下（可保留 `2605211` 编号或改为你的项目编号）
-> 3. 确保系统已安装 Claude Code（`claude`）或 Codex（`codex`）作为执行器
-> 4. 验证安装：`bash projects/<your-id>/ralph/scripts/ralph-loop.sh --help`
+> **如果未安装 Ralph Loop**：参见 `projects/2605211/ralph/SKILL.md` 的「安装」章节。
 
 ---
 

@@ -13,6 +13,61 @@ metadata:
 
 # Ralph Loop — AI 自主循环执行协议
 
+## 安装
+
+### 前置要求
+
+- **bash**（macOS / Linux 自带）
+- **AI 执行器**（任选其一）：
+  - [Claude Code](https://docs.anthropic.com/en/docs/claude-code)（`claude` 命令）
+  - [OpenAI Codex](https://github.com/openclaw/codex)（`codex` 命令）
+- **git**
+
+### 安装步骤
+
+```bash
+# 1. 克隆仓库（如果还没有）
+git clone https://github.com/evan-zhang/agent-factory.git
+cd agent-factory
+
+# 2. Ralph Loop 已包含在仓库中，位于：
+#    projects/2605211/ralph/
+#    含：SKILL.md（本文件）、scripts/、references/
+
+# 3. 验证安装
+bash projects/2605211/ralph/scripts/ralph-loop.sh --help
+bash projects/2605211/ralph/scripts/init-state.sh --help
+```
+
+### 集成到你的项目
+
+```bash
+# 复制到你的项目目录（可选，修改编号为你的项目编号）
+cp -r projects/2605211/ralph projects/<your-project-id>/ralph
+```
+
+### 不想克隆整个仓库？
+
+可以只下载需要的文件：
+
+```bash
+# 创建目录
+mkdir -p ralph/scripts ralph/references
+
+# 下载核心文件
+curl -o ralph/SKILL.md https://raw.githubusercontent.com/evan-zhang/agent-factory/master/projects/2605211/ralph/SKILL.md
+curl -o ralph/scripts/ralph-loop.sh https://raw.githubusercontent.com/evan-zhang/agent-factory/master/projects/2605211/ralph/scripts/ralph-loop.sh
+curl -o ralph/scripts/init-state.sh https://raw.githubusercontent.com/evan-zhang/agent-factory/master/projects/2605211/ralph/scripts/init-state.sh
+curl -o ralph/version.json https://raw.githubusercontent.com/evan-zhang/agent-factory/master/projects/2605211/ralph/version.json
+chmod +x ralph/scripts/*.sh
+
+# 下载参考模板（按需）
+curl -o ralph/references/prompt-template-executor.md https://raw.githubusercontent.com/evan-zhang/agent-factory/master/projects/2605211/ralph/references/prompt-template-executor.md
+curl -o ralph/references/prompt-template-autonomous.md https://raw.githubusercontent.com/evan-zhang/agent-factory/master/projects/2605211/ralph/references/prompt-template-autonomous.md
+```
+
+---
+
 ## 核心原理
 
 ```
