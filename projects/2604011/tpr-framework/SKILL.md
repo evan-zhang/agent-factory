@@ -162,6 +162,23 @@ Draft the contract/blueprint. Output: `GRV.md`. Includes scope, constraints, del
 ### Phase 4: Implementation
 Shangshu省 executes. Menxi省 reviews. Orchestrator dispatches tasks and coordinates.
 
+#### Phase 4 执行模式选择
+
+进入 Implementation 前，与用户确认执行方式：
+
+**方式 A：尚书省单线程执行**（适合简单任务，步骤已知）
+
+**方式 B：Ralph Loop 持续执行**（适合复杂任务、多阶段、预计 > 30 分钟）
+- 触发条件：Battle 通过 + GRV 定稿 + 用户说"开始执行"或"持续执行"
+- 操作：参见 `references/tpr-bridge-protocol.md` 进行 GRV → Ralph Loop 桥接
+- 桥接输出：GRV → checklist + ralph-state.json + PROMPT.md → coding agent 持续执行
+
+**方式 C：其他 coding agent**（直接调用 Claude Code / Codex，一次性执行）
+
+> 推荐默认选 B。Ralph Loop 的循环验证机制可以避免"执行到一半发现方案有问题"的风险。
+
+> Ralph Loop skill 地址：`projects/2605211/ralph/SKILL.md`
+
 ---
 
 ## The Three Provinces（Absolute Rules）
@@ -801,5 +818,17 @@ projects/{PROJECT-ID}/
 ├── battle/             ← Battle records
 │   ├── BATTLE-R1-MENXI.md
 │   └── BATTLE-R1-SHANGSHU.md
-└── output/             ← Final deliverables
+├── bridge-metadata.json  ← Ralph Loop bridge metadata (when using Mode B)
+├── ralph-state.json      ← Ralph Loop state (when using Mode B)
+└── ralph-journal.md      ← Ralph Loop journal (when using Mode B)
 ```
+
+## References Index
+
+| File | Purpose | When to Read |
+|------|---------|--------------|
+| `references/best-practices.md` | TPR 最佳实践 | 项目启动时 |
+| `references/spawning-guide.md` | Sub-agent spawn 规范 | 调度任务时 |
+| `references/bindings-guide.md` | 路由绑定管理 | 配置 channel 时 |
+| `references/maintenance.md` | 自我检查与复盘 | 每次任务后 |
+| `references/tpr-bridge-protocol.md` | **Ralph Loop 桥接规范** | **Phase 4 选择 Mode B 时** |
