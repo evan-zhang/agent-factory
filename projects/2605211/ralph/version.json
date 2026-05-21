@@ -1,0 +1,7 @@
+{
+  "skillcode": "ralph",
+  "version": "2.0.0",
+  "description": "Ralph Loop — AI 自主循环执行协议（执行者模式 + 自主者模式）",
+  "author": "Based on Geoffrey Huntley's Ralph Loop pattern",
+  "references": "https://ghuntley.com/loop/"
+}

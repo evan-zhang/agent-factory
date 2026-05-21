@@ -1,0 +1,17 @@
+{
+  "task": "一句话任务描述",
+  "goal": "完成条件原文（范围 + 证据 + 测试）",
+  "mode": "executor",
+  "phase": "initialized",
+  "iteration": 0,
+  "checklist": {
+    "条件A（范围）：涉及的文件/目录已创建": false,
+    "条件B（证据）：验证命令输出符合预期": false,
+    "条件C（测试）：相关测试全部通过": false
+  },
+  "blockers": [],
+  "decisions": [],
+  "startedAt": "2026-01-01T00:00:00Z",
+  "completedAt": "",
+  "meta": {}
+}

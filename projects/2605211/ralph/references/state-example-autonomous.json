@@ -1,0 +1,15 @@
+{
+  "task": "一句话任务描述",
+  "goal": "最终要达成的结果",
+  "mode": "autonomous",
+  "phase": "initialized",
+  "iteration": 0,
+  "checklist": {},
+  "route": [],
+  "journal": [],
+  "blockers": [],
+  "decisions": [],
+  "startedAt": "2026-05-21T00:00:00Z",
+  "completedAt": "",
+  "meta": {}
+}

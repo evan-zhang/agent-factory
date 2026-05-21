@@ -1,0 +1,19 @@
+{
+  "projectId": "2605211",
+  "name": "Ralph Loop 持续编程协议",
+  "skill": "ralph",
+  "version": "1.0.0",
+  "phase": "maintenance",
+  "source": "tpr/projects/ontology-db/skills/ralph",
+  "migratedAt": "2026-05-21",
+  "steps": {
+    "discovery": "completed",
+    "grv": "completed",
+    "agents": "skip",
+    "skills": "completed",
+    "api": "skip",
+    "matrix": "completed",
+    "acceptance": "completed"
+  },
+  "notes": "从 tpr domain 迁移，理论框架+脚本已完整，纳入工厂版本管理"
+}
