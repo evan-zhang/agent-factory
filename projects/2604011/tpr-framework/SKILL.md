@@ -9,6 +9,31 @@ Three Provinces System: a structured project workflow with exactly three roles a
 
 ---
 
+## 安装
+
+### 一键安装
+
+```bash
+# 安装到默认位置（当前目录下的 tpr-framework/）
+bash <(curl -fsSL https://raw.githubusercontent.com/evan-zhang/agent-factory/master/projects/2604011/tpr-framework/install.sh)
+
+# 或指定目标目录
+bash <(curl -fsSL https://raw.githubusercontent.com/evan-zhang/agent-factory/master/projects/2604011/tpr-framework/install.sh) ~/.agents/skills/tpr-framework
+```
+
+### 手动安装
+
+```bash
+git clone https://github.com/evan-zhang/agent-factory.git
+cp -r agent-factory/projects/2604011/tpr-framework/ ~/.agents/skills/tpr-framework/
+```
+
+### 升级
+
+重新运行安装脚本即可覆盖更新（不会删除你自己的项目文件）。
+
+---
+
 ## The Four Phases
 
 ```
