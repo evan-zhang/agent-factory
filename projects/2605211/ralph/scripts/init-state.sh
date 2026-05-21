@@ -62,7 +62,9 @@ if [[ "$MODE" != "executor" && "$MODE" != "autonomous" ]]; then
 fi
 
 # 用 Python 安全构建 JSON（处理所有特殊字符）
-python3 - "$STATE_FILE" "$TASK" "$GOAL" "$MODE" "${CHECKLIST[@]}" <<'PYEOF'
+# 注意：CHECKLIST 仅 executor 模式需要，autonomous 模式不传避免空数组问题
+if [[ "$MODE" == "executor" ]]; then
+  python3 - "$STATE_FILE" "$TASK" "$GOAL" "$MODE" "${CHECKLIST[@]}" <<'PYEOF'
 import json, sys
 
 state_file = sys.argv[1]
@@ -71,36 +73,19 @@ goal = sys.argv[3]
 mode = sys.argv[4]
 checklist_items = sys.argv[5:]
 
-if mode == "executor":
-    state = {
-        "task": task,
-        "goal": goal,
-        "mode": "executor",
-        "phase": "initialized",
-        "iteration": 0,
-        "checklist": {item: False for item in checklist_items},
-        "blockers": [],
-        "decisions": [],
-        "startedAt": "",
-        "completedAt": "",
-        "meta": {}
-    }
-else:
-    state = {
-        "task": task,
-        "goal": goal,
-        "mode": "autonomous",
-        "phase": "initialized",
-        "iteration": 0,
-        "checklist": {},
-        "route": [],
-        "journal": [],
-        "blockers": [],
-        "decisions": [],
-        "startedAt": "",
-        "completedAt": "",
-        "meta": {}
-    }
+state = {
+    "task": task,
+    "goal": goal,
+    "mode": "executor",
+    "phase": "initialized",
+    "iteration": 0,
+    "checklist": {item: False for item in checklist_items},
+    "blockers": [],
+    "decisions": [],
+    "startedAt": "",
+    "completedAt": "",
+    "meta": {}
+}
 
 with open(state_file, "w", encoding="utf-8") as f:
     json.dump(state, f, indent=2, ensure_ascii=False)
@@ -109,6 +94,39 @@ print(f"已初始化: {state_file}")
 print(f"模式: {mode}")
 print(f"任务: {task}")
 print(f"完成条件: {goal}")
-if mode == "executor":
-    print(f"检查项: {len(checklist_items)} 个")
+print(f"检查项: {len(checklist_items)} 个")
 PYEOF
+else
+  python3 - "$STATE_FILE" "$TASK" "$GOAL" "$MODE" <<'PYEOF'
+import json, sys
+
+state_file = sys.argv[1]
+task = sys.argv[2]
+goal = sys.argv[3]
+mode = sys.argv[4]
+
+state = {
+    "task": task,
+    "goal": goal,
+    "mode": "autonomous",
+    "phase": "initialized",
+    "iteration": 0,
+    "checklist": {},
+    "route": [],
+    "journal": [],
+    "blockers": [],
+    "decisions": [],
+    "startedAt": "",
+    "completedAt": "",
+    "meta": {}
+}
+
+with open(state_file, "w", encoding="utf-8") as f:
+    json.dump(state, f, indent=2, ensure_ascii=False)
+
+print(f"已初始化: {state_file}")
+print(f"模式: {mode}")
+print(f"任务: {task}")
+print(f"完成条件: {goal}")
+PYEOF
+fi
