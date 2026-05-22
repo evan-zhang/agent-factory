@@ -306,6 +306,7 @@ A4 纵向，章节密集，表格整齐。专为导出 PDF/Word 设计。
 
 **配色方案（color-themes/）**：
 - **琥珀金（amber）**：深金 #C9920A，沉稳高端，适合高管/BD报告（默认）
+- **暗色技术风（dark-technical）**：暗黑 #070707 + 橙红 #FF4A22，适合 AI 极客/技术海报报告
 - **阳光黄（yellow）**：亮黄 #F4B400，现代活力，适合内部审阅
 - **投资蓝（investment-blue）**：深海蓝 #1D4ED8，专业金融，适合投资报告
 
@@ -317,6 +318,7 @@ A4 纵向，章节密集，表格整齐。专为导出 PDF/Word 设计。
 | `templates/style-03/skeleton.html` | HTML 骨架（含 {{TOKEN}} 占位符） |
 | `templates/style-03/style-03-bd-report.md` | 视觉说明与内容结构 |
 | `templates/style-03/color-themes/amber.yml` | 琥珀金配色 Token |
+| `templates/style-03/color-themes/dark-technical.yml` | 暗色技术风配色 Token（橙红）|
 | `templates/style-03/color-themes/yellow.yml` | 阳光黄配色 Token |
 | `templates/style-03/color-themes/investment-blue.yml` | 投资蓝配色 Token |
 | `templates/style-03/reference-amber.html` | 琥珀金版完整参考范例（CG-0255） |
