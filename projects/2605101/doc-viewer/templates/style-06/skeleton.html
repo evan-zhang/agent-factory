@@ -124,6 +124,13 @@ a { color:#D98B52; text-decoration:none; }
   font-size:11pt; color:#9CA3AF; border-top:1px solid #E5E7EB;
   text-align:center;
 }
+
+/* ===== TABLE WRAP (mobile scroll) ===== */
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 12px 0 18px;
+}
 </style>
 </head>
 <body>
@@ -175,7 +182,7 @@ a { color:#D98B52; text-decoration:none; }
   <div class="specs">
     <div class="section-label">产品信息</div>
     <div class="section-title">基本规格</div>
-    <table class="specs-table">
+    <div class="table-wrap"><table class="specs-table">
       <tr><th>化合物名</th><td>CG-0255 (Evategrel / 依福格雷)</td></tr>
       <tr><th>靶点</th><td>P2Y12受体</td></tr>
       <tr><th>分子式</th><td>C₂₁H₂₆ClNO₇S</td></tr>
