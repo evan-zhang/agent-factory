@@ -6,7 +6,7 @@ description: |
   · 自主者模式（Autonomous）：人只给目标，AI 自主规划、执行、验证、记录全过程
   核心机制：每次迭代全新上下文 + state.json 跨迭代状态持久化 + 机械验证。
 metadata:
-  version: "2.0.0"
+  version: "3.0.0"
   author: "Based on Geoffrey Huntley's Ralph Loop pattern"
   reference: "https://ghuntley.com/loop/"
 ---

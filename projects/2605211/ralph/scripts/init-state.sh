@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 # init-state.sh — 初始化 Ralph Loop state.json
-# v2.0.1: 用 Python json.dumps 安全构建 JSON
+# v3.0.0: 新增 verify.sh 路径记录
 set -euo pipefail
 
 STATE_FILE=""
 TASK=""
 GOAL=""
 MODE="executor"
+VERIFY_FILE=""
 CHECKLIST=()
 
 usage() {
@@ -21,6 +22,7 @@ usage() {
   --goal <conditions>    完成条件原文
   --mode <mode>          运行模式: executor（默认）| autonomous
   --checklist <item>     检查项（可多次使用，执行者模式必填）
+  --verify <file>        verify.sh 验证器路径（写入 meta.verify）
 
 示例（执行者模式）:
   init-state.sh /tmp/state.json \
@@ -41,6 +43,7 @@ EOF
 
 # 第一个位置参数是 state file
 [[ $# -lt 1 ]] && usage
+[[ "$1" == "-h" || "$1" == "--help" ]] && usage
 STATE_FILE="$1"
 shift
 
@@ -50,6 +53,7 @@ while [[ $# -gt 0 ]]; do
     --goal)      GOAL="$2"; shift 2 ;;
     --mode)      MODE="$2"; shift 2 ;;
     --checklist) CHECKLIST+=("$2"); shift 2 ;;
+    --verify)    VERIFY_FILE="$2"; shift 2 ;;
     -h|--help)   usage ;;
     *) echo "未知参数: $1"; usage ;;
   esac
@@ -64,14 +68,15 @@ fi
 # 用 Python 安全构建 JSON（处理所有特殊字符）
 # 注意：CHECKLIST 仅 executor 模式需要，autonomous 模式不传避免空数组问题
 if [[ "$MODE" == "executor" ]]; then
-  python3 - "$STATE_FILE" "$TASK" "$GOAL" "$MODE" "${CHECKLIST[@]}" <<'PYEOF'
+  python3 - "$STATE_FILE" "$TASK" "$GOAL" "$MODE" "$VERIFY_FILE" "${CHECKLIST[@]+"${CHECKLIST[@]}"}" <<'PYEOF'
 import json, sys
 
 state_file = sys.argv[1]
 task = sys.argv[2]
 goal = sys.argv[3]
 mode = sys.argv[4]
-checklist_items = sys.argv[5:]
+verify_file = sys.argv[5]
+checklist_items = sys.argv[6:]
 
 state = {
     "task": task,
@@ -86,6 +91,8 @@ state = {
     "completedAt": "",
     "meta": {}
 }
+if verify_file:
+    state["meta"]["verify"] = verify_file
 
 with open(state_file, "w", encoding="utf-8") as f:
     json.dump(state, f, indent=2, ensure_ascii=False)
@@ -95,15 +102,18 @@ print(f"模式: {mode}")
 print(f"任务: {task}")
 print(f"完成条件: {goal}")
 print(f"检查项: {len(checklist_items)} 个")
+if verify_file:
+    print(f"验证器: {verify_file}")
 PYEOF
 else
-  python3 - "$STATE_FILE" "$TASK" "$GOAL" "$MODE" <<'PYEOF'
+  python3 - "$STATE_FILE" "$TASK" "$GOAL" "$MODE" "$VERIFY_FILE" <<'PYEOF'
 import json, sys
 
 state_file = sys.argv[1]
 task = sys.argv[2]
 goal = sys.argv[3]
 mode = sys.argv[4]
+verify_file = sys.argv[5]
 
 state = {
     "task": task,
@@ -120,6 +130,8 @@ state = {
     "completedAt": "",
     "meta": {}
 }
+if verify_file:
+    state["meta"]["verify"] = verify_file
 
 with open(state_file, "w", encoding="utf-8") as f:
     json.dump(state, f, indent=2, ensure_ascii=False)
@@ -128,5 +140,7 @@ print(f"已初始化: {state_file}")
 print(f"模式: {mode}")
 print(f"任务: {task}")
 print(f"完成条件: {goal}")
+if verify_file:
+    print(f"验证器: {verify_file}")
 PYEOF
 fi

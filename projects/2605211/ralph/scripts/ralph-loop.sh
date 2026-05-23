@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ralph-loop.sh — Ralph Loop 核心循环引擎
-# v2.0.1: 修复 JSON 安全、macOS 兼容、state 校验、人审阅 checkpoint
+# v3.0.0: 新增 verify.sh 支持、只读文件 hash 保护、results.tsv 追踪
 set -euo pipefail
 
 # ── 默认配置 ──
@@ -11,6 +11,7 @@ STATE_FILE=""
 PROMPT_FILE=""
 PROJECT_ROOT=""
 EXECUTOR="claude"
+VERIFY_FILE=""
 
 # ── macOS 兼容：检测 timeout 命令 ──
 TIMEOUT_CMD=""
@@ -37,6 +38,7 @@ usage() {
   --project-root <dir>   项目根目录 (默认: 当前目录)
   --executor <command>   执行器 (默认: claude)
                          可选: claude | codex | 任意可执行命令
+  --verify <file>        verify.sh 验证器路径（可选）
 
 模式由 state.json 中的 "mode" 字段决定:
   executor    — 执行者模式：按 checklist 逐条执行
@@ -59,6 +61,7 @@ while [[ $# -gt 0 ]]; do
     --timeout)     ITERATION_TIMEOUT="$2"; shift 2 ;;
     --project-root) PROJECT_ROOT="$2"; shift 2 ;;
     --executor)    EXECUTOR="$2"; shift 2 ;;
+    --verify)      VERIFY_FILE="$2"; shift 2 ;;
     -h|--help)     usage ;;
     *) echo "未知参数: $1"; usage ;;
   esac
@@ -67,11 +70,18 @@ done
 [[ -z "$PROMPT_FILE" ]] && { echo "错误: 缺少 --prompt 参数"; usage; }
 [[ -z "$STATE_FILE" ]]  && { echo "错误: 缺少 --state 参数"; usage; }
 [[ ! -f "$PROMPT_FILE" ]] && { echo "错误: PROMPT 文件不存在: $PROMPT_FILE"; exit 1; }
+[[ -n "$VERIFY_FILE" && ! -f "$VERIFY_FILE" ]] && { echo "错误: verify 文件不存在: $VERIFY_FILE"; exit 1; }
 
 PROJECT_ROOT="${PROJECT_ROOT:-$(pwd)}"
 LOG_DIR="${PROJECT_ROOT}/.ralph-logs"
 BACKUP_DIR="${LOG_DIR}/state-backups"
+RESULTS_FILE="${PROJECT_ROOT}/results.tsv"
 mkdir -p "$LOG_DIR" "$BACKUP_DIR"
+
+# 初始化 results.tsv header（仅首次）
+if [[ -n "$VERIFY_FILE" && ! -f "$RESULTS_FILE" ]]; then
+  printf 'iteration\tscore_before\tscore_after\tstatus\tdiff_stat\treason\n' > "$RESULTS_FILE"
+fi
 
 # ── 初始化 state.json（如果不存在）──
 if [[ ! -f "$STATE_FILE" ]]; then
@@ -116,6 +126,107 @@ state_get_phase() {
 
 state_get_mode() {
   state_get "mode"
+}
+
+file_hash() {
+  if command -v sha256sum &>/dev/null; then
+    sha256sum "$1" | cut -d' ' -f1
+  else
+    shasum -a 256 "$1" | cut -d' ' -f1
+  fi
+}
+
+capture_readonly_hashes() {
+  local checksum_file="$1"
+  : > "$checksum_file"
+
+  if [[ -n "$VERIFY_FILE" ]]; then
+    printf '%s\t%s\n' "$VERIFY_FILE" "$(file_hash "$VERIFY_FILE")" >> "$checksum_file"
+  fi
+
+  printf '%s\t%s\n' "$PROMPT_FILE" "$(file_hash "$PROMPT_FILE")" >> "$checksum_file"
+
+  local protocol_file="${PROJECT_ROOT}/PROTOCOL.md"
+  if [[ -f "$protocol_file" ]]; then
+    printf '%s\t%s\n' "$protocol_file" "$(file_hash "$protocol_file")" >> "$checksum_file"
+  fi
+}
+
+readonly_files_tampered() {
+  local checksum_file="$1"
+  local path expected_hash actual_hash
+  local tampered=0
+
+  while IFS=$'\t' read -r path expected_hash; do
+    [[ -z "$path" ]] && continue
+    actual_hash=$(file_hash "$path" 2>/dev/null || echo "__missing__")
+    if [[ "$actual_hash" != "$expected_hash" ]]; then
+      echo "⚠️  只读文件被篡改: $path"
+      tampered=1
+    fi
+  done < "$checksum_file"
+
+  return "$tampered"
+}
+
+verify_last_json() {
+  local output_file="$1"
+  tail -n 1 "$output_file" 2>/dev/null || true
+}
+
+verify_parse_field() {
+  local json_line="$1"
+  local field="$2"
+  python3 - "$json_line" "$field" <<'PYEOF'
+import json, sys
+try:
+    data = json.loads(sys.argv[1])
+    value = data.get(sys.argv[2], "")
+    print(value)
+except Exception:
+    sys.exit(1)
+PYEOF
+}
+
+run_verify() {
+  local output_file verify_exit json_line status score details
+  output_file=$(mktemp /tmp/ralph-verify-XXXXXX.log)
+
+  set +e
+  (cd "$PROJECT_ROOT" && bash "$VERIFY_FILE") > "$output_file" 2>&1
+  verify_exit=$?
+  set -e
+
+  json_line=$(verify_last_json "$output_file")
+  if ! status=$(verify_parse_field "$json_line" "status" 2>/dev/null); then
+    status="crash"
+  fi
+  if ! score=$(verify_parse_field "$json_line" "score" 2>/dev/null); then
+    score="1"
+  fi
+  if ! details=$(verify_parse_field "$json_line" "details" 2>/dev/null); then
+    details="verify.sh 输出格式错误"
+  fi
+
+  # 退出码优先：exit 1 = FAIL, exit 0 = PASS
+  if [[ "$verify_exit" -ne 0 ]]; then
+    status="FAIL"
+    [[ "$score" == "0" ]] && score="1"
+  fi
+
+  rm -f "$output_file"
+  printf '%s\t%s\t%s\n' "$status" "$score" "$details"
+}
+
+verify_score() {
+  local result_line="$1"
+  printf '%s' "$result_line" | awk -F '\t' '{print $2}'
+}
+
+diff_stat_summary() {
+  local stat
+  stat=$(git -C "$PROJECT_ROOT" diff --shortstat 2>/dev/null || true)
+  [[ -n "$stat" ]] && printf '%s' "$stat" || printf '0'
 }
 
 # ── state.json 校验 + 备份 ──
@@ -304,6 +415,7 @@ echo " 模式:    $MODE"
 echo " 执行器:  $EXECUTOR"
 echo " Prompt:  $PROMPT_FILE"
 echo " State:   $STATE_FILE"
+[[ -n "$VERIFY_FILE" ]] && echo " Verify:  $VERIFY_FILE"
 echo " 上限:    $MAX_ITERATIONS 次迭代"
 echo " 冷却:    ${COOLDOWN_SECONDS}s"
 [[ -n "$TIMEOUT_CMD" ]] && echo " 超时:    ${ITERATION_TIMEOUT}s (via $TIMEOUT_CMD)" || echo " 超时:    未启用（未检测到 timeout/gtimeout）"
@@ -361,6 +473,18 @@ while [[ $iteration -lt $MAX_ITERATIONS ]]; do
   # 备份当前 state.json
   backup_state "$iteration"
 
+  score_before=""
+  if [[ -n "$VERIFY_FILE" ]]; then
+    verify_before=$(run_verify)
+    score_before=$(verify_score "$verify_before")
+  fi
+
+  CHECKSUM_FILE=""
+  if [[ -n "$VERIFY_FILE" ]]; then
+    CHECKSUM_FILE=$(mktemp /tmp/ralph-checksums-XXXXXX)
+    capture_readonly_hashes "$CHECKSUM_FILE"
+  fi
+
   # 根据模式构建 prompt
   local_prompt=""
   if [[ "$MODE" == "autonomous" ]]; then
@@ -375,10 +499,58 @@ while [[ $iteration -lt $MAX_ITERATIONS ]]; do
   exit_code=${PIPESTATUS[0]}
   set -e
 
+  if [[ -n "$VERIFY_FILE" ]]; then
+    if ! readonly_files_tampered "$CHECKSUM_FILE"; then
+      rm -f "$CHECKSUM_FILE"
+      git -C "$PROJECT_ROOT" reset --hard HEAD
+      git -C "$PROJECT_ROOT" clean -fd
+      printf '%s\t%s\t%s\t%s\t%s\t%s\n' "${iteration}" "${score_before}" "${score_before}" "crash" "0" "只读文件被篡改，全部回滚" >> "$RESULTS_FILE"
+      continue
+    fi
+    rm -f "$CHECKSUM_FILE"
+  fi
+
   # 校验 state.json 完整性
   if ! validate_state; then
     echo "⚠️  state.json 损坏，正在从备份恢复..."
     restore_last_backup
+  fi
+
+  if [[ -n "$VERIFY_FILE" ]]; then
+    verify_after=$(run_verify)
+    verify_status=$(printf '%s' "$verify_after" | awk -F '\t' '{print $1}')
+    score_after=$(printf '%s' "$verify_after" | awk -F '\t' '{print $2}')
+    verify_details=$(printf '%s' "$verify_after" | awk -F '\t' '{print $3}')
+
+    # score 比较：越小越好，决定 keep/discard
+    action="keep"
+    reason="$verify_details"
+    if [[ "$verify_status" == "FAIL" || "$verify_status" == "crash" ]]; then
+      action="discard"
+      reason="验证失败: $verify_details"
+      # 撤回本轮改动
+      git -C "$PROJECT_ROOT" reset --hard HEAD
+      git -C "$PROJECT_ROOT" clean -fd
+    elif [[ -n "$score_before" ]]; then
+      # score 越小越好；score_after >= score_before 表示没有改善
+      if awk "BEGIN{exit !($score_after >= $score_before)}" 2>/dev/null; then
+        action="discard"
+        reason="score 未改善: $score_before -> $score_after"
+        git -C "$PROJECT_ROOT" reset --hard HEAD
+        git -C "$PROJECT_ROOT" clean -fd
+      else
+        # score 改善，提交
+        git -C "$PROJECT_ROOT" add -A
+        git -C "$PROJECT_ROOT" commit -m "ralph iter ${iteration}: score ${score_before} -> ${score_after}" --allow-empty 2>/dev/null || true
+        reason="score 改善: $score_before -> $score_after; $verify_details"
+      fi
+    else
+      # 第一轮没有 score_before，PASS 就保留
+      git -C "$PROJECT_ROOT" add -A
+      git -C "$PROJECT_ROOT" commit -m "ralph iter ${iteration}: initial score ${score_after}" --allow-empty 2>/dev/null || true
+    fi
+
+    printf '%s\t%s\t%s\t%s\t%s\t%s\n' "${iteration}" "${score_before}" "${score_after}" "${action}" "$(diff_stat_summary)" "${reason}" >> "$RESULTS_FILE"
   fi
 
   # 检查迭代结果
