@@ -1,4 +1,4 @@
-# Ralph Loop v3.0.0 Protocol
+# Ralph Loop v3.1.0 Protocol
 
 本文件是每轮迭代必须读取并遵守的核心循环协议。
 只讲规则，不讲安装，不讲配置。
@@ -119,7 +119,8 @@ results 记录必须反映真实结果。
 不要为了显得进展顺利修改历史记录。
 
 ## 10. state.json
-每轮结束前更新 `state.json`。
+state.json 的完整字段规范见 SKILL.md，本节只规定更新规则。
+每轮结束前更新 state.json。
 只记录真实完成的事项。
 不要提前把未验证事项标记完成。
 验证通过后，才能标记 checklist 项完成。

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ralph-loop.sh — Ralph Loop 核心循环引擎
-# v3.0.0: 新增 verify.sh 支持、只读文件 hash 保护、results.tsv 追踪
+# v3.1.0: 引导执行模式、score 容忍区间、git 安全检查
 set -euo pipefail
 
 # ── 默认配置 ──
@@ -12,6 +12,7 @@ PROMPT_FILE=""
 PROJECT_ROOT=""
 EXECUTOR="claude"
 VERIFY_FILE=""
+SCORE_TOLERANCE=0
 
 # ── macOS 兼容：检测 timeout 命令 ──
 TIMEOUT_CMD=""
@@ -39,10 +40,13 @@ usage() {
   --executor <command>   执行器 (默认: claude)
                          可选: claude | codex | 任意可执行命令
   --verify <file>        verify.sh 验证器路径（可选）
+  --score-tolerance <n>  score 容忍区间（默认: 0，即 score 不变时保留；
+                         设为 0.1 则 score 变差不超过 0.1 也保留）
 
 模式由 state.json 中的 "mode" 字段决定:
   executor    — 执行者模式：按 checklist 逐条执行
   autonomous  — 自主者模式：AI 自主规划、执行、记录
+  guided      — 引导执行模式：AI 根据目标自动生成 PROMPT+checklist+verify，用户确认后执行
 
 退出码:
   0 — 任务完成
@@ -62,6 +66,7 @@ while [[ $# -gt 0 ]]; do
     --project-root) PROJECT_ROOT="$2"; shift 2 ;;
     --executor)    EXECUTOR="$2"; shift 2 ;;
     --verify)      VERIFY_FILE="$2"; shift 2 ;;
+    --score-tolerance) SCORE_TOLERANCE="$2"; shift 2 ;;
     -h|--help)     usage ;;
     *) echo "未知参数: $1"; usage ;;
   esac
@@ -423,6 +428,126 @@ echo "=========================================="
 
 consecutive_fails=0
 iteration=0
+STASHED=0
+COMPLETED=0
+
+# ── 循环前 git 安全检查：stash 未提交改动 ──
+if [[ -n "$VERIFY_FILE" ]]; then
+  if ! git -C "$PROJECT_ROOT" diff --quiet 2>/dev/null || \
+     ! git -C "$PROJECT_ROOT" diff --cached --quiet 2>/dev/null; then
+    echo "⚠️  检测到未提交改动，正在 stash..."
+    git -C "$PROJECT_ROOT" stash push -m "ralph-auto-stash-$(date +%Y%m%d-%H%M%S)" 2>/dev/null
+    STASHED=1
+    echo "   已 stash，循环结束后自动恢复"
+  fi
+fi
+
+# ── 引导执行模式：等待用户确认 AI 生成的方案 ──
+if [[ "$MODE" == "guided" ]]; then
+  current_phase=$(state_get_phase)
+  if [[ "$current_phase" == "initialized" ]]; then
+    echo ""
+    echo "=========================================="
+    echo " 🎯 引导执行模式"
+    echo " AI 正在分析项目并生成执行方案..."
+    echo "=========================================="
+
+    # 用 AI 生成 PROMPT.md + checklist + verify.sh
+    guided_prompt=$(cat <<GUIDEDPROMPT
+# Ralph Loop 引导执行模式 — 方案生成
+
+## 用户目标
+
+$(cat "$PROMPT_FILE")
+
+## 你的任务
+
+根据用户目标，生成以下内容并写入对应文件：
+
+1. **PROMPT.md** — 完善任务描述（范围 + 证据 + 测试三要素）
+   - 写入: ${PROJECT_ROOT}/PROMPT.md
+   - 范围：涉及哪些文件/目录
+   - 证据：什么证明完成
+   - 测试：怎么验证
+
+2. **verify.sh** — 验证脚本
+   - 写入: ${PROJECT_ROOT}/verify.sh
+   - 必须是可执行的 bash 脚本
+   - 最后一行输出 JSON: {"status":"PASS","score":0,"details":"..."}
+   - score 越小越好，0 = 完美
+   - exit 0 = 通过，exit 1 = 失败
+
+3. **更新 state.json** — 填入 checklist
+   - 写入: $STATE_FILE
+   - 把 checklist 设为具体的可验证条件
+   - phase 改为 "awaiting_approval"
+   - 保留所有已有字段
+
+请直接执行，生成文件后停止。
+GUIDEDPROMPT
+)
+
+    set +e
+    run_executor "$guided_prompt" 2>&1 | tee "${LOG_DIR}/guided-generation.log"
+    guided_exit=${PIPESTATUS[0]}
+    set -e
+
+    if [[ $guided_exit -ne 0 ]]; then
+      echo "❌ 方案生成失败，请检查 ${LOG_DIR}/guided-generation.log"
+      exit 1
+    fi
+
+    # 校验生成的文件
+    if ! validate_state; then
+      echo "❌ state.json 生成后损坏，请重试"
+      exit 1
+    fi
+
+    # 更新 VERIFY_FILE 指向生成的 verify.sh
+    if [[ -f "${PROJECT_ROOT}/verify.sh" ]]; then
+      VERIFY_FILE="${PROJECT_ROOT}/verify.sh"
+      chmod +x "$VERIFY_FILE"
+      echo "   已生成 verify.sh: $VERIFY_FILE"
+    fi
+
+    # 显示生成的方案供用户确认
+    echo ""
+    echo "=========================================="
+    echo " 📋 AI 已生成执行方案，请审阅："
+    echo "=========================================="
+    echo ""
+    echo "--- PROMPT.md ---"
+    cat "${PROJECT_ROOT}/PROMPT.md" 2>/dev/null || echo "（未生成）"
+    echo ""
+    echo "--- verify.sh ---"
+    cat "${PROJECT_ROOT}/verify.sh" 2>/dev/null || echo "（未生成）"
+    echo ""
+    echo "--- checklist ---"
+    python3 -c "import json,sys; d=json.load(open(sys.argv[1])); [print(f'  [{"✓" if v else " "}] {k}') for k,v in d.get('checklist',{}).items()]" "$STATE_FILE" 2>/dev/null || echo "（未生成）"
+    echo ""
+    echo "=========================================="
+    echo " 确认 → 将 phase 改为 'working'"
+    echo " 修改 → 修改文件后将 phase 改为 'working'"
+    echo " 取消 → 将 phase 改为 'done'"
+    echo "=========================================="
+    echo ""
+    echo "等待中...（每 10 秒检查一次）"
+    while true; do
+      sleep 10
+      new_phase=$(state_get_phase)
+      if [[ "$new_phase" != "awaiting_approval" ]]; then
+        current_phase="$new_phase"
+        echo "检测到 phase 变更为 '$new_phase'，继续执行"
+        break
+      fi
+    done
+
+    # 初始化 results.tsv（此时才有 verify）
+    if [[ -n "$VERIFY_FILE" && ! -f "$RESULTS_FILE" ]]; then
+      printf 'iteration\tscore_before\tscore_after\tstatus\tdiff_stat\treason\n' > "$RESULTS_FILE"
+    fi
+  fi
+fi
 
 while [[ $iteration -lt $MAX_ITERATIONS ]]; do
   iteration=$((iteration + 1))
@@ -464,7 +589,8 @@ while [[ $iteration -lt $MAX_ITERATIONS ]]; do
     echo " 总迭代:  $iteration"
     echo " 状态文件: $STATE_FILE"
     echo "=========================================="
-    exit 0
+    COMPLETED=1
+    break
   fi
 
   echo ""
@@ -532,10 +658,11 @@ while [[ $iteration -lt $MAX_ITERATIONS ]]; do
       git -C "$PROJECT_ROOT" reset --hard HEAD
       git -C "$PROJECT_ROOT" clean -fd
     elif [[ -n "$score_before" ]]; then
-      # score 越小越好；score_after >= score_before 表示没有改善
-      if awk "BEGIN{exit !($score_after >= $score_before)}" 2>/dev/null; then
+      # score 越小越好；score 变差超过容忍区间才 discard
+      score_diff=$(python3 -c "print(float('$score_after') - float('$score_before'))" 2>/dev/null || echo "1")
+      if awk "BEGIN{exit !($score_diff > $SCORE_TOLERANCE)}" 2>/dev/null; then
         action="discard"
-        reason="score 未改善: $score_before -> $score_after"
+        reason="score 变差超出容忍: $score_before -> $score_after (tolerance=$SCORE_TOLERANCE)"
         git -C "$PROJECT_ROOT" reset --hard HEAD
         git -C "$PROJECT_ROOT" clean -fd
       else
@@ -572,6 +699,17 @@ while [[ $iteration -lt $MAX_ITERATIONS ]]; do
     sleep "$COOLDOWN_SECONDS"
   fi
 done
+
+# ── 统一退出路径：恢复 stash ──
+if [[ "$STASHED" -eq 1 ]]; then
+  echo ""
+  echo "正在恢复之前 stash 的改动..."
+  git -C "$PROJECT_ROOT" stash pop 2>/dev/null && echo "   已恢复" || echo "   ⚠️ stash pop 失败，请手动 git stash pop"
+fi
+
+if [[ "$COMPLETED" -eq 1 ]]; then
+  exit 0
+fi
 
 echo ""
 echo "=========================================="

@@ -1,12 +1,13 @@
 ---
 name: ralph
 description: |
-  Ralph Loop — AI 自主循环执行协议。两种模式：
+  Ralph Loop — AI 自主循环执行协议。三种模式：
+  · 引导执行模式（Guided）：用户只说目标，AI 生成 PROMPT + checklist + verify.sh，用户确认后执行
   · 执行者模式（Executor）：人定义 checklist，AI 按清单执行并验证
   · 自主者模式（Autonomous）：人只给目标，AI 自主规划、执行、验证、记录全过程
   核心机制：每次迭代全新上下文 + state.json 跨迭代状态持久化 + 机械验证。
 metadata:
-  version: "3.0.0"
+  version: "3.1.0"
   author: "Based on Geoffrey Huntley's Ralph Loop pattern"
   reference: "https://ghuntley.com/loop/"
 ---
@@ -85,6 +86,20 @@ while !done; do executor <prompt>; done
 
 ## 两种运行模式
 
+### 引导执行模式（Guided）
+
+用户只给目标，AI 分析项目上下文，自动生成 PROMPT.md + checklist + verify.sh，展示给用户确认后按执行者模式执行。
+
+适合：**不想自己写 checklist 和 verify.sh，希望一句话启动的场景。**
+
+流程：
+1. 用户提供目标（一句话）
+2. AI 分析项目结构，生成 PROMPT.md（范围+证据+测试）、checklist（具体可验证条件）、verify.sh（自动化验证脚本）
+3. **展示方案给用户确认**（展示 PROMPT.md、checklist、verify.sh）
+4. 用户确认后，按执行者模式运行，verify.sh 做自动门控
+
+特点：用户只需给目标，后续所有专业工作由 AI 完成。兼顾低门槛和高严谨性。
+
 ### 执行者模式（Executor）
 
 人定义目标 + 完成条件 checklist，AI 按清单逐条执行并验证。
@@ -121,6 +136,7 @@ while !done; do executor <prompt>; done
 
 用户说"我自己定 checklist" → 执行者
 用户说"AI 自己来" / "以终为始" → 自主者
+用户只想说一句话 → 引导执行模式（默认推荐）
 ```
 
 ## 触发场景
@@ -209,6 +225,10 @@ bash "${RALPH_SKILL_DIR}/scripts/ralph-loop.sh" \
 - ~~"完成功能"~~ — 无验证标准
 
 ## state.json 规范
+
+### 引导执行模式
+
+与执行者模式结构相同，mode 为 "guided"，phase 为 "initialized"。AI 生成方案后 phase 变为 "awaiting_approval"，用户确认后变为 "working"，完成后变为 "done"。
 
 ### 执行者模式
 
