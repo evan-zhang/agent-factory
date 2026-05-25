@@ -4,73 +4,73 @@ label: "Cyan Steel"
 description: "Cyan Steel — 现代 · 冷静精密，适合汽车报告"
 ---
 
-body-bg: "#EEF5F8"
-body-color: "#1A3040"
-link-color: "#5088A0"
-cover-gradient: "linear-gradient(160deg, #EEF5F8 0%, #A0C4D4 100%)"
-cover-border: "6px solid #3A7A90"
-cover-topbar-class: "cover-topbar"
-cover-topbar-gradient: "linear-gradient(90deg, #3A7A90, #5088A0, #3A7A90)"
-cover-badge-border: "1.5px solid #3A7A90"
-cover-badge-color: "#3A7A90"
-cover-title-color: "#1A3040"
-cover-subtitle-color: "#3A7A90"
-cover-company-color: "#A0C4D4"
-cover-meta-color: "#1A3040"
-cover-meta-label-color: "#A0C4D4"
-cover-confidential-color: "#B06060"
-cover-confidential-border: "2px solid #A0C4D4"
-rating-box-bg: "#3A7A90"
-rating-box-color: "#EEF5F8"
-toc-bg: "#EEF5F8"
-toc-border: "3px solid #A0C4D4"
-toc-header-color: "#1A3040"
-toc-header-border: "5px solid #3A7A90"
-toc-item-border: "1px solid #A0C4D4"
-toc-num-color: "#3A7A90"
-toc-title-color: "#1A3040"
-toc-ch-color: "#A0C4D4"
-h1-color: "#1A3040"
-h1-bg: "linear-gradient(to right, #EEF5F8, white)"
-h1-border: "3px solid #3A7A90"
-h2-color: "#3A7A90"
-h2-border: "5px solid #3A7A90"
-h2-bg: "#EEF5F8"
-h3-color: "#1A3040"
-h4-color: "#3A7A90"
-th-bg: "#3A7A90"
-th-color: "#EEF5F8"
-th-border: "1px solid #3A7A90"
-td-border: "1px solid #A0C4D4"
-td-alt-bg: "#A0C4D4"
-pass-color: "#4A8A6B"
-cond-color: "#C08040"
-fail-color: "#B06060"
-highlight-border: "5px solid #3A7A90"
-highlight-bg: "#A0C4D4"
-veto-pass-border: "5px solid #4A8A6B"
-veto-pass-bg: "#A0C4D4"
-veto-cond-border: "5px solid #C08040"
-veto-cond-bg: "#A0C4D4"
-veto-fail-border: "5px solid #B06060"
-veto-fail-bg: "#A0C4D4"
-rating-badge-border: "2px solid #3A7A90"
-rating-badge-color: "#1A3040"
-summary-tag-color: "#3A7A90"
-pre-bg: "#A0C4D4"
-pre-border: "1px solid #A0C4D4"
-pre-accent: "4px solid #3A7A90"
-pre-color: "#1A3040"
-blockquote-border: "5px solid #3A7A90"
-blockquote-bg: "#A0C4D4"
-blockquote-color: "#1A3040"
-footer-color: "#A0C4D4"
-footer-border: "1px solid #A0C4D4"
-section-rule: "2px solid #A0C4D4"
-td-label-bg: "#A0C4D4"
-th-green-bg: "#4A8A6B"
-th-red-bg: "#B06060"
-th-warm-bg: "#C08040"
-score-a: "#4A8A6B"
-score-b: "#C08040"
-score-c: "#B06060"
+body-bg: '#EEF5F8'
+body-color: '#1A3040'
+link-color: '#5088A0'
+cover-gradient: 'linear-gradient(160deg, #EEF5F8 0%, #A0C4D4 100%)'
+cover-border: '6px solid #3A7A90'
+cover-topbar-class: 'cover-topbar'
+cover-topbar-gradient: 'linear-gradient(90deg, #3A7A90, #5088A0, #3A7A90)'
+cover-badge-border: '1.5px solid #3A7A90'
+cover-badge-color: '#3A7A90'
+cover-title-color: '#1A3040'
+cover-subtitle-color: '#3A7A90'
+cover-company-color: '#A0C4D4'
+cover-meta-color: '#1A3040'
+cover-meta-label-color: '#A0C4D4'
+cover-confidential-color: '#B06060'
+cover-confidential-border: '2px solid #A0C4D4'
+rating-box-bg: '#3A7A90'
+rating-box-color: '#EEF5F8'
+toc-bg: '#EEF5F8'
+toc-border: '3px solid #A0C4D4'
+toc-header-color: '#1A3040'
+toc-header-border: '5px solid #3A7A90'
+toc-item-border: '1px solid #A0C4D4'
+toc-num-color: '#3A7A90'
+toc-title-color: '#1A3040'
+toc-ch-color: '#A0C4D4'
+h1-color: '#1A3040'
+h1-bg: 'linear-gradient(to right, #EEF5F8, white)'
+h1-border: '3px solid #3A7A90'
+h2-color: '#3A7A90'
+h2-border: '5px solid #3A7A90'
+h2-bg: '#EEF5F8'
+h3-color: '#1A3040'
+h4-color: '#3A7A90'
+th-bg: '#3A7A90'
+th-color: '#EEF5F8'
+th-border: '1px solid #3A7A90'
+td-border: '1px solid #A0C4D4'
+td-alt-bg: '#A0C4D4'
+pass-color: '#4A8A6B'
+cond-color: '#C08040'
+fail-color: '#B06060'
+highlight-border: '5px solid #3A7A90'
+highlight-bg: '#A0C4D4'
+veto-pass-border: '5px solid #4A8A6B'
+veto-pass-bg: '#A0C4D4'
+veto-cond-border: '5px solid #C08040'
+veto-cond-bg: '#A0C4D4'
+veto-fail-border: '5px solid #B06060'
+veto-fail-bg: '#A0C4D4'
+rating-badge-border: '2px solid #3A7A90'
+rating-badge-color: '#1A3040'
+summary-tag-color: '#3A7A90'
+pre-bg: '#A0C4D4'
+pre-border: '1px solid #A0C4D4'
+pre-accent: '4px solid #3A7A90'
+pre-color: '#1A3040'
+blockquote-border: '5px solid #3A7A90'
+blockquote-bg: '#A0C4D4'
+blockquote-color: '#1A3040'
+footer-color: '#A0C4D4'
+footer-border: '1px solid #A0C4D4'
+section-rule: '2px solid #A0C4D4'
+td-label-bg: '#A0C4D4'
+th-green-bg: '#4A8A6B'
+th-red-bg: '#B06060'
+th-warm-bg: '#C08040'
+score-a: '#4A8A6B'
+score-b: '#C08040'
+score-c: '#B06060'

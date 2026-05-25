@@ -4,73 +4,73 @@ label: "Blush Pink"
 description: "Blush Pink — 温柔 · 柔和女性，适合私募材料"
 ---
 
-body-bg: "#FDF5F7"
-body-color: "#3D2C30"
-link-color: "#D4A8B8"
-cover-gradient: "linear-gradient(160deg, #FDF5F7 0%, #E8D0D8 100%)"
-cover-border: "6px solid #C48A9B"
-cover-topbar-class: "cover-topbar"
-cover-topbar-gradient: "linear-gradient(90deg, #C48A9B, #D4A8B8, #C48A9B)"
-cover-badge-border: "1.5px solid #C48A9B"
-cover-badge-color: "#C48A9B"
-cover-title-color: "#3D2C30"
-cover-subtitle-color: "#C48A9B"
-cover-company-color: "#E8D0D8"
-cover-meta-color: "#3D2C30"
-cover-meta-label-color: "#E8D0D8"
-cover-confidential-color: "#B06060"
-cover-confidential-border: "2px solid #E8D0D8"
-rating-box-bg: "#C48A9B"
-rating-box-color: "#FDF5F7"
-toc-bg: "#FDF5F7"
-toc-border: "3px solid #E8D0D8"
-toc-header-color: "#3D2C30"
-toc-header-border: "5px solid #C48A9B"
-toc-item-border: "1px solid #E8D0D8"
-toc-num-color: "#C48A9B"
-toc-title-color: "#3D2C30"
-toc-ch-color: "#E8D0D8"
-h1-color: "#3D2C30"
-h1-bg: "linear-gradient(to right, #FDF5F7, white)"
-h1-border: "3px solid #C48A9B"
-h2-color: "#C48A9B"
-h2-border: "5px solid #C48A9B"
-h2-bg: "#FDF5F7"
-h3-color: "#3D2C30"
-h4-color: "#C48A9B"
-th-bg: "#C48A9B"
-th-color: "#FDF5F7"
-th-border: "1px solid #C48A9B"
-td-border: "1px solid #E8D0D8"
-td-alt-bg: "#E8D0D8"
-pass-color: "#5A8A6B"
-cond-color: "#C08040"
-fail-color: "#B06060"
-highlight-border: "5px solid #C48A9B"
-highlight-bg: "#E8D0D8"
-veto-pass-border: "5px solid #5A8A6B"
-veto-pass-bg: "#E8D0D8"
-veto-cond-border: "5px solid #C08040"
-veto-cond-bg: "#E8D0D8"
-veto-fail-border: "5px solid #B06060"
-veto-fail-bg: "#E8D0D8"
-rating-badge-border: "2px solid #C48A9B"
-rating-badge-color: "#3D2C30"
-summary-tag-color: "#C48A9B"
-pre-bg: "#E8D0D8"
-pre-border: "1px solid #E8D0D8"
-pre-accent: "4px solid #C48A9B"
-pre-color: "#3D2C30"
-blockquote-border: "5px solid #C48A9B"
-blockquote-bg: "#E8D0D8"
-blockquote-color: "#3D2C30"
-footer-color: "#E8D0D8"
-footer-border: "1px solid #E8D0D8"
-section-rule: "2px solid #E8D0D8"
-td-label-bg: "#E8D0D8"
-th-green-bg: "#5A8A6B"
-th-red-bg: "#B06060"
-th-warm-bg: "#C08040"
-score-a: "#5A8A6B"
-score-b: "#C08040"
-score-c: "#B06060"
+body-bg: '#FDF5F7'
+body-color: '#3D2C30'
+link-color: '#D4A8B8'
+cover-gradient: 'linear-gradient(160deg, #FDF5F7 0%, #E8D0D8 100%)'
+cover-border: '6px solid #C48A9B'
+cover-topbar-class: 'cover-topbar'
+cover-topbar-gradient: 'linear-gradient(90deg, #C48A9B, #D4A8B8, #C48A9B)'
+cover-badge-border: '1.5px solid #C48A9B'
+cover-badge-color: '#C48A9B'
+cover-title-color: '#3D2C30'
+cover-subtitle-color: '#C48A9B'
+cover-company-color: '#E8D0D8'
+cover-meta-color: '#3D2C30'
+cover-meta-label-color: '#E8D0D8'
+cover-confidential-color: '#B06060'
+cover-confidential-border: '2px solid #E8D0D8'
+rating-box-bg: '#C48A9B'
+rating-box-color: '#FDF5F7'
+toc-bg: '#FDF5F7'
+toc-border: '3px solid #E8D0D8'
+toc-header-color: '#3D2C30'
+toc-header-border: '5px solid #C48A9B'
+toc-item-border: '1px solid #E8D0D8'
+toc-num-color: '#C48A9B'
+toc-title-color: '#3D2C30'
+toc-ch-color: '#E8D0D8'
+h1-color: '#3D2C30'
+h1-bg: 'linear-gradient(to right, #FDF5F7, white)'
+h1-border: '3px solid #C48A9B'
+h2-color: '#C48A9B'
+h2-border: '5px solid #C48A9B'
+h2-bg: '#FDF5F7'
+h3-color: '#3D2C30'
+h4-color: '#C48A9B'
+th-bg: '#C48A9B'
+th-color: '#FDF5F7'
+th-border: '1px solid #C48A9B'
+td-border: '1px solid #E8D0D8'
+td-alt-bg: '#E8D0D8'
+pass-color: '#5A8A6B'
+cond-color: '#C08040'
+fail-color: '#B06060'
+highlight-border: '5px solid #C48A9B'
+highlight-bg: '#E8D0D8'
+veto-pass-border: '5px solid #5A8A6B'
+veto-pass-bg: '#E8D0D8'
+veto-cond-border: '5px solid #C08040'
+veto-cond-bg: '#E8D0D8'
+veto-fail-border: '5px solid #B06060'
+veto-fail-bg: '#E8D0D8'
+rating-badge-border: '2px solid #C48A9B'
+rating-badge-color: '#3D2C30'
+summary-tag-color: '#C48A9B'
+pre-bg: '#E8D0D8'
+pre-border: '1px solid #E8D0D8'
+pre-accent: '4px solid #C48A9B'
+pre-color: '#3D2C30'
+blockquote-border: '5px solid #C48A9B'
+blockquote-bg: '#E8D0D8'
+blockquote-color: '#3D2C30'
+footer-color: '#E8D0D8'
+footer-border: '1px solid #E8D0D8'
+section-rule: '2px solid #E8D0D8'
+td-label-bg: '#E8D0D8'
+th-green-bg: '#5A8A6B'
+th-red-bg: '#B06060'
+th-warm-bg: '#C08040'
+score-a: '#5A8A6B'
+score-b: '#C08040'
+score-c: '#B06060'

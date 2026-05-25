@@ -4,73 +4,73 @@ label: "Olive"
 description: "Olive — 军绿 · 沉稳克制，适合国防军工报告"
 ---
 
-body-bg: "#F2F0E8"
-body-color: "#2D3518"
-link-color: "#8A9A50"
-cover-gradient: "linear-gradient(160deg, #F2F0E8 0%, #C0C8A0 100%)"
-cover-border: "6px solid #6B7A3A"
-cover-topbar-class: "cover-topbar"
-cover-topbar-gradient: "linear-gradient(90deg, #6B7A3A, #8A9A50, #6B7A3A)"
-cover-badge-border: "1.5px solid #6B7A3A"
-cover-badge-color: "#6B7A3A"
-cover-title-color: "#2D3518"
-cover-subtitle-color: "#6B7A3A"
-cover-company-color: "#C0C8A0"
-cover-meta-color: "#2D3518"
-cover-meta-label-color: "#C0C8A0"
-cover-confidential-color: "#A85050"
-cover-confidential-border: "2px solid #C0C8A0"
-rating-box-bg: "#6B7A3A"
-rating-box-color: "#F2F0E8"
-toc-bg: "#F2F0E8"
-toc-border: "3px solid #C0C8A0"
-toc-header-color: "#2D3518"
-toc-header-border: "5px solid #6B7A3A"
-toc-item-border: "1px solid #C0C8A0"
-toc-num-color: "#6B7A3A"
-toc-title-color: "#2D3518"
-toc-ch-color: "#C0C8A0"
-h1-color: "#2D3518"
-h1-bg: "linear-gradient(to right, #F2F0E8, white)"
-h1-border: "3px solid #6B7A3A"
-h2-color: "#6B7A3A"
-h2-border: "5px solid #6B7A3A"
-h2-bg: "#F2F0E8"
-h3-color: "#2D3518"
-h4-color: "#6B7A3A"
-th-bg: "#6B7A3A"
-th-color: "#F2F0E8"
-th-border: "1px solid #6B7A3A"
-td-border: "1px solid #C0C8A0"
-td-alt-bg: "#C0C8A0"
-pass-color: "#4A7A4A"
-cond-color: "#C08030"
-fail-color: "#A85050"
-highlight-border: "5px solid #6B7A3A"
-highlight-bg: "#C0C8A0"
-veto-pass-border: "5px solid #4A7A4A"
-veto-pass-bg: "#C0C8A0"
-veto-cond-border: "5px solid #C08030"
-veto-cond-bg: "#C0C8A0"
-veto-fail-border: "5px solid #A85050"
-veto-fail-bg: "#C0C8A0"
-rating-badge-border: "2px solid #6B7A3A"
-rating-badge-color: "#2D3518"
-summary-tag-color: "#6B7A3A"
-pre-bg: "#C0C8A0"
-pre-border: "1px solid #C0C8A0"
-pre-accent: "4px solid #6B7A3A"
-pre-color: "#2D3518"
-blockquote-border: "5px solid #6B7A3A"
-blockquote-bg: "#C0C8A0"
-blockquote-color: "#2D3518"
-footer-color: "#C0C8A0"
-footer-border: "1px solid #C0C8A0"
-section-rule: "2px solid #C0C8A0"
-td-label-bg: "#C0C8A0"
-th-green-bg: "#4A7A4A"
-th-red-bg: "#A85050"
-th-warm-bg: "#C08030"
-score-a: "#4A7A4A"
-score-b: "#C08030"
-score-c: "#A85050"
+body-bg: '#F2F0E8'
+body-color: '#2D3518'
+link-color: '#8A9A50'
+cover-gradient: 'linear-gradient(160deg, #F2F0E8 0%, #C0C8A0 100%)'
+cover-border: '6px solid #6B7A3A'
+cover-topbar-class: 'cover-topbar'
+cover-topbar-gradient: 'linear-gradient(90deg, #6B7A3A, #8A9A50, #6B7A3A)'
+cover-badge-border: '1.5px solid #6B7A3A'
+cover-badge-color: '#6B7A3A'
+cover-title-color: '#2D3518'
+cover-subtitle-color: '#6B7A3A'
+cover-company-color: '#C0C8A0'
+cover-meta-color: '#2D3518'
+cover-meta-label-color: '#C0C8A0'
+cover-confidential-color: '#A85050'
+cover-confidential-border: '2px solid #C0C8A0'
+rating-box-bg: '#6B7A3A'
+rating-box-color: '#F2F0E8'
+toc-bg: '#F2F0E8'
+toc-border: '3px solid #C0C8A0'
+toc-header-color: '#2D3518'
+toc-header-border: '5px solid #6B7A3A'
+toc-item-border: '1px solid #C0C8A0'
+toc-num-color: '#6B7A3A'
+toc-title-color: '#2D3518'
+toc-ch-color: '#C0C8A0'
+h1-color: '#2D3518'
+h1-bg: 'linear-gradient(to right, #F2F0E8, white)'
+h1-border: '3px solid #6B7A3A'
+h2-color: '#6B7A3A'
+h2-border: '5px solid #6B7A3A'
+h2-bg: '#F2F0E8'
+h3-color: '#2D3518'
+h4-color: '#6B7A3A'
+th-bg: '#6B7A3A'
+th-color: '#F2F0E8'
+th-border: '1px solid #6B7A3A'
+td-border: '1px solid #C0C8A0'
+td-alt-bg: '#C0C8A0'
+pass-color: '#4A7A4A'
+cond-color: '#C08030'
+fail-color: '#A85050'
+highlight-border: '5px solid #6B7A3A'
+highlight-bg: '#C0C8A0'
+veto-pass-border: '5px solid #4A7A4A'
+veto-pass-bg: '#C0C8A0'
+veto-cond-border: '5px solid #C08030'
+veto-cond-bg: '#C0C8A0'
+veto-fail-border: '5px solid #A85050'
+veto-fail-bg: '#C0C8A0'
+rating-badge-border: '2px solid #6B7A3A'
+rating-badge-color: '#2D3518'
+summary-tag-color: '#6B7A3A'
+pre-bg: '#C0C8A0'
+pre-border: '1px solid #C0C8A0'
+pre-accent: '4px solid #6B7A3A'
+pre-color: '#2D3518'
+blockquote-border: '5px solid #6B7A3A'
+blockquote-bg: '#C0C8A0'
+blockquote-color: '#2D3518'
+footer-color: '#C0C8A0'
+footer-border: '1px solid #C0C8A0'
+section-rule: '2px solid #C0C8A0'
+td-label-bg: '#C0C8A0'
+th-green-bg: '#4A7A4A'
+th-red-bg: '#A85050'
+th-warm-bg: '#C08030'
+score-a: '#4A7A4A'
+score-b: '#C08030'
+score-c: '#A85050'

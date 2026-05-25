@@ -4,73 +4,73 @@ label: "Terracotta"
 description: "Terracotta — 热情 · 大地质感，适合材料行业"
 ---
 
-body-bg: "#F7EDE8"
-body-color: "#3D1810"
-link-color: "#D09070"
-cover-gradient: "linear-gradient(160deg, #F7EDE8 0%, #D8C0A8 100%)"
-cover-border: "6px solid #B87050"
-cover-topbar-class: "cover-topbar"
-cover-topbar-gradient: "linear-gradient(90deg, #B87050, #D09070, #B87050)"
-cover-badge-border: "1.5px solid #B87050"
-cover-badge-color: "#B87050"
-cover-title-color: "#3D1810"
-cover-subtitle-color: "#B87050"
-cover-company-color: "#D8C0A8"
-cover-meta-color: "#3D1810"
-cover-meta-label-color: "#D8C0A8"
-cover-confidential-color: "#A85050"
-cover-confidential-border: "2px solid #D8C0A8"
-rating-box-bg: "#B87050"
-rating-box-color: "#F7EDE8"
-toc-bg: "#F7EDE8"
-toc-border: "3px solid #D8C0A8"
-toc-header-color: "#3D1810"
-toc-header-border: "5px solid #B87050"
-toc-item-border: "1px solid #D8C0A8"
-toc-num-color: "#B87050"
-toc-title-color: "#3D1810"
-toc-ch-color: "#D8C0A8"
-h1-color: "#3D1810"
-h1-bg: "linear-gradient(to right, #F7EDE8, white)"
-h1-border: "3px solid #B87050"
-h2-color: "#B87050"
-h2-border: "5px solid #B87050"
-h2-bg: "#F7EDE8"
-h3-color: "#3D1810"
-h4-color: "#B87050"
-th-bg: "#B87050"
-th-color: "#F7EDE8"
-th-border: "1px solid #B87050"
-td-border: "1px solid #D8C0A8"
-td-alt-bg: "#D8C0A8"
-pass-color: "#5A7A5A"
-cond-color: "#C08030"
-fail-color: "#A85050"
-highlight-border: "5px solid #B87050"
-highlight-bg: "#D8C0A8"
-veto-pass-border: "5px solid #5A7A5A"
-veto-pass-bg: "#D8C0A8"
-veto-cond-border: "5px solid #C08030"
-veto-cond-bg: "#D8C0A8"
-veto-fail-border: "5px solid #A85050"
-veto-fail-bg: "#D8C0A8"
-rating-badge-border: "2px solid #B87050"
-rating-badge-color: "#3D1810"
-summary-tag-color: "#B87050"
-pre-bg: "#D8C0A8"
-pre-border: "1px solid #D8C0A8"
-pre-accent: "4px solid #B87050"
-pre-color: "#3D1810"
-blockquote-border: "5px solid #B87050"
-blockquote-bg: "#D8C0A8"
-blockquote-color: "#3D1810"
-footer-color: "#D8C0A8"
-footer-border: "1px solid #D8C0A8"
-section-rule: "2px solid #D8C0A8"
-td-label-bg: "#D8C0A8"
-th-green-bg: "#5A7A5A"
-th-red-bg: "#A85050"
-th-warm-bg: "#C08030"
-score-a: "#5A7A5A"
-score-b: "#C08030"
-score-c: "#A85050"
+body-bg: '#F7EDE8'
+body-color: '#3D1810'
+link-color: '#D09070'
+cover-gradient: 'linear-gradient(160deg, #F7EDE8 0%, #D8C0A8 100%)'
+cover-border: '6px solid #B87050'
+cover-topbar-class: 'cover-topbar'
+cover-topbar-gradient: 'linear-gradient(90deg, #B87050, #D09070, #B87050)'
+cover-badge-border: '1.5px solid #B87050'
+cover-badge-color: '#B87050'
+cover-title-color: '#3D1810'
+cover-subtitle-color: '#B87050'
+cover-company-color: '#D8C0A8'
+cover-meta-color: '#3D1810'
+cover-meta-label-color: '#D8C0A8'
+cover-confidential-color: '#A85050'
+cover-confidential-border: '2px solid #D8C0A8'
+rating-box-bg: '#B87050'
+rating-box-color: '#F7EDE8'
+toc-bg: '#F7EDE8'
+toc-border: '3px solid #D8C0A8'
+toc-header-color: '#3D1810'
+toc-header-border: '5px solid #B87050'
+toc-item-border: '1px solid #D8C0A8'
+toc-num-color: '#B87050'
+toc-title-color: '#3D1810'
+toc-ch-color: '#D8C0A8'
+h1-color: '#3D1810'
+h1-bg: 'linear-gradient(to right, #F7EDE8, white)'
+h1-border: '3px solid #B87050'
+h2-color: '#B87050'
+h2-border: '5px solid #B87050'
+h2-bg: '#F7EDE8'
+h3-color: '#3D1810'
+h4-color: '#B87050'
+th-bg: '#B87050'
+th-color: '#F7EDE8'
+th-border: '1px solid #B87050'
+td-border: '1px solid #D8C0A8'
+td-alt-bg: '#D8C0A8'
+pass-color: '#5A7A5A'
+cond-color: '#C08030'
+fail-color: '#A85050'
+highlight-border: '5px solid #B87050'
+highlight-bg: '#D8C0A8'
+veto-pass-border: '5px solid #5A7A5A'
+veto-pass-bg: '#D8C0A8'
+veto-cond-border: '5px solid #C08030'
+veto-cond-bg: '#D8C0A8'
+veto-fail-border: '5px solid #A85050'
+veto-fail-bg: '#D8C0A8'
+rating-badge-border: '2px solid #B87050'
+rating-badge-color: '#3D1810'
+summary-tag-color: '#B87050'
+pre-bg: '#D8C0A8'
+pre-border: '1px solid #D8C0A8'
+pre-accent: '4px solid #B87050'
+pre-color: '#3D1810'
+blockquote-border: '5px solid #B87050'
+blockquote-bg: '#D8C0A8'
+blockquote-color: '#3D1810'
+footer-color: '#D8C0A8'
+footer-border: '1px solid #D8C0A8'
+section-rule: '2px solid #D8C0A8'
+td-label-bg: '#D8C0A8'
+th-green-bg: '#5A7A5A'
+th-red-bg: '#A85050'
+th-warm-bg: '#C08030'
+score-a: '#5A7A5A'
+score-b: '#C08030'
+score-c: '#A85050'

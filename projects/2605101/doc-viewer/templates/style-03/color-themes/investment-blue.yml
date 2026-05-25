@@ -5,74 +5,74 @@ description: "深海蓝主色 + 暖金强调，专业金融报告风格，适合
 note: "投资报告专用配色，与 BD 琥珀金区分"
 ---
 
-body-bg: "#F8FAFC"
-body-color: "#0F172A"
-link-color: "#1D4ED8"
-cover-gradient: "linear-gradient(160deg, #EFF6FF 0%, #DBEAFE 50%, #BFDBFE 100%)"
-cover-border: "6px solid #1D4ED8"
-cover-topbar-class: "cover-topbar"
-cover-topbar-gradient: "linear-gradient(90deg, #1D4ED8, #3B82F6, #60A5FA, #1D4ED8)"
-cover-badge-border: "1.5px solid #1D4ED8"
-cover-badge-color: "#1D4ED8"
-cover-title-color: "#0F172A"
-cover-subtitle-color: "#1D4ED8"
-cover-company-color: "#334155"
-cover-meta-color: "#0F172A"
-cover-meta-label-color: "#334155"
-cover-confidential-color: "#DC2626"
-cover-confidential-border: "2px solid #BFDBFE"
-rating-box-bg: "#1D4ED8"
-rating-box-color: "#FFFFFF"
-toc-bg: "#F8FAFC"
-toc-border: "3px solid #BFDBFE"
-toc-header-color: "#0F172A"
-toc-header-border: "5px solid #1D4ED8"
-toc-item-border: "1px solid #E2E8F0"
-toc-num-color: "#1D4ED8"
-toc-title-color: "#0F172A"
-toc-ch-color: "#334155"
-h1-color: "#0F172A"
-h1-bg: "linear-gradient(to right, #EFF6FF, #F8FAFC)"
-h1-border: "3px solid #1D4ED8"
-h2-color: "#1D4ED8"
-h2-border: "5px solid #1D4ED8"
-h2-bg: "#F8FAFC"
-h3-color: "#0F172A"
-h4-color: "#1D4ED8"
-th-bg: "#1D4ED8"
-th-color: "#FFFFFF"
-th-border: "1px solid #3B82F6"
-td-border: "1px solid #CBD5E1"
-td-alt-bg: "#EFF6FF"
-pass-color: "#15803D"
-cond-color: "#B45309"
-fail-color: "#DC2626"
-highlight-border: "5px solid #1D4ED8"
-highlight-bg: "#EFF6FF"
-veto-pass-border: "5px solid #15803D"
-veto-pass-bg: "#F0FDF4"
-veto-cond-border: "5px solid #B45309"
-veto-cond-bg: "#FFFBEB"
-veto-fail-border: "5px solid #DC2626"
-veto-fail-bg: "#FEF2F2"
-rating-badge-border: "2px solid #1D4ED8"
-rating-badge-color: "#0F172A"
-summary-tag-color: "#1D4ED8"
-pre-bg: "#EFF6FF"
-pre-border: "1px solid #BFDBFE"
-pre-accent: "4px solid #1D4ED8"
-pre-color: "#0F172A"
-blockquote-border: "5px solid #1D4ED8"
-blockquote-bg: "#EFF6FF"
-blockquote-color: "#0F172A"
-footer-color: "#64748B"
-footer-border: "1px solid #E2E8F0"
-section-rule: "2px solid #BFDBFE"
-td-label-bg: "#EFF6FF"
-th-green-bg: "#15803D"
-th-red-bg: "#DC2626"
-th-warm-bg: "#B45309"
-score-a: "#15803D"
-score-b: "#B45309"
-score-c: "#DC2626"
-amber-row-bg: "#EFF6FF"
+body-bg: '#F8FAFC'
+body-color: '#0F172A'
+link-color: '#1D4ED8'
+cover-gradient: 'linear-gradient(160deg, #EFF6FF 0%, #DBEAFE 50%, #BFDBFE 100%)'
+cover-border: '6px solid #1D4ED8'
+cover-topbar-class: 'cover-topbar'
+cover-topbar-gradient: 'linear-gradient(90deg, #1D4ED8, #3B82F6, #60A5FA, #1D4ED8)'
+cover-badge-border: '1.5px solid #1D4ED8'
+cover-badge-color: '#1D4ED8'
+cover-title-color: '#0F172A'
+cover-subtitle-color: '#1D4ED8'
+cover-company-color: '#334155'
+cover-meta-color: '#0F172A'
+cover-meta-label-color: '#334155'
+cover-confidential-color: '#DC2626'
+cover-confidential-border: '2px solid #BFDBFE'
+rating-box-bg: '#1D4ED8'
+rating-box-color: '#FFFFFF'
+toc-bg: '#F8FAFC'
+toc-border: '3px solid #BFDBFE'
+toc-header-color: '#0F172A'
+toc-header-border: '5px solid #1D4ED8'
+toc-item-border: '1px solid #E2E8F0'
+toc-num-color: '#1D4ED8'
+toc-title-color: '#0F172A'
+toc-ch-color: '#334155'
+h1-color: '#0F172A'
+h1-bg: 'linear-gradient(to right, #EFF6FF, #F8FAFC)'
+h1-border: '3px solid #1D4ED8'
+h2-color: '#1D4ED8'
+h2-border: '5px solid #1D4ED8'
+h2-bg: '#F8FAFC'
+h3-color: '#0F172A'
+h4-color: '#1D4ED8'
+th-bg: '#1D4ED8'
+th-color: '#FFFFFF'
+th-border: '1px solid #3B82F6'
+td-border: '1px solid #CBD5E1'
+td-alt-bg: '#EFF6FF'
+pass-color: '#15803D'
+cond-color: '#B45309'
+fail-color: '#DC2626'
+highlight-border: '5px solid #1D4ED8'
+highlight-bg: '#EFF6FF'
+veto-pass-border: '5px solid #15803D'
+veto-pass-bg: '#F0FDF4'
+veto-cond-border: '5px solid #B45309'
+veto-cond-bg: '#FFFBEB'
+veto-fail-border: '5px solid #DC2626'
+veto-fail-bg: '#FEF2F2'
+rating-badge-border: '2px solid #1D4ED8'
+rating-badge-color: '#0F172A'
+summary-tag-color: '#1D4ED8'
+pre-bg: '#EFF6FF'
+pre-border: '1px solid #BFDBFE'
+pre-accent: '4px solid #1D4ED8'
+pre-color: '#0F172A'
+blockquote-border: '5px solid #1D4ED8'
+blockquote-bg: '#EFF6FF'
+blockquote-color: '#0F172A'
+footer-color: '#64748B'
+footer-border: '1px solid #E2E8F0'
+section-rule: '2px solid #BFDBFE'
+td-label-bg: '#EFF6FF'
+th-green-bg: '#15803D'
+th-red-bg: '#DC2626'
+th-warm-bg: '#B45309'
+score-a: '#15803D'
+score-b: '#B45309'
+score-c: '#DC2626'
+amber-row-bg: '#EFF6FF'

@@ -5,74 +5,74 @@ description: "暗黑背景 + 橙红主色，技术海报风格，适合 Claude C
 note: "主色 #FF4A22，背景 #070707 / #0B0B0C，暖白文字 #F4F1EC"
 ---
 
-body-bg: "#070707"
-body-color: "#F4F1EC"
-link-color: "#FF4A22"
-cover-gradient: "linear-gradient(160deg, #0B0B0C 0%, #111111 50%, #1A1A1A 100%)"
-cover-border: "6px solid #FF4A22"
-cover-topbar-class: "cover-topbar-dark"
-cover-topbar-gradient: "linear-gradient(90deg, #FF4A22, #FF7A4A, #FF9B6A, #FF4A22)"
-cover-badge-border: "1.5px solid #FF4A22"
-cover-badge-color: "#FF4A22"
-cover-title-color: "#F4F1EC"
-cover-subtitle-color: "#FF4A22"
-cover-company-color: "rgba(244,241,236,0.6)"
-cover-meta-color: "#F4F1EC"
-cover-meta-label-color: "rgba(244,241,236,0.5)"
-cover-confidential-color: "#FF4A22"
-cover-confidential-border: "2px solid rgba(255,74,34,0.4)"
-rating-box-bg: "#FF4A22"
-rating-box-color: "#070707"
-toc-bg: "#0B0B0C"
-toc-border: "3px solid rgba(255,74,34,0.25)"
-toc-header-color: "#F4F1EC"
-toc-header-border: "5px solid #FF4A22"
-toc-item-border: "1px solid rgba(255,255,255,0.06)"
-toc-num-color: "#FF4A22"
-toc-title-color: "#F4F1EC"
-toc-ch-color: "rgba(244,241,236,0.5)"
-h1-color: "#F4F1EC"
-h1-bg: "linear-gradient(to right, #0B0B0C, #111111)"
-h1-border: "3px solid #FF4A22"
-h2-color: "#FF4A22"
-h2-border: "5px solid #FF4A22"
-h2-bg: "#0B0B0C"
-h3-color: "#F4F1EC"
-h4-color: "#FF4A22"
-th-bg: "#FF4A22"
-th-color: "#070707"
-th-border: "1px solid rgba(255,74,34,0.4)"
-td-border: "1px solid rgba(255,255,255,0.07)"
-td-alt-bg: "rgba(255,74,34,0.05)"
-pass-color: "#4ADE80"
-cond-color: "#FF9B6A"
-fail-color: "#FF4A22"
-highlight-border: "5px solid rgba(255,74,34,0.4)"
-highlight-bg: "rgba(255,74,34,0.07)"
-veto-pass-border: "5px solid #4ADE80"
-veto-pass-bg: "rgba(74,222,128,0.07)"
-veto-cond-border: "5px solid #FF9B6A"
-veto-cond-bg: "rgba(255,155,106,0.07)"
-veto-fail-border: "5px solid #FF4A22"
-veto-fail-bg: "rgba(255,74,34,0.07)"
-rating-badge-border: "2px solid #FF4A22"
-rating-badge-color: "#070707"
-summary-tag-color: "#FF4A22"
-pre-bg: "rgba(0,0,0,0.5)"
-pre-border: "1px solid rgba(255,74,34,0.2)"
-pre-accent: "4px solid #FF4A22"
-pre-color: "#E8C47C"
-blockquote-border: "5px solid #FF4A22"
-blockquote-bg: "rgba(255,74,34,0.06)"
-blockquote-color: "#F4F1EC"
-footer-color: "rgba(244,241,236,0.35)"
-footer-border: "1px solid rgba(255,255,255,0.06)"
-section-rule: "2px solid rgba(255,74,34,0.25)"
-td-label-bg: "rgba(255,74,34,0.06)"
-th-green-bg: "#4ADE80"
-th-red-bg: "#FF4A22"
-th-warm-bg: "#FF9B6A"
-score-a: "#4ADE80"
-score-b: "#FF9B6A"
-score-c: "#FF4A22"
-amber-row-bg: "rgba(255,74,34,0.05)"
+body-bg: '#070707'
+body-color: '#F4F1EC'
+link-color: '#FF4A22'
+cover-gradient: 'linear-gradient(160deg, #0B0B0C 0%, #111111 50%, #1A1A1A 100%)'
+cover-border: '6px solid #FF4A22'
+cover-topbar-class: 'cover-topbar-dark'
+cover-topbar-gradient: 'linear-gradient(90deg, #FF4A22, #FF7A4A, #FF9B6A, #FF4A22)'
+cover-badge-border: '1.5px solid #FF4A22'
+cover-badge-color: '#FF4A22'
+cover-title-color: '#F4F1EC'
+cover-subtitle-color: '#FF4A22'
+cover-company-color: 'rgba(244,241,236,0.6)'
+cover-meta-color: '#F4F1EC'
+cover-meta-label-color: 'rgba(244,241,236,0.5)'
+cover-confidential-color: '#FF4A22'
+cover-confidential-border: '2px solid rgba(255,74,34,0.4)'
+rating-box-bg: '#FF4A22'
+rating-box-color: '#070707'
+toc-bg: '#0B0B0C'
+toc-border: '3px solid rgba(255,74,34,0.25)'
+toc-header-color: '#F4F1EC'
+toc-header-border: '5px solid #FF4A22'
+toc-item-border: '1px solid rgba(255,255,255,0.06)'
+toc-num-color: '#FF4A22'
+toc-title-color: '#F4F1EC'
+toc-ch-color: 'rgba(244,241,236,0.5)'
+h1-color: '#F4F1EC'
+h1-bg: 'linear-gradient(to right, #0B0B0C, #111111)'
+h1-border: '3px solid #FF4A22'
+h2-color: '#FF4A22'
+h2-border: '5px solid #FF4A22'
+h2-bg: '#0B0B0C'
+h3-color: '#F4F1EC'
+h4-color: '#FF4A22'
+th-bg: '#FF4A22'
+th-color: '#070707'
+th-border: '1px solid rgba(255,74,34,0.4)'
+td-border: '1px solid rgba(255,255,255,0.07)'
+td-alt-bg: 'rgba(255,74,34,0.05)'
+pass-color: '#4ADE80'
+cond-color: '#FF9B6A'
+fail-color: '#FF4A22'
+highlight-border: '5px solid rgba(255,74,34,0.4)'
+highlight-bg: 'rgba(255,74,34,0.07)'
+veto-pass-border: '5px solid #4ADE80'
+veto-pass-bg: 'rgba(74,222,128,0.07)'
+veto-cond-border: '5px solid #FF9B6A'
+veto-cond-bg: 'rgba(255,155,106,0.07)'
+veto-fail-border: '5px solid #FF4A22'
+veto-fail-bg: 'rgba(255,74,34,0.07)'
+rating-badge-border: '2px solid #FF4A22'
+rating-badge-color: '#070707'
+summary-tag-color: '#FF4A22'
+pre-bg: 'rgba(0,0,0,0.5)'
+pre-border: '1px solid rgba(255,74,34,0.2)'
+pre-accent: '4px solid #FF4A22'
+pre-color: '#E8C47C'
+blockquote-border: '5px solid #FF4A22'
+blockquote-bg: 'rgba(255,74,34,0.06)'
+blockquote-color: '#F4F1EC'
+footer-color: 'rgba(244,241,236,0.35)'
+footer-border: '1px solid rgba(255,255,255,0.06)'
+section-rule: '2px solid rgba(255,74,34,0.25)'
+td-label-bg: 'rgba(255,74,34,0.06)'
+th-green-bg: '#4ADE80'
+th-red-bg: '#FF4A22'
+th-warm-bg: '#FF9B6A'
+score-a: '#4ADE80'
+score-b: '#FF9B6A'
+score-c: '#FF4A22'
+amber-row-bg: 'rgba(255,74,34,0.05)'
