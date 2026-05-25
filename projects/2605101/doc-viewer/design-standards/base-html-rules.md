@@ -212,6 +212,33 @@ font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "SimSun", Ari
 
 ---
 
+## 12. 表格移动端适配（必须）
+
+所有使用原生 `<table>` 的模板，必须用 `.table-wrap` 包裹：
+
+```html
+<div class="table-wrap">
+  <table>...</table>
+</div>
+```
+
+对应 CSS 规则：
+
+```css
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 12px 0 18px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+```
+
+**注意：** CSS Grid / Flexbox 布局的页面（div 结构）不需要此规则，只有 `<table>` 才需要。
+
+
 ## 11. Do's and Don'ts
 
 **Do's：**
@@ -220,6 +247,7 @@ font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "SimSun", Ari
 - ✅ 响应式断点至少覆盖 480px / 768px / 1024px
 - ✅ 字体栈以中文字体优先
 - ✅ 设置 `:root` CSS 变量定义风格颜色
+- ✅ 所有 `<table>` 必须包裹 `.table-wrap`（适用于含 table 的 skeleton）
 
 **Don'ts：**
 - ❌ 在 HTML 中直接写颜色值
@@ -227,3 +255,4 @@ font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "SimSun", Ari
 - ❌ 硬编码宽度（如 `width: 1200px`），使用 `max-width` + `100%`
 - ❌ 省略 viewport meta 标签
 - ❌ 使用 JS 动画框架
+- ❌ `<table>` 未包裹 `.table-wrap`（移动端表格会溢出）
