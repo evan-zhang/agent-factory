@@ -85,7 +85,7 @@ URL=$(echo "$UPLOAD_RESP" | python3 -c "import sys,json; print(json.load(sys.std
 
 **推荐规则**：
 - 用户说「报告」「BD」「评估」「尽调」「投前」「文档」「分析」→ 推荐 **风格 03**
-  - 进一步判断配色：「琥珀金」「金色」→ amber（默认）；「阳光黄」「黄色」→ yellow
+  - 进一步判断配色：「琥珀金」「金色」→ amber（默认）；「阳光黄」「黄色」→ yellow；「投资蓝」「蓝色」「金融报告」→ investment-blue
 - 用户说「情报」「日报」「动态」「资讯」「新闻」→ 推荐 **风格 04**
 - 用户说「指标」「KPI」「数据」「数字」「看板」→ 推荐 **风格 05**
 - 用户说「产品介绍」「产品页」「服务页」→ 推荐 **风格 06**
@@ -93,10 +93,18 @@ URL=$(echo "$UPLOAD_RESP" | python3 -c "import sys,json; print(json.load(sys.std
 - 用户说「苹果」「Apple」「极简」「电影感」「keynote」→ 推荐 **风格 08**
 - 用户说「文档」「编辑器」「Notion」「笔记」「知识库」→ 推荐 **风格 09**
 - 用户说「开发者」「Stripe」「API」「代码」「开发者平台」→ 推荐 **风格 10**
-- 用户说「暗色」「Linear」「SaaS」「暗色主题」「高级感」→ 推荐 **风格 11**
+- 用户说「暗色」「Linear」「暗色主题」「高级感」「极客」「技术海报」「AI 教程」→ 推荐 **风格 11 + dark-technical**
 - 用户说「封面」「首页」→ 推荐 **风格 02-A** 或 **02-B**
 - 用户说「案例」「客户案例」→ 推荐 **风格 02-F**
 - 用户没明确偏好 → 推荐 **风格 01**
+
+> **📐 架构说明：样式 × 颜色 两个正交维度**
+> 
+> **样式（skeleton.html）**：决定页面结构、章节排版、组件布局。目前 style-01 ~ 11 代表 11 种结构方案。
+> 
+> **颜色（color-themes/*.yml）**：决定配色体系，只替换 CSS 变量值，不改变结构。同一套骨架换一套配色即可。
+> 
+> **适用场景**：同一份报告内容（如投资评估），可以套用 style-03 骨架 + investment-blue 配色来生成；同骨架换 amber 配色则变为 BD 报告风格。
 
 ### Step 2：素材收集
 
@@ -132,7 +140,7 @@ Agent 生成 HTML 前必须读取以下文件：
 |------|-----------|---------|
 | 风格 01 | `templates/style-01/design-token.md` | `templates/style-01/skeleton.html` | — |
 | 风格 02 | `templates/style-02/design-token.md` | `templates/style-02/skeleton.html` | — |
-| 风格 03 | `templates/style-03/design-token.md` | `templates/style-03/skeleton.html` | `templates/style-03/color-themes/amber.yml`（琥珀金）或 `yellow.yml`（阳光黄） |
+| 风格 03 | `templates/style-03/design-token.md` | `templates/style-03/skeleton.html` | `templates/style-03/color-themes/amber.yml`（琥珀金）或 `yellow.yml`（阳光黄）或 `investment-blue.yml`（投资蓝） |
 | 风格 04 | `templates/style-04/design-token.md` | `templates/style-04/skeleton.html` | — |
 | 风格 05 | `templates/style-05/design-token.md` | `templates/style-05/skeleton.html` | — |
 | 风格 06 | `templates/style-06/design-token.md` | `templates/style-06/skeleton.html` | — |
@@ -140,7 +148,7 @@ Agent 生成 HTML 前必须读取以下文件：
 | 风格 08 | `templates/style-08/design-token.md` | `templates/style-08/skeleton.html` | — |
 | 风格 09 | `templates/style-09/design-token.md` | `templates/style-09/skeleton.html` | — |
 | 风格 10 | `templates/style-10/design-token.md` | `templates/style-10/skeleton.html` | — |
-| 风格 11 | `templates/style-11/design-token.md` | `templates/style-11/skeleton.html` | — |
+| 风格 11 | `templates/style-11/design-token.md` | `templates/style-11/skeleton.html` | `templates/style-11/color-themes/dark-technical.yml`（暗色技术风）|
 
 Design Token 包含：
 - **YAML front matter**：机器可读的 tokens（颜色、字体、间距、圆角）
@@ -297,10 +305,12 @@ curl -X PUT https://doc.20100706.xyz/api/{doc_id} \
 A4 纵向，章节密集，表格整齐。专为导出 PDF/Word 设计。
 
 **配色方案（color-themes/）**：
-- **琥珀金（amber）**：深金 #C9920A，沉稳高端，适合高管/投资人对接（默认）
+- **琥珀金（amber）**：深金 #C9920A，沉稳高端，适合高管/BD报告（默认）
+- **暗色技术风（dark-technical）**：暗黑 #070707 + 橙红 #FF4A22，适合 AI 极客/技术海报报告
 - **阳光黄（yellow）**：亮黄 #F4B400，现代活力，适合内部审阅
+- **投资蓝（investment-blue）**：深海蓝 #1D4ED8，专业金融，适合投资报告
 
-用户说「琥珀金」「金色」→ amber；说「阳光黄」「黄色」→ yellow；未指定 → amber。
+用户说「琥珀金」「金色」→ amber；说「阳光黄」「黄色」→ yellow；说「投资蓝」「蓝色」「金融报告」→ investment-blue；未指定 → amber。
 
 | 文件 | 说明 |
 |------|------|
@@ -308,7 +318,9 @@ A4 纵向，章节密集，表格整齐。专为导出 PDF/Word 设计。
 | `templates/style-03/skeleton.html` | HTML 骨架（含 {{TOKEN}} 占位符） |
 | `templates/style-03/style-03-bd-report.md` | 视觉说明与内容结构 |
 | `templates/style-03/color-themes/amber.yml` | 琥珀金配色 Token |
+| `templates/style-03/color-themes/dark-technical.yml` | 暗色技术风配色 Token（橙红）|
 | `templates/style-03/color-themes/yellow.yml` | 阳光黄配色 Token |
+| `templates/style-03/color-themes/investment-blue.yml` | 投资蓝配色 Token |
 | `templates/style-03/reference-amber.html` | 琥珀金版完整参考范例（CG-0255） |
 | `templates/style-03/reference-yellow.html` | 阳光黄版完整参考范例（CG-0255） |
 
@@ -345,6 +357,23 @@ A4 纵向，章节密集，表格整齐。专为导出 PDF/Word 设计。
 |------|------|
 | `templates/style-06/design-token.md` | Design Token |
 | `templates/style-06/skeleton.html` | HTML 骨架参考 |
+
+### 风格 11 — Linear 暗色技术风（技术海报 + 仪表盘）
+
+暗黑背景 + 橙红主色，技术海报风格，适合 Claude Code 深度教程 / AI 极客内容 / 开发者文档。
+
+**配色方案（color-themes/）**：
+- **dark-technical（暗色技术风）**：暗黑 #070707 + 橙红 #FF4A22 + 暖白文字，适合技术海报（默认）
+
+用户说「暗色」「Linear」「暗色主题」「高级感」「极客」「AI 教程」「技术海报」→ 推荐 style-11 + dark-technical。
+
+| 文件 | 说明 |
+|------|------|
+| `templates/style-11/design-token.md` | Design Token |
+| `templates/style-11/skeleton.html` | HTML 骨架（含 {{TOKEN}} 占位符）|
+| `templates/style-11/color-themes/dark-technical.yml` | 暗色技术风配色 Token（橙红主色）|
+
+**生成流程**：同风格 03，从 skeleton.html + color-themes/*.yml 生成。
 
 ---
 
