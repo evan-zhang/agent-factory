@@ -29,13 +29,10 @@ def test_basic_archive():
         try:
             data = json.loads(result)
             if data.get("ok") and (archive_dir / "2026" / "05").exists():
-                print(json.dumps({"ok": True, "test": "basic_archive", "result": "pass"}))
                 return 0
             else:
-                print(json.dumps({"ok": False, "test": "basic_archive", "error": "Archive failed"}))
                 return 1
         except json.JSONDecodeError:
-            print(json.dumps({"ok": False, "test": "basic_archive", "error": "Invalid JSON output"}))
             return 1
 
     finally:
@@ -66,19 +63,14 @@ def test_archive_with_entities():
                 archive_file = list((archive_dir / "2026" / "05").glob("K-*.md"))[0]
                 content = archive_file.read_text()
                 if "entities:" in content and "AI" in content and "summary:" in content and "confidence: high" in content:
-                    print(json.dumps({"ok": True, "test": "archive_with_entities", "result": "pass"}))
                     return 0
                 else:
-                    print(json.dumps({"ok": False, "test": "archive_with_entities", "error": "Missing entities in output"}))
                     return 1
             else:
-                print(json.dumps({"ok": False, "test": "archive_with_entities", "error": "Archive failed"}))
                 return 1
         except json.JSONDecodeError:
-            print(json.dumps({"ok": False, "test": "archive_with_entities", "error": "Invalid JSON output"}))
             return 1
         except Exception as e:
-            print(json.dumps({"ok": False, "test": "archive_with_entities", "error": str(e)}))
             return 1
 
     finally:
@@ -94,13 +86,10 @@ def test_mode_decision():
         ).read()
         data = json.loads(result)
         if "mode" in data:  # 只验证有 mode 字段，不强制具体值
-            print(json.dumps({"ok": True, "test": "mode_decision_github", "result": "pass"}))
             return 0
         else:
-            print(json.dumps({"ok": False, "test": "mode_decision_github", "error": f"No mode in output"}))
             return 1
     except json.JSONDecodeError:
-        print(json.dumps({"ok": False, "test": "mode_decision_github", "error": "Invalid JSON output"}))
         return 1
 
 

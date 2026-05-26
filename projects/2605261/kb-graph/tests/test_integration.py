@@ -33,10 +33,8 @@ def test_build_basic():
         index_file = Path(test_dir) / ".kb-index.md"
 
         if cache_file.exists() and entries_file.exists() and index_file.exists():
-            print(json.dumps({"ok": True, "test": "build_basic", "result": "pass"}))
-            return 0
+            return 0  # 不输出，只返回成功状态
         else:
-            print(json.dumps({"ok": False, "test": "build_basic", "error": "Missing files"}))
             return 1
 
     finally:
@@ -62,10 +60,8 @@ def test_incremental_update():
         data = json.loads(result)
 
         if data.get("ok") and data.get("updated", 0) > 0:
-            print(json.dumps({"ok": True, "test": "incremental_update", "result": "pass"}))
             return 0
         else:
-            print(json.dumps({"ok": False, "test": "incremental_update", "error": "Update failed"}))
             return 1
 
     finally:
@@ -88,10 +84,8 @@ def test_query():
         data = json.loads(result)
 
         if data.get("ok") and data.get("total", 0) > 0:
-            print(json.dumps({"ok": True, "test": "query", "result": "pass"}))
             return 0
         else:
-            print(json.dumps({"ok": False, "test": "query", "error": "Query failed"}))
             return 1
 
     finally:
