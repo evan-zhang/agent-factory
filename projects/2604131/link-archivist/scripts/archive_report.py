@@ -39,13 +39,24 @@ def parse_args():
     parser.add_argument('--file', '-f', dest='file_arg', help='Markdown report file path (named)')
     parser.add_argument('--dir', '-d', dest='dir_arg', help='Archive directory (named)')
     parser.add_argument('--title', '-t', dest='title_arg', help='Report title (named)')
+    parser.add_argument('--entities', help='JSON array of entities, e.g. \'["AI","OpenClaw"]\'')
+    parser.add_argument('--summary', help='One-line summary of the report')
+    parser.add_argument('--confidence', default='medium', choices=['high', 'medium', 'low'], help='Extraction confidence')
     args = parser.parse_args()
 
     content_file = args.file_arg or args.content_file
     archive_dir = args.dir_arg or args.archive_dir
     title = args.title_arg or args.title or 'report'
 
-    return content_file, archive_dir, title
+    # Parse entities JSON
+    entities = []
+    if args.entities:
+        try:
+            entities = json.loads(args.entities)
+        except json.JSONDecodeError:
+            entities = [e.strip() for e in args.entities.split(",")]
+
+    return content_file, archive_dir, title, entities, args.summary, args.confidence
 
 
 def load_config():
@@ -64,13 +75,14 @@ def load_config():
 
 
 def main() -> int:
-    content_file_str, archive_dir_str, title = parse_args()
+    content_file_str, archive_dir_str, title, entities, summary, confidence = parse_args()
 
     if not content_file_str:
         print(json.dumps({
             "ok": False,
             "error": "usage: archive_report.py <content_file> <archive_dir> [title]\n"
-                     "       or: archive_report.py --file <file> [--dir <dir>] [--title <title>]"
+                     "       or: archive_report.py --file <file> [--dir <dir>] [--title <title>]\n"
+                     "            [--entities '<json>'] [--summary '<text>'] [--confidence high]"
         }, ensure_ascii=False))
         return 1
 
@@ -78,7 +90,7 @@ def main() -> int:
     archive_dir = Path(archive_dir_str).expanduser() if archive_dir_str else Path(".")
 
     if not content_file.exists():
-        print(json.dumps({"ok": False, "error": f"missing file: {content_file}"}, ensure_ascii=False))
+        print(json.dumps({"ok": False, "error": f"missing file: {content_file}"}))
         return 1
 
     # Load config
@@ -101,13 +113,24 @@ def main() -> int:
 
     # Add YAML header if not present
     if not content.startswith("---"):
-        header = f"""---
-archive: {archive_id}
-source: unknown
-created_at: {datetime.now().isoformat()}
-tags: []
----
-"""
+        import json as _json
+        header_parts = [
+            f"archive: {archive_id}",
+            "source: unknown",
+            f"created_at: {datetime.now().isoformat()}",
+        ]
+        if entities:
+            header_parts.append("entities:")
+            for ent in entities[:10]:
+                header_parts.append(f"  - {ent}")
+        else:
+            header_parts.append("entities: []")
+        if summary:
+            header_parts.append(f"summary: {summary}")
+        if confidence:
+            header_parts.append(f"confidence: {confidence}")
+        header_parts.append("tags: []")
+        header = "---\n" + "\n".join(header_parts) + "\n---\n"
         content = header + content
 
     safe_title = title.replace(" ", "-").replace("/", "-")[:50]

@@ -305,14 +305,31 @@ Step 3：结合两者动态生成个性化洞察
 
 ## 阶段 6：归档本地
 
-调用 `scripts/archive_report.py`：
+> **KB Graph Ready**：本阶段在调用 `archive_report.py` 前，需要从报告正文中提取 entities 和 summary，写入 YAML frontmatter。
+
+### 6.1 提取 Entities 和 Summary
+
+在调用归档脚本前，Agent 需要从报告正文中提取：
+- **entities**：报告中提到的关键概念、项目、人名、术语（最多 10 个）
+- **summary**：一句话概括报告核心内容（不超过 200 字）
+
+提取方式：由 Agent 根据报告内容自行判断，不需要额外调用 LLM（报告内容已经在 Agent 上下文中）。
+
+### 6.2 调用归档脚本
+
+调用 `scripts/archive_report.py`，新增 `--entities` 和 `--summary` 参数：
 
 ```bash
 # 位置参数
-python3 scripts/archive_report.py <content_file> <archive_dir> [title]
+python3 scripts/archive_report.py <content_file> <archive_dir> [title] --entities '["项目名","技术栈"]' --summary "一句话描述"
 
 # 命名参数（等效）
-python3 scripts/archive_report.py --file <content_file> --title "标题"
+python3 scripts/archive_report.py \
+  --file <content_file> \
+  --title "标题" \
+  --entities '[{"name":"项目名"},{"name":"技术栈"}]' \
+  --summary "一句话描述" \
+  --confidence high
 ```
 
 **归档结果示例：**
@@ -322,6 +339,22 @@ python3 scripts/archive_report.py --file <content_file> --title "标题"
 └── 2026-04-15/
     └── K-260415-001-项目名称.md
 ```
+
+**编号规则**：`K-YYMMDD-NNN`
+- YYMMDD：建档日期
+- NNN：当日序号（每日从 001 开始，自动取最大 +1）
+
+### 6.3 Wiki 链接注入（建议）
+
+在归档前，建议在报告正文的「个人洞察」或「对比分析」栏目中，引用本地相关的已有报告：
+
+```markdown
+## 个人洞察
+
+本项目与 [[K-260410-002-MCP协议调研]] 在架构思路上有一定关联...
+```
+
+这可以直接被 KB Graph 的 `build_graph.py` 识别为边关系。
 
 **编号规则**：`K-YYMMDD-NNN`
 - YYMMDD：建档日期
