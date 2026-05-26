@@ -24,8 +24,8 @@ def test_build_basic():
         (Path(test_dir) / "doc1.md").write_text("# 测试文档1\n内容1")
         (Path(test_dir) / "doc2.md").write_text("# 测试文档2\n内容2")
 
-        # 运行构建
-        os.system(f'python3 {SCRIPT_DIR}/kb_graph.py build {test_dir} --test-mode')
+        # 运行构建（重定向输出）
+        os.system(f'python3 {SCRIPT_DIR}/kb_graph.py build {test_dir} --test-mode > /dev/null 2>&1')
 
         # 验证结果
         cache_file = Path(test_dir) / ".kb-workdir" / "kb_cache.json"
@@ -100,8 +100,6 @@ def test_query():
 
 def main():
     """运行所有测试"""
-    print(json.dumps({"ok": True, "status": "starting"}))
-
     tests = [
         test_build_basic,
         test_incremental_update,

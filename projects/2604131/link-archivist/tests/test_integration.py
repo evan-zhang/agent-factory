@@ -106,8 +106,6 @@ def test_mode_decision():
 
 def main():
     """运行所有测试"""
-    print(json.dumps({"ok": True, "status": "starting"}))
-
     tests = [
         test_basic_archive,
         test_archive_with_entities,
