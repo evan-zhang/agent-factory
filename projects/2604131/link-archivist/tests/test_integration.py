@@ -59,18 +59,24 @@ def test_archive_with_entities():
         try:
             data = json.loads(result)
             if data.get("ok"):
-                # 检查生成的文件是否包含正确的 YAML
-                archive_file = list((archive_dir / "2026" / "05").glob("K-*.md"))[0]
-                content = archive_file.read_text()
-                if "entities:" in content and "AI" in content and "summary:" in content and "confidence: high" in content:
-                    return 0
-                else:
+                try:
+                    # 检查生成的文件是否包含正确的 YAML
+                    archive_files = list((archive_dir / "2026" / "05").glob("K-*.md"))
+                    if not archive_files:
+                        return 1
+                    archive_file = archive_files[0]
+                    content = archive_file.read_text()
+                    if "entities:" in content and "AI" in content and "summary:" in content and "confidence: high" in content:
+                        return 0
+                    else:
+                        return 1
+                except (IndexError, FileNotFoundError):
                     return 1
             else:
                 return 1
         except json.JSONDecodeError:
             return 1
-        except Exception as e:
+        except Exception:
             return 1
 
     finally:
@@ -107,20 +113,25 @@ def main():
         try:
             result = test()
             results.append(result)
-        except Exception as e:
-            print(json.dumps({"ok": False, "test": test.__name__, "error": str(e)}))
+        except Exception:
             results.append(1)
 
     # 汇总结果
     passed = sum(1 for r in results if r == 0)
     total = len(results)
 
-    print(json.dumps({
-        "ok": all(r == 0 for r in results),
-        "passed": passed,
-        "failed": total - passed,
-        "total": total
-    }))
+    # 确保总是输出有效的 JSON
+    try:
+        output = json.dumps({
+            "ok": all(r == 0 for r in results),
+            "passed": passed,
+            "failed": total - passed,
+            "total": total
+        })
+        print(output)
+    except Exception:
+        # 如果 JSON 序列化失败，输出最简单的有效 JSON
+        print('{"ok": false, "error": "serialization_failed"}')
 
     return 0 if all(r == 0 for r in results) else 1
 

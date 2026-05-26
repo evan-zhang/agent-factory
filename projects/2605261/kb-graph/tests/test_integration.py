@@ -24,16 +24,24 @@ def test_build_basic():
         (Path(test_dir) / "doc1.md").write_text("# 测试文档1\n内容1")
         (Path(test_dir) / "doc2.md").write_text("# 测试文档2\n内容2")
 
-        # 运行构建（重定向输出）
-        os.system(f'python3 {SCRIPT_DIR}/kb_graph.py build {test_dir} --test-mode > /dev/null 2>&1')
+        # 运行构建并捕获输出
+        result = os.popen(f'python3 {SCRIPT_DIR}/kb_graph.py build {test_dir} --test-mode').read()
 
-        # 验证结果
+        # 验证命令是否成功
+        try:
+            data = json.loads(result)
+            if not data.get("ok"):
+                return 1
+        except json.JSONDecodeError:
+            return 1
+
+        # 验证结果文件
         cache_file = Path(test_dir) / ".kb-workdir" / "kb_cache.json"
         entries_file = Path(test_dir) / ".kb-workdir" / "entries.json"
         index_file = Path(test_dir) / ".kb-index.md"
 
         if cache_file.exists() and entries_file.exists() and index_file.exists():
-            return 0  # 不输出，只返回成功状态
+            return 0
         else:
             return 1
 
@@ -50,18 +58,28 @@ def test_incremental_update():
         (Path(test_dir) / "doc1.md").write_text("# 测试文档1\n内容1")
 
         # 第一次构建
-        os.system(f'python3 {SCRIPT_DIR}/kb_graph.py build {test_dir} --test-mode > /dev/null 2>&1')
+        result = os.popen(f'python3 {SCRIPT_DIR}/kb_graph.py build {test_dir} --test-mode').read()
+
+        try:
+            data = json.loads(result)
+            if not data.get("ok"):
+                return 1
+        except json.JSONDecodeError:
+            return 1
 
         # 修改文件
         (Path(test_dir) / "doc1.md").write_text("# 测试文档1\n内容1\n新增内容")
 
         # 增量更新
         result = os.popen(f'python3 {SCRIPT_DIR}/kb_graph.py update {test_dir} --test-mode').read()
-        data = json.loads(result)
 
-        if data.get("ok") and data.get("updated", 0) > 0:
-            return 0
-        else:
+        try:
+            data = json.loads(result)
+            if data.get("ok") and data.get("updated", 0) > 0:
+                return 0
+            else:
+                return 1
+        except json.JSONDecodeError:
             return 1
 
     finally:
@@ -77,15 +95,25 @@ def test_query():
         (Path(test_dir) / "doc1.md").write_text("# AI 人工智能\nAI内容")
 
         # 构建
-        os.system(f'python3 {SCRIPT_DIR}/kb_graph.py build {test_dir} --test-mode > /dev/null 2>&1')
+        result = os.popen(f'python3 {SCRIPT_DIR}/kb_graph.py build {test_dir} --test-mode').read()
+
+        try:
+            data = json.loads(result)
+            if not data.get("ok"):
+                return 1
+        except json.JSONDecodeError:
+            return 1
 
         # 查询
         result = os.popen(f'python3 {SCRIPT_DIR}/query.py --query "AI" --dir {test_dir}').read()
-        data = json.loads(result)
 
-        if data.get("ok") and data.get("total", 0) > 0:
-            return 0
-        else:
+        try:
+            data = json.loads(result)
+            if data.get("ok") and data.get("total", 0) > 0:
+                return 0
+            else:
+                return 1
+        except json.JSONDecodeError:
             return 1
 
     finally:
@@ -107,19 +135,24 @@ def main():
             result = test()
             results.append(result)
         except Exception as e:
-            print(json.dumps({"ok": False, "test": test.__name__, "error": str(e)}))
             results.append(1)
 
     # 汇总结果
     passed = sum(1 for r in results if r == 0)
     total = len(results)
 
-    print(json.dumps({
-        "ok": all(r == 0 for r in results),
-        "passed": passed,
-        "failed": total - passed,
-        "total": total
-    }))
+    # 确保总是输出有效的 JSON
+    try:
+        output = json.dumps({
+            "ok": all(r == 0 for r in results),
+            "passed": passed,
+            "failed": total - passed,
+            "total": total
+        })
+        print(output)
+    except Exception:
+        # 如果 JSON 序列化失败，输出最简单的有效 JSON
+        print('{"ok": false, "error": "serialization_failed"}')
 
     return 0 if all(r == 0 for r in results) else 1
 
