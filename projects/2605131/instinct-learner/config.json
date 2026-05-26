@@ -1,0 +1,10 @@
+{
+  "max_instincts_load": 5,
+  "max_inject_tokens": 500,
+  "confidence_threshold": 0.3,
+  "dormant_days": 30,
+  "expired_days": 60,
+  "max_active_instincts": 50,
+  "extraction_mode": "keyword"
+}
+

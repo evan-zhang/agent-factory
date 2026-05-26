@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>上海VBP集采品种衰退诊断与重振方案</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; font-size: 14px; line-height: 1.85; color: #1a1a1a; background: #ffffff; }
+.container { max-width: 720px; margin: 0 auto; padding: 24px 32px; }
+.chapter { break-before: page; padding-top: 0; }
+h1 { font-size: 28px; font-weight: 700; color: #1a3a5c; margin-bottom: 8px; }
+h2 { font-size: 20px; font-weight: 700; color: #1a3a5c; border-left: 5px solid #1a3a5c; padding-left: 12px; margin: 32px 0 16px; }
+h3 { font-size: 15px; font-weight: 600; color: #1a3a5c; margin: 20px 0 10px; }
+.exec, .insight, .warn, .action, .indep, .mnc, .role-hq, .role-rg, .role-sa { border-left: 5px solid; padding: 14px 18px; margin: 16px 0; background: #f8f9fa; border-radius: 0 4px 4px 0; }
+.exec { border-color: #1a3a5c; background: #eef2f7; }
+.insight, .mnc { border-color: #2e7d32; background: #e8f5e9; }
+.warn { border-color: #c62828; background: #ffebee; }
+.action { border-color: #1565c0; background: #e3f2fd; }
+.indep { border-color: #e65100; background: #fff3e0; }
+.role-hq { border-color: #6a1b9a; background: #f3e5f5; }
+.role-rg { border-color: #e65100; background: #fff3e0; }
+.role-sa { border-color: #2e7d32; background: #e8f5e9; }
+.form-box { border: 1px solid #bdbdbd; border-radius: 4px; padding: 16px; margin: 16px 0; background: #fafafa; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
+th { background: #1a3a5c; color: #ffffff; padding: 9px 12px; text-align: left; font-weight: 600; }
+td { padding: 8px 12px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+tr:nth-child(even) td { background: #f5f7fa; }
+tr:last-child td { border-bottom: none; }
+.r-red td { background: #ffcdd2 !important; color: #b71c1c; }
+.r-org td { background: #ffe0b2 !important; color: #e65100; }
+.r-grn td { background: #c8e6c9 !important; color: #1b5e20; }
+.r-gry td { background: #eceff1 !important; color: #455a64; font-weight: 600; }
+.cover { text-align: center; padding: 80px 40px; border: 2px solid #1a3a5c; margin-bottom: 32px; }
+.cover .brand { font-size: 13px; color: #1a3a5c; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px; }
+.cover h1 { font-size: 26px; border: none; padding: 0; text-align: center; margin-bottom: 16px; }
+.cover .subtitle { font-size: 15px; color: #546e7a; margin-bottom: 40px; }
+.cover .meta { font-size: 12px; color: #90a4ae; margin-top: 40px; }
+.exec-summary { background: #eef2f7; border: 1px solid #1a3a5c; padding: 20px; margin: 20px 0; border-radius: 4px; }
+.exec-summary h3 { color: #1a3a5c; margin-top: 0; }
+.exec-summary .big-num { font-size: 32px; font-weight: 700; color: #c62828; }
+.exec-summary .big-num.grn { color: #2e7d32; }
+.warn-box { background: #ffebee; border-left: 5px solid #c62828; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+.kpi-card { display: flex; gap: 16px; margin: 16px 0; flex-wrap: wrap; }
+.kpi-card .card { flex: 1; min-width: 120px; background: #f5f7fa; border: 1px solid #e0e0e0; border-radius: 4px; padding: 14px; text-align: center; }
+.kpi-card .card .num { font-size: 26px; font-weight: 700; color: #1a3a5c; }
+.kpi-card .card .num.red { color: #c62828; }
+.kpi-card .card .num.org { color: #e65100; }
+.kpi-card .card .num.grn { color: #2e7d32; }
+.kpi-card .card .label { font-size: 12px; color: #757575; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- 封面 -->
+<div class="cover chapter">
+  <div class="brand">康哲药业 · 经营责任中心</div>
+  <h1>上海VBP集采品种<br>衰退诊断与重振实操方案</h1>
+  <div class="subtitle">品种 × 分组 × 个人 三层穿透 ｜ 基于真实调研数据</div>
+  <div style="margin-top:16px;font-size:13px;color:#546e7a;">
+    <strong>样本区域</strong>：上海市 &nbsp;|&nbsp; <strong>覆盖品种</strong>：波依定、黛力新、优思弗 &nbsp;|&nbsp; <strong>数据来源</strong>：区域上报调研表
+  </div>
+  <div class="meta">
+    报告日期：2026年5月 &nbsp;|&nbsp; 版本：v1.0 &nbsp;|&nbsp; 制式：经营责任中心内部作战手册
+  </div>
+</div>
+
+<!-- 执行摘要 -->
+<div class="chapter">
+  <h2>执行摘要</h2>
+  <div class="exec-summary">
+    <h3>三句话定性</h3>
+    <ol>
+      <li>上海VBP集采品种面临的是<strong>结构性塌方与激励失位复合型衰退</strong>：波依定21→25销量跌83.8%、黛力新跌73.5%、优思弗22→25跌79.1%，且<strong>超过1/3不在院医院明确拒绝恢复</strong>，问题远比数字更根深蒂固。</li>
+      <li>基层执行力出现<strong>系统性衰减</strong>：优思弗1:1管控解控率0%，8周长处方开通率仅10.8%，代表在政策压制下主动选择"不动"，这<strong>不是道德问题，是KPI设计失位的症状</strong>。</li>
+      <li>扭转局势需要<strong>三管齐下</strong>：解控政策快速落地（优思弗100%仍管控中）、8周长处方通道激活（目前仅10.8%）、人员四象限诊断与调整同步推进。</li>
+    </ol>
+  </div>
+
+  <h3>核心数字仪表盘</h3>
+  <div class="kpi-card">
+    <div class="card">
+      <div class="num red">29.1%</div>
+      <div class="label">波依定+黛力新<br>不在院率</div>
+    </div>
+    <div class="card">
+      <div class="num red">83.8%</div>
+      <div class="label">波依定<br>21→25销量跌幅</div>
+    </div>
+    <div class="card">
+      <div class="num red">58.0%</div>
+      <div class="label">黛力新<br>在院率</div>
+    </div>
+    <div class="card">
+      <div class="num org">93.2%</div>
+      <div class="label">波依定+黛力新<br>1:1管控中</div>
+    </div>
+    <div class="card">
+      <div class="num red">0%</div>
+      <div class="label">优思弗<br>1:1管控解控率</div>
+    </div>
+    <div class="card">
+      <div class="num red">10.8%</div>
+      <div class="label">8周长处方<br>开通率</div>
+    </div>
+    <div class="card">
+      <div class="num red">36.4%</div>
+      <div class="label">不在院医院<br>明确拒绝恢复</div>
+    </div>
+    <div class="card">
+      <div class="num org">52.2%</div>
+      <div class="label">上海心八区<br>不在院率(最高)</div>
+    </div>
+  </div>
+
+  <h3>各品种关键指标</h3>
+  <table>
+    <tr><th>品种</th><th>医院数</th><th>在院数</th><th>不在院数</th><th>在院率</th><th>21/22→25销量跌幅</th><th>1:1管控率</th><th>管控解控率</th><th>8周开通率</th></tr>
+    <tr class="r-red"><td>波依定</td><td>256</td><td>206</td><td>50</td><td>80.5%</td><td>83.8%</td><td>93.2%</td><td>70.3%</td><td>10.8%</td></tr>
+    <tr class="r-org"><td>黛力新</td><td>188</td><td>109</td><td>79</td><td>58.0%</td><td>73.5%</td><td>93.2%</td><td>70.3%</td><td>10.8%</td></tr>
+    <tr class="r-red"><td>优思弗</td><td>41</td><td>32</td><td>9</td><td>78.0%</td><td>79.1%</td><td>100%</td><td>0%</td><td>0%</td></tr>
+  </table>
+</div>
+
+<!-- 第一部分：现状三层穿透 -->
+<div class="chapter">
+  <h2>第一部分：现状三层穿透</h2>
+
+  <h3>1.1 品种层：衰退性质判定</h3>
+  <div class="indep">
+    <strong>独立洞见：</strong>三个品种衰退性质各异，需要差异化策略：
+    <br>波依定：<strong>管控锁量型为主</strong>（93.2%管控中），但已解控率较高（70.3%），说明政策传导存在时滞，恢复潜力最大
+    <br>黛力新：<strong>基层放弃型为主</strong>（不在院率42%为三品种最高，且大量备注"药剂科不接待"），核心问题在代表执行力
+    <br>优思弗：<strong>政策封堵型</strong>（100%管控中，0%解控，0% 8周开通），完全是被政策卡死，需要市场准入部强力介入
+  </div>
+  <table>
+    <tr><th>品种</th><th>衰退性质</th><th>在院率</th><th>不在院数</th><th>主要问题</th><th>优先策略</th></tr>
+    <tr class="r-org"><td>波依定</td><td>管控锁量型</td><td>80.5%</td><td>50</td><td>管控解控率仅70.3%，还有123家未解控</td><td>推动未解控医院解控，激活8周长处方</td></tr>
+    <tr class="r-red"><td>黛力新</td><td>基层放弃型+管控锁量型</td><td>58.0%</td><td>79</td><td>不在院率42%，备注大量"药剂科不接待"</td><td>代表面谈诊断，推动恢复，激活延伸处方</td></tr>
+    <tr class="r-red"><td>优思弗</td><td>政策封堵型</td><td>78.0%</td><td>9</td><td>1:1管控100%，0%解控，0% 8周开通</td><td>市场准入部介入，政策推动+跨部门SWAT</td></tr>
+  </table>
+
+  <h3>1.2 分组层：危险分区热力表</h3>
+  <table>
+    <tr><th>分区</th><th>医院数</th><th>不在院数</th><th>不在院率</th><th>21→25跌幅</th><th>风险等级</th><th>主要问题</th></tr>
+    <tr class="r-red"><td>上海心八区</td><td>138</td><td>72</td><td>52.2%</td><td>74.5%</td><td>🔴 高风险</td><td>不在院率超50%，优思弗/黛力新占绝大多数</td></tr>
+    <tr class="r-red"><td>上海心九区</td><td>38</td><td>15</td><td>39.5%</td><td>93.4%</td><td>🔴 高风险</td><td>跌幅最深(93.4%)，不在院率近40%</td></tr>
+    <tr class="r-org"><td>上海心七区</td><td>87</td><td>25</td><td>28.7%</td><td>72.7%</td><td>🟠 中风险</td><td>崇明区域覆盖弱，代表盛玉婷辖区问题突出</td></tr>
+    <tr class="r-org"><td>上海心一区</td><td>48</td><td>8</td><td>16.7%</td><td>86.5%</td><td>🟠 中风险</td><td>三级医院集中(中山/胸科/六院)，销量跌幅深</td></tr>
+    <tr class="r-org"><td>上海心三区</td><td>73</td><td>5</td><td>6.8%</td><td>85.3%</td><td>🟡 低风险</td><td>在院率较高，但跌幅仍深，量在萎缩</td></tr>
+    <tr class="r-org"><td>上海心二区</td><td>60</td><td>4</td><td>6.7%</td><td>82.4%</td><td>🟡 低风险</td><td>整体稳健，个别医院问题（如民航上海医院）</td></tr>
+  </table>
+  <div class="warn">
+    <strong>⚠️ 上海心八区预警：</strong>138家医院中72家不在院（52.2%），占全量不在院医院的56%。其中大部分为社区和民营医院，黛力新和优思弗占主体。江南（13家医院，30.8%在院率）和周志文（22家，22.7%在院率）需要重点关注。
+  </div>
+
+  <h3>1.3 个人层：代表四象限分类</h3>
+  <div class="action">
+    <strong>判定标准说明：</strong>
+    <br>标杆代表：在院率≥85%且销量跌幅低于平均值（<80%）或在同等政策环境下逆势增长
+    <br>高能低意：有具体恢复动作记录，但整体在院率偏低（政策压制型）
+    <br>有心无力：医院数少，在院率中等，但缺乏系统性恢复思路
+    <br>双低风险：在院率<50%，无明确恢复计划，等靠要心态明显
+  </div>
+  <table>
+    <tr><th>代表</th><th>分区</th><th>医院数</th><th>在院数</th><th>不在院数</th><th>在院率</th><th>销量跌幅</th><th>象限</th><th>关键备注</th></tr>
+    <tr class="r-red"><td>周志文</td><td>上海心八区</td><td>22</td><td>5</td><td>17</td><td>22.7%</td><td>92.5%</td><td>🔴 双低风险</td><td>不在院率最高，72家不在院中占17家</td></tr>
+    <tr class="r-red"><td>江南</td><td>上海心九区</td><td>13</td><td>4</td><td>9</td><td>30.8%</td><td>97.6%</td><td>🔴 双低风险</td><td>销量跌幅最深，松江/奉贤/青浦覆盖弱</td></tr>
+    <tr class="r-red"><td>南子金</td><td>上海心八区</td><td>6</td><td>2</td><td>4</td><td>33.3%</td><td>70.5%</td><td>🔴 双低风险</td><td>医院数少但几乎全不在院</td></tr>
+    <tr class="r-red"><td>潘超超</td><td>上海心八区</td><td>26</td><td>10</td><td>16</td><td>38.5%</td><td>86.7%</td><td>🔴 双低风险</td><td>上海心八区核心代表，覆盖大量社区医院</td></tr>
+    <tr class="r-red"><td>徐雅</td><td>上海心一区</td><td>5</td><td>2</td><td>3</td><td>40.0%</td><td>92.1%</td><td>🔴 双低风险</td><td>覆盖胸科/六院，三级医院管控问题严重</td></tr>
+    <tr class="r-org"><td>黄亚杰</td><td>上海心八区</td><td>16</td><td>8</td><td>8</td><td>50.0%</td><td>80.0%</td><td>🟠 高能低意</td><td>一半在院一半不在院，有恢复空间</td></tr>
+    <tr class="r-org"><td>张素雅</td><td>上海心九区</td><td>8</td><td>4</td><td>4</td><td>50.0%</td><td>83.3%</td><td>🟠 高能低意</td><td>金山区域，问题与江南重叠</td></tr>
+    <tr class="r-org"><td>盛玉婷</td><td>上海心七区</td><td>21</td><td>11</td><td>10</td><td>52.4%</td><td>50.5%</td><td>🟠 高能低意</td><td>崇明岛区域特殊性，覆盖难度大</td></tr>
+    <tr class="r-org"><td>杜光利</td><td>上海心八区</td><td>18</td><td>10</td><td>8</td><td>55.6%</td><td>71.4%</td><td>🟠 高能低意</td><td>部分医院在院但销量归零</td></tr>
+    <tr class="r-org"><td>何文乾</td><td>上海心八区</td><td>7</td><td>4</td><td>3</td><td>57.1%</td><td>84.1%</td><td>🟠 高能低意</td><td>-</td></tr>
+    <tr class="r-gry"><td colspan="10">以下为在院率≥60%的代表（有心无力象限需进一步面谈诊断）</td></tr>
+    <tr><td>赵德凤</td><td>上海心七区</td><td>22</td><td>13</td><td>9</td><td>59.1%</td><td>56.6%</td><td>🟡 有心无力</td><td>崇明+宝山，区域分散</td></tr>
+    <tr><td>杨波</td><td>上海心八区</td><td>15</td><td>9</td><td>6</td><td>60.0%</td><td>66.3%</td><td>🟡 有心无力</td><td>-</td></tr>
+    <tr><td>张业强</td><td>上海心八区</td><td>28</td><td>18</td><td>10</td><td>64.3%</td><td>58.6%</td><td>🟡 有心无力</td><td>医院数多，覆盖面广</td></tr>
+    <tr class="r-gry"><td colspan="10">以下为在院率≥80%的代表（标杆象限，需保护；部分需进一步区分是政策保护还是真实能力）</td></tr>
+    <tr class="r-grn"><td>白雪峰</td><td>上海心二区</td><td>29</td><td>27</td><td>2</td><td>93.1%</td><td>86.3%</td><td>🟢 标杆（存疑）</td><td>在院率93.1%，但销量跌幅仍深(86.3%)，需确认是在院有量还是空挂在院</td></tr>
+    <tr class="r-grn"><td>夏鹏飞</td><td>上海心一区</td><td>17</td><td>16</td><td>1</td><td>94.1%</td><td>81.5%</td><td>🟢 标杆</td><td>一级医院覆盖强，社区医院开拓能力强</td></tr>
+    <tr class="r-grn"><td>王颖</td><td>上海心七区</td><td>10</td><td>10</td><td>0</td><td>100%</td><td>77.2%</td><td>🟢 标杆</td><td>在院率100%，需要提炼经验</td></tr>
+    <tr class="r-grn"><td>黄健明</td><td>上海心三区</td><td>10</td><td>10</td><td>0</td><td>100%</td><td>87.6%</td><td>🟢 标杆</td><td>-</td></tr>
+    <tr class="r-grn"><td>邱漾</td><td>上海心七区</td><td>10</td><td>10</td><td>0</td><td>100%</td><td>32.6%</td><td>🟢 真实标杆</td><td>唯一逆势增长代表（32.6%跌幅远低于均值），需重点提炼经验</td></tr>
+    <tr class="r-grn"><td>向武</td><td>上海心一区</td><td>15</td><td>15</td><td>0</td><td>100%</td><td>80.4%</td><td>🟢 标杆</td><td>-</td></tr>
+  </table>
+  <div class="warn">
+    <strong>⚠️ 重要发现：</strong>白雪峰在院率93.1%但销量跌幅86.3%——说明<strong>在院≠有量</strong>。这类"空挂在院"现象掩盖了真实问题，是典型的"在场安慰剂"。建议增加"在院销量/天花板比"指标，区分真实在院和有院无量。
+  </div>
+</div>
+
+<!-- 第二部分：问题穷尽 -->
+<div class="chapter">
+  <h2>第二部分：问题穷尽</h2>
+
+  <h3>心态与认知类</h3>
+  <table>
+    <tr><th>#</th><th>问题</th><th>证据</th></tr>
+    <tr class="r-red"><td>1</td><td>代表主动放弃，部分"占位不作为"</td><td>周志文22.7%在院率，江南97.6%跌幅；不在院医院备注大量空白无跟进记录</td></tr>
+    <tr class="r-org"><td>2</td><td>代表将"管控"等同于"放弃"的认知误区</td><td>36.4%不在院医院明确拒绝（"医院目前不考虑"），部分代表以此为由停止跟进</td></tr>
+    <tr class="r-org"><td>3</td><td>优思弗代表缺乏政策推动意识</td><td>优思弗0%解控、0% 8周开通，41家医院全部管控，但备注中无代表主动推动政策解决的记录</td></tr>
+    <tr class="r-org"><td>4</td><td>标杆代表经验未提炼复制</td><td>邱漾逆势增长（32.6%跌幅），夏鹏飞94.1%在院率，但无系统性经验提炼机制</td></tr>
+  </table>
+
+  <h3>机制与政策类</h3>
+  <table>
+    <tr><th>#</th><th>问题</th><th>证据</th></tr>
+    <tr class="r-red"><td>5</td><td>优思弗1:1管控解控率0%</td><td>41家医院100%管控中，备注大量"目前没有明确政策"，无一家解控</td></tr>
+    <tr class="r-red"><td>6</td><td>8周长处方开通率仅10.8%</td><td>444家医院仅48家开通，备注显示医院和代表均不知如何申请和开通</td></tr>
+    <tr class="r-red"><td>7</td><td>延伸处方通道未激活（优思弗）</td><td>9家不在院优思弗医院中，多家提到"优思弗不在延伸处方目录内"</td></tr>
+    <tr class="r-org"><td>8</td><td>波依定仍有123家医院未解控</td><td>414家管控中，仅291家解控，还有123家（29.7%）仍处于管控状态</td></tr>
+    <tr class="r-org"><td>9</td><td>DRG/DIP压力持续</td><td>优思弗备注中多处提到"DRG限制"、"干保和特需才能处方"，成本压力压缩原研药空间</td></tr>
+  </table>
+
+  <h3>管理设计类</h3>
+  <table>
+    <tr><th>#</th><th>问题</th><th>证据</th></tr>
+    <tr class="r-red"><td>10</td><td>KPI只看总量，过程质量零权重</td><td>代表在院率/8周开通率/摸排更新等过程指标均未纳入考核</td></tr>
+    <tr class="r-red"><td>11</td><td>"在院率"掩盖了"在院无量"问题</td><td>白雪峰93.1%在院率但86.3%跌幅，说明在院≠有量，但无"在院销量天花板比"监控</td></tr>
+    <tr class="r-red"><td>12</td><td>日常管理工具缺失</td><td>无周例会标准化流程、无医院健康卡、无战报机制</td></tr>
+    <tr class="r-org"><td>13</td><td>跨部门资源协同机制缺失</td><td>优思弗需要医学部/KOL资源，但目前无触发机制；商务部配送问题无绿色通道</td></tr>
+    <tr class="r-org"><td>14</td><td>人员调整机制缺位</td><td>周志文、江南长期低绩效但无调整动作，劣币驱逐良币效应</td></tr>
+  </table>
+</div>
+
+<!-- 第三部分：独立洞见 -->
+<div class="chapter">
+  <h2>第三部分：独立洞见</h2>
+
+  <div class="indep">
+    <h3>洞见1：优思弗是政策封堵型衰退的极端案例，不代表所有品种</h3>
+    优思弗0%解控、0% 8周开通、100%管控——这不是代表问题，是<strong>市场准入政策缺失</strong>。解决优思弗问题需要医学部+市场准入部联合介入，而不是单纯靠代表推动。这揭示了一个更根本的问题：<strong>当政策成为主要阻力时，销售团队的力量是有限的，需要集团层面战略级介入</strong>。
+  </div>
+
+  <div class="indep">
+    <h3>洞见2：波依定"70.3%解控率"是假解控——解控≠恢复</h3>
+    波依定有291家解控，但调研表显示在院率仅80.5%，还有50家不在院。<strong>解控只是政策允许医院采购，但不代表医院会实际采购</strong>。真正的障碍已经从"政策禁止"变成了"药剂科不愿意采购"——这是一个从政策问题转变为市场问题的重要信号，需要完全不同的应对策略。
+  </div>
+
+  <div class="indep">
+    <h3>洞见3：社区医院是被忽视的增量来源</h3>
+    上海心八区138家医院中绝大多数是社区卫生服务中心（一级医院），这些医院的特点是<strong>覆盖人口大、政策管制相对灵活、延伸处方通道更容易开通</strong>。但代表普遍反映"不接待"、"不进货"。核心问题是：<strong>代表不知道用什么话术说服药剂科，也不知道延伸处方的申请流程</strong>——这是工具缺失，不是意愿缺失。
+  </div>
+
+  <div class="indep">
+    <h3>洞见4："在院率"是最危险的安慰剂</h3>
+    在院率从70.9%（当前）到85%是一个听起来合理的提升目标，但<strong>白雪峰的案例告诉我们：在院率可以很高，但销量可以归零</strong>。真正需要监控的是"在院销量/理论天花板比"——即实际销量占在院医院理论最大销量之比。这个指标才能真正反映市场存在感和增长潜力。
+  </div>
+
+  <div class="indep">
+    <h3>洞见5：上海心八区的问题不是上海的问题，是整个VBP模式的缩影</h3>
+    上海心八区52.2%不在院率、黛力新58%在院率、36.4%明确拒绝恢复——这些数字揭示了一个系统性危机：<strong>当VBP中标品种占据了医院的采购额度，原研药的生存空间被物理性挤压，而不是竞争性淘汰</strong>。这不是哪家代表能解决的问题，需要在带量采购政策框架下寻找结构性出路。
+  </div>
+</div>
+
+<!-- 第四部分：实操重建方案 -->
+<div class="chapter">
+  <h2>第四部分：实操重建方案</h2>
+
+  <h3>4.1 大区启动：思想动员与首轮摸排</h3>
+  <div class="action">
+    <strong>上海专项启动原则：</strong>鉴于真实数据已暴露，问题不是"有没有"，而是"有多严重"。启动会应该<strong>用数据开路，用工具收尾</strong>，不要开成批判会，而是开成"我们知道了，现在开始做这三件事"的行动会。
+  </div>
+  <div class="action">
+    <strong>启动三件事：</strong>
+    <br>① 宣布调整KPI结构（在院率、8周开通率纳入考核）
+    <br>② 下发真实数据地图（各代表看到自己的四象限定位）
+    <br>③ 下发新版摸排表（含8周开通、延伸处方状态等新字段）
+  </div>
+
+  <h4>上海专项摸排表（更新版，基于原始调研表字段）</h4>
+  <div class="form-box">
+  <table>
+    <tr><th colspan="3">A. 医院基础</th></tr>
+    <tr><th>字段</th><th>取值规范</th><th>备注</th></tr>
+    <tr><td>A1. EPR名称</td><td>系统预填，代表核实</td><td>-</td></tr>
+    <tr><td>A2. 医院级别</td><td>三级/二级/一级及其他</td><td>-</td></tr>
+    <tr><td>A3. 所在区</td><td>上海区划</td><td>-</td></tr>
+    <tr><td>A4. 医院类型</td><td>公立/民营/DTP/社区</td><td>-</td></tr>
+  </table>
+
+  <table>
+    <tr><th colspan="3">B. 品种状态（本次五态，对应原始调研表字段）</th></tr>
+    <tr><th>字段</th><th>取值规范</th><th>原始表来源</th></tr>
+    <tr><td>B1. 当前在院状态</td><td>①正常在院②停限控③不在院④延伸处方运营⑤暂停采购</td><td>"是否保留在院"</td></tr>
+    <tr><td>B2. 不在院开始时间</td><td>YYYY-MM</td><td>需代表填写</td></tr>
+    <tr><td>B3. 月销量</td><td>25年实际销量（盒）</td><td>"25年销量(盒)"</td></tr>
+    <tr><td>B4. 恢复难度</td><td>极易/易/中/难/放弃</td><td>综合"恢复时间"字段判定</td></tr>
+  </table>
+
+  <table>
+    <tr><th colspan="3">C. 政策环境（直接对应原始调研表字段）</th></tr>
+    <tr><th>字段</th><th>取值规范</th><th>原始表来源</th></tr>
+    <tr><td>C1. 8周长处方</td><td>是/否/签约病人可开</td><td>"是否可以开8周的长处方"</td></tr>
+    <tr><td>C2. 1:1管控状态</td><td>是/否</td><td>"是否管控集采中标品种完成进度"</td></tr>
+    <tr><td>C3. 1:1解控状态</td><td>是/否/未到解控节点</td><td>"是否完成集采任务之后取消1:1管控"</td></tr>
+    <tr><td>C4. 延伸处方状态</td><td>已开通/申请中/未开通/不适用</td><td>需代表填写</td></tr>
+  </table>
+
+  <table>
+    <tr><th colspan="3">D. 客户关系（基于原始调研表备注推断）</th></tr>
+    <tr><th>字段</th><th>取值规范</th><th>诊断用途</th></tr>
+    <tr><td>D1. 药剂科关系</td><td>A/B/C/D（关系评级）</td><td>根据原始备注推断</td></tr>
+    <tr><td>D2. 关键障碍</td><td>①政策禁止②药剂科关系③竞品替换④无患者⑤其他</td><td>综合备注关键词</td></tr>
+    <tr><td>D3. 预计恢复时间</td><td>YYYY-MM，<strong>禁止空白</strong></td><td>根据"恢复进药需要多长时间"字段</td></tr>
+    <tr><td>D4. 需跨部门支持</td><td>①医学部②市场准入③商务部④其他</td><td>触发协同</td></tr>
+  </table>
+
+  <table>
+    <tr><th colspan="3">E. 执行动作</th></tr>
+    <tr><th>字段</th><th>取值规范</th><th>频次</th></tr>
+    <tr><td>E1. 最近药剂科拜访日期</td><td>YYYY-MM-DD</td><td>月度更新</td></tr>
+    <tr><td>E2. 下一步动作+承诺时点</td><td>两者同时填写，禁止空白</td><td>月度更新</td></tr>
+  </table>
+  </div>
+
+  <h3>4.2 人员诊断与调整决策框架</h3>
+  <div class="warn">
+    <strong>⚠️ 基于真实数据的调整建议：</strong>
+    <br>① <strong>周志文（22.7%在院率）</strong>→立即启动1对1面谈，90天内无改善则启动调岗程序
+    <br>② <strong>江南（30.8%在院率，97.6%跌幅）</strong>→面谈+资源重新配置，考虑将部分医院划拨给标杆代表
+    <br>③ <strong>潘超超（38.5%在院率）</strong>→上海心八区核心代表，建议省区经理陪访，帮其建立社区医院突破方法论
+    <br>④ <strong>白雪峰（93.1%在院率但86.3%跌幅）</strong>→面谈确认"在院有量"还是"空挂在院"，如果是后者重新定象限
+  </div>
+  <h4>调整决策矩阵（基于真实数据）</h4>
+  <table>
+    <tr><th>象限</th><th>代表名单</th><th>数据</th><th>决策</th></tr>
+    <tr class="r-red"><td>双低风险（立即干预）</td><td>周志文、江南、南子金</td><td>在院率22-33%</td><td>面谈→调岗/优化（90天观察期）</td></tr>
+    <tr class="r-org"><td>高能低意（重点赋能）</td><td>潘超超、黄亚杰、杜光利、盛玉婷</td><td>在院率38-59%</td><td>省区陪访+工具下沉+方法论培训</td></tr>
+    <tr class="r-org"><td>有心无力（观察面谈）</td><td>赵德凤、杨波、张业强、张素雅、何文乾、徐雅</td><td>在院率50-64%</td><td>面谈后按需赋能</td></tr>
+    <tr class="r-grn"><td>标杆（保护+复制）</td><td>邱漾（真实标杆）、夏鹏飞、王颖、向武</td><td>在院率94-100%</td><td>经验提炼+内部分享+激励兑现</td></tr>
+    <tr class="r-org"><td>存疑需核实</td><td>白雪峰、陈样样、袁梓文</td><td>在院率81-93%，但跌幅深</td><td>先核实"在院有量"还是"空挂在院"</td></tr>
+  </table>
+
+  <h3>4.3 市场重启激励政策（上海专项）</h3>
+  <div class="action">
+    <strong>优先级调整：</strong>鉴于优思弗0%解控、8周长处方开通率10.8%，建议将<strong>8周长处方开通奖励和1:1管控松绑奖励设为最高优先级</strong>，因为这两个通道一旦打开，对波依定和黛力新的销量恢复效果最直接。
+  </div>
+  <table>
+    <tr><th>奖励项</th><th>触发条件</th><th>参考标准</th><th>优先级</th></tr>
+    <tr class="r-grn"><td>8周长处方开通奖</td><td>原"否"医院成功开通</td><td>500元/家（社区医院800元/家）</td><td>★★★ 最高优先</td></tr>
+    <tr class="r-grn"><td>1:1管控松绑奖</td><td>原"是"医院正式取消管控（须文件）</td><td>1500元/家</td><td>★★★ 最高优先</td></tr>
+    <tr class="r-grn"><td>重入院奖</td><td>原不在院医院重新采购（须采购订单）</td><td>三级3000元/二级2000元/一级1000元</td><td>★★ 高优先</td></tr>
+    <tr class="r-grn"><td>延伸处方开通奖</td><td>一级医院通过延伸处方实现销售</td><td>800元/家</td><td>★★ 高优先</td></tr>
+    <tr class="r-grn"><td>季度在院率达标奖</td><td>代表辖区加权在院率≥85%</td><td>绩效系数×1.2</td><td>★★ 高优先</td></tr>
+    <tr class="r-org"><td>优思弗解控突破奖</td><td>优思弗医院成功解除1:1管控</td><td>3000元/家（市场准入部协同）</td><td>★★★ 专项设立</td></tr>
+  </table>
+  <div class="action">
+    <strong>KPI重构（上海立即生效）：</strong>
+    <br>① 在院率达成率（占KPI权重25%）——针对黛力新（58%在院率）提升
+    <br>② 8周长处方开通数（占KPI权重20%）——针对10.8%开通率的根本性改变
+    <br>③ 优思弗解控推动（占KPI权重15%）——专项激励优思弗医院政策突破
+    <br>④ 摸排表D3/E2零空白率（占KPI权重10%）——质量管控
+    <br>⑤ 总量达成率（保留，降为权重30%）
+  </div>
+
+  <h3>4.4 日常管理工具体系</h3>
+  <h4>周例会三件事模型（上海大区立即执行版）</h4>
+  <div class="form-box">
+  <strong>一看（10分钟）：数据回顾</strong>
+  <ul style="margin:4px 0 10px 20px;">
+    <li>本周8周长处方新开通医院数（目标：每周至少1家）</li>
+    <li>本周1:1管控解控医院数（目标：每周至少2家）</li>
+    <li>本周不在院医院恢复采购数（目标：每周至少1家）</li>
+    <li>本周E2承诺兑现率（目标：≥80%）</li>
+    <li>优思弗专项：本周跟进医院数、政策推动进展</li>
+  </ul>
+  <strong>二问（15分钟）：障碍扫清</strong>
+  <ul style="margin:4px 0 10px 20px;">
+    <li>每个代表提出本周最棘手的1个障碍（不是抱怨，是请求决策）</li>
+    <li>省区当场判断：①自己能解决 ②需要大区资源 ③需要跨部门SWAT ④无解（诚实承认）</li>
+    <li>需要跨部门的，当场@对应负责人，48小时内响应</li>
+  </ul>
+  <strong>三定（5分钟）：闭环确认</strong>
+  <ul style="margin:4px 0 10px 20px;">
+    <li>每个代表确认下周E2（下一步动作+承诺时点）</li>
+    <li>省区记录，缺席代表由省区代填但不享受任何奖励</li>
+    <li>下周例会前公示兑现率排名（匿名）</li>
+  </ul>
+  </div>
+
+  <h4>医院月度健康卡（基于原始调研表字段定制版）</h4>
+  <div class="form-box">
+  <table>
+    <tr><th>字段</th><th>本月值</th><th>来源字段</th><th>健康判断</th></tr>
+    <tr><td>在院状态（五态）</td><td>①-⑤</td><td>是否保留在院</td><td>🟢正常/🟡关注/🔴干预</td></tr>
+    <tr><td>25年销量</td><td>实际数字</td><td>25年销量(盒)</td><td>与21年对比跌幅%</td></tr>
+    <tr><td>8周长处方</td><td>是/否</td><td>是否可以开8周的长处方</td><td>🟢已开通/🔴未开通</td></tr>
+    <tr><td>1:1管控状态</td><td>是/否</td><td>是否管控集采中标品种完成进度</td><td>🟡管控中/🟢已解控</td></tr>
+    <tr><td>解控后取消1:1</td><td>是/否</td><td>是否完成集采任务之后取消1:1管控</td><td>政策落地进度</td></tr>
+    <tr><td>恢复时间（如不在院）</td><td>填写值</td><td>如不在院，恢复进药需要多长时间</td><td>放弃/观望/可恢复</td></tr>
+    <tr><td>E2承诺兑现</td><td>是/否/部分</td><td>代表自填</td><td>执行力</td></tr>
+  </table>
+  </div>
+
+  <h3>4.5 三层分角色管理模型</h3>
+
+  <div class="role-hq">
+    <strong>总部层（集团/深康）——上海专项任务</strong>
+    <table>
+      <tr><th>部门</th><th>上海专项任务</th><th>输出物</th><th>截止时间</th></tr>
+      <tr><td>区域管理部</td><td>①调整KPI结构，纳入在院率/8周开通率②审批人员调整方案（周志文/江南）③季度驾驶舱上海视角</td><td>KPI调整通知、人员调整批复</td><td>启动后2周内</td></tr>
+      <tr><td>市场部</td><td>①制作8周长处方申请话术（给药剂科的说明材料）②制作黛力新vs仿制药价值一页纸（临床版）</td><td>话术卡、价值一页纸</td><td>启动后3周内</td></tr>
+      <tr><td>医学部</td><td>①优思弗KOL地图（上海重点医院科室主任）②RWD数据：原研vs仿制药在肝病/抑郁/焦虑患者群的优势</td><td>KOL名单、RWD报告</td><td>启动后4周内</td></tr>
+      <tr><td>市场准入部</td><td>①优思弗全量41家医院解控推动（100%管控中，0%解控）②8周长处方流程指引（上海落地版）③延伸处方目录更新跟踪</td><td>政策快讯、解控跟进表</td><td>立即启动，72小时出初稿</td></tr>
+    </table>
+  </div>
+
+  <div class="role-rg">
+    <strong>大区层——上海大区指挥任务</strong>
+    <table>
+      <tr><th>任务</th><th>具体动作</th><th>输出物</th><th>截止</th></tr>
+      <tr><td>四象限诊断</td><td>基于真实数据确认代表象限，面谈后更新</td><td>四象限分布图</td><td>启动后2周</td></tr>
+      <tr><td>资源再平衡</td><td>将周志文/江南辖区的高潜力医院临时划拨给标杆代表</td><td>划拨通知</td><td>启动后3周</td></tr>
+      <tr><td>周战报</td><td>每周汇总：8周开通数/解控数/恢复数/E2兑现率</td><td>上海周战报</td><td>每周</td></tr>
+      <tr><td>月度复盘</td><td>90分钟：①看数据②点红牌③突破分享④下月动作</td><td>会议纪要</td><td>每月</td></tr>
+      <tr><td>优思弗专项SWAT</td><td>牵头医学部+市场准入部，梳理优思弗41家医院解控路径</td><td>优思弗解控作战图</td><td>启动后1个月</td></tr>
+    </table>
+  </div>
+
+  <div class="role-sa">
+    <strong>省区层（上海专项执行任务）</strong>
+    <table>
+      <tr><th>任务</th><th>具体动作</th><th>输出物</th><th>频次</th></tr>
+      <tr><td>周例会三件事</td><td>执行标准化三件事模型</td><td>周例会纪要</td><td>每周</td></tr>
+      <tr><td>医院陪访</td><td>每月陪访A类医院≥5家（重点：白雪峰/邱漾辖区的高风险医院）</td><td>陪访记录</td><td>每月≥5</td></tr>
+      <tr><td>优思弗医院专项跟进</td><td>每周至少跟进1家优思弗医院，推动政策解控</td><td>优思弗跟进日志</td><td>每周</td></tr>
+      <tr><td>激励申报快速通道</td><td>收到申报后≤10天完成审核和发放（快于标准15天，制造示范效应）</td><td>激励发放记录</td><td>按申报</td></tr>
+      <tr><td>上海心八区专项</td><td>潘超超辖区（26家，38.5%在院率）作为社区医院突破样板</td><td>社区医院突破手册</td><td>持续</td></tr>
+    </table>
+  </div>
+
+  <h3>4.6 跨部门横向资源协同（上海专项触发机制）</h3>
+  <table>
+    <tr><th>级别</th><th>上海专项触发条件</th><th>响应时限</th><th>主责方</th><th>协同内容</th></tr>
+    <tr class="r-red"><td>L1 即时</td><td>优思弗医院配送中断</td><td>24小时</td><td>商务部绿色通道</td><td>紧急调货/替代医院</td></tr>
+    <tr class="r-red"><td>L2 快速</td><td>优思弗解控申请（D5勾选市场准入部）</td><td>48小时</td><td>市场准入部</td><td>政策解读+医院跟进</td></tr>
+    <tr class="r-red"><td>L3 专项</td><td>上海心八区52.2%不在院率持续60天无进展</td><td>7天内</td><td>大区经理牵头四部门</td><td>SWAT现场办公</td></tr>
+    <tr class="r-red"><td>L3 专项</td><td>优思弗41家医院0%解控，医学部KOL资源申请</td><td>7天内</td><td>医学部牵头</td><td>KOL对接+临床数据支持</td></tr>
+    <tr class="r-red"><td>L4 战略</td><td>上海大区在院率连续2季度低于60%</td><td>30天内</td><td>集团/深康</td><td>战略级方案重设</td></tr>
+  </table>
+  <div class="action">
+    <strong>优思弗专项SWAT建议：</strong>
+    <br>牵头：大区经理
+    <br>成员：市场准入部（政策推动）+ 医学部（KOL资源）+ 商务部（配送支持）+ 上海省区
+    <br>目标：90天内推动≥5家优思弗医院解除1:1管控
+  </div>
+
+  <h3>4.7 MNC经验借鉴与上海本土化方案</h3>
+  <div class="mnc">
+  <table>
+    <tr><th>MNC策略</th><th>上海市场应用</th><th>立即可执行动作</th></tr>
+    <tr><td>①保护人群锁定</td><td>黛力新聚焦精神/焦虑症患者，优思弗聚焦肝病/胆汁淤积患者，代表针对性维护KOL</td><td>医学部制作患者群画像，代表按科室分配</td></tr>
+    <tr><td>②差异化临床定位</td><td>波依定（非洛地平）证明在心血管患者中的长期疗效优势，区别于集采仿制药</td><td>市场部制作"非洛地平vs仿制药"对比一页纸</td></tr>
+    <tr><td>③专科渠道转移</td><td>优思弗：精神科/肝病科/消化科特需门诊；波依定：心血管专科医院</td><td>梳理上海三级医院特需门诊名单，代表定向开发</td></tr>
+    <tr><td>④患者教育与依从性管理</td><td>黛力新精神类患者长期用药，依从性管理ROI高</td><td>建立患者随访机制，降低脱落率</td></tr>
+    <tr><td>⑤院内学术锁仓</td><td>即使医院断货，科室会不停，KOL维护不停（如胸科医院、东方医院）</td><td>列出已断货但仍需维护的医院清单，分配给代表</td></tr>
+    <tr><td>⑥政策提前布局</td><td>上海市场准入部提前预判1:1管控松绑窗口期</td><td>市场准入部建立上海政策跟踪机制</td></tr>
+  </table>
+  </div>
+
+  <h3>4.8 落地路线图（6个月，上海专项）</h3>
+  <table>
+    <tr><th>阶段</th><th>时间</th><th>核心动作</th><th>里程碑验收标准</th></tr>
+    <tr class="r-gry"><td colspan="4">第一阶段：启动与基线确认（第1-6周）</td></tr>
+    <tr><td>启动</td><td>第1-2周</td><td>大区召开数据发布会，宣布新KPI结构；下发更新版摸排表</td><td>KPI调整通知全员知晓，摸排表下发100%</td></tr>
+    <tr><td>面谈</td><td>第2-4周</td><td>完成周志文/江南/潘超超等高风险代表1对1面谈</td><td>面谈完成率100%，四象限图更新</td></tr>
+    <tr><td>资源划拨</td><td>第3-4周</td><td>将周志文/江南高潜力医院临时划拨给标杆代表</td><td>划拨通知发出，接收代表确认</td></tr>
+    <tr><td>激励上线</td><td>第4-6周</td><td>8周长处方开通奖、优思弗解控突破奖正式生效</td><td>第一批申报启动</td></tr>
+    <tr class="r-gry"><td colspan="4">第二阶段：政策推动与激励兑现（第7-14周）</td></tr>
+    <tr><td>优思弗SWAT</td><td>第7-10周</td><td>医学部+KOL对接，市场准入部推进优思弗解控（目标5家）</td><td>≥3家优思弗医院启动解控申请</td></tr>
+    <tr><td>8周开通</td><td>第7-14周</td><td>代表在社区医院推动8周长处方开通（目标每周1家）</td><td>全量8周开通率从10.8%提升至≥20%</td></tr>
+    <tr><td>周例会固化</td><td>第7周起</td><td>三件事模型成为标准流程</td><td>连续6周E2兑现率≥80%</td></tr>
+    <tr><td>标杆复制</td><td>第10-14周</td><td>夏鹏飞/邱漾经验提炼，内部培训推广</td><td>夏鹏飞社区开拓方法论手册完成</td></tr>
+    <tr class="r-gry"><td colspan="4">第三阶段：机制固化与验证（第15-24周）</td></tr>
+    <tr><td>KPI新结构验证</td><td>第15-20周</td><td>新KPI体系运行2个完整季度，评估效果</td><td>黛力新在院率从58%提升至≥65%</td></tr>
+    <tr><td>季度复盘</td><td>第24周</td><td>首季完整复盘：各品种在院率/解控率/8周开通率变化</td><td>波依定在院率维持≥80%；黛力新≥65%；优思弗解控≥3家</td></tr>
+  </table>
+</div>
+
+<!-- 附录 -->
+<div class="chapter">
+  <h2>附录</h2>
+
+  <h3>数据字典（本次调研表字段说明）</h3>
+  <table>
+    <tr><th>指标名称</th><th>计算公式</th><th>数据来源</th><th>更新频率</th></tr>
+    <tr><td>在院率</td><td>在院医院数 / 调研总院数 × 100%</td><td>是否保留在院</td><td>季度更新</td></tr>
+    <tr><td>不在院归零率</td><td>不在院且月销量为零的医院数 / 不在院医院总数 × 100%</td><td>25年销量(盒)</td><td>季度更新</td></tr>
+    <tr><td>年销量跌幅</td><td>（当前年销量 - 基准年销量）/ 基准年销量 × 100%</td><td>21/22年销量 vs 25年销量</td><td>年度</td></tr>
+    <tr><td>1:1管控解控率</td><td>已解控医院数 / 管控中医院总数 × 100%</td><td>是否完成集采任务之后取消1:1管控</td><td>季度更新</td></tr>
+    <tr><td>8周长处方开通率</td><td>已开通医院数 / 调研总院数 × 100%</td><td>是否可以开8周的长处方</td><td>季度更新</td></tr>
+    <tr><td>E2承诺兑现率</td><td>本周已兑现E2数 / 本周E2总数 × 100%</td><td>省区周例会记录</td><td>每周</td></tr>
+    <tr><td>在院销量/理论天花板比</td><td>实际月销量 / 理论最大月销量（需调研获取）</td><td>需新增摸排字段</td><td>季度更新</td></tr>
+  </table>
+
+  <h3>数据来源说明</h3>
+  <table>
+    <tr><th>数据</th><th>来源</th><th>负责人</th></tr>
+    <tr><td>波依定+黛力新调研表</td><td>区域上报（444家医院）</td><td>上海心脑区域</td></tr>
+    <tr><td>优思弗调研表</td><td>区域上报（41家医院）</td><td>上海消化区域</td></tr>
+    <tr><td>销量数据（21/22/24/25年）</td><td>流向数据（调研表内）</td><td>商务部</td></tr>
+    <tr><td>政策环境数据</td><td>调研表C/D字段</td><td>代表填写</td></tr>
+  </table>
+
+  <h3>免责说明</h3>
+  <div class="warn">
+    本报告基于上海区域上报的调研数据生成，原始数据由各代表填写，部分备注为开放式文字记录，可能存在主观偏差。本报告中的激励政策标准为参考值，实际执行前需经集团人力资源部和财务部审核确认。本报告不构成正式管理指令，所有人员调整方案需经相应审批流程后实施。
+  </div>
+
+  <div style="text-align:center;margin-top:48px;padding-top:24px;border-top:1px solid #e0e0e0;color:#90a4ae;font-size:12px;">
+    康哲药业 · 经营责任中心 ｜ 上海VBP集采品种衰退诊断与重振方案 ｜ 内部文件 ｜ 2026年5月 ｜ v1.0
+  </div>
+</div>
+
+</div>
+</body>
+</html>

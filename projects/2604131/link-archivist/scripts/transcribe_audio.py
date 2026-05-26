@@ -6,6 +6,7 @@ import sys
 import time
 import uuid
 from pathlib import Path
+from typing import Optional
 
 # Configuration
 HUIJI_BASE_URL = os.getenv("XGJK_HUIJI_BASE_URL", "https://sg-al-cwork-web.mediportal.com.cn/open-api")
@@ -13,7 +14,7 @@ CWORK_API_URL = os.getenv("XGJK_CWORK_API_URL", "https://sg-al-cwork-web.medipor
 APP_KEY = os.getenv("XGJK_APP_KEY")
 
 
-def load_app_key() -> str | None:
+def load_app_key() -> Optional[str]:
     """Load appKey from config file or environment."""
     if APP_KEY:
         return APP_KEY

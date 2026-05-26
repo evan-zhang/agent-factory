@@ -1,0 +1,18 @@
+{
+  "project_id": "2605131",
+  "skill_name": "instinct-learner",
+  "phase": "S2",
+  "phase_name": "需求确认",
+  "version": "0.1.0",
+  "created": "2026-05-13",
+  "steps": {
+    "S1_background": { "status": "done", "date": "2026-05-13" },
+    "S2_requirements": { "status": "in_progress", "date": "2026-05-13" },
+    "S3_design": { "status": "pending" },
+    "S4_development": { "status": "pending" },
+    "S5_testing": { "status": "pending" },
+    "S6_release": { "status": "pending" },
+    "S7_version_management": { "status": "pending" },
+    "S8_maintenance": { "status": "pending" }
+  }
+}

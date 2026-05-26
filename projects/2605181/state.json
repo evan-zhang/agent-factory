@@ -1,0 +1,50 @@
+{
+  "projectId": "2605181",
+  "name": "VBP Skill",
+  "skillName": "vbp-market-revitalization-report",
+  "version": "0.1.0",
+  "status": "ready",
+  "createdAt": "2026-05-18T18:04:00+08:00",
+  "updatedAt": "2026-05-18T18:53:00+08:00",
+  "currentPhase": "S3-design",
+  "phaseHistory": [
+    {
+      "phase": "S1-background",
+      "status": "completed",
+      "completedAt": "2026-05-18T18:04:00+08:00",
+      "note": "用户提供完整 SKILL.md 原始文档，业务背景清晰"
+    },
+    {
+      "phase": "S2-requirement",
+      "status": "completed",
+      "completedAt": "2026-05-18T18:04:00+08:00",
+      "note": "需求明确：在工厂中创建 VBP Skill 项目"
+    },
+    {
+      "phase": "S3-design",
+      "status": "completed",
+      "completedAt": "2026-05-18T18:53:00+08:00",
+      "note": "完成工具链迁移：jupyter_execute→exec+python3，publish_artifact→write+doc-viewer，web_search保持不变"
+    }
+  ],
+  "description": "VBP集采品种市场重振诊断报告 Skill — 生成麦肯锡风格HTML诊断与实操重建报告",
+  "triggerKeywords": ["VBP", "集采", "带量采购", "在院率", "原研药衰退", "集采品种诊断"],
+  "deliverable": "单文件HTML报告（55-80KB）+ doc-viewer 在线预览链接",
+  "toolchain": {
+    "excelParsing": "exec + python3 + pandas/openpyxl",
+    "htmlGeneration": "write 工具输出单文件 HTML",
+    "htmlDelivery": "doc-viewer 上传到 doc.20100706.xyz 返回预览链接",
+    "pdfConversion": "html-to-pdf Skill（可选）",
+    "webSearch": "OpenClaw 内置 web_search"
+  },
+  "steps": {
+    "S1-background": "completed",
+    "S2-requirement": "completed",
+    "S3-design": "completed",
+    "S4-development": "pending",
+    "S5-testing": "pending",
+    "S6-release": "pending",
+    "S7-versioning": "pending",
+    "S8-maintenance": "pending"
+  }
+}

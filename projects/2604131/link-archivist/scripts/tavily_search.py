@@ -23,7 +23,9 @@ def get_config_path() -> Path:
         return Path.home() / ".config"
 
 
-def get_tavily_key() -> str | None:
+from typing import Optional
+
+def get_tavily_key() -> Optional[str]:
     config_path = get_config_path() / "link-archivist-config.json"
     if config_path.exists():
         try:

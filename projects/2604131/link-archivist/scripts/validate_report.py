@@ -114,8 +114,11 @@ def validate(report_path: str, mode: str) -> dict:
 
 def main():
     if len(sys.argv) < 2:
-        print("用法: python3 validate_report.py <report_file> [--mode full|short]",
-              file=sys.stderr)
+        print(json.dumps({
+            "ok": False,
+            "missing": ["参数不足"],
+            "warnings": ["需要指定报告文件: python3 validate_report.py <report_file> [--mode full|short]"]
+        }, ensure_ascii=False))
         sys.exit(1)
 
     report_file = sys.argv[1]
@@ -127,11 +130,15 @@ def main():
             mode = sys.argv[idx + 1]
 
     if mode not in ("full", "short"):
-        print(f"未知模式: {mode}，支持 full/short", file=sys.stderr)
+        print(json.dumps({
+            "ok": False,
+            "missing": [f"未知模式"],
+            "warnings": [f"模式 {mode} 不支持，支持 full/short"]
+        }, ensure_ascii=False))
         sys.exit(1)
 
     result = validate(report_file, mode)
-    print(json.dumps(result, ensure_ascii=False, indent=2))
+    print(json.dumps(result, ensure_ascii=False))
     sys.exit(0 if result["ok"] else 1)
 
 

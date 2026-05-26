@@ -128,7 +128,7 @@ def main():
             'success': False,
             'url': args.url,
             'error': str(e)
-        }, ensure_ascii=False), file=sys.stderr)
+        }, ensure_ascii=False))
         sys.exit(1)
 
 

@@ -26,6 +26,7 @@ import sys
 import tempfile
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 
 def load_config() -> dict:
@@ -43,7 +44,7 @@ def load_config() -> dict:
     return {}
 
 
-def get_archive_dir(config: dict) -> Path | None:
+def get_archive_dir(config: dict) -> Optional[Path]:
     """Return video_archive_dir as Path, or None if not configured."""
     raw = config.get("video_archive_dir", "")
     if not raw:

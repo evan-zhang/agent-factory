@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>上海VBP集采品种衰退诊断与重振方案</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; font-size: 14px; line-height: 1.85; color: #1a1a1a; background: #ffffff; }
+.container { max-width: 720px; margin: 0 auto; padding: 24px 32px; }
+.chapter { break-before: page; padding-top: 0; }
+h1 { font-size: 28px; font-weight: 700; color: #1a3a5c; margin-bottom: 8px; }
+h2 { font-size: 20px; font-weight: 700; color: #1a3a5c; border-left: 5px solid #1a3a5c; padding-left: 12px; margin: 32px 0 16px; }
+h3 { font-size: 15px; font-weight: 600; color: #1a3a5c; margin: 20px 0 10px; }
+.exec, .insight, .warn, .action, .indep, .mnc, .role-hq, .role-rg, .role-sa { border-left: 5px solid; padding: 14px 18px; margin: 16px 0; background: #f8f9fa; border-radius: 0 4px 4px 0; }
+.exec { border-color: #1a3a5c; background: #eef2f7; }
+.insight, .mnc { border-color: #2e7d32; background: #e8f5e9; }
+.warn { border-color: #c62828; background: #ffebee; }
+.action { border-color: #1565c0; background: #e3f2fd; }
+.indep { border-color: #e65100; background: #fff3e0; }
+.role-hq { border-color: #6a1b9a; background: #f3e5f5; }
+.role-rg { border-color: #e65100; background: #fff3e0; }
+.role-sa { border-color: #2e7d32; background: #e8f5e9; }
+.form-box { border: 1px solid #bdbdbd; border-radius: 4px; padding: 16px; margin: 16px 0; background: #fafafa; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
+th { background: #1a3a5c; color: #ffffff; padding: 9px 12px; text-align: left; font-weight: 600; }
+td { padding: 8px 12px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+tr:nth-child(even) td { background: #f5f7fa; }
+tr:last-child td { border-bottom: none; }
+.r-red td { background: #ffcdd2 !important; color: #b71c1c; }
+.r-org td { background: #ffe0b2 !important; color: #e65100; }
+.r-grn td { background: #c8e6c9 !important; color: #1b5e20; }
+.r-gry td { background: #eceff1 !important; color: #455a64; font-weight: 600; }
+.cover { text-align: center; padding: 80px 40px; border: 2px solid #1a3a5c; margin-bottom: 32px; }
+.cover .brand { font-size: 13px; color: #1a3a5c; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px; }
+.cover h1 { font-size: 26px; border: none; padding: 0; text-align: center; margin-bottom: 16px; }
+.cover .subtitle { font-size: 15px; color: #546e7a; margin-bottom: 40px; }
+.cover .meta { font-size: 12px; color: #90a4ae; margin-top: 40px; }
+.toc { background: #f8f9fa; padding: 24px; margin: 24px 0; border-radius: 4px; }
+.toc h3 { margin-top: 0; }
+.toc ol { padding-left: 24px; }
+.toc li { margin: 6px 0; }
+.exec-summary { background: #eef2f7; border: 1px solid #1a3a5c; padding: 20px; margin: 20px 0; border-radius: 4px; }
+.exec-summary h3 { color: #1a3a5c; margin-top: 0; }
+.exec-summary .big-num { font-size: 32px; font-weight: 700; color: #c62828; }
+.exec-summary .big-num.grn { color: #2e7d32; }
+.warn-box { background: #ffebee; border-left: 5px solid #c62828; padding: 14px 18px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- 封面 -->
+<div class="cover chapter">
+  <div class="brand">康哲药业 · 经营责任中心</div>
+  <h1>上海VBP集采品种<br>衰退诊断与重振实操方案</h1>
+  <div class="subtitle">品种 × 分组 × 个人 三层穿透 ｜ 麦肯锡风格深度报告</div>
+  <div style="margin-top:16px;font-size:13px;color:#546e7a;">
+    <strong>样本区域</strong>：上海市 &nbsp;|&nbsp; <strong>品种类型</strong>：VBP集采未中选原研药 &nbsp;|&nbsp; <strong>报告性质</strong>：数据估算
+  </div>
+  <div class="meta">
+    报告日期：2026年5月 &nbsp;|&nbsp; 版本：v1.0 &nbsp;|&nbsp; 制式：经营责任中心内部作战手册
+  </div>
+</div>
+
+<!-- 执行摘要 -->
+<div class="chapter">
+  <h2>执行摘要</h2>
+  <div class="exec-summary">
+    <h3>三句话定性</h3>
+    <ol>
+      <li>上海VBP集采品种当前面临的是<strong>复合型衰退</strong>——非单一政策因素，亦非单纯人员失职，而是心态放弃、政策误导、结构压制三重力量叠加。</li>
+      <li>基层执行力出现<strong>系统性衰减</strong>：制度设计鼓励总量漠视过程，激励错位导致"占位不作为"成理性选择。</li>
+      <li>扭转局势需要<strong>同步推进</strong>：机制重建（数据字典+监控体系）先行，人员诊断调整跟进，激励政策重设压轴。</li>
+    </ol>
+  </div>
+
+  <h3>最刺眼的数字</h3>
+  <table>
+    <tr><th>指标</th><th>数据估算</th><th>定性</th></tr>
+    <tr class="r-red"><td>代表辖区加权在院率</td><td class="big-num">—</td><td>⚠️ 数据缺失，需专项调研获取基准值</td></tr>
+    <tr class="r-org"><td>人员四象限中"双低风险"代表占比</td><td>数据缺失</td><td>⚠️ 需通过面谈框架诊断后填入</td></tr>
+    <tr class="r-org"><td>延伸处方通道开通率</td><td>数据缺失</td><td>⚠️ 需在摸排表C5字段获取</td></tr>
+    <tr class="r-red"><td>8周长处方开通率</td><td>数据缺失</td><td>⚠️ 需在摸排表C4字段获取</td></tr>
+    <tr class="r-org"><td>上海年销量跌幅（基准年→当前年）</td><td>数据缺失</td><td>⚠️ 需流向数据填入</td></tr>
+    <tr class="r-grn"><td>预计可启动反转的关键节点</td><td>首轮摸排完成后45天</td><td>✅ 机制已就位，可快速启动</td></tr>
+  </table>
+
+  <div class="warn-box">
+    <strong>⚠️ 重要提示：</strong>本报告基于用户描述推断结构，原始流向数据（Excel/CSV）和代表调研表未上传。以下"数据估算"均为基于已知情况的推断，需在正式摸排后用真实数据替换。数据填充完整的报告才具备决策依据效力。
+  </div>
+</div>
+
+<!-- 第一部分：现状三层穿透 -->
+<div class="chapter">
+  <h2>第一部分：现状三层穿透</h2>
+
+  <h3>1.1 品种层：衰退性质判定</h3>
+  <div class="indep">
+    <strong>独立洞见：</strong>上海集采品种的衰退性质属于<strong>"管控锁量型为主、基层放弃型为辅"</strong>的复合型衰退。占位不作为现象说明部分代表已将"不努力"内化为合理行为，而非偶发懈怠——这是激励扭曲的典型症状，不是道德问题。
+  </div>
+  <table>
+    <tr><th>判断维度</th><th>上海样本特征</th><th>衰退性质</th></tr>
+    <tr class="r-org"><td>政策压制强度</td><td>1:1管控、DRG/DIP口径严苛</td><td>管控锁量型</td></tr>
+    <tr class="r-org"><td>代表行为模式</td><td>心态放弃+占位不作为</td><td>基层放弃型</td></tr>
+    <tr class="r-org"><td>医院流失分布</td><td>三级医院为主，一级医院延伸处方未激活</td><td>结构塌方型</td></tr>
+    <tr class="r-gry"><td>综合判定</td><td colspan="2"><strong>复合型衰退（管控锁量×基层放弃）</strong></td></tr>
+  </table>
+
+  <h3>1.2 分组层：危险分区识别</h3>
+  <table>
+    <tr><th>分区</th><th>在院率</th><th>年销量跌幅</th><th>风险等级</th><th>主要问题</th></tr>
+    <tr class="r-red"><td>上海大区（汇总）</td><td>数据缺失</td><td>数据缺失</td><td>🔴 高风险</td><td>基层放弃+管控压制双重压力</td></tr>
+    <tr class="r-org"><td>上海省区（细分待摸排）</td><td>数据缺失</td><td>数据缺失</td><td>🟠 待定</td><td>需细分到代表层面才有意义</td></tr>
+  </table>
+
+  <h3>1.3 个人层：能力×意愿四象限</h3>
+  <div class="action">
+    <strong>判断标准（基于已知描述推断）：</strong><br>
+    - <strong>标杆代表</strong>：在同等政策环境下逆势正增长，主动开拓延伸处方通道<br>
+    - <strong>高能低意</strong>：有能力但受政策限制，主动性被抑制，表现为"等待指令"<br>
+    - <strong>有心无力</strong>：意愿足但能力不足，缺乏工具和战术指导<br>
+    - <strong>双低风险</strong>："占着茅坑不拉屎"型代表，属于调整对象
+  </div>
+  <table>
+    <tr><th>象限</th><th>代表特征</th><th>推断占比（需数据验证）</th><th>处置策略</th></tr>
+    <tr class="r-grn"><td>标杆代表</td><td>逆势增长，主动对接延伸处方</td><td>数据缺失</td><td>提炼经验，树为内部标杆</td></tr>
+    <tr class="r-org"><td>高能低意</td><td>能力足但等待指令，主动性被压制</td><td>数据缺失</td><td>解除管控枷锁，KPI重构</td></tr>
+    <tr class="r-org"><td>有心无力</td><td>意愿足但缺乏工具和战术</td><td>数据缺失</td><td>培训赋能+工具下沉</td></tr>
+    <tr class="r-red"><td>双低风险（"占坑型"）</td><td>占位不作为，激励错位下理性选择</td><td>数据缺失</td><td>面谈→调岗/优化</td></tr>
+  </table>
+  <div class="warn">
+    <strong>⚠️ 关键警示：</strong>"占着茅坑不拉屎"不是道德问题，是<strong>KPI设计失位的症状</strong>。当"完成任务"（总量）成了唯一评价维度，而过程质量（医院关系维护、延伸处方开拓）无人考核，放弃成为理性选择。调整人员之前必须先调整评价体系，否则换人换不走问题。
+  </div>
+</div>
+
+<!-- 第二部分：问题穷尽 -->
+<div class="chapter">
+  <h2>第二部分：问题穷尽</h2>
+
+  <h3>心态与认知类</h3>
+  <table>
+    <tr><th>#</th><th>问题</th><th>根因</th></tr>
+    <tr class="r-org"><td>1</td><td>部分人员"主动放弃"</td><td>长期政策高压下习得性无助，将放弃内化为合理</td></tr>
+    <tr class="r-org"><td>2</td><td>"做多错多"的认知误区</td><td>延伸处方开通后若被管控归零，代表会认为动作无意义</td></tr>
+    <tr class="r-org"><td>3</td><td>将总量等同于努力的思维惯性</td><td>KPI指挥棒只认结果，过程质量不受认可</td></tr>
+    <tr class="r-org"><td>4</td><td>对VBP政策存侥幸心理</td><td>认为等待原研药保护政策出台即可，无需主动作为</td></tr>
+  </table>
+
+  <h3>机制与政策类</h3>
+  <table>
+    <tr><th>#</th><th>问题</th><th>根因</th></tr>
+    <tr class="r-red"><td>5</td><td>1:1管控压制增量空间</td><td>医院端管控政策，代表无法施展</td></tr>
+    <tr class="r-red"><td>6</td><td>DRG/DIP口径收紧替代空间</td><td>成本压力下医院优先使用仿制药</td></tr>
+    <tr class="r-org"><td>7</td><td>延伸处方/8周长处方通道未激活</td><td>政策知晓度低，落地流程不清，无人推动</td></tr>
+  </table>
+
+  <h3>管理设计类</h3>
+  <table>
+    <tr><th>#</th><th>问题</th><th>根因</th></tr>
+    <tr class="r-red"><td>8</td><td>KPI只看总量，过程质量零权重</td><td>评价体系设计失位，"总量英雄"掩盖医院关系塌陷</td></tr>
+    <tr class="r-red"><td>9</td><td>执行力到基层后显著衰减</td><td>集团→大区→省区→代表，信息链断裂，工具不到位</td></tr>
+    <tr class="r-red"><td>10</td><td>"占位不作为"无后果</td><td>缺乏过程监管+淘汰机制，劣币驱逐良币</td></tr>
+    <tr class="r-org"><td>11</td><td>跨部门资源协同机制缺失</td><td>商务部/医学部/市场准入各自为政，代表孤军奋战</td></tr>
+    <tr class="r-org"><td>12</td><td>日常管理工具缺失</td><td>无周例会模型、无医院健康卡、无战报机制</td></tr>
+  </table>
+</div>
+
+<!-- 第三部分：独立洞见 -->
+<div class="chapter">
+  <h2>第三部分：独立洞见</h2>
+
+  <div class="indep">
+    <h3>洞见1：政策不是主因，激励扭曲才是</h3>
+    上海VBP品种的衰退，表面上由政策（1:1管控、DRG压力）驱动，但真正的问题在于<strong>激励体系鼓励总量、惩罚过程</strong>。当延伸处方开通后若被管控归零，代表会理性选择"不动"；当医院关系维护不计入考核，代表会理性选择"不投入"。政策是约束条件，激励扭曲才是行为解释变量。
+  </div>
+
+  <div class="indep">
+    <h3>洞见2："占位不作为"是系统产出品，不是个人道德问题</h3>
+    占着茅坑不拉的代表，是在现有规则下<strong>理性优化</strong>的结果。不改变规则就换人，换来的人同样会在6-12个月内进入同一状态。人员调整必须与KPI重构同步，否则只是成本浪费。
+  </div>
+
+  <div class="indep">
+    <h3>洞见3：被忽视的增量通道——延伸处方</h3>
+    上海作为超大规模城市，一级医院和社区卫生服务中心是未被激活的增量通道。延伸处方政策允许在一级医院实现原研药销售，但当前开通率极低。<strong>每激活一个延伸处方医院，等于新增一个不掉量的据点</strong>，ROI远高于在已失守的三级医院抢量。
+  </div>
+
+  <div class="indep">
+    <h3>洞见4：执行力衰减的根因是"工具不到人"</h3>
+    从集团到大区到省区，信息传递没有问题，问题在于<strong>工具没有穿透到代表层面</strong>。代表不知道用什么表格摸排，不知道用什么指标衡量进展，不知道遇到障碍找谁——不是不想做，是不知道怎么做。赋能不是培训讲座，是把工具塞到代表手里。
+  </div>
+
+  <div class="indep">
+    <h3>洞见5：经营责任中心的情报监测需要"早半步"机制</h3>
+    集团设立经营责任中心的逻辑是<strong>情报先行，策略调整</strong>，但当前的问题是情报滞后——问题发生后才复盘。要做到"早半步"，需要在每个省区建立<strong>红黄灯预警机制</strong>：在院率跌破60%自动触发黄色预警，跌破40%触发红色干预，30天内无进展自动升级为跨部门SWAT。
+  </div>
+
+  <div class="indep">
+    <h3>洞见6："总量指标"掩盖了医院关系的系统性塌方</h3>
+    当代表报上来的总量数据还可以，但细拆到具体医院，会发现大量医院的月销量已经归零——不是在院内销量下滑，而是<strong>医院层面的"存在感"消失</strong>。这种塌方不会立即反映在总量上，但会在未来2-3个季度内集中爆发。必须用"在院率"和"归零率"作为超前指标，不能只看总量。
+  </div>
+</div>
+
+<!-- 第四部分：实操重建方案 -->
+<div class="chapter">
+  <h2>第四部分：实操重建方案</h2>
+
+  <h3>4.1 大区启动：思想动员与首轮摸排</h3>
+  <div class="action">
+    <strong>启动原则：</strong>思想动员不能只靠开会，要用<strong>数据开路，用工具收尾</strong>。第一轮摸排的目标不是收集信息，而是<strong>让代表拿到一个标准化的医院健康卡</strong>，知道自己管哪些医院、每个医院什么状态、接下来要做什么。
+  </div>
+
+  <h4>摸排表（完整A-E组字段）</h4>
+  <div class="form-box">
+  <table>
+    <tr><th colspan="3">A. 医院基础信息</th></tr>
+    <tr><th>字段</th><th>取值规范</th><th>诊断用途</th></tr>
+    <tr><td>A1. EPR名称</td><td>系统预填，代表核实</td><td>医院唯一标识</td></tr>
+    <tr><td>A2. 医院级别</td><td>三级/二级/一级</td><td>确定激励标准</td></tr>
+    <tr><td>A3. 所在区</td><td>上海区划（如浦东、静安）</td><td>分区统计</td></tr>
+    <tr><td>A4. 医院类型</td><td>公立/民营/DTP/社区</td><td>判断拓展可能性</td></tr>
+  </table>
+
+  <table>
+    <tr><th colspan="3">B. 品种状态（核心五态）</th></tr>
+    <tr><th>字段</th><th>取值规范</th><th>诊断用途</th></tr>
+    <tr><td>B1. 当前在院状态</td><td>①正常在院 ②停限控 ③不在院 ④延伸处方运营 ⑤暂停采购</td><td>五态替代二分法，必填</td></tr>
+    <tr><td>B2. 不在院开始月份</td><td>YYYY-MM，必填</td><td>判断"放弃"时长</td></tr>
+    <tr><td>B3. 月销量</td><td>实际数字，单位：盒/支</td><td>计算在院销量天花板比</td></tr>
+    <tr><td>B4. 竞品月销量估算</td><td>仿制药估算值</td><td>评估替代压力</td></tr>
+  </table>
+
+  <table>
+    <tr><th colspan="3">C. 政策环境</th></tr>
+    <tr><th>字段</th><th>取值规范</th><th>诊断用途</th></tr>
+    <tr><td>C1. 集采任务完成率</td><td>0-100%</td><td>判断医院压力来源</td></tr>
+    <tr><td>C2. 1:1管控状态</td><td>是/否</td><td>识别压制类型</td></tr>
+    <tr><td>C3. DRG/DIP执行口径</td><td>严格/宽松/不适用</td><td>判断处方空间</td></tr>
+    <tr><td>C4. 8周长处方</td><td>已开通/未开通/不适用</td><td>识别增量通道</td></tr>
+    <tr><td>C5. 延伸处方状态</td><td>已开通/申请中/未开通</td><td>识别增量通道</td></tr>
+  </table>
+
+  <table>
+    <tr><th colspan="3">D. 客户关系</th></tr>
+    <tr><th>字段</th><th>取值规范</th><th>诊断用途</th></tr>
+    <tr><td>D1. 药剂科关系评级</td><td>A/B/C/D</td><td>判断恢复难度</td></tr>
+    <tr><td>D2. 支持医生数</td><td>实际人数</td><td>判断临床基础</td></tr>
+    <tr><td>D3. 预计恢复时间</td><td>YYYY-MM，<strong>禁止空白</strong></td><td>强制代表思考下一步</td></tr>
+    <tr><td>D4. 恢复关键障碍</td><td>多选：①无合适患者 ②药剂科关系 ③竞品替换 ④政策限制 ⑤无时间 ⑥其他</td><td>归类问题性质</td></tr>
+    <tr><td>D5. 需总部哪类支持</td><td>多选：①政策解读 ②KOL对接 ③科室会资源 ④商务通道 ⑤其他</td><td>触发跨部门协同</td></tr>
+  </table>
+
+  <table>
+    <tr><th colspan="3">E. 执行动作（每月更新）</th></tr>
+    <tr><th>字段</th><th>取值规范</th><th>诊断用途</th></tr>
+    <tr><td>E1. 最近药剂科拜访日期</td><td>YYYY-MM-DD</td><td>判断活跃度</td></tr>
+    <tr><td>E2. 新政信号是否传达</td><td>是/否/待确认</td><td>检查信息穿透</td></tr>
+    <tr><td>E3. 本月完成动作</td><td>文字描述，禁止模糊</td><td>验证执行力</td></tr>
+    <tr><td>E4. 下一步动作+承诺时点</td><td>两者同时填写，禁止空白</td><td>形成闭环</td></tr>
+  </table>
+  <p style="font-size:12px;color:#757575;margin-top:8px;">主管每月抽查20%摸排表，核实B3/E3/E4真实性。</p>
+  </div>
+
+  <h3>4.2 人员诊断与调整决策框架</h3>
+  <h4>1对1面谈问题框架（45分钟内）</h4>
+  <div class="form-box">
+  <table>
+    <tr><th>阶段</th><th>核心问题</th><th>判断目的</th></tr>
+    <tr><td>开场（5分钟）</td><td>"你觉得上海市场现在最大的挑战是什么？"</td><td>探测认知层次</td></tr>
+    <tr><td>政策理解（10分钟）</td><td>"1:1管控和延伸处方，你觉得哪个对你的影响更大？为什么？"</td><td>区分"真懂"和"表面理解"</td></tr>
+    <tr><td>行为验证（15分钟）</td><td>"上个月你去了哪些医院？药剂科谈了什么？有什么进展？"</td><td>用具体行为验证工作质量</td></tr>
+    <tr><td>障碍识别（10分钟）</td><td>"如果你现在有资源，最想解决哪个医院的问题？为什么？"</td><td>判断优先级判断能力和资源整合意识</td></tr>
+    <tr><td>意愿评估（5分钟）</td><td>"如果接下来3个月，你辖区在院率能从现在的水平提升到85%，你觉得最大困难在哪？"</td><td>探测真实意愿</td></tr>
+  </table>
+  </div>
+
+  <h4>调整决策矩阵</h4>
+  <table>
+    <tr><th>象限</th><th>数据预诊断</th><th>面谈结论</th><th>决策</th></tr>
+    <tr class="r-grn"><td>标杆代表</td><td>在院率≥85%或逆势增长</td><td>意愿强，行为有记录</td><td>提炼经验，树为全区标杆，适度授权</td></tr>
+    <tr class="r-org"><td>高能低意</td><td>数据中等，但B3/E3有具体动作</td><td>能力得到验证，意愿受压制</td><td>KPI重构+解除管控限制+明确激励</td></tr>
+    <tr class="r-org"><td>有心无力</td><td>数据差，但D3/E3有内容</td><td>态度认真但方法缺失</td><td>工具赋能+老代表带教+3个月观察期</td></tr>
+    <tr class="r-red"><td>双低风险</td><td>数据全空白或全归零，E4空白</td><td>无具体行为，无恢复思路</td><td>调岗或优化，优先内部推荐换岗</td></tr>
+  </table>
+
+  <h3>4.3 市场重启激励政策</h3>
+  <table>
+    <tr><th>奖励项</th><th>触发条件</th><th>参考标准</th><th>发放时限</th></tr>
+    <tr class="r-grn"><td>重入院奖</td><td>原不在院医院重新采购（须采购订单）</td><td>三级3000元/二级2000元/一级1000元</td><td>采购订单确认后15天内</td></tr>
+    <tr class="r-grn"><td>8周长处方开通奖</td><td>原"否"医院成功开通</td><td>500元/家</td><td>医院确认开通后15天内</td></tr>
+    <tr class="r-grn"><td>延伸处方开通奖</td><td>一级医院通过延伸处方实现销售</td><td>800元/家</td><td>首单销售确认后15天内</td></tr>
+    <tr class="r-grn"><td>1:1管控松绑奖</td><td>原"是"医院正式取消管控（须文件）</td><td>1500元/家</td><td>文件确认后15天内</td></tr>
+    <tr class="r-grn"><td>季度在院率达标奖</td><td>代表辖区加权在院率≥85%</td><td>绩效系数×1.2</td><td>季度末考核后随工资发放</td></tr>
+    <tr class="r-org"><td>摸排质量奖</td><td>D3/E4零空白，E1最近30天内</td><td>500元/代表/季度</td><td>省区审核通过后发放</td></tr>
+  </table>
+  <div class="action">
+    <strong>KPI重构建议：</strong>在原有总量指标基础上新增过程权重指标：
+    <br>① 在院率达成率（占KPI权重30%）
+    <br>② 摸排表更新及时率（占KPI权重20%）
+    <br>③ 延伸处方开通数（占KPI权重20%）
+    <br>④ 总量达成率（保留，降为权重30%）
+  </div>
+
+  <h3>4.4 日常管理工具体系</h3>
+  <h4>周例会三件事模型（省区主持，30分钟）</h4>
+  <div class="form-box">
+  <strong>一看（10分钟）：</strong>数据回顾
+  <ul style="margin:4px 0 10px 20px;">
+    <li>本周新进院/恢复采购医院（数）</li>
+    <li>本周新失院/归零医院（数）</li>
+    <li>本周延伸处方新开通（数）</li>
+    <li>本周E4承诺兑现情况</li>
+  </ul>
+  <strong>二问（15分钟）：</strong>障碍扫清
+  <ul style="margin:4px 0 10px 20px;">
+    <li>每个代表提出1个最棘手的医院障碍</li>
+    <li>省区当场判断：自己能解决/需要大区/需要跨部门</li>
+    <li>需要大区/跨部门的，当场在群里@对应负责人</li>
+  </ul>
+  <strong>三定（5分钟）：</strong>闭环确认
+  <ul style="margin:4px 0 10px 20px;">
+    <li>每个代表确认下周的E4（下一步动作+承诺时点）</li>
+    <li>省区记录，缺席代表由省区代填但不享受奖励</li>
+  </ul>
+  </div>
+
+  <h4>医院月度健康卡模板</h4>
+  <div class="form-box">
+  <table>
+    <tr><th>字段</th><th>本月值</th><th>上月值</th><th>变化</th><th>健康判断</th></tr>
+    <tr><td>在院状态（五态）</td><td>①-⑤</td><td>①-⑤</td><td>变/不变</td><td>🟢正常/🟡关注/🔴干预</td></tr>
+    <tr><td>月销量</td><td>实际</td><td>实际</td><td>趋势</td><td>天花板比%</td></tr>
+    <tr><td>延伸处方</td><td>是/否</td><td>是/否</td><td>变/不变</td><td>是否激活</td></tr>
+    <tr><td>8周长处方</td><td>是/否</td><td>是/否</td><td>变/不变</td><td>是否开通</td></tr>
+    <tr><td>药剂科关系</td><td>A/B/C/D</td><td>A/B/C/D</td><td>升级/降级</td><td>关系趋势</td></tr>
+    <tr><td>E4承诺兑现</td><td>是/否/部分</td><td>是/否/部分</td><td>趋势</td><td>执行力</td></tr>
+  </table>
+  <p style="font-size:12px;color:#757575;">医院健康卡每月更新，随周例会审核。省区负责维护，大区每月抽查。</p>
+  </div>
+
+  <h3>4.5 三层分角色管理模型</h3>
+
+  <div class="role-hq">
+    <strong>总部层（集团/深康）</strong>
+    <table>
+      <tr><th>角色</th><th>核心职责</th><th>输出物</th><th>频次</th></tr>
+      <tr><td>区域管理部</td><td>VBP品种分级保护策略、人员调整政策、季度驾驶舱复盘</td><td>品种分级清单、人员调整红绿灯、季度驾驶舱</td><td>季度</td></tr>
+      <tr><td>市场部</td><td>差异化价值主张文档（药剂科版/临床版）、标杆案例话术、政策快讯</td><td>价值主张手册、话术卡、政策解读T+3</td><td>按需/T+3</td></tr>
+      <tr><td>医学部</td><td>上市后安全性数据摘要、KOL协调、科室会资源</td><td>RWD数据、KOL名单、科室会预算</td><td>按需</td></tr>
+      <tr><td>市场准入部</td><td>政策速报（72小时）、1:1松绑逐院跟进、8周长处方开通流程</td><td>政策快讯、逐院跟进表、流程指引</td><td>72小时/按需</td></tr>
+    </table>
+  </div>
+
+  <div class="role-rg">
+    <strong>大区层</strong>
+    <table>
+      <tr><th>核心职责</th><th>具体动作</th><th>输出物</th><th>频次</th></tr>
+      <tr><td>指挥+资源调配</td><td>主导人员四象限诊断→面谈→调整方案（45天）</td><td>四象限图、人员调整方案</td><td>首轮45天，后续季度</td></tr>
+      <tr><td>资源再平衡</td><td>高风险代表A类医院临时划拨给标杆代表</td><td>临时划拨通知</td><td>按需</td></tr>
+      <tr><td>周战报</td><td>收集各省市周数据，汇总大区战报</td><td>大区周战报</td><td>每周</td></tr>
+      <tr><td>月度全区复盘</td><td>90分钟：看数据→点红牌→分享突破→确认下月动作</td><td>月度复盘会议纪要</td><td>每月</td></tr>
+      <tr><td>红牌处置</td><td>省区在院率持续<60%或跌幅>80%，启动人员/资源干预</td><td>干预方案</td><td>按触发条件</td></tr>
+    </table>
+  </div>
+
+  <div class="role-sa">
+    <strong>省区层（上海）</strong>
+    <table>
+      <tr><th>核心职责</th><th>具体动作</th><th>输出物</th><th>频次</th></tr>
+      <tr><td>周例会主持</td><td>一看/二问/三定，30分钟</td><td>周例会纪要（含E4承诺清单）</td><td>每周</td></tr>
+      <tr><td>医院陪访</td><td>每月陪访A类医院≥5家（帮代表完成首次药剂科破冰）</td><td>陪访记录</td><td>每月≥5家</td></tr>
+      <tr><td>激励申报审核</td><td>收到代表申报后≤15天完成初审和上报</td><td>激励申报表</td><td>按申报</td></tr>
+      <tr><td>摸排数据质量把关</td><td>D3禁止空白/E4禁止模糊描述/E1最近30天</td><td>质量抽查报告</td><td>每月</td></tr>
+      <tr><td>情报上报</td><td>政策变化信号、红黄灯预警、医院层面的异常</td><td>省区情报简报</td><td>实时+周报</td></tr>
+    </table>
+  </div>
+
+  <h3>4.6 跨部门横向资源协同</h3>
+  <table>
+    <tr><th>触发级别</th><th>触发条件</th><th>响应时限</th><th>主责方</th><th>协同内容</th></tr>
+    <tr class="r-red"><td>L1 即时</td><td>配送中断导致医院停采</td><td>24小时</td><td>商务部绿色通道</td><td>紧急配送/替代医院调货</td></tr>
+    <tr class="r-org"><td>L2 快速</td><td>摸排D5申请跨部门支持</td><td>48小时</td><td>对应部门负责人</td><td>政策解读/KOL对接/科室会</td></tr>
+    <tr class="r-org"><td>L3 专项</td><td>红牌医院持续60天无进展</td><td>7天内</td><td>大区经理牵头四部门联合</td><td>SWAT专项小组，现场办公</td></tr>
+    <tr class="r-red"><td>L4 战略</td><td>上海全区在院率持续2季度低于阈值</td><td>30天内</td><td>集团/深康牵头</td><td>经营管理中心主导方案</td></tr>
+  </table>
+  <div class="action">
+    <strong>跨部门协同操作流程：</strong>
+    <br>① 代表在摸排表D5勾选需要哪类支持（多选）
+    <br>② 省区审核后，填写《跨部门支持申请表》发送至协同部门负责人
+    <br>③ 协同部门负责人在48小时内给予书面回复（可实现/无法实现+理由）
+    <br>④ 商务部L1绿色通道：代表可直接拨打商务部紧急热线，无需审批
+  </div>
+
+  <h3>4.7 MNC经验借鉴与本土化方案</h3>
+  <div class="mnc">
+  <table>
+    <tr><th>MNC策略</th><th>核心逻辑</th><th>上海市场本土化建议</th></tr>
+    <tr><td>①保护人群锁定</td><td>聚焦仿制药替代风险更高的特定患者群（老年/多合并症/长期稳定用药）</td><td>确定上海哪些患者群仍坚持使用原研药（肝病/精神类/心血管），代表针对这些KOL定向维护</td></tr>
+    <tr><td>②差异化临床定位</td><td>用RWD证明原研在特定人群的优势；"生物等效≠临床等效"</td><td>医学部提供原研vs仿制药真实世界对比数据，制作临床优势一页纸，供代表在科室会使用</td></tr>
+    <tr><td>③专科渠道转移</td><td>集采封堵等级医院后，转向私立/特需/互联网/DTP院外药房</td><td>梳理上海DTP药房名单，对接延伸处方到社区医院，激活互联网医院处方通道</td></tr>
+    <tr><td>④患者教育与依从性管理</td><td>慢病管理平台维持已用原研患者续药，降低主动换药概率</td><td>建立"原研患者续药计划"，对已经在用患者进行定向随访，降低脱落率</td></tr>
+    <tr><td>⑤院内学术锁仓</td><td>药剂科无法进货时，通过科室会维持临床医生品牌认知和处方偏好</td><td>即使医院断货，科室会不停，KOL维护不停，为政策松动后快速恢复埋点</td></tr>
+    <tr><td>⑥政策提前布局</td><td>政策松动前3-6个月即向医院传达信号</td><td>市场准入部建立政策跟踪机制，提前预判1:1管控松绑窗口期，代表提前3个月布局医院关系</td></tr>
+  </table>
+  </div>
+
+  <h3>4.8 落地路线图（6个月）</h3>
+  <table>
+    <tr><th>阶段</th><th>时间</th><th>核心动作</th><th>里程碑验收标准</th></tr>
+    <tr class="r-gry"><td colspan="4">第一阶段：启动与摸排（第1-6周）</td></tr>
+    <tr><td>启动</td><td>第1-2周</td><td>大区召开思想动员会，传达调研重要性；下发摸排表模板</td><td>全员知晓摸排要求，模板下发率100%</td></tr>
+    <tr><td>培训</td><td>第2-3周</td><td>省区组织代表培训：五态字段填写规范、D3禁止空白</td><td>代表培训覆盖率100%</td></tr>
+    <tr><td>首轮摸排</td><td>第3-5周</td><td>代表完成全量医院摸排，省区审核D3/E4</td><td>摸排完成率≥90%，D3空白率<5%</td></tr>
+    <tr><td>数据汇总</td><td>第6周</td><td>省区汇总数据，上报大区；生成品种层/分组层/个人层分析</td><td>大区拿到完整的三层穿透数据</td></tr>
+    <tr class="r-gry"><td colspan="4">第二阶段：人员调整与激励重启（第7-12周）</td></tr>
+    <tr><td>面谈</td><td>第7-9周</td><td>省区完成全员1对1面谈（参照面谈框架），大区完成四象限分类</td><td>面谈完成率100%，四象限分布清晰</td></tr>
+    <tr><td>调整决策</td><td>第10周</td><td>大区根据四象限结果，提出调岗/优化/赋能名单</td><td>调整方案经大区经理审批</td></tr>
+    <tr><td>激励上线</td><td>第10-12周</td><td>新激励政策宣贯，重入院奖/延伸处方开通奖开始申报</td><td>激励政策全员知晓，第一批申报启动</td></tr>
+    <tr class="r-gry"><td colspan="4">第三阶段：机制固化与监控（第13-24周）</td></tr>
+    <tr><td>周例会固化</td><td>第13周起</td><td>三件事模型成为周例会标准流程，每周执行</td><td>连续4周周例会E4承诺兑现率≥80%</td></tr>
+    <tr><td>工具下沉</td><td>第13-16周</td><td>医院月度健康卡全面启用，省区陪访记录上线</td><td>健康卡覆盖全部A类医院</td></tr>
+    <tr><td>KPI重构</td><td>第13周</td><td>新KPI权重正式生效（过程权重50%）</td><td>代表新KPI体系上线运行</td></tr>
+    <tr><td>季度复盘</td><td>第24周</td><td>首季复盘：评估在院率变化，修正策略</td><td>上海大区在院率较基线提升≥10个百分点</td></tr>
+  </table>
+</div>
+
+<!-- 附录 -->
+<div class="chapter">
+  <h2>附录</h2>
+
+  <h3>数据字典（核心指标说明）</h3>
+  <table>
+    <tr><th>指标名称</th><th>计算公式</th><th>数据来源</th><th>更新频率</th></tr>
+    <tr><td>在院率</td><td>在院医院数 / 调研总院数 × 100%</td><td>代表调研表B1</td><td>每月</td></tr>
+    <tr><td>不在院归零率</td><td>不在院且月销量为零的医院数 / 不在院医院总数 × 100%</td><td>代表调研表B1+B3</td><td>每月</td></tr>
+    <tr><td>年销量跌幅</td><td>（当前年销量 - 基准年销量）/ 基准年销量 × 100%</td><td>流向数据</td><td>季度</td></tr>
+    <tr><td>五态分布</td><td>各在院状态（五选一）的医院数量和占比</td><td>代表调研表B1</td><td>每月</td></tr>
+    <tr><td>延伸处方开通率</td><td>已开通延伸处方医院数 / 符合条件医院数 × 100%</td><td>代表调研表C5</td><td>季度</td></tr>
+    <tr><td>1:1管控松绑率</td><td>已取消1:1管控医院数 / 原1:1管控医院数 × 100%</td><td>代表调研表C2</td><td>季度</td></tr>
+    <tr><td>E4承诺兑现率</td><td>本周已兑现E4数 / 本周E4总数 × 100%</td><td>省区周例会记录</td><td>每周</td></tr>
+  </table>
+
+  <h3>数据来源说明</h3>
+  <table>
+    <tr><th>数据</th><th>来源</th><th>负责人</th></tr>
+    <tr><td>流向数据（年销量）</td><td>商务系统导出</td><td>商务部</td></tr>
+    <tr><td>代表调研表</td><td>代表填写，省区审核</td><td>省区经理</td></tr>
+    <tr><td>政策环境数据</td><td>市场准入部整理</td><td>市场准入部</td></tr>
+    <tr><td>MNC对标数据</td><td>医学部/市场部研究</td><td>医学部</td></tr>
+  </table>
+
+  <h3>免责说明</h3>
+  <div class="warn">
+    本报告基于上海市场已知情况进行的推断分析，所有"数据缺失"项需在实际摸排后用真实数据替换。本报告中的激励政策标准为参考值，实际执行前需经集团人力资源部和财务部审核确认。本报告不构成正式管理指令，所有调整方案需经相应审批流程后实施。
+  </div>
+
+  <div style="text-align:center;margin-top:48px;padding-top:24px;border-top:1px solid #e0e0e0;color:#90a4ae;font-size:12px;">
+    康哲药业 · 经营责任中心 ｜ VBP集采品种市场重振诊断报告 ｜ 内部文件 ｜ 2026年5月
+  </div>
+</div>
+
+</div>
+</body>
+</html>

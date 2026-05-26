@@ -1,0 +1,718 @@
+{
+  "version": 1,
+  "updatedAt": "2026-05-25T00:23:07.748Z",
+  "entries": {
+    "memory:memory/2026-04-23.md:131:160": {
+      "key": "memory:memory/2026-04-23.md:131:160",
+      "path": "memory/2026-04-23.md",
+      "startLine": 131,
+      "endLine": 160,
+      "source": "memory",
+      "snippet": "- 文档输出：/tmp/research-final2.md（484行完整报告） ### Claude Code 调用指南 - 输出文件：/tmp/CLAUDE-CODE-USAGE-GUIDE.md（v2.0，基于 OPS 标准更新） - 关键参数：background:true、timeout 600s（长任务）、workdir 必须是 git 仓库 - 不支持模型：api.z.ai 是智谱网关，非 Anthropic 原生 ### 经验沉淀 - corrections.md 和 patterns.md 需要定期更新（目前由 HEARTBEAT.md 监控） # Agent Factory 记忆存档 ## 2026-04-23 更新 ### 项目新建需求：SPBP主控编排器 - Evan 提出新建项目 + Skill，名称：SPBP主控编排器 - SPBP = Strategic Planning / Business Planning，创新药SP/BP规划 - 项目 ID：2604231 - 项目路径：projects/2604231/ - 这是 L2 Skill 产品开发 ### SPBP 项目完成内容 - 主控编排器（spbp-master）：SKILL.md + version.json，定义执行模型（Funnel + Iterative） - 10个专业Skill全部创建完毕（v1.0.0骨架版本）： 1. innovative-drug-market-definition（市场定义/TAM/SAM/SOM） 2. innovative-drug",
+      "recallCount": 5,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.8553895324468612,
+      "maxScore": 0.3968940556049347,
+      "firstRecalledAt": "2026-04-29T13:12:38.527Z",
+      "lastRecalledAt": "2026-05-12T04:51:56.475Z",
+      "queryHashes": [
+        "b962fa08cc77",
+        "c5a1e9538517",
+        "63438df6b256",
+        "69a27c68cc92",
+        "1dd285d75913"
+      ],
+      "recallDays": [
+        "2026-04-29",
+        "2026-05-10",
+        "2026-05-12"
+      ],
+      "conceptTags": [
+        "网关",
+        "tmp/research-final2.md",
+        "tmp/claude-code-usage-guide.md",
+        "v2.0",
+        "api.z.ai",
+        "corrections.md",
+        "patterns.md",
+        "heartbeat.md"
+      ]
+    },
+    "memory:memory/2026-04-23.md:45:66": {
+      "key": "memory:memory/2026-04-23.md:45:66",
+      "path": "memory/2026-04-23.md",
+      "startLine": 45,
+      "endLine": 66,
+      "source": "memory",
+      "snippet": "- 项目路径：projects/2604231/ - 这是 L2 Skill 产品开发 ### SPBP 项目完成内容 - 主控编排器（spbp-master）：SKILL.md + version.json，定义执行模型（Funnel + Iterative） - 10个专业Skill全部创建完毕（v1.0.0骨架版本）： 1. innovative-drug-market-definition（市场定义/TAM/SAM/SOM） 2. innovative-drug-competition-and-winning（竞争分析/SWOT） 3. innovative-drug-policy-analysis（政策环境/VBP/DRG） 4. innovative-drug-market-segmentation（市场细分/客户画像） 5. innovative-drug-positioning-and-messaging（产品定位/RTB/利益阶梯） 6. innovative-drug-leverage-points（杠杆点/行为转化） 7. innovative-drug-brand-vision（品牌Vision/5-10年愿景） 8. innovative-drug-strategic-pillars（战略支柱/3个核心方向） 9. innovative-drug-continuous-growth（增长举措/未满足需求） 10. innovative-drug-metrics-and-standards（指标体系/KPI+阈值",
+      "recallCount": 6,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 2.302102068066597,
+      "maxScore": 0.4177180677652359,
+      "firstRecalledAt": "2026-04-29T13:12:38.527Z",
+      "lastRecalledAt": "2026-05-12T04:51:56.475Z",
+      "queryHashes": [
+        "b962fa08cc77",
+        "9454c8f50c8c",
+        "57502721a8e2",
+        "c5a1e9538517",
+        "63438df6b256",
+        "1dd285d75913"
+      ],
+      "recallDays": [
+        "2026-04-29",
+        "2026-04-30",
+        "2026-05-10",
+        "2026-05-12"
+      ],
+      "conceptTags": [
+        "projects/2604231",
+        "spbp-master",
+        "skill.md",
+        "version.json",
+        "v1.0.0骨架版本",
+        "市场定义/tam/sam/som",
+        "竞争分析/swot",
+        "innovative-drug-policy-analysis"
+      ]
+    },
+    "memory:memory/2026-04-23.md:61:79": {
+      "key": "memory:memory/2026-04-23.md:61:79",
+      "path": "memory/2026-04-23.md",
+      "startLine": 61,
+      "endLine": 79,
+      "source": "memory",
+      "snippet": "- 每个SKILL.md包含：角色定位、核心任务、工具与方法(2-3个)、推导过程(3步)、关键发现F1-FN、结论表(维度|结论|置信度)、待讨论点、数据来源表 - 尚未提交Git ### Codex 沙箱问题诊断（重要经验） - **问题**：Codex v0.56.0 启动时沙箱限制写入范围：`workspace-write [workdir, /tmp, $TMPDIR]` - **影响**：无法写入 `/Users/evan/.openclaw/...`，返回 `operation not permitted` - **根因**：Codex 沙箱安全策略，非系统权限问题 - **连带问题**：Codex 沙箱内 DNS 解析被限制，`curl` 无法联网 - **之前成功的原因**：之前写 `/tmp/research-report.md` 在沙箱允许范围内 - **解决方案（待验证）**： 1. 让 Codex 写到 /tmp/staging/，手动 cp 到目标目录 2. 尝试 `--writable-root` 参数（待确认是否存在） 3. 调整 Codex settings.json 中的沙箱配置 - **决策记录**：没选直接改 Codex 全局配置是因为可能影响其他项目安全性 - **最终方案**：`codex exec --dangerously-bypass-approvals-and-sandbox '任务'`（不加 --full-auto，加 pty:true + background:true） - **已写入 SOUL.md**",
+      "recallCount": 5,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 2.0305905550718304,
+      "maxScore": 0.4353628098964691,
+      "firstRecalledAt": "2026-04-30T08:38:56.636Z",
+      "lastRecalledAt": "2026-05-12T04:51:56.475Z",
+      "queryHashes": [
+        "9454c8f50c8c",
+        "57502721a8e2",
+        "c5a1e9538517",
+        "63438df6b256",
+        "1dd285d75913"
+      ],
+      "recallDays": [
+        "2026-04-30",
+        "2026-05-10",
+        "2026-05-12"
+      ],
+      "conceptTags": [
+        "每个skill.md包含",
+        "2-3个",
+        "关键发现f1-fn",
+        "v0.56.0",
+        "workspace-write",
+        "users/evan",
+        "tmp/research-report.md",
+        "tmp/staging"
+      ]
+    },
+    "memory:memory/2026-04-23.md:156:175": {
+      "key": "memory:memory/2026-04-23.md:156:175",
+      "path": "memory/2026-04-23.md",
+      "startLine": 156,
+      "endLine": 175,
+      "source": "memory",
+      "snippet": "3. innovative-drug-policy-analysis（政策环境/VBP/DRG） 4. innovative-drug-market-segmentation（市场细分/客户画像） 5. innovative-drug-positioning-and-messaging（产品定位/RTB/利益阶梯） 6. innovative-drug-leverage-points（杠杆点/行为转化） 7. innovative-drug-brand-vision（品牌Vision/5-10年愿景） 8. innovative-drug-strategic-pillars（战略支柱/3个核心方向） 9. innovative-drug-continuous-growth（增长举措/未满足需求） 10. innovative-drug-metrics-and-standards（指标体系/KPI+阈值） - 每个SKILL.md包含：角色定位、核心任务、工具与方法(2-3个)、推导过程(3步)、关键发现F1-FN、结论表(维度|结论|置信度)、待讨论点、数据来源表 - 尚未提交Git ### Codex 沙箱问题诊断（重要经验） - **问题**：Codex v0.56.0 启动时沙箱限制写入范围：`workspace-write [workdir, /tmp, $TMPDIR]` - **影响**：无法写入 `/Users/evan/.openclaw/...`，返回 `operation not permitted` - **根因**：Co",
+      "recallCount": 4,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.5689705103635787,
+      "maxScore": 0.40954333543777466,
+      "firstRecalledAt": "2026-04-30T08:38:56.636Z",
+      "lastRecalledAt": "2026-05-10T08:09:23.925Z",
+      "queryHashes": [
+        "9454c8f50c8c",
+        "57502721a8e2",
+        "c5a1e9538517",
+        "63438df6b256"
+      ],
+      "recallDays": [
+        "2026-04-30",
+        "2026-05-10"
+      ],
+      "conceptTags": [
+        "innovative-drug-policy-analysis",
+        "政策环境/vbp/drg",
+        "市场细分/客户画像",
+        "产品定位/rtb/利益阶梯",
+        "innovative-drug-leverage-points",
+        "杠杆点/行为转化",
+        "innovative-drug-brand-vision",
+        "品牌vision/5-10年愿景"
+      ]
+    },
+    "memory:memory/2026-04-23.md:235:242": {
+      "key": "memory:memory/2026-04-23.md:235:242",
+      "path": "memory/2026-04-23.md",
+      "startLine": 235,
+      "endLine": 242,
+      "source": "memory",
+      "snippet": "### 设计决策：Skill 自包含初始化 - **问题**：用户需要额外配置 MiniMax MCP 才能使用政策采集 Skill - **决策**：将环境初始化脚本打包进 Skill 项目，首次执行时自动检测并引导配置 - **没选其他方案的原因**： - 不写在 SKILL.md 里让 AI 自行配置 → 太容易出错，且安全问题（Key 暴露在对话中） - 不依赖系统级环境变量 → 跨平台兼容差 - 用脚本 + 交互式输入 → 最可控，Key 只写入本地配置文件",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.37444473505020137,
+      "maxScore": 0.37444473505020137,
+      "firstRecalledAt": "2026-04-30T08:38:56.636Z",
+      "lastRecalledAt": "2026-04-30T08:38:56.636Z",
+      "queryHashes": [
+        "9454c8f50c8c"
+      ],
+      "recallDays": [
+        "2026-04-30"
+      ],
+      "conceptTags": [
+        "skill.md",
+        "设计",
+        "决策",
+        "skill",
+        "包含",
+        "初始",
+        "问题",
+        "用户"
+      ]
+    },
+    "memory:memory/2026-04-23.md:1:26": {
+      "key": "memory:memory/2026-04-23.md:1:26",
+      "path": "memory/2026-04-23.md",
+      "startLine": 1,
+      "endLine": 26,
+      "source": "memory",
+      "snippet": "# Agent Factory 记忆存档 ## 2026-04-23 更新 ### 项目新建需求：SPBP主控编排器 - Evan 提出新建项目 + Skill，名称：SPBP主控编排器 - 具体含义待确认（SPBP = ?） - 这是 L2 Skill 产品开发，Evan 希望工厂协助创建 - 项目 ID 待分配（YYMMDDN 格式，N 从1开始） ### OpenClaw 配置调整（基于 OPS 标准 v1.0） 调整了 life Gateway 的三项配置： 1. **Compaction**：safeguard → default，新增 maxHistoryShare 0.5、reserveTokens 16384、keepRecentTokens 32768、recentTurnsPreserve 5、notifyUser true、postIndexSync async 2. **bigmodel 模型显式值**：glm-4.7/glm-5.1/glm-5-turbo/glm-5v-turbo 补全 contextWindow + maxTokens 3. **Clash fake-IP SSRF**：tools.web.fetch.ssrfPolicy.allowRfc2544BenchmarkRange = true ### Claude Code 长任务研究结论 - 关键发现：长任务必须用 `background:true`，`yieldMs` 前台等待会导致内存泄漏最终 SIGKILL - 根因：Mac Mini 内存压力（free + inact",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.720661374926567,
+      "maxScore": 0.3603553980588913,
+      "firstRecalledAt": "2026-04-30T08:38:56.636Z",
+      "lastRecalledAt": "2026-04-30T10:13:48.035Z",
+      "queryHashes": [
+        "9454c8f50c8c",
+        "57502721a8e2"
+      ],
+      "recallDays": [
+        "2026-04-30"
+      ],
+      "conceptTags": [
+        "gateway",
+        "v1.0",
+        "0.5",
+        "fake-ip",
+        "factory",
+        "记忆",
+        "存档",
+        "更新"
+      ]
+    },
+    "memory:memory/2026-04-23.md:220:238": {
+      "key": "memory:memory/2026-04-23.md:220:238",
+      "path": "memory/2026-04-23.md",
+      "startLine": 220,
+      "endLine": 238,
+      "source": "memory",
+      "snippet": "- **来源**：Evan 发来的 policy-collection-skills zip 包 + MiniMax 配置指南 - **包含7个Skill**： 01-异地就医 / 02-异地生育报销 / 03-公积金异地购房贷款 04-购房资格 / 05-车牌摇号 / 06-子女上学 / 07-落户 - **搜索工具**：MiniMax web_search（via mcporter），首次使用需配置 API Key - **自包含设计**：Evan 要求把 MiniMax MCP 初始化打包进 Skill，用户无需额外配置 - 创建了 scripts/setup-minimax.sh 一键初始化脚本 - 自动检查/安装 uv、mcporter - 首次执行时提示用户输入 MiniMax Token Plan API Key - 写入 ~/.mcporter/mcporter.json 并验证 - **输出结构**：每个模块3个MD文件（指标汇总表 + 来源明细表 + 缺口与待补充） - **执行提示词**：Phase 0 环境初始化 + Phase 1 七模块串行采集 - **MiniMax Key 说明**：必须是 Token Plan Key（sk-cp- 开头），普通 Key 不支持 web_search - **Evan 提供的配置指南**也存入了项目 references/ 目录 ### 设计决策：Skill 自包含初始化 - **问题**：用户需要额外配置 MiniMax MCP 才能使用政策采集 Skill - **决策**：将环境初",
+      "recallCount": 3,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.120862790942192,
+      "maxScore": 0.39288722574710844,
+      "firstRecalledAt": "2026-04-30T08:38:56.636Z",
+      "lastRecalledAt": "2026-05-12T04:51:56.475Z",
+      "queryHashes": [
+        "9454c8f50c8c",
+        "c5a1e9538517",
+        "1dd285d75913"
+      ],
+      "recallDays": [
+        "2026-04-30",
+        "2026-05-10",
+        "2026-05-12"
+      ],
+      "conceptTags": [
+        "policy-collection-skills",
+        "01-异地就医",
+        "02-异地生育报销",
+        "03-公积金异地购房贷款",
+        "04-购房资格",
+        "05-车牌摇号",
+        "06-子女上学",
+        "07-落户"
+      ]
+    },
+    "memory:memory/2026-04-26.md:1:24": {
+      "key": "memory:memory/2026-04-26.md:1:24",
+      "path": "memory/2026-04-26.md",
+      "startLine": 1,
+      "endLine": 24,
+      "source": "memory",
+      "snippet": "# Memory 2026-04-26 ## 七大政策采集 Skill Pack — 完整迭代记录 ### 项目概况 - 项目编号：2604233 - 标准名称：`seven-policy-collector`（Pack 总控入口 SKILL.md 已创建） - 当前版本：v1.2.2 - 7 个子模块，每个输出 3 个 Markdown（指标汇总表/来源明细表/缺口与待补充） - 依赖：`multi-search`（项目 2604251，通用搜索降级工具包） ### 版本迭代链（v1.0.0 → v1.2.2） - v1.0.0：初始版本，Issue #30 测试发现 2P0+3P1+3P2 - v1.0.1：修复 Tavily 残留（去品牌化+双通道声明）、setup --key 参数、OpenClaw 残留、占位符、验证逻辑误判 - v1.0.2：修复 --key 被 L68 覆盖（BUG-6）、API Host 硬编码国际版（BUG-7） - v1.1.0：EXECUTION-PROMPT 重构（Phase 0 拆成初始化+能力探测）+ 7文件去品牌化 - v1.1.1：7 个检索词模板从单轮 site: 改为三轮递进（精准→泛搜→兜底） - v1.1.2：setup 脚本新增 Step 6 环境能力探测 + Exa 配置指南 - v1.1.3：搜索降级链加入 Tavily（MiniMax→Tavily→Exa→web_fetch） - v1.1.4：修复 BUG-8（配置指南 OpenClaw 残留）、BUG-9（EXECUTION-PROMPT tavily",
+      "recallCount": 8,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 3.1689908802509303,
+      "maxScore": 0.4702591985464096,
+      "firstRecalledAt": "2026-04-30T10:13:48.035Z",
+      "lastRecalledAt": "2026-05-23T15:08:31.843Z",
+      "queryHashes": [
+        "57502721a8e2",
+        "c5a1e9538517",
+        "63438df6b256",
+        "69a27c68cc92",
+        "1dd285d75913",
+        "f169226f08f8",
+        "a62ae533bbe5",
+        "1aab70e57526"
+      ],
+      "recallDays": [
+        "2026-04-30",
+        "2026-05-10",
+        "2026-05-12",
+        "2026-05-15",
+        "2026-05-23"
+      ],
+      "conceptTags": [
+        "seven-policy-collector",
+        "skill.md",
+        "v1.2.2",
+        "指标汇总表/来源明细表/缺口与待补充",
+        "multi-search",
+        "v1.0.0",
+        "v1.0.1",
+        "v1.0.2"
+      ]
+    },
+    "memory:memory/2026-04-23.md:21:51": {
+      "key": "memory:memory/2026-04-23.md:21:51",
+      "path": "memory/2026-04-23.md",
+      "startLine": 21,
+      "endLine": 51,
+      "source": "memory",
+      "snippet": "- prompt 过长时通过文件传递（写入 /tmp/*.txt，Claude Code 读取） - Claude Code 需要 PTY=false（不是 pty:true） ### OpenClaw 远程协作方案（调研报告） - 方案 A（推荐）：Node Host，Mac Mini 跑 Node Host，VPS Gateway 通过 exec host=node 调用 - 方案 B：Sub-agent + Node Host 组合 - 方案 C：双 Gateway（需自建桥接，OpenClaw 不原生支持跨 Gateway 通信） - 文档输出：/tmp/research-final2.md（484行完整报告） ### Claude Code 调用指南 - 输出文件：/tmp/CLAUDE-CODE-USAGE-GUIDE.md（v2.0，基于 OPS 标准更新） - 关键参数：background:true、timeout 600s（长任务）、workdir 必须是 git 仓库 - 不支持模型：api.z.ai 是智谱网关，非 Anthropic 原生 ### 经验沉淀 - corrections.md 和 patterns.md 需要定期更新（目前由 HEARTBEAT.md 监控） # Agent Factory 记忆存档 ## 2026-04-23 更新 ### 项目新建需求：SPBP主控编排器 - Evan 提出新建项目 + Skill，名称：SPBP主控编排器 - SPBP = Strategic Planning / Business Plan",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.7290358781814574,
+      "maxScore": 0.36894525587558746,
+      "firstRecalledAt": "2026-04-30T10:13:48.035Z",
+      "lastRecalledAt": "2026-05-10T08:09:23.925Z",
+      "queryHashes": [
+        "57502721a8e2",
+        "63438df6b256"
+      ],
+      "recallDays": [
+        "2026-04-30",
+        "2026-05-10"
+      ],
+      "conceptTags": [
+        "gateway",
+        "网关",
+        "sub-agent",
+        "tmp/research-final2.md",
+        "tmp/claude-code-usage-guide.md",
+        "v2.0",
+        "api.z.ai",
+        "corrections.md"
+      ]
+    },
+    "memory:memory/2026-04-22.md:1:39": {
+      "key": "memory:memory/2026-04-22.md:1:39",
+      "path": "memory/2026-04-22.md",
+      "startLine": 1,
+      "endLine": 39,
+      "source": "memory",
+      "snippet": "# 2026-04-22 记忆 ## Link Archivist v1.3.1 发布 所有更新已 push 到 GitHub master。测试通知模板已固化到 TOOLS.md。 **本次更新内容：** 1. 隐含 GitHub 项目发现（github_discovery.py） 2. Claim 验证（批判性论证）一节 3. transcribe_audio.py MinIO→七牛修复 4. jina.ai 超时 30s→60s，头条新增 Playwright 方案 5. 抖音视频处理合并到本 skill（douyin_process.py 移入，移除外部 Skill 依赖） ## 新发现：抖音音频开放 API 来源：Evan 转发的 API 文档（OPEN_API---61870b01-67f3-4207-93a3-91a05b890647.md） - **Base URL**：`https://hk-al-xg-node.mediportal.com.cn` - **鉴权**：Bearer Token（向负责人获取） - **推荐接口**：`POST /api/open/audio/export-with-asr` - 只传 `{\"url\": \"抖音视频URL\"}` - 返回 `aweme_id`、`is_original`、`music_title`、`asr_text` - 典型耗时 20-60 秒，超时设置 ≥180 秒 - 不需要 mcporter/ffmpeg/whisper，比现有方案简单得多 **建议**：Link Arch",
+      "recallCount": 5,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.951010525226593,
+      "maxScore": 0.43735232055187223,
+      "firstRecalledAt": "2026-05-10T02:16:38.568Z",
+      "lastRecalledAt": "2026-05-23T15:08:31.843Z",
+      "queryHashes": [
+        "a0da03942208",
+        "a9c1e129d77b",
+        "f169226f08f8",
+        "a62ae533bbe5",
+        "1aab70e57526"
+      ],
+      "recallDays": [
+        "2026-05-10",
+        "2026-05-15",
+        "2026-05-23"
+      ],
+      "conceptTags": [
+        "v1.3.1",
+        "tools.md",
+        "github-discovery.py",
+        "transcribe-audio.py",
+        "jina.ai",
+        "douyin-process.py",
+        "open-api",
+        "hk-al-xg-node.mediportal.com.cn"
+      ]
+    },
+    "memory:memory/2026-04-23.md:203:224": {
+      "key": "memory:memory/2026-04-23.md:203:224",
+      "path": "memory/2026-04-23.md",
+      "startLine": 203,
+      "endLine": 224,
+      "source": "memory",
+      "snippet": "- 不支持模型：api.z.ai 是智谱网关，非 Anthropic 原生 ### 经验沉淀 - corrections.md 和 patterns.md 需要定期更新（目前由 HEARTBEAT.md 监控） ## 2026-04-23 下午更新 ### 新项目：2604232 · pharma-market-landscape-report - **定位**：药品市场全景报告生成（独立项目，非 SPBP 子模块） - **来源**：Evan 发来的完整 Skill 包（zip + md 说明书） - **结构**：SKILL.md + workflow.md(7步) + templates/report_template.html + schemas/research_note_schema.json + checklists/qa_checklist.md + examples/ + EXECUTION-PROMPT.md - **核心能力**：15章×3部分（市场全景/患者分布/渠道深度），输出单一HTML文件 - **特点**：治疗领域无关、市场无关，已验证皮肤科/肾脏科/精神科 × 香港/台湾/新加坡/马来西亚 - **输出目录**：_runtime/projects/2604232/{market_code}_{product_code}/，含15个证据JSON + 最终HTML + QA报告 ### 新项目：2604233 · 七大政策采集 Skill Pack - **定位**：城市政策信息采集工具包（独立项目） - **来源**：Evan 发来的 p",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.7474182039499282,
+      "maxScore": 0.38012276887893676,
+      "firstRecalledAt": "2026-05-12T04:51:56.475Z",
+      "lastRecalledAt": "2026-05-14T21:33:56.016Z",
+      "queryHashes": [
+        "1dd285d75913",
+        "7a697c7e2862"
+      ],
+      "recallDays": [
+        "2026-05-12",
+        "2026-05-15"
+      ],
+      "conceptTags": [
+        "网关",
+        "api.z.ai",
+        "corrections.md",
+        "patterns.md",
+        "heartbeat.md",
+        "pharma-market-landscape-report",
+        "skill.md",
+        "workflow.md"
+      ]
+    },
+    "memory:memory/2026-05-12.md:1:28": {
+      "key": "memory:memory/2026-05-12.md:1:28",
+      "path": "memory/2026-05-12.md",
+      "startLine": 1,
+      "endLine": 28,
+      "source": "memory",
+      "snippet": "# Memory — 2026-05-12 ## Doc Viewer 项目进展（2605101） ### 已完成 - 收藏/加星功能 + 标签云 - `encodeURIComponent` 缺失 bug 修复 - 复制链接按钮（列表页 + 详情页 + HTML 预览工具栏） - 中文文件名乱码（uvicorn Latin-1 stdout 问题，通过 `PYTHONUTF8=1` + `-X utf8` 解决） - 列表页 ✏️ 编辑按钮 + 编辑模态框 + `PUT /api/{doc_id}` 更新接口 ### 当前状态 - VPS `140.235.37.79` 服务已正常运行（主页 HTTP 200） - 本地文件：`~/.agents/skills/doc-viewer/app.py` - GitHub：`projects/2605101/doc-viewer/` ### 关键 bug 修复记录 - **NameError: name 'docId' is not defined**：根本原因是 Python f-string 里 `$${var}` 会被 Python 求值为变量值（而非字面字符串）。修复方法：统一使用 `${{var}}` 产生字面 `${var}`，避免 Python 求值。所有 `$${docId}/${doc.id/editingDocId}` 等全部替换为 `${{...}}` 模式。 - **编码问题**：VPS uvicorn stdout 用 Latin-1 编码。修复：systemd service 加 `Environ",
+      "recallCount": 3,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.136569947004318,
+      "maxScore": 0.39584104418754573,
+      "firstRecalledAt": "2026-05-14T20:01:21.326Z",
+      "lastRecalledAt": "2026-05-25T00:23:07.748Z",
+      "queryHashes": [
+        "be00037e8930",
+        "55c10319ea09",
+        "81b6b75ec4ba"
+      ],
+      "recallDays": [
+        "2026-05-15",
+        "2026-05-25"
+      ],
+      "conceptTags": [
+        "收藏/加星功能",
+        "latin-1",
+        "doc-id",
+        "140.235.37.79",
+        "agents/skills/doc-viewer/app.py",
+        "projects/2605101/doc-viewer",
+        "f-string",
+        "doc.id/editingdocid"
+      ]
+    },
+    "memory:memory/2026-05-15.md:1:34": {
+      "key": "memory:memory/2026-05-15.md:1:34",
+      "path": "memory/2026-05-15.md",
+      "startLine": 1,
+      "endLine": 34,
+      "source": "memory",
+      "snippet": "# Memory — 2026-05-15 ## CG-0255 BD报告双版生成 **任务**：为 CG-0255（依福格雷）完整BD报告（13章节+Battle）生成两份不同配色的HTML正式报告。 **输出文件**： - `/tmp/CG0255_Report_Amber.html` — 琥珀金版（深金 #C9920A，暖白背景，沉稳高端） - `/tmp/CG0255_Report_Yellow.html` — 阳光黄版（亮黄 #F4B400，奶白背景，明亮活力） **上传结果**： - 琥珀金版：https://doc.20100706.xyz/view/9ea05d0fe5b2 - 阳光黄版：https://doc.20100706.xyz/view/0e49338a54c7 **两版配色差异**： - 琥珀金：深金主色（#C9920A），适合高管/投资人对接，正式感强 - 阳光黄：明亮黄（#F4B400），更现代感，适合内部审阅 **内容覆盖**：3.0产品定义、3.1 S-1靶点科学（24/25分）、3.2 S-2化合物、3.3 S-3 Ⅰ期数据、3.4 S-4开发风险、3.5 S-5 TPP、3.6 S-6 IP、3.7 S-7中国开发、3.8 S-8里程碑财务、3.9 S-9合作方、3.10一票否决、3.11验收标准、3.12快速启动、Battle综合建议 **结论**：B+ / A-，推荐推进至尽调阶段 --- ## 新增 html-to-pdf skill **创建时间**：2026-05-15 **实现方式**：使用本地 Chro",
+      "recallCount": 3,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.1312359422445297,
+      "maxScore": 0.39638342559337614,
+      "firstRecalledAt": "2026-05-14T20:01:28.460Z",
+      "lastRecalledAt": "2026-05-14T21:33:56.016Z",
+      "queryHashes": [
+        "1c1501ce8dc8",
+        "55c10319ea09",
+        "7a697c7e2862"
+      ],
+      "recallDays": [
+        "2026-05-15"
+      ],
+      "conceptTags": [
+        "cg-0255",
+        "tmp/cg0255-report-amber.html",
+        "tmp/cg0255-report-yellow.html",
+        "适合高管/投资人对接",
+        "3.0产品定义",
+        "3.1",
+        "s-1靶点科学",
+        "24/25分"
+      ]
+    },
+    "memory:memory/2026-05-15.md:25:59": {
+      "key": "memory:memory/2026-05-15.md:25:59",
+      "path": "memory/2026-05-15.md",
+      "startLine": 25,
+      "endLine": 59,
+      "source": "memory",
+      "snippet": "## 新增 html-to-pdf skill **创建时间**：2026-05-15 **实现方式**：使用本地 Chrome headless CLI，不依赖 npm 包 **功能**： - 输入：本地 HTML 文件路径 或 HTTP(S) URL - 输出：PDF 文件 - 支持：A4/Letter纸张、自定义边距、横向、缩放、背景色 - 关键：直接用 HTML 原始文件转换，不用预览页面 **安装路径**：skills/html-to-pdf/（git repo）/ 运行时：~/.agents/skills/html-to-pdf/ **使用方式**：doc-viewer 返回 raw URL → html-to-pdf skill 转换 → PDF raw URL 返回 **GitHub 提交**：c6a23c3 --- ## doc-viewer Skill 重构（v2.2.0） **完成时间**：2026-05-15 **架构变更**：建立 design-standards 通用规范层 + 分层模板架构 ### 变更内容 1. **根因修复**：根目录 `.gitignore` TEMPLATES/ 规则导致 templates/ 从未提交 git，已删除 2. **新增 design-standards/ 通用规范层**（所有风格共享）： - `base-html-rules.md`：字体栈（禁Inter/Roboto）、颜色变量、间距、圆角、动画 - `table-spec.md`：`.table-wrap`包裹、`wid",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.37585846483707425,
+      "maxScore": 0.37585846483707425,
+      "firstRecalledAt": "2026-05-14T20:04:08.542Z",
+      "lastRecalledAt": "2026-05-14T20:04:08.542Z",
+      "queryHashes": [
+        "f169226f08f8"
+      ],
+      "recallDays": [
+        "2026-05-15"
+      ],
+      "conceptTags": [
+        "html-to-pdf",
+        "a4/letter纸张",
+        "skills/html-to-pdf",
+        "agents/skills/html-to-pdf",
+        "doc-viewer",
+        "v2.2.0",
+        "design-standards",
+        "base-html-rules.md"
+      ]
+    },
+    "memory:memory/2026-05-15.md:133:159": {
+      "key": "memory:memory/2026-05-15.md:133:159",
+      "path": "memory/2026-05-15.md",
+      "startLine": 133,
+      "endLine": 159,
+      "source": "memory",
+      "snippet": "- 安装位置：`~/.agents/skills/doc-viewer/` - 已推送 GitHub（agent-factory repo, master） - 安装方式：`git clone --depth 1 --sparse` + `git sparse-checkout set projects/2605101/doc-viewer` - 风格 03 新增 `color-themes/amber.yml` + `yellow.yml`，`reference-amber.html`，`reference-yellow.html`，`skeleton.html` - 触发词：「琥珀金」→ amber（默认），「阳光黄」→ yellow ## 大报告 HTML 生成策略 - Sub-agent 生成超长报告 HTML（17章+，70KB+ Markdown）容易超时（6min+ → timeout） - **更可靠方案**：Python 脚本读取 reference-amber.html 的 CSS + Markdown 内容，用正则解析转 HTML - 成功案例：TEVA 氮䓬斯汀报告（68KB/18章）和 CG-0255 依福格雷报告（92KB/18章）均用 Python 脚本生成 - 脚本位置：`/tmp/gen_teva_report.py` 和 `/tmp/gen_cg0255_report.py` - 上传 API：`curl -s -X POST https://doc.20100706.xyz/upload -F \"file=@<path>;filenam",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4297851413488388,
+      "maxScore": 0.4297851413488388,
+      "firstRecalledAt": "2026-05-14T21:13:06.377Z",
+      "lastRecalledAt": "2026-05-14T21:13:06.377Z",
+      "queryHashes": [
+        "55c10319ea09"
+      ],
+      "recallDays": [
+        "2026-05-15"
+      ],
+      "conceptTags": [
+        "agents/skills/doc-viewer",
+        "agent-factory",
+        "sparse-checkout",
+        "projects/2605101/doc-viewer",
+        "color-themes/amber.yml",
+        "yellow.yml",
+        "reference-amber.html",
+        "reference-yellow.html"
+      ]
+    },
+    "memory:memory/2026-05-15.md:56:85": {
+      "key": "memory:memory/2026-05-15.md:56:85",
+      "path": "memory/2026-05-15.md",
+      "startLine": 56,
+      "endLine": 85,
+      "source": "memory",
+      "snippet": "- `table-spec.md`：`.table-wrap`包裹、`width:100%`、移动端横向滚动 - `responsive-spec.md`：480/768px断点、三端字号对照、触摸交互 - `print-spec.md`：@page边距、pt单位、page-break控制 3. **模板分层目录**：`templates/style-XX/design-token.md` + `skeleton.html` 4. **SKILL.md Step 3 改为「读取规范」流程**：先读通用规范（4个文件），再读风格token（2个文件） 5. **新增 3 个风格**：04情报日报/05数据看板/06产品介绍页 6. **模板贡献机制**：`templates/README.md` 定义贡献规范（design-token.md + skeleton.html 即可贡献） ### 关键规则（必须遵守） - 字体：PingFang SC优先，禁止 Inter/Roboto - 表格：外层`.table-wrap`，`width:100%`，不用`max-content` - 返回链接：统一给 raw 路径 - **HTML转PDF不是doc-viewer的职责**，由独立skill负责 ### GitHub 提交 - `gitignore TEMPLATES/ 规则删除` → edb7bea --- ## 待办（未完成） - [ ] Evan 对配色方案的选择确认（琥珀金 vs 阳光黄） --- ## HTML转PDF技术踩坑记录（202",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.7273483395576477,
+      "maxScore": 0.3745893895626068,
+      "firstRecalledAt": "2026-05-14T21:33:42.702Z",
+      "lastRecalledAt": "2026-05-14T21:33:56.016Z",
+      "queryHashes": [
+        "f35c42b98170",
+        "7a697c7e2862"
+      ],
+      "recallDays": [
+        "2026-05-15"
+      ],
+      "conceptTags": [
+        "table-spec.md",
+        "table-wrap",
+        "responsive-spec.md",
+        "480/768px断点",
+        "print-spec.md",
+        "page-break控制",
+        "skeleton.html",
+        "skill.md"
+      ]
+    },
+    "memory:memory/2026-05-15.md:151:173": {
+      "key": "memory:memory/2026-05-15.md:151:173",
+      "path": "memory/2026-05-15.md",
+      "startLine": 151,
+      "endLine": 173,
+      "source": "memory",
+      "snippet": "- SPI-1005 Ebselen（之前生成的）：https://doc.20100706.xyz/raw/0229bcdc382f ## Evan 的使用模式 - Evan 转发三省 Bot 的 BD 评估报告到 skill 工厂群，要求生成琥珀金版 HTML - 期望 3-5 分钟内完成，超时会觉得慢 - 对安装说明和使用说明有明确需求 - 关注 GitHub 是否已提交 # Memory 2026-05-15 ## [2026-05-15 05:18] [技术] doc-viewer 琥珀金 HTML 报告批量生成 - **决策**：两份 BD 评估报告（RHOFADE + 门冬氨酸钙片）都使用 Python 脚本生成琥珀金配色 HTML，走 doc-viewer style-03 模板，上传到 doc.20100706.xyz - **前车之鉴**：大报告（>70KB）必须用 Python 脚本生成而非直接 inline HTML，避免超时。脚本放在 /tmp/，输出 HTML 也放在 /tmp/ - **上下文**：Telegram 群\"skill 工厂\" Doc Viewer 话题，用户 evan 转发两份 markdown 报告要求生成琥珀金版投钱报告 ### 生成的报告 1. RHOFADE（盐酸羟甲唑啉乳膏 1%）BD 品种评估报告 — https://doc.20100706.xyz/raw/ef2a899c785c 2. 门冬氨酸钙片 BD 评估报告（模板六 OTC 消费品）— https://doc.20100706.xyz/raw/0041",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.7574099421501159,
+      "maxScore": 0.4005865424871444,
+      "firstRecalledAt": "2026-05-14T21:33:42.702Z",
+      "lastRecalledAt": "2026-05-14T21:33:56.016Z",
+      "queryHashes": [
+        "f35c42b98170",
+        "7a697c7e2862"
+      ],
+      "recallDays": [
+        "2026-05-15"
+      ],
+      "conceptTags": [
+        "spi-1005",
+        "3-5",
+        "doc-viewer",
+        "style-03",
+        "doc.20100706.xyz",
+        "doc.20100706.xyz/raw/0041",
+        "spi",
+        "ebselen"
+      ]
+    },
+    "memory:memory/2026-05-15.md:133:158": {
+      "key": "memory:memory/2026-05-15.md:133:158",
+      "path": "memory/2026-05-15.md",
+      "startLine": 133,
+      "endLine": 158,
+      "source": "memory",
+      "snippet": "- 安装位置：`~/.agents/skills/doc-viewer/` - 已推送 GitHub（agent-factory repo, master） - 安装方式：`git clone --depth 1 --sparse` + `git sparse-checkout set projects/2605101/doc-viewer` - 风格 03 新增 `color-themes/amber.yml` + `yellow.yml`，`reference-amber.html`，`reference-yellow.html`，`skeleton.html` - 触发词：「琥珀金」→ amber（默认），「阳光黄」→ yellow ## 大报告 HTML 生成策略 - Sub-agent 生成超长报告 HTML（17章+，70KB+ Markdown）容易超时（6min+ → timeout） - **更可靠方案**：Python 脚本读取 reference-amber.html 的 CSS + Markdown 内容，用正则解析转 HTML - 成功案例：TEVA 氮䓬斯汀报告（68KB/18章）和 CG-0255 依福格雷报告（92KB/18章）均用 Python 脚本生成 - 脚本位置：`/tmp/gen_teva_report.py` 和 `/tmp/gen_cg0255_report.py` - 上传 API：`curl -s -X POST https://doc.20100706.xyz/upload -F \"file=@<path>;filenam",
+      "recallCount": 3,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.1080634117126464,
+      "maxScore": 0.3915487855672836,
+      "firstRecalledAt": "2026-05-14T21:33:42.702Z",
+      "lastRecalledAt": "2026-05-25T00:23:07.748Z",
+      "queryHashes": [
+        "f35c42b98170",
+        "7a697c7e2862",
+        "81b6b75ec4ba"
+      ],
+      "recallDays": [
+        "2026-05-15",
+        "2026-05-25"
+      ],
+      "conceptTags": [
+        "agents/skills/doc-viewer",
+        "agent-factory",
+        "sparse-checkout",
+        "projects/2605101/doc-viewer",
+        "color-themes/amber.yml",
+        "yellow.yml",
+        "reference-amber.html",
+        "reference-yellow.html"
+      ]
+    },
+    "memory:memory/2026-05-15.md:169:183": {
+      "key": "memory:memory/2026-05-15.md:169:183",
+      "path": "memory/2026-05-15.md",
+      "startLine": 169,
+      "endLine": 183,
+      "source": "memory",
+      "snippet": "2. 门冬氨酸钙片 BD 评估报告（模板六 OTC 消费品）— https://doc.20100706.xyz/raw/00412ed9dcd2 ### 关键技术路径 - 琥珀金配色 CSS 变量：~/.agents/skills/doc-viewer/templates/style-03/color-themes/amber.yml - 骨架模板：~/.agents/skills/doc-viewer/templates/style-03/skeleton.html - 设计令牌：~/.agents/skills/doc-viewer/templates/style-03/design-token.md - 上传 API：`curl -s -X POST https://doc.20100706.xyz/upload -F \"file=@<path>;filename=<name>\"`，HTML 用 raw_url - 主色 #C9920A，背景 #FFFDF7，文本 #2C1810 ## [2026-05-15 05:14] [流程] doc-viewer 路径 B（内容创建）工作流确认 - **决策**：用户发 markdown 内容 → 读取设计标准 → 用 Python 生成琥珀金 HTML → 上传 → 返回链接 - **前车之鉴**：需要先读 SKILL.md 理解路径 B，再读各设计标准文件（base-html-rules, table-spec, responsive-spec, print-spec），再读 style-03 的 design-tok",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.7200479388236999,
+      "maxScore": 0.36892848312854765,
+      "firstRecalledAt": "2026-05-14T21:33:42.702Z",
+      "lastRecalledAt": "2026-05-14T21:33:56.016Z",
+      "queryHashes": [
+        "f35c42b98170",
+        "7a697c7e2862"
+      ],
+      "recallDays": [
+        "2026-05-15"
+      ],
+      "conceptTags": [
+        "doc.20100706.xyz/upload",
+        "raw-url",
+        "doc-viewer",
+        "skill.md",
+        "base-html-rules",
+        "table-spec",
+        "responsive-spec",
+        "print-spec"
+      ]
+    },
+    "memory:memory/2026-04-28.md:1:28": {
+      "key": "memory:memory/2026-04-28.md:1:28",
+      "path": "memory/2026-04-28.md",
+      "startLine": 1,
+      "endLine": 28,
+      "source": "memory",
+      "snippet": "# 2026-04-28 记忆归档 ## 自我改进机制落地完成 今天完成了 Agent Factory 自我改进机制（FIP-001-R v2）的调研、方案设计和落地执行。 ### 调研结果 - 搜索了 ClawHub 5个 Skill + GitHub 6个项目 - 最值得参考的：actual-self-improvement（search-before-log + decision table）、self-improvement-system（session-lifecycle）、spores（记忆层级） - 结论：没有现成方案可直接使用，但设计模式可借鉴 ### 落地改动（4项） 1. **HEARTBEAT.md** — 删除经验检查步骤，心跳只保留 Sub-Agent 状态监控 2. **_runtime/experience/** — 废弃 corrections/patterns 散文件，只用1个 EXPERIENCE.md 3. **EXPERIENCE.md** — 10条经验（8条seed来自真实工作 + 2条新写入） 4. **AGENTS.md** — FIP-001-R v2：decision table（什么情况写）+ 查重（写前先读）+ 条件触发（耗时>10min/阻塞重试/否定决策/Evan说记住） ### 验证 - 第一轮验证失败：经验未注入（Orchestrator 忘了读文件） - 第二轮验证通过：手动读文件注入后 sub-agent 确认看到5条经验 ### 已知局限 - 经验注入靠 Orchestrator 每次手动执行，不",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4080115497112274,
+      "maxScore": 0.4080115497112274,
+      "firstRecalledAt": "2026-05-23T15:08:31.843Z",
+      "lastRecalledAt": "2026-05-23T15:08:31.843Z",
+      "queryHashes": [
+        "1aab70e57526"
+      ],
+      "recallDays": [
+        "2026-05-23"
+      ],
+      "conceptTags": [
+        "fip-001-r",
+        "actual-self-improvement",
+        "search-before-log",
+        "self-improvement-system",
+        "session-lifecycle",
+        "heartbeat.md",
+        "sub-agent",
+        "runtime/experience"
+      ]
+    },
+    "memory:memory/2026-05-15.md:258:277": {
+      "key": "memory:memory/2026-05-15.md:258:277",
+      "path": "memory/2026-05-15.md",
+      "startLine": 258,
+      "endLine": 277,
+      "source": "memory",
+      "snippet": "4. TY1801J/艾氟康唑 — https://doc.20100706.xyz/raw/81909f9d8c83 5. 阿达木单抗 — https://doc.20100706.xyz/raw/139e276283b0 6. CG-0255 — https://doc.20100706.xyz/raw/72e7c7830a46 7. SPI-1005 — https://doc.20100706.xyz/raw/1b7c2e7dbe9d 8. 氮䓬斯汀氟替卡松 — https://doc.20100706.xyz/raw/0bb2010ac35b ## [2026-05-15 08:42] [流程] doc-viewer 发版规范提醒 - **决策**：Evan 明确要求发版时必须提供「安装说明和使用说明」，不只是列出技术变更 - **前车之鉴**：之前直接给了 git commit 信息和技术变更列表，Evan 说\"按照 Skill 工厂要求，你应该给我安装说明和使用说明\" - **上下文**：TOOLS.md 里已有测试通知模板，包含安装命令、Skill 目录、更新内容、测试方向 - **发版模板**：安装命令（sparse-checkout）→ 安装到运行时 → 更新内容 → 重点测试方向 → 配置与授权 → 问题反馈 ## [2026-05-15 08:44] [决策] Issue #52 关闭 — 多行表格嵌套 bug 已修复 - **决策**：验证 doc-viewer v2.4.0 中所有 78 个表格结构正确（1 thead + 1 tbody +",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.3895110636949539,
+      "maxScore": 0.3895110636949539,
+      "firstRecalledAt": "2026-05-25T00:23:07.748Z",
+      "lastRecalledAt": "2026-05-25T00:23:07.748Z",
+      "queryHashes": [
+        "81b6b75ec4ba"
+      ],
+      "recallDays": [
+        "2026-05-25"
+      ],
+      "conceptTags": [
+        "ty1801j/艾氟康唑",
+        "cg-0255",
+        "spi-1005",
+        "doc-viewer",
+        "tools.md",
+        "sparse-checkout",
+        "v2.4.0",
+        "ty1801j"
+      ]
+    }
+  }
+}

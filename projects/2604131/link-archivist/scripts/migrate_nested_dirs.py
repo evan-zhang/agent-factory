@@ -12,6 +12,7 @@ This script handles:
 2. Loose files named *-YYYY-MM-DD.md → extract date and move into nested path
 """
 import argparse
+import json
 import re
 import shutil
 import sys
@@ -110,7 +111,7 @@ def main() -> int:
     base = Path(args.local).expanduser()
 
     if not base.exists():
-        print(f"Directory not found: {base}")
+        print(json.dumps({"ok": False, "error": f"Directory not found: {base}"}, ensure_ascii=False))
         return 1
 
     print(f"\n{'='*60}")

@@ -250,10 +250,11 @@ def generate_report(info, output_dir, audio_duration, transcript=""):
 def main():
     use_api = "--api" in sys.argv
     if len(sys.argv) < 2 or (len(sys.argv) < 3 and not use_api):
-        print("用法: python3 douyin_process.py <抖音分享链接> [输出目录] [--api]")
-        print("  --api: 使用玄关开放平台API方案（推荐，默认方案）")
-        print("  不加--api: 使用mcporter+ffmpeg方案（降级方案）")
-        print("示例: python3 douyin_process.py https://v.douyin.com/XXXXX/ /tmp/douyin_out")
+        print(json.dumps({
+            "ok": False,
+            "error": "用法: python3 douyin_process.py <抖音分享链接> [输出目录] [--api]",
+            "help": "--api: 使用玄关开放平台API方案（推荐，默认方案）"
+        }, ensure_ascii=False))
         sys.exit(1)
 
     share_link = sys.argv[1] if len(sys.argv) >= 2 else sys.argv[2]

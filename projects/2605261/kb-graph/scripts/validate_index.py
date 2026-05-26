@@ -30,8 +30,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--index", default=".kb-index.md")
     args = parser.parse_args()
-    result = validate_index(args.index)
-    print(json.dumps({"ok": len(result["errors"]) == 0, **result}))
+
+    try:
+        result = validate_index(args.index)
+        print(json.dumps({"ok": len(result["errors"]) == 0, **result}))
+    except FileNotFoundError:
+        print(json.dumps({"ok": False, "errors": [f"Index file not found: {args.index}"], "warnings": []}))
+    except Exception as e:
+        print(json.dumps({"ok": False, "errors": [str(e)], "warnings": []}))
 
 if __name__ == "__main__":
     main()
