@@ -59,6 +59,48 @@ def parse_args():
     return content_file, archive_dir, title, entities, args.summary, args.confidence
 
 
+def _trigger_kb_graph_index(archive_file: Path, archive_dir: Path, result: dict):
+    """Best-effort: trigger kb-graph incremental index on the newly archived file.
+
+    Non-blocking: if kb-graph is not installed or fails, just log a warning.
+    The result dict is updated with kb_graph_status if available.
+    """
+    import subprocess
+    import sys
+
+    # Find kb-graph scripts: check skill locations in order
+    kb_candidates = [
+        Path.home() / ".openclaw" / "skills" / "kb-graph" / "scripts" / "kb_graph.py",
+        # Also check the factory project as fallback during development
+        Path.home() / ".openclaw" / "gateways" / "life" / "domains" / "agent-factory" / "projects" / "2605261" / "kb-graph" / "scripts" / "kb_graph.py",
+    ]
+
+    kb_script = None
+    for candidate in kb_candidates:
+        if candidate.exists():
+            kb_script = candidate
+            break
+
+    if not kb_script:
+        result["kb_graph_status"] = "not_installed"
+        return
+
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(kb_script), "update-single", str(archive_file), "--dir", str(archive_dir)],
+            capture_output=True, text=True, timeout=30,
+            env={**__import__('os').environ},  # inherit env for API keys
+        )
+        if proc.returncode == 0:
+            result["kb_graph_status"] = "indexed"
+        else:
+            result["kb_graph_status"] = f"error: {proc.stderr[:100]}"
+    except subprocess.TimeoutExpired:
+        result["kb_graph_status"] = "timeout"
+    except Exception as e:
+        result["kb_graph_status"] = f"error: {str(e)[:100]}"
+
+
 def load_config():
     """Load config from standard paths."""
     for config_file in [
@@ -113,7 +155,6 @@ def main() -> int:
 
     # Add YAML header if not present
     if not content.startswith("---"):
-    if not content.startswith("---"):
         header_parts = [
             f"archive: {archive_id}",
             "source: unknown",
@@ -137,12 +178,17 @@ def main() -> int:
     archive_file = date_dir / f"{archive_id}-{safe_title}.md"
     archive_file.write_text(content, encoding="utf-8")
 
-    print(json.dumps({
+    result = {
         "ok": True,
         "archive_id": archive_id,
         "archive_file": str(archive_file),
-        "seq": seq
-    }, ensure_ascii=False))
+        "seq": seq,
+    }
+
+    # Auto-trigger kb-graph incremental update (non-blocking, best-effort)
+    _trigger_kb_graph_index(archive_file, archive_dir, result)
+
+    print(json.dumps(result, ensure_ascii=False))
     return 0
 
 
