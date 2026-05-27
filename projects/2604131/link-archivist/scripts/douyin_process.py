@@ -110,40 +110,59 @@ def parse_with_mcp(share_link):
 
 
 def parse_with_python(share_link):
-    """备选方案：用 Python requests 直接解析"""
-    import requests
-    
-    print("[1/4] 用 Python 直接解析抖音链接...")
-    
+    """备选方案：从 iesdouyin 页面提取真实播放地址"""
+    import requests as req_lib
+
+    print("[1/4] 从 iesdouyin 提取真实播放地址...")
+
     headers = {
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) "
-                       "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 "
-                       "Mobile/15E148 Safari/604.1",
-        "Referer": "https://www.douyin.com/",
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) '
+                       'AppleWebKit/605.1.15 (KHTML, like Gecko) '
+                       'EdgiOS/121.0.2277.107 Version/17.0 Mobile/15E148 Safari/604.1'
     }
-    
-    # 跟随重定向获取真实URL
-    resp = requests.get(share_link, headers=headers, timeout=30, 
-                        allow_redirects=True, verify=False)
-    real_url = resp.url
-    
-    # 提取视频ID
-    vid_match = re.search(r'/video/(\d+)', real_url)
-    video_id = vid_match.group(1) if vid_match else ""
-    
-    if not video_id:
-        raise RuntimeError(f"无法从 URL 提取视频ID: {real_url}")
-    
-    # 构造无水印下载链接
-    download_url = f"https://aweme.snssdk.com/aweme/v1/play/?video_id={video_id}&ratio=720p&line=0"
-    
-    # 从页面提取标题
-    title_match = re.search(r'<title[^>]*>(.*?)</title>', resp.text)
-    title = title_match.group(1) if title_match else f"抖音视频_{video_id}"
-    
+
+    # Step 1: 解析短链接获取 video_id
+    resp = req_lib.get(share_link, headers=headers, timeout=15, verify=False)
+    video_id_match = re.search(r'/video/(\d+)', resp.url)
+    if not video_id_match:
+        raise RuntimeError(f"无法从 URL 提取视频ID: {resp.url}")
+    video_id = video_id_match.group(1)
+
+    # Step 2: 获取 iesdouyin 页面
+    ies_url = f'https://www.iesdouyin.com/share/video/{video_id}'
+    resp2 = req_lib.get(ies_url, headers=headers, timeout=15, verify=False)
+
+    # Step 3: 从 _ROUTER_DATA 提取播放地址
+    pattern = re.compile(r'window\._ROUTER_DATA\s*=\s*(.*?)</script>', re.DOTALL)
+    match = pattern.search(resp2.text)
+    if not match:
+        raise RuntimeError("从 iesdouyin 页面解析视频信息失败")
+
+    data = json.loads(match.group(1).strip())
+    video_info = None
+    for key in data.get('loaderData', {}):
+        loader = data['loaderData'].get(key, {})
+        if isinstance(loader, dict) and 'videoInfoRes' in loader:
+            video_info = loader['videoInfoRes']
+            break
+
+    if not video_info or not video_info.get('item_list'):
+        raise RuntimeError("未找到视频信息")
+
+    item = video_info['item_list'][0]
+    play_urls = item.get('video', {}).get('play_addr', {}).get('url_list', [])
+    if not play_urls:
+        raise RuntimeError("未找到播放地址")
+
+    # playwm → play 去水印
+    download_url = play_urls[0].replace('playwm', 'play')
+    title = item.get('desc', '').strip() or f'douyin_{video_id}'
+    title = re.sub(r'[\\/:*?"<>|]', '_', title)
+
     print(f"  标题: {title}")
     print(f"  ID: {video_id}")
-    
+    print(f"  下载链接: {download_url[:80]}...")
+
     return {"title": title, "video_id": video_id, "download_url": download_url}
 
 
