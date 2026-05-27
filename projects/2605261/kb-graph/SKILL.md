@@ -1,96 +1,57 @@
 ---
 name: kb-graph
-version: "0.3.0"
+version: "0.3.1"
 skillcode: kb-graph
 github: https://github.com/evan-zhang/agent-factory
-description: 为指定目录下的 Markdown 文件构建知识库图谱，支持多目录监控、LLM 语义编译、Leiden 社区发现和双引擎查询。触发词：知识库、kb、图谱、索引、语义搜索
+description: 查询知识库图谱、搜索本地索引文件、查找归档报告中的相关内容。触发词：查知识库、搜索引、知识图谱、kb查询、找归档报告、知识库搜索
 ---
 
 # KB Graph
 
-为 Markdown 文件构建知识库图谱。增量索引、LLM 语义编译、社区发现、关键词查询、语义搜索、混合查询。
+知识库图谱查询 Skill。在本地 Markdown 归档目录中搜索相关内容，返回匹配文件的标题、摘要、实体和标签。
 
-## 五层架构
+## 何时触发
 
+当用户的请求涉及以下场景时触发：
+- 查询/搜索知识库或归档内容
+- 查找之前归档的报告或调研
+- 询问某个主题在知识库中的相关信息
+- 需要基于已有知识库内容回答问题
+
+## 执行步骤
+
+1. 读取配置获取归档目录：`cat ~/.openclaw/kb-graph-config.json`，取 `watch_dirs[0]`
+2. 执行查询：
 ```
-采集层 → 文件发现、SHA256 变更检测
-编译层 → LLM 语义编译（摘要/实体/标签/关系/置信度）
-图谱层 → 节点/边构建（实体/标签/引用/主题）、Leiden 社区发现
-查询层 → 关键词搜索 / 语义向量搜索 / 混合查询
-维护层 → Lint 矛盾检测、孤儿文件检查
+python3 ~/.openclaw/skills/kb-graph/scripts/kb_graph.py query "用户查询内容" --dir <归档目录> --mode keyword
 ```
+3. 解析 JSON 结果，提取 `results` 数组中的条目
+4. 将结果以可读格式呈现给用户
 
-## 快速开始
+## 查询模式
 
-```bash
-# 全量构建
-python3 scripts/kb_graph.py build /path/to/dir
+默认使用 keyword 模式。仅在用户明确要求语义搜索时使用 hybrid 模式（需要 OPENAI_API_KEY）。
 
-# 关键词查询
-python3 scripts/kb_graph.py query "关键词" --dir /path/to/dir --mode keyword
+## 结果格式
 
-# 语义查询（需先构建向量索引）
-python3 scripts/kb_graph.py build-embeddings /path/to/dir
-python3 scripts/kb_graph.py query "查询内容" --dir /path/to/dir --mode semantic
+将查询结果整理为：
+- 文件标题和路径
+- 相关度分数
+- 摘要（如有）
+- 关键实体和标签
 
-# 混合查询
-python3 scripts/kb_graph.py query "查询内容" --dir /path/to/dir --mode hybrid
+只展示前 5 条最相关的结果，避免信息过载。如果用户需要更多，再展示后续结果。
 
-# 状态
-python3 scripts/kb_graph.py status /path/to/dir
+## 全量重建
 
-# Lint
-python3 scripts/kb_graph.py lint /path/to/dir
+仅在用户明确要求"重建索引"或"全量更新"时执行：
 ```
-
-测试模式（跳过 LLM）：`python3 scripts/kb_graph.py build /path/to/dir --test-mode`
-
-## 核心产出
-
-- `.kb-index.md` — 目录索引（YAML frontmatter 格式）
-- `.kb-workdir/entries.json` — 结构化条目（标题/摘要/实体/标签/关系/置信度/置信度分数）
-- `.kb-workdir/embeddings.json` — 语义向量索引（用于语义搜索）
-- `.kb-workdir/kb_cache.json` — SHA256 缓存（增量更新依据）
-
-## 配置与授权
-
-运行 `python3 scripts/init_config.py` 初始化。配置文件：`~/.openclaw/kb-graph-config.json`
-
-必填：`watch_dirs`（要索引的 Markdown 目录列表）、`llm_provider` 和 `model`。
-
-需要至少一个 LLM API Key 环境变量：`MINIMAX_API_KEY`、`ZHIPU_API_KEY` 或 `DEEPSEEK_API_KEY`。
-
-语义搜索需要：`OPENAI_API_KEY` 环境变量。
-
-无需配置即可用：`ingest.py --scan`（扫描）、`build_graph.py --dir`（图谱构建）、`validate_index.py`（索引验证）。
-
-详细配置说明和完整命令参考见 `references/usage.md`。
-
-## Agent 调用接口
-
-标准 OpenClaw Skill，可通过以下方式调用：
-
-```bash
-# 直接调用
-python3 scripts/kb_graph.py query "AI架构设计" --dir /path/to/dir --mode hybrid
-
-# 代理调用（在其他 Agent 中）
-import subprocess
-result = subprocess.run(
-    ["python3", "scripts/kb_graph.py", "query", "AI架构设计", "--dir", "/path/to/dir", "--mode", "hybrid"],
-    capture_output=True, text=True
-)
+python3 ~/.openclaw/skills/kb-graph/scripts/kb_graph.py build <归档目录>
 ```
+此操作耗时较长（351个文件约20分钟），执行前必须告知用户预计时间。
 
 ## 边界
 
-- 不修改原始文件（只读索引）
-- 零数据库（所有数据存 Markdown/JSON）
-- 仅支持 .md 文件
-- Schema 首次运行自动生成
-
-## 问题反馈
-
-- Issue：https://github.com/evan-zhang/agent-factory/issues
-- 标题格式：`[kb-graph] 问题描述`
-- 建议包含：重现步骤、环境信息、日志输出
+- 只读操作，不修改原始归档文件
+- 查询依赖已构建的索引（.kb-workdir/entries.json）
+- Link Archivist 归档新文件时会自动增量更新索引，通常无需手动重建
