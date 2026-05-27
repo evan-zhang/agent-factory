@@ -28,7 +28,7 @@ def validate_index(index_path):
 def main():
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--index", default=".kb-index.md")
+    parser.add_argument("index", nargs="?", default=".kb-index.md", help="索引文件路径")
     args = parser.parse_args()
 
     try:

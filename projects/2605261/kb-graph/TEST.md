@@ -90,9 +90,27 @@ sleep 60 && python3 -c "
 import json
 d=json.load(open('$VAULT/.kb-workdir/entries.json'))
 c=json.load(open('$VAULT/.kb-workdir/kb_cache.json'))
-print(f'Entries:{len(d)} Success:{sum(1 for v in c.values() if v.get(\"status\")==\"success\")} Failed:{sum(1 for v in c.values() if v.get(\"status\")==\"failed\")}')
+failed=sum(1 for v in c.values() if v.get(\"status\")==\"failed\")
+print(failed)
 "
-```
+
+# 最终验证
+python3 -c "
+import json
+with open('$VAULT/.kb-workdir/kb_cache.json') as f:
+    cache = json.load(f)
+failed = sum(1 for v in cache.values() if v.get('status') == 'failed')
+print(failed)
+"
+# 预期：0
+
+# 验证图谱构建
+python3 $SKILL_ROOT/build_graph.py --dir "$VAULT" | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+print(data['stats']['node_count'])
+"
+# 预期：351
 
 ---
 
