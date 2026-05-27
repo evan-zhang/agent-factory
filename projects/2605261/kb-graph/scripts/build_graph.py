@@ -70,6 +70,43 @@ def build_graph_from_entries(root):
                     "weight": 0.3
                 })
 
+    # 边：relationships → 边（引用关系和主题关联）
+    for rel_path, entry in entries.items():
+        for rel in entry.get("relationships", []):
+            rel_type = rel.get("type", "unknown")
+            target = rel.get("target", "")
+            description = rel.get("description", "")
+
+            if not target:
+                continue
+
+            # 尝试在 entries 中查找目标文件
+            target_files = []
+            for other_path in entries.keys():
+                if target.lower() in other_path.lower():
+                    target_files.append(other_path)
+
+            # 根据关系类型设置权重
+            if rel_type == "reference":
+                weight = 0.8
+            elif rel_type == "topic":
+                weight = 0.5
+            else:
+                weight = 0.3
+
+            # 创建边
+            for target_file in target_files:
+                if target_file == rel_path:
+                    continue
+                edges.append({
+                    "from": rel_path,
+                    "to": target_file,
+                    "type": rel_type,
+                    "label": target,
+                    "description": description,
+                    "weight": weight
+                })
+
     return nodes, edges
 
 def run_louvain_community(nodes, edges):

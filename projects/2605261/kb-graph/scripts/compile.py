@@ -28,7 +28,7 @@ def parse_markdown(path):
 
 def call_llm(content: str, title: str) -> dict:
     """
-    调用 LLM 生成摘要/实体/标签。
+    调用 LLM 生成摘要/实体/标签/关系。
     顺序尝试：MiniMax-M2.7 → GLM-Z1-0528 → DeepSeek-V3
     返回结构化 dict，失败抛异常。
     """
@@ -43,6 +43,10 @@ def call_llm(content: str, title: str) -> dict:
   "summary": "不超过200字的中文摘要，概括文档核心内容",
   "entities": ["实体1", "实体2", ...],
   "tags": ["标签1", "标签2", "标签3"],
+  "relationships": [
+    {"type": "reference", "target": "文档或文件名", "description": "引用关系描述"},
+    {"type": "topic", "target": "主题或概念", "description": "主题关联描述"}
+  ],
   "confidence": "high"
 }
 
@@ -50,8 +54,12 @@ def call_llm(content: str, title: str) -> dict:
 - summary 不超过200字
 - entities 只列出文档中明确提到的关键概念、项目、人名、术语（最多10个）
 - tags 从以下标签表中选择最相关的1-3个：AI, 架构, 安全, 运维, 产品, 运营, 前端, 后端, 数据库, 工具, 流程, 综合
+- relationships 提取文档中的关系：
+  * reference: 文件间引用（如：参考了、见、详见等）
+  * topic: 主题关联（如：相关主题、属于、涉及等）
 - confidence 表示你对摘要和实体提取的置信度：high/medium/low
-- 如果文档内容不足以提取实体，entities 可以为空数组"""
+- 如果文档内容不足以提取实体，entities 可以为空数组
+- 如果没有明确的关系，relationships 可以为空数组"""
 
     # 模型候选列表
     models = [
@@ -130,14 +138,45 @@ def call_llm(content: str, title: str) -> dict:
                 if field not in result:
                     result[field] = [] if field in ("entities", "tags") else ""
 
+            # 增强置信度计算：基于内容长度和 LLM 返回质量
+            base_confidence = result.get("confidence", "medium")
+            content_length_factor = min(len(content) / 1000, 1.0)  # 内容长度因子
+
+            # 计算质量分数
+            quality_score = 0
+            if result.get("summary"):
+                quality_score += 2
+            if result.get("entities"):
+                quality_score += 2
+            if result.get("tags"):
+                quality_score += 1
+            if result.get("relationships"):
+                quality_score += 2
+
+            quality_factor = min(quality_score / 7, 1.0)  # 质量因子
+
+            # 综合置信度计算
+            confidence_map = {"high": 3, "medium": 2, "low": 1}
+            base_score = confidence_map.get(base_confidence, 2)
+            final_score = (base_score * 0.5 + content_length_factor * 2 + quality_factor * 2) / 4.5
+
+            if final_score >= 2.5:
+                final_confidence = "high"
+            elif final_score >= 1.5:
+                final_confidence = "medium"
+            else:
+                final_confidence = "low"
+
             return {
                 "title": result.get("title", title),
                 "summary": result.get("summary", "")[:300],
                 "entities": list(result.get("entities", []))[:10],
                 "tags": list(result.get("tags", []))[:3],
-                "confidence": result.get("confidence", "medium"),
+                "relationships": list(result.get("relationships", []))[:20],
+                "confidence": final_confidence,
                 "provider": provider,
                 "model": model,
+                "confidence_score": round(final_score, 2),
             }
 
         except Exception as e:
@@ -158,9 +197,13 @@ def compile_with_llm(file_path, schema_path=None, test_mode=False):
             "summary": f"测试模式：{parsed['content'][:100]}...",
             "entities": ["实体1", "实体2"],
             "tags": ["AI", "架构"],
+            "relationships": [
+                {"type": "topic", "target": "测试主题", "description": "测试模式下的主题关联"}
+            ],
             "confidence": "medium",
             "provider": "test",
             "model": "test",
+            "confidence_score": 1.5,
             "sha256": sha256(file_path),
         }
 

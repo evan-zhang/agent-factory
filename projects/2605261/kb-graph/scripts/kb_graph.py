@@ -65,8 +65,19 @@ def _rebuild_yaml_index(root, entries):
                 lines.append(f"  - {tag}\n")
         else:
             lines.append("tags: []\n")
+        relationships = e.get('relationships', [])
+        if relationships:
+            lines.append("relationships:\n")
+            for rel in relationships:
+                lines.append(f"  - type: {rel.get('type', 'unknown')}\n")
+                lines.append(f"    target: {rel.get('target', '')}\n")
+                lines.append(f"    description: {rel.get('description', '')}\n")
+        else:
+            lines.append("relationships: []\n")
         lines.append(f"sha256: {e.get('sha256', '')}\n")
         lines.append(f"confidence: {e.get('confidence', 'low')}\n")
+        confidence_score = e.get('confidence_score', 0)
+        lines.append(f"confidence_score: {confidence_score}\n")
         lines.append("---\n\n")
     idx_path.write_text("".join(lines))
 
