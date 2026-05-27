@@ -169,9 +169,55 @@ def cmd_lint(args):
 
 def cmd_query(args):
     """查询"""
-    result = query.query(args.query, args.dir)
+    mode = getattr(args, 'mode', 'keyword')
+    result = query.query(args.query, args.dir, mode)
     print(json.dumps(result))
     return 0
+
+def cmd_build_embeddings(args):
+    """构建语义向量索引"""
+    root = Path(args.dir)
+    entries = load_index(root)
+
+    if not entries:
+        print(json.dumps({"ok": True, "built": 0, "message": "No entries found"}))
+        return 0
+
+    # 加载现有 embeddings
+    from scripts.query import load_embeddings, save_embeddings, get_text_embedding
+    embeddings = load_embeddings(root)
+
+    built = 0
+    skipped = 0
+    errors = []
+
+    for rel_path, entry in entries.items():
+        # 检查是否需要重新生成
+        if rel_path in embeddings:
+            skipped += 1
+            continue
+
+        try:
+            # 组合文本进行向量化
+            text = f"{entry.get('title', '')} {entry.get('summary', '')}"
+            embedding = get_text_embedding(text)
+            embeddings[rel_path] = embedding
+            built += 1
+        except Exception as e:
+            errors.append({"file": rel_path, "error": str(e)[:200]})
+
+    # 保存 embeddings
+    if built > 0:
+        save_embeddings(root, embeddings)
+
+    print(json.dumps({
+        "ok": True,
+        "built": built,
+        "skipped": skipped,
+        "errors": errors,
+        "total_embeddings": len(embeddings)
+    }, indent=2))
+    return 0 if not errors else 1
 
 def cmd_status(args):
     """查看状态"""
@@ -220,7 +266,13 @@ def main():
     p = sub.add_parser("query", help="查询")
     p.add_argument("query", help="查询内容")
     p.add_argument("--dir", required=True, help="知识库根目录")
+    p.add_argument("--mode", default="keyword", choices=["keyword", "semantic", "hybrid"],
+                    help="查询模式 (keyword/semantic/hybrid)")
     p.set_defaults(fn=cmd_query)
+
+    p = sub.add_parser("build-embeddings", help="构建语义向量索引")
+    p.add_argument("dir", help="知识库根目录")
+    p.set_defaults(fn=cmd_build_embeddings)
 
     p = sub.add_parser("status", help="查看状态")
     p.add_argument("dir", help="目录路径")

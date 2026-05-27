@@ -216,9 +216,22 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--file", required=True)
     parser.add_argument("--schema", default=None)
+    parser.add_argument("--embedding", action="store_true", help="同时生成语义向量")
     args = parser.parse_args()
 
     entry = compile_with_llm(args.file, args.schema)
+
+    # 如果需要生成 embedding
+    if args.embedding and not getattr(args, 'test_mode', False):
+        try:
+            from query import get_text_embedding
+            text = f"{entry.get('title', '')} {entry.get('summary', '')}"
+            embedding = get_text_embedding(text)
+            entry["embedding"] = embedding
+        except Exception as e:
+            # embedding 生成失败不影响主流程
+            print(f"Warning: Failed to generate embedding: {e}", file=sys.stderr)
+
     print(json.dumps({"ok": True, "entry": entry}))
 
 if __name__ == "__main__":
