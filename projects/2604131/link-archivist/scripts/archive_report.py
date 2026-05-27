@@ -90,7 +90,7 @@ def main() -> int:
     archive_dir = Path(archive_dir_str).expanduser() if archive_dir_str else Path(".")
 
     if not content_file.exists():
-        print(json.dumps({"ok": False, "error": f"missing file: {content_file}"}, ensure_ascii=False))
+        print(json.dumps({"ok": False, "error": f"missing file: {content_file}"}))
         return 1
 
     # Load config
@@ -112,6 +112,7 @@ def main() -> int:
     content = content_file.read_text(encoding="utf-8")
 
     # Add YAML header if not present
+    if not content.startswith("---"):
     if not content.startswith("---"):
         header_parts = [
             f"archive: {archive_id}",
