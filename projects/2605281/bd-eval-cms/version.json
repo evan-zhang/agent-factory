@@ -1,0 +1,7 @@
+{
+  "skillcode": "bd-eval-cms",
+  "version": "0.1.0",
+  "description": "CMS（康哲药业）投前评估体系 — 19个技能 + 6-Gate门控",
+  "dependencies": ["doc-viewer", "multi-search"],
+  "scheme": "B"
+}
