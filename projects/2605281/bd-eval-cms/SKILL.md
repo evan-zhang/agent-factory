@@ -2,7 +2,7 @@
 name: bd-eval-cms
 description: "CMS（康哲药业）投前评估体系 — 基于19个技能 + 6-Gate门控的完整BD评估流水线。触发词：CMS投前评估、CMS评估、投前评估"
 version: "0.1.0"
-homepage: projects/2605152/bd-eval-cms/PLAN.md
+homepage: projects/2605281/bd-eval-cms/PLAN.md
 dependencies:
   - doc-viewer (required, for HTML report generation)
   - multi-search (required, for web_search infrastructure)
@@ -40,7 +40,7 @@ Phase 5.5: HTML 生成（麦肯锡深蓝风格）+ 上传归档
 
 | 文件 | 路径 | 用途 |
 |------|------|------|
-| 本 Skill | `projects/2605152/bd-eval-cms/SKILL.md` | 主入口 |
+| 本 Skill | `projects/2605281/bd-eval-cms/SKILL.md` | 主入口 |
 | SOP 规范 | `references/SOP.md` | Phase 1-5 完整流程 |
 | 总规则 | `references/00_CMS-投前评估技能体系总规则.md` | 顶层规范 |
 | 增补条款 | `references/00_体系总规则增补条款_v1.1.md` | 增补规范 |
@@ -63,6 +63,108 @@ Phase 5.5: HTML 生成（麦肯锡深蓝风格）+ 上传归档
 **排除规则**：以下情况不触发本 Skill，应路由到 bd-eval（方案A）：
 - 用户说"BD评估""跑品种"但未提及 CMS 相关业务主体
 - 通用 BD 评估需求（非康哲专属）
+
+---
+
+## 执行模式
+
+本 Skill 支持三种执行模式，根据用户输入自动判断：
+
+### 模式判断规则
+
+| 用户输入 | 判断为 | 说明 |
+|---------|--------|------|
+| `CMS投前评估：{品种名}` | 全量评估 | 从 Phase 1 跑到 Phase 5.5 |
+| `CMS投前评估：{品种名}` + 上传文件/指定路径 | 全量评估 + 外部资料 | 同上，但先读取外部资料，搜索策略调整为补充验证 |
+| `更新{品种名} Gate 2、Gate 6` + 可选补充资料 | 增量更新 | 只重跑指定 Gate，更新合并报告 |
+
+### 模式 1：全量评估（默认）
+
+即下方"完整流水线执行（默认）"章节描述的流程。从 Phase 1 DISCOVERY 开始，一直执行到 Phase 5.5 HTML 生成。
+
+### 模式 2：全量评估 + 外部资料注入
+
+当用户在发起评估时同时提供了参考资料（上传文件、知识库链接、项目目录内文档），执行全量评估流程，但做以下调整：
+
+**Phase 1 调整**：
+1. 先处理外部资料（见下方"外部资料处理流程"）
+2. 基于 EXT- 资料内容，调整搜索策略：已有确切数据的维度减少搜索，缺少数据的维度加强搜索
+3. Discovery 文件中标注"本评估基于 N 份外部资料 + M 次联网搜索"
+
+**Phase 3 调整**：
+1. Gate 子 Agent 在搜索前先列出 EXT/ 目录下已有文件
+2. EXT- 资料优先于联网搜索，联网搜索仅用于交叉验证和补充
+3. 引用外部资料时使用 `[EXT-XXX]` 编号
+
+### 模式 3：增量更新
+
+当品种目录已存在（state.json 中 phase 不是空），且用户明确指定要更新某些 Gate 时触发。
+
+**前置条件**：
+- `{品种目录}/state.json` 存在
+- 用户指定了要更新的 Gate 编号
+
+**执行流程**：
+
+1. **读取现有状态**：读取 state.json，确认品种存在 + 当前版本
+2. **处理补充资料**（如有）：存入 EXT/EXT-XXX.md（每份资料一个独立文件）
+3. **版本备份**：将待更新 Gate 的当前文件复制到 `02-gate-by-chapter/history/`，命名 `{Gate文件名}.v{N}.md`
+4. **重跑指定 Gate**：spawn Gate 子 Agent（注入已有上下文 + EXT 资料 + 对应前缀）
+5. **Gate 6 依赖检查**：如果更新了 Gate 1-5 中的任何一个，必须检查 Gate 6 是否需要同步更新（Orchestrator 判断，基于 Gate 6 是否引用了被更新 Gate 的结论）
+6. **Battle 审查**：只审查更新的 Gate 的变更（不重审未变更的 Gate）
+7. **更新最终报告**：合并为 `04-final-report.md`（版本 +1）
+8. **重新生成 HTML**：生成 `REPORT.html`（版本 +1）
+9. **更新 state.json**：版本号 +1，记录更新历史
+10. **追加 execution-log.md**
+
+**版本管理规则**：
+- 全量评估产生的 Gate 文件版本号为 1
+- 增量更新时，被更新的 Gate 版本 +1，未更新的保持不变
+- 最终报告版本 = max(所有 Gate 版本)
+- history/ 目录只保留被更新过的 Gate 的历史版本
+- 历史报告文件命名：`04-final-report.v{N}.md`、`REPORT.v{N}.html`
+- 每次更新必须触发 Battle 审查（只审更新的 Gate）
+
+**Battle 命名规则**：
+- 首次全量评估：`BATTLE-R1-AUDITOR.md` / `BATTLE-R1-EXECUTOR.md`
+- 第1轮增量更新：`BATTLE-U1-AUDITOR.md` / `BATTLE-U1-EXECUTOR.md`
+- 第2轮增量更新：`BATTLE-U2-AUDITOR.md` / `BATTLE-U2-EXECUTOR.md`
+
+### 外部资料处理流程
+
+适用于模式 2 和模式 3。当用户提供参考资料时：
+
+**资料来源识别**：
+
+| 来源方式 | 处理方法 | 示例 |
+|---------|---------|------|
+| 上传文件（PDF/Word/Excel/图片） | 用对应工具读取内容（pdf/excel/image） | 用户上传 GLISTEN_临床报告.pdf |
+| 在线链接（知识库/网页） | 用 web_fetch 抓取内容 | 用户给 https://docs.xxx.com/yyy |
+| 项目目录内文档 | 直接读取，不复制 | {品种目录}/合作方资料/xxx.pdf |
+
+**统一存入 EXT/EXT-XXX.md**（前缀 `EXT-`，从 EXT-001 递增，每份资料一个独立文件）：
+
+```markdown
+# [EXT-001] {标题/文件名}
+- **来源方式**: 上传文件 / 在线链接 / 项目目录内
+- **原始位置**: 文件名 或 URL 或 项目内路径
+- **获取方式**: 文件读取 / web_fetch / 直接引用
+- **提供方**: 用户 / 合作方 / 内部部门
+- **资料类型**: 临床数据 / 市场调研 / 财务测算 / 注册文件 / 竞品分析 / 其他
+- **覆盖Gate**: Gate 2 / Gate 3（AI自动判断，基于内容与Gate评估维度的匹配度）
+- **提供时间**: 2026-05-29
+
+## 原文内容
+（提取的关键信息，尽量完整保留）
+
+## 关键数据点
+- 具体数字/结论1
+- 具体数字/结论2
+```
+
+**正文引用**：统一使用 `[EXT-XXX]` 格式。
+
+**搜索策略调整**：当 EXT- 资料已覆盖某维度的确切数据时，联网搜索减少为 1-2 次交叉验证（而非原本的 3+ 次）。当 EXT- 资料缺少某维度数据时，联网搜索加强补充。
 
 ---
 
@@ -99,11 +201,22 @@ HTML 生成（麦肯锡深蓝 #1a3a5c）+ 上传 doc.20100706.xyz + 归档
 
 如果用户说"不知道"或"先跑吧"，允许跳过，但 Gate 1 标注"⚠️ 基于公开信息"。
 
+**1.5 分配案件代号**
+
+根据当前日期生成代号 `{YYMM}-{DDNN}`。
+
+- 取当前时间的 YY（年后两位）和 MM（月份）
+- 取当前时间的 DD（日期）
+- 检查 `projects/2605281/bd-eval-cms/` 下当月目录中已有多少同日编号
+- 取 max(同日NN) + 1
+- 代号格式示例：`2605-2901` = 2026年5月29日第1个案件
+
 **2. 创建品种目录**
 ```bash
-mkdir -p projects/bd-eval-cms/{品种名}/
-mkdir -p projects/bd-eval-cms/{品种名}/02-gate-by-chapter/
-mkdir -p projects/bd-eval-cms/{品种名}/battle/
+mkdir -p projects/2605281/bd-eval-cms/{品种名}/
+mkdir -p projects/2605281/bd-eval-cms/{品种名}/02-gate-by-chapter/history/
+mkdir -p projects/2605281/bd-eval-cms/{品种名}/battle/
+mkdir -p projects/2605281/bd-eval-cms/{品种名}/references/P1/
 ```
 
 **3. 宽度搜索（web_search ≥5 次）+ 参考文献采集**
@@ -113,17 +226,22 @@ mkdir -p projects/bd-eval-cms/{品种名}/battle/
 - 每次搜索后，对每个搜索结果中有价值的页面执行 `web_fetch` 抓取内容
 - 有价值的判断标准：包含具体数据、结论、事实陈述的页面
 - 不抓取：纯导航页、广告页、无实质内容的列表页
-- 抓取内容存入 `{品种目录}/references/REFERENCES.md`
+- 抓取内容存入 `{品种目录}/references/P1/P1-XXX.md`（每篇文章一个独立文件）
 - 参考文献格式：
-  ```
-  ## [REF-001] 标题
+  ```markdown
+  # [P1-001] 文章标题
   - **URL**: https://...
-  - **抓取时间**: 2026-05-28 23:00 CST
-  - **来源类型**: 官方/学术/行业媒体/公司公告
-  - **内容摘要**: （200-500字摘要，保留关键数据和原文表述）
-  - **关键数据点**: （列出可用于报告的具体数字/结论）
+  - **抓取时间**: 2026-05-29 11:00 CST
+  - **来源类型**: 官方|学术|行业媒体|公司公告|监管数据库
+
+  ## 原文内容
+  （web_fetch 抓取的完整内容，尽量完整保留）
+
+  ## 关键数据点
+  - 具体数字/结论1
+  - 具体数字/结论2
   ```
-- 编号从 REF-001 起连续递增
+- **Phase 1 使用固定前缀 `P1-`，编号从 P1-001 起连续递增**
 
 **4. 写入 `01-discovery.md`**
 包含：品种基本信息、业务主体初步判断、产品类型初步判断（为 D-0 路由准备）
@@ -140,13 +258,25 @@ mkdir -p projects/bd-eval-cms/{品种名}/battle/
 **5. 创建 `state.json`**
 ```json
 {
+  "caseCode": "{YYMM-DDNN}",
   "name": "{品种名}",
+  "displayName": "{显示名}",
   "scheme": "B",
   "businessEntity": "待确认",
   "routedSkill": "待路由",
   "routedChain": [],
   "phase": "discovery_complete",
   "startedAt": "{ISO时间}",
+  "currentVersion": 1,
+  "gateVersions": {
+    "One-pager": 1,
+    "Gate-1": 1,
+    "Gate-2": 1,
+    "Gate-3": 1,
+    "Gate-4": 1,
+    "Gate-5": 1,
+    "Gate-6": 1
+  },
   "financialThresholdType": "待判断",
   "routingDecision": {
     "recommendedSkill": "{技能编号}",
@@ -160,6 +290,12 @@ mkdir -p projects/bd-eval-cms/{品种名}/battle/
     "productType": "创新药|仿制药|医美|消费健康|平台型",
     "confidence": "高|中|低",
     "referenceCount": 0
+  },
+  "updateHistory": [],
+  "references": {
+    "file": "references/REFERENCES.md",
+    "count": 0,
+    "prefixes": ["P1"]
   }
 }
 ```
@@ -269,13 +405,15 @@ Gate 6 可做门（串行，依赖前面所有Gate结论）
 - 并行 Gate 各自独立搜索
 
 **参考文献采集（每个 Gate 子Agent 强制）**：
-每个 Gate 子Agent 的 task 指令必须包含以下参考文献要求：
-1. 搜索前先读取现有 `{品种目录}/references/REFERENCES.md`，避免重复抓取已有URL
-2. 每次搜索后，对有价值的结果执行 `web_fetch` 抓取内容
-3. 新的参考文献追加到 `REFERENCES.md`（编号续接现有最大编号）
-4. 报告正文中每个数据点必须标注 `[REF-XXX]` 引用编号
-5. 不允许出现“外网核查”“分析推断”等无具体引用的标注
-6. 报告开头列出本 Gate 使用的参考文献编号清单
+每个 Gate 子Agent 在 spawn 时由 Orchestrator 分配唯一前缀，task 指令必须包含：
+1. **你的参考文献前缀：{前缀}**（如 G1-、G2-、G3-、G4-、G5-、G6-、OP-、BT- 等）
+2. **你的参考文献目录：{品种目录}/references/{前缀}//**
+3. **搜索前**：先列出 `{品种目录}/references/{前缀}/` 目录下已有文件，了解已抓取 URL 避免重复，以及引用前面节点的数据时使用对应前缀编号（如 `[P1-001]`、`[G3-005]`）
+4. 每次搜索后，对有价值的结果执行 `web_fetch` 抓取内容
+5. 新的参考文献写入 `{品种目录}/references/{前缀}/{前缀}-XXX.md`（编号从 {前缀}-001 开始独立递增）
+6. 报告正文中每个数据点必须标注 `[{前缀}-XXX]` 引用编号（如 `[G1-003]`）
+7. 不允许出现”外网核查””分析推断”等无具体引用的标注
+8. 报告开头列出本 Gate 使用的参考文献编号清单
 
 **预计耗时**：串行 20-28 min → 并行 12-18 min（提速 ~40%）
 
@@ -364,10 +502,12 @@ Gate 6 可做门（串行，依赖前面所有Gate结论）
 
 1. 将 One-pager、全部 Gate 章节、battle summary 合并为 `04-final-report.md`
 2. **参考文献合并（强制）**：
-   - 合并时保留所有 Gate 章节中的 `[REF-XXX]` 引用编号
-   - 从 `{品种目录}/references/REFERENCES.md` 提取所有被引用的参考文献
-   - 报告末尾自动生成完整参考文献表（按编号排序）
-   - 参考文献表格式：`[REF-XXX] 标题 — URL（抓取时间）`
+   - 合并时保留所有 Gate 章节中的 `[{前缀}-XXX]` 引用编号（如 `[P1-001]`、`[G3-005]`、`[BT-002]`）
+   - 遍历 `{品种目录}/references/` 下所有前缀目录（P1/、OP/、G1/、G2/、...、BT/、EXT/ 等）
+   - 读取每个 `{前缀}/` 目录下所有 .md 文件的头部元数据（标题、URL、抓取时间）
+   - 生成 `{品种目录}/references/REFERENCES.md` 纯索引文件（只含标题+URL+摘要，不含原文）
+   - 报告末尾自动生成完整参考文献表（按前缀分组排序）
+   - 参考文献表格式：`[P1-001] 标题 — URL（抓取时间）`、`[G1-003] 标题 — URL（抓取时间）`
 3. 报告结构：
    ```
    第一章：执行摘要（结论先行，核心指标一览）
@@ -396,9 +536,28 @@ Gate 6 可做门（串行，依赖前面所有Gate结论）
 4. 更新 `state.json`：
    ```json
    {
+     "caseCode": "{YYMM-DDNN}",
      "phase": "report_finalized",
      "finalReport": "04-final-report.md",
      "conclusion": "推进/条件推进/停止",
+     "currentVersion": 1,
+     "gateVersions": {
+       "One-pager": 1,
+       "Gate-1": 1,
+       "Gate-2": 1,
+       "Gate-3": 1,
+       "Gate-4": 1,
+       "Gate-5": 1,
+       "Gate-6": 1
+     },
+     "updateHistory": [
+       {
+         "version": 1,
+         "date": "{ISO时间}",
+         "type": "full",
+         "gatesUpdated": ["all"]
+       }
+     ],
      "qualityCheck": {
        "gateCards": "PASS",
        "financialThreshold": "PASS/FAIL",
@@ -465,7 +624,7 @@ Gate 6 可做门（串行，依赖前面所有Gate结论）
 
 ### 生成方式：调用 doc-viewer skill
 
-1. 读取 `projects/bd-eval-cms/{品种}/04-final-report.md`
+1. 读取 `projects/2605281/bd-eval-cms/{品种}/04-final-report.md`
 2. 切换到 doc-viewer skill 上下文
 3. 生成麦肯锡深蓝风格 HTML
 4. 保存到 `/tmp/report-cms-{slug}.html`
@@ -481,6 +640,79 @@ scripts/archive-links.sh \
 ```
 
 同时更新 `state.json` 的 `reportHtmlUrl`。
+
+### 知识库自动同步（Phase 5.5 必执行）
+
+完成 HTML 上传后，自动将品种目录下所有文件同步到玄关知识库。
+
+**配置**：
+- API 地址：`https://sg-al-cwork-web.mediportal.com.cn/open-api/document-database/file/uploadContent`
+- appKey：`mN6bVc2Xz9Lk4Jh7Gt5Rf3Wp1Yq8As0D`
+- projectId：`2060176831872499713`（产品引进知识库）
+
+**同步目录**：
+- 月份目录：`{YYMM}`（取 state.json 中 caseCode 的前4位，或当前日期）
+- 案件目录：`{caseCode}`（从 state.json 读取）
+
+**同步文件清单**（遍历品种目录，逐文件上传）：
+
+| 本地路径 | 知识库 folderName | fileName | fileSuffix |
+|---------|------------------|----------|-----------|
+| state.json | `{YYMM}/{caseCode}` | state | json |
+| 01-discovery.md | `{YYMM}/{caseCode}` | 01-discovery | md |
+| 03-battle-summary.md | `{YYMM}/{caseCode}` | 03-battle-summary | md |
+| 04-final-report.md | `{YYMM}/{caseCode}` | 04-final-report | md |
+| links.md | `{YYMM}/{caseCode}` | links | md |
+| execution-log.md | `{YYMM}/{caseCode}` | execution-log | md |
+| REPORT.html | `{YYMM}/{caseCode}` | REPORT | html |
+| 02-gate-by-chapter/*.md | `{YYMM}/{caseCode}/02-gate-by-chapter` | {原名去后缀} | md |
+| 02-gate-by-chapter/history/*.md | `{YYMM}/{caseCode}/02-gate-by-chapter/history` | {原名去后缀} | md |
+| battle/*.md | `{YYMM}/{caseCode}/battle` | {原名去后缀} | md |
+| references/REFERENCES.md | `{YYMM}/{caseCode}/references` | REFERENCES | md |
+| references/{前缀}/*.md | `{YYMM}/{caseCode}/references/{前缀}` | {原名去后缀} | md |
+
+**调用方式**：
+
+```bash
+bash scripts/sync-to-knowledge-base.sh "{品种目录路径}" "{案件代号}"
+# 示例：bash scripts/sync-to-knowledge-base.sh "projects/2605281/bd-eval-cms/利奈昔巴特" "2605-2901"
+```
+
+**调用模板**（单文件）：
+```bash
+curl -X POST 'https://sg-al-cwork-web.mediportal.com.cn/open-api/document-database/file/uploadContent' \
+  -H 'appKey: mN6bVc2Xz9Lk4Jh7Gt5Rf3Wp1Yq8As0D' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "projectId": 2060176831872499713,
+    "content": "{文件内容（JSON转义）}",
+    "fileName": "{文件名（不含后缀和路径分隔符）}",
+    "fileSuffix": "{md/html/json}",
+    "folderName": "{YYMM}/{caseCode}/{子目录}",
+    "nameConflictStrategy": 1
+  }'
+```
+
+**增量更新同步**：
+- 增量更新完成后，同样触发全量同步（覆盖模式，新增版本）
+- 历史版本文件（history/）也同步
+
+**同步结果记录**：
+同步完成后在 state.json 中记录：
+```json
+{
+  "kbSync": {
+    "lastSyncAt": "{ISO时间}",
+    "syncedFiles": 27,
+    "status": "success"
+  }
+}
+```
+
+**同步失败处理**：
+- 单文件失败不阻塞其他文件，继续同步
+- 全部完成后记录失败文件列表
+- 如果超过50%文件失败，报告错误给用户
 
 **注意**：本 Skill 只生成一份报告（整体评估报告），不单独生成 Battle 报告。Battle 内容合并到最终报告的风险登记表章节中。
 
@@ -513,7 +745,7 @@ scripts/archive-links.sh \
 
 ## 执行日志
 
-每个品种在 `projects/bd-eval-cms/{品种}/execution-log.md` 中维护：
+每个品种在 `projects/2605281/bd-eval-cms/{品种}/execution-log.md` 中维护：
 
 ```
 ## Phase 1 DISCOVERY
@@ -583,4 +815,4 @@ bash scripts/bd-eval-cms-health-check.sh
 - **建议包含**：
   1. 重现步骤（品种名称、执行到哪个 Phase）
   2. 环境信息（健康检测脚本输出）
-  3. 相关日志（`projects/bd-eval-cms/{品种名}/execution-log.md`）
+  3. 相关日志（`projects/2605281/bd-eval-cms/{品种名}/execution-log.md`）
