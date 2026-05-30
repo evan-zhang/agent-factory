@@ -1,7 +1,7 @@
 ---
 name: doc-viewer
 description: "文件上传预览 + HTML 内容页面生成器。提供现成文件可直接上传预览；描述内容需求可自动生成风格化 HTML 页面并上传。触发词：上传文件、预览文件、生成链接、生成页面、HTML页面、宣传页、报告页面"
-version: "2.5.1"
+version: "2.6.0"
 homepage: https://github.com/evan-zhang/agent-factory/tree/master/projects/2605101/doc-viewer/
 issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=doc-viewer
 ---
@@ -94,6 +94,8 @@ URL=$(echo "$UPLOAD_RESP" | python3 -c "import sys,json; print(json.load(sys.std
 - 用户说「文档」「编辑器」「Notion」「笔记」「知识库」→ 推荐 **风格 09**
 - 用户说「开发者」「Stripe」「API」「代码」「开发者平台」→ 推荐 **风格 10**
 - 用户说「暗色」「Linear」「暗色主题」「高级感」「极客」「技术海报」「AI 教程」→ 推荐 **风格 11 + dark-technical**
+- 用户说「CMS评估」「投前评估」「康哲评估」「CMS报告」→ 推荐 **风格 12**
+  - 进一步判断配色：「麦肯锡」「深蓝」「咨询」→ mckinsey-navy（默认）；「投资蓝」「蓝色」「金融」→ investment-blue；「酒红」「勃艮第」→ burgundy-wine；「青绿」「森林」「ESG」→ forest-teal；未指定 → mckinsey-navy
 - 用户说「封面」「首页」→ 推荐 **风格 02-A** 或 **02-B**
 - 用户说「案例」「客户案例」→ 推荐 **风格 02-F**
 - 用户没明确偏好 → 推荐 **风格 01**
@@ -149,6 +151,7 @@ Agent 生成 HTML 前必须读取以下文件：
 | 风格 09 | `templates/style-09/design-token.md` | `templates/style-09/skeleton.html` | — |
 | 风格 10 | `templates/style-10/design-token.md` | `templates/style-10/skeleton.html` | — |
 | 风格 11 | `templates/style-11/design-token.md` | `templates/style-11/skeleton.html` | `templates/style-11/color-themes/dark-technical.yml`（暗色技术风）|
+| 风格 12 | `templates/style-12/design-token.md` | `templates/style-12/skeleton.html` | `templates/style-12/color-themes/mckinsey-navy.yml`（麦肯锡深蓝）或 `investment-blue.yml`（投资蓝）或 `burgundy-wine.yml`（勃艮第酒红）或 `forest-teal.yml`（森林青） |
 
 Design Token 包含：
 - **YAML front matter**：机器可读的 tokens（颜色、字体、间距、圆角）
@@ -374,6 +377,52 @@ A4 纵向，章节密集，表格整齐。专为导出 PDF/Word 设计。
 | `templates/style-11/color-themes/dark-technical.yml` | 暗色技术风配色 Token（橙红主色）|
 
 **生成流程**：同风格 03，从 skeleton.html + color-themes/*.yml 生成。
+
+### 风格 12 — CMS 康哲药业投前评估报告（Gate门控型）
+
+A4 纵向，专为 CMS 投前评估体系设计。Gate 结论卡 + Battle 对抗审查 + 置信度徽章 + 一票否决框。
+
+**配色方案（color-themes/）**：
+- **麦肯锡深蓝（mckinsey-navy）**：深蓝 #1a3a5c，经典咨询公司风格（默认）
+- **投资蓝（investment-blue）**：投资蓝 #1D4ED8，投行/基金报告风格
+- **勃艮第酒红（burgundy-wine）**：酒红 #7B2D3B，欧洲老牌药企风格
+- **森林青（forest-teal）**：青绿 #1B6B5A，现代药企/ESG 风格
+
+用户说「麦肯锡」「深蓝」「咨询」→ mckinsey-navy；说「投资蓝」「蓝色」「金融」→ investment-blue；说「酒红」「勃艮第」→ burgundy-wine；说「青绿」「森林」「ESG」→ forest-teal；未指定 → mckinsey-navy。
+
+| 文件 | 说明 |
+|------|------|
+| `templates/style-12/design-token.md` | Design Token |
+| `templates/style-12/skeleton.html` | HTML 骨架（含 {{TOKEN}} 占位符） |
+| `templates/style-12/style-12-cms-eval.md` | 视觉说明与内容结构 |
+| `templates/style-12/generation-spec.md` | 生成规范（Markdown→HTML映射） |
+| `templates/style-12/prompt.md` | 生成 prompt（给 Agent 用） |
+| `templates/style-12/color-themes/mckinsey-navy.yml` | 麦肯锡深蓝配色 Token |
+| `templates/style-12/color-themes/investment-blue.yml` | 投资蓝配色 Token |
+| `templates/style-12/color-themes/burgundy-wine.yml` | 勃艮第酒红配色 Token |
+| `templates/style-12/color-themes/forest-teal.yml` | 森林青配色 Token |
+| `templates/style-12/reference-mckinsey-navy.html` | 麦肯锡深蓝版完整参考范例（MB-001） |
+
+**CMS 专属组件**：
+- Gate 结论卡（`.gate-card` + `.gate-pass` / `.gate-conditional` / `.gate-stop`）
+- 置信度徽章（`.confidence-badge` + `.conf-a` / `.conf-b` / `.conf-c` / `.conf-d`）
+- Battle 对抗审查（`.battle-auditor` + `.battle-executor`）
+- 一票否决框（`.veto-box`）
+- 信息冲突框（`.conflict-box`）
+- 阶段标签（`.stage-tag` + `.stage-a` / `.stage-b`）
+- DRL 优先级（`.drl-priority` + `.drl-p0` / `.drl-p1` / `.drl-p2`）
+- 风险等级（`.risk-high` / `.risk-medium` / `.risk-low`）
+- 中立审查框（`.neutral-review`）
+
+**生成流程**：风格 12 提供专用 Python 转换脚本 `convert-md-to-html.py`，可直接从 Markdown 报告程序化生成 HTML，不需要 AI 手写 HTML。
+
+```bash
+python3 templates/style-12/convert-md-to-html.py <报告目录> <配色名> [输出路径]
+```
+
+脚本自动完成：读取 04-final-report.md → 提取封面元信息 → 识别 CMS 专属结构（Gate 结论卡、Battle 框、置信度标注等）→ 套用 skeleton.html + 配色 → 输出完整 HTML。
+
+如需 AI 手动生成（路径 B），则从 skeleton.html + color-themes/*.yml 生成，封面使用 CMS 专属字段（案件代号、评估技能、业务主体）。
 
 ---
 
