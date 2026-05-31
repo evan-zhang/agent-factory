@@ -16,9 +16,13 @@
 
 | 端 | 断点 | 屏幕宽度参考 |
 |---|---|---|
-| 手机 | ≤ 480px | iPhone SE / 小屏 Android |
-| 平板 / 大手机 | 481px ~ 768px | iPad / 大屏 Android |
-| PC | > 768px | 笔记本 / 台式机 |
+| 手机 | ≤ 768px | iPhone / 小屏 Android |
+| 平板 / 大手机 | 769px ~ 1024px | iPad / 大屏 Android / 小笔记本 |
+| PC | > 1024px | 笔记本 / 台式机 |
+
+**说明**：
+- 768px 断点：移动端与桌面端分界
+- 1024px 断点：侧边栏布局启用（目录导航由浮动按钮切换为固定侧边栏）
 
 ---
 
@@ -30,13 +34,13 @@
 /* 手机（默认样式，无需媒体查询） */
 body { font-size: 9pt; }
 
-/* 平板 */
-@media screen and (min-width: 481px) {
+/* 平板 / 大屏手机 */
+@media screen and (min-width: 769px) {
   body { font-size: 10pt; }
 }
 
-/* PC */
-@media screen and (min-width: 769px) {
+/* PC（侧边栏启用） */
+@media screen and (min-width: 1025px) {
   body { font-size: 10.5pt; }
 }
 ```
@@ -53,7 +57,64 @@ body { font-size: 9pt; }
 @media screen and (min-width: 769px) { ... }
 ```
 
+**断点选择建议**：
+- 常规布局：768px 断点（移动/桌面分界）
+- 侧边栏布局：1024px 断点（启用固定侧边栏）
+- 如需 PC 大屏优化：可增加 1280px 断点
+
 **禁止使用 `max-width` 作为主断点**，因为会导致在大屏幕设备上样式失效。
+
+### 2.3 侧边栏布局规范
+
+适用于目录导航、工具栏等浮动组件。
+
+#### 移动端（≤ 768px）
+- **布局**：浮动按钮（固定在右下角）
+- **宽度**：44×44px 触摸区域
+- **交互**：点击弹出全屏抽屉（左侧滑入）
+- **遮罩**：半透明黑色遮罩，点击关闭
+
+#### 平板端（769px ~ 1024px）
+- **布局**：浮动按钮（固定在右上角）
+- **宽度**：200px 侧边栏
+- **交互**：点击展开/收起
+- **遮罩**：无遮罩
+
+#### PC 端（> 1024px）
+- **布局**：固定侧边栏（右侧，240px 宽）
+- **交互**：默认展开，无切换按钮
+- **主内容区**：自动避让（max-width 适配）
+
+```css
+/* 示例：侧边栏三端适配 */
+.sidebar {
+  /* 移动端：浮动按钮 */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .sidebar {
+    /* 平板端：浮动按钮（右上角） */
+    top: 16px;
+    bottom: auto;
+  }
+}
+
+@media screen and (min-width: 1025px) {
+  .sidebar {
+    /* PC 端：固定侧边栏 */
+    top: 40px;
+    right: 40px;
+    width: 240px;
+    height: auto;
+    max-height: calc(100vh - 80px);
+  }
+}
+```
 
 ---
 
@@ -62,49 +123,75 @@ body { font-size: 9pt; }
 ### 3.1 页面整体
 
 ```css
-/* PC */
+/* 手机（默认样式） */
 .page-wrap {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 40px 48px;
+  max-width: 100%;
+  padding: 16px;
 }
 
-/* 手机 */
-@media screen and (max-width: 768px) {
-  .page-wrap { padding: 16px; }
+/* 平板 */
+@media screen and (min-width: 769px) {
+  .page-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 32px;
+  }
+}
+
+/* PC（侧边栏预留空间） */
+@media screen and (min-width: 1025px) {
+  .page-wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 48px;
+  }
 }
 ```
 
 ### 3.2 标题（H1/H2/H3）
 
 ```css
-/* PC */
-h1 { font-size: 17pt; padding: 10px 14px; }
-h2 { font-size: 12.5pt; }
+/* 手机（默认样式） */
+h1 { font-size: 13pt; padding: 8px 10px; }
+h2 { font-size: 11.5pt; }
 
-/* 手机 */
-@media screen and (max-width: 768px) {
-  h1 { font-size: 14pt; padding: 8px 10px; }
-  h2 { font-size: 11.5pt; }
+/* 平板 */
+@media screen and (min-width: 769px) {
+  h1 { font-size: 14pt; padding: 10px 12px; }
+  h2 { font-size: 12pt; }
 }
-@media screen and (max-width: 480px) {
-  h1 { font-size: 13pt; }
+
+/* PC */
+@media screen and (min-width: 1025px) {
+  h1 { font-size: 17pt; padding: 10px 14px; }
+  h2 { font-size: 12.5pt; }
 }
 ```
 
 ### 3.3 卡片网格
 
 ```css
-/* PC：多列 */
+/* 手机：单列 */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: 1fr;
+  gap: 12px;
 }
 
-/* 手机：单列 */
-@media screen and (max-width: 768px) {
-  .card-grid { grid-template-columns: 1fr; }
+/* 平板：双列 */
+@media screen and (min-width: 769px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+/* PC：三列/四列 */
+@media screen and (min-width: 1025px) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
 }
 ```
 
@@ -180,15 +267,17 @@ img {
 
 ## 7. 常见布局响应式对照
 
-| 元素 | PC（>768px） | 手机（≤768px） |
-|------|------------|--------------|
-| 页面边距 | 40~64px | 12~16px |
-| 标题字号 | 28~40pt | 13~18pt |
-| 正文字号 | 10.5pt | 9~9.5pt |
-| 卡片网格 | 3列/4列 | 单列 |
-| 表格 | 撑满宽度 | 横向滚动 |
-| Hero 区域 | 大字号 | 缩小字号 |
-| 指标数字 | 36pt+ | 24pt |
+| 元素 | PC（>1024px） | 平板（769~1024px） | 手机（≤768px） |
+|------|--------------|-------------------|----------------|
+| 页面边距 | 40~64px | 24~32px | 12~16px |
+| 标题字号（H1） | 17pt | 14pt | 13pt |
+| 正文字号 | 10.5pt | 10pt | 9pt |
+| 卡片网格 | 3列/4列 | 2列 | 单列 |
+| 表格 | 撑满宽度 | 撑满宽度 | 横向滚动 |
+| Hero 区域 | 大字号 | 中等字号 | 缩小字号 |
+| 指标数字 | 36pt+ | 30pt | 24pt |
+| 侧边栏 | 固定 240px | 浮动按钮 | 浮动按钮 |
+| 目录导航 | 默认展开 | 点击展开 | 全屏抽屉 |
 
 ---
 
