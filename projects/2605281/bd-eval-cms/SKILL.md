@@ -48,6 +48,7 @@ Phase 5.5: HTML 生成（麦肯锡深蓝风格）+ 上传归档
 | 子Agent Prompt | `references/sub-agent-prompt-template.md` | Gate 章节撰写规范 |
 | 19个技能定义 | `references/A-*.md` `B-*.md` `C-*.md` `D-*.md` `E-*.md` | 各产品类型评估框架 |
 | 归档脚本 | `scripts/archive-links.sh` | 归档到 links.md |
+| 合并脚本 | `scripts/merge-report.sh` | Phase 5 纯程序合并报告 |
 
 ## 触发判断
 
@@ -201,15 +202,17 @@ HTML 生成（麦肯锡深蓝 #1a3a5c）+ 上传 doc.20100706.xyz + 归档
 
 如果用户说"不知道"或"先跑吧"，允许跳过，但 Gate 1 标注"⚠️ 基于公开信息"。
 
-**1.5 分配案件代号**
+**1.5 生成案件代号**
 
-根据当前日期生成代号 `{YYMM}-{DDNN}`。
+案件代号格式：`YYMMDD-XXXX`（日期 + 4字母品种缩写）
 
-- 取当前时间的 YY（年后两位）和 MM（月份）
-- 取当前时间的 DD（日期）
-- 检查 `projects/2605281/bd-eval-cms/` 下当月目录中已有多少同日编号
-- 取 max(同日NN) + 1
-- 代号格式示例：`2605-2901` = 2026年5月29日第1个案件
+- 取当前日期生成 YYMMDD（6位）
+- 从品种名生成 4 字母缩写（参见知识库同步章节的映射表）
+- 英文品种名：取前 4 个辅音字母，大写。如 Gvoke HypoPen → GVHP
+- 中文品种名：取每个字拼音首字母，最多 4 个。如 乌司他丁 → WSTD
+- 示例：`260531-LNXB` = 2026年5月31日，利奈昔巴特
+
+此代号用于知识库目录命名，全局唯一，不会冲突。
 
 **2. 创建品种目录**
 ```bash
@@ -258,7 +261,7 @@ mkdir -p projects/2605281/bd-eval-cms/{品种名}/references/P1/
 **5. 创建 `state.json`**
 ```json
 {
-  "caseCode": "{YYMM-DDNN}",
+  "caseCode": "YYMMDD-XXXX",
   "name": "{品种名}",
   "displayName": "{显示名}",
   "scheme": "B",
@@ -496,140 +499,167 @@ Gate 6 可做门（串行，依赖前面所有Gate结论）
 ## Phase 5: 报告合并 + 质量终检
 
 ### 执行者
-主会话
+主会话（调度）+ 合并脚本（程序行为）+ AI（仅执行摘要）
+
+### ⚠️ 核心原则：合并是程序行为，不是 AI 行为
+
+**合并 = 纯文件拼接**。不做任何删除、改写、润色、摘要化。
+原始评估文档的每个字都必须原样出现在最终报告中。
+
+AI 唯一参与的部分：生成执行摘要（基于所有 Gate 结论卡汇总）。
+其余全部由 `scripts/merge-report.sh` 脚本完成。
 
 ### 操作步骤
 
-1. 将 One-pager、全部 Gate 章节、battle summary 合并为 `04-final-report.md`
-2. **参考文献合并（强制）**：
-   - 合并时保留所有 Gate 章节中的 `[{前缀}-XXX]` 引用编号（如 `[P1-001]`、`[G3-005]`、`[BT-002]`）
-   - 遍历 `{品种目录}/references/` 下所有前缀目录（P1/、OP/、G1/、G2/、...、BT/、EXT/ 等）
-   - 读取每个 `{前缀}/` 目录下所有 .md 文件的头部元数据（标题、URL、抓取时间）
-   - 生成 `{品种目录}/references/REFERENCES.md` 纯索引文件（只含标题+URL+摘要，不含原文）
-   - 报告末尾自动生成完整参考文献表（按前缀分组排序）
-   - 参考文献表格式：`[P1-001] 标题 — URL（抓取时间）`、`[G1-003] 标题 — URL（抓取时间）`
-3. 报告结构：
-   ```
-   第一章：执行摘要（结论先行，核心指标一览）
-   第二章：公司基本信息（M-01~M-10）
-   第三章：产品基本面
-   Gate 1~6 各自独立章节
-   第X章：财务模型
-   第Y章：风险登记表（红旗台账）
-   第Z章：评估结论与推荐（推进/条件推进/停止）
-   附录A：数据来源
-   附录B：DRL资料需求清单
-   附录C：信息冲突汇总表
-   参考文献
-   ```
+**Step 1：参考文献索引生成（程序行为）**
+- 遍历 `{品种目录}/references/` 下所有前缀目录（P1/、OP/、G1/、G2/、...、BT/、EXT/ 等）
+- 读取每个 `{前缀}/` 目录下所有 .md 文件的头部元数据（标题、URL、抓取时间）
+- 生成 `{品种目录}/references/REFERENCES.md` 纯索引文件（只含标题+URL+摘要，不含原文）
+- 参考文献表格式：`[P1-001] 标题 — URL（抓取时间）`、`[G1-003] 标题 — URL（抓取时间）`
 
-3. 执行质量终检（8项）：
-   - ① Gate 1-6 结论卡完整性（每Gate都有结论卡）
-   - ② 财务硬门槛达标情况（对照总规则第5节）
-   - ③ 一票否决清单核查（7条体系级 + 技能专属）
-   - ④ 置信度标注完整性（关键数据不超过3处缺失）
-   - ⑤ 信息冲突汇总表（附录C）非空
-   - ⑥ 阶段标签标注正确（[阶段A]/[阶段B]）
-   - ⑦ 来源四分法标注覆盖
-   - ⑧ 财务缩写首次出现标注中文全称
+**Step 2：执行合并（程序行为）**
 
-4. 更新 `state.json`：
-   ```json
-   {
-     "caseCode": "{YYMM-DDNN}",
-     "phase": "report_finalized",
-     "finalReport": "04-final-report.md",
-     "conclusion": "推进/条件推进/停止",
-     "currentVersion": 1,
-     "gateVersions": {
-       "One-pager": 1,
-       "Gate-1": 1,
-       "Gate-2": 1,
-       "Gate-3": 1,
-       "Gate-4": 1,
-       "Gate-5": 1,
-       "Gate-6": 1
-     },
-     "updateHistory": [
-       {
-         "version": 1,
-         "date": "{ISO时间}",
-         "type": "full",
-         "gatesUpdated": ["all"]
-       }
-     ],
-     "qualityCheck": {
-       "gateCards": "PASS",
-       "financialThreshold": "PASS/FAIL",
-       "vetoCheck": "PASS/FAIL",
-       "confidenceAnnotation": "PASS/FAIL",
-       "conflictSummary": "PASS",
-       "stageLabels": "PASS",
-       "sourceAnnotation": "PASS",
-       "financialAbbreviation": "PASS"
-     },
-     "completedAt": "{ISO时间}"
-   }
-   ```
+运行合并脚本：
+```bash
+bash scripts/merge-report.sh "{品种目录路径}"
+```
 
-**✅ Phase 5 完成标志**：`04-final-report.md` 存在 + 质量终检通过
+脚本执行逻辑：
+1. 从 state.json 读取案件代号、品种名等元信息 → 生成封面
+2. 写入执行摘要占位符（`<!-- EXECUTIVE_SUMMARY_PLACEHOLDER -->`）
+3. 依次 cat 拼接所有源文件（01-discovery.md → One-pager.md → Gate 1-6 → battle → REFERENCES.md）
+4. 输出 `04-final-report.md`
+
+**Step 3：AI 生成执行摘要（唯一需要 AI 的步骤）**
+
+AI 读取所有 Gate 结论卡，生成执行摘要，替换占位符：
+- 结论先行（推进/条件推进/停止）
+- 核心指标一览
+- 关键风险提示（含 C/D 级数据披露）
+- 推荐行动
+
+**Step 4：格式校验（程序行为）**
+
+合并脚本内置格式校验，自动检查：
+
+| 检查项 | 标准 | 说明 |
+|--------|------|------|
+| 报告/源文件行数比 | ≥ 95% | 纯合并应接近 100%，封面和章节标题行会使比例略高 |
+| 章节完整性 | 所有 Gate 章节标题存在 | 检查报告内是否包含所有必要章节 |
+| 结论卡存在 | 每个 Gate 区域内含"结论卡"关键词 | 防止空章节 |
+
+**如果报告/源文件比 < 90%，脚本报警，说明合并可能丢内容。**
+
+**Step 5：质量终检（8+2 项）**
+
+原有 8 项（AI 执行）：
+- ① Gate 1-6 结论卡完整性（每Gate都有结论卡）
+- ② 财务硬门槛达标情况（对照总规则第5节）
+- ③ 一票否决清单核查（7条体系级 + 技能专属）
+- ④ 置信度标注完整性（关键数据不超过3处缺失）
+- ⑤ 信息冲突汇总表（附录C）非空
+- ⑥ 阶段标签标注正确（[阶段A]/[阶段B]）
+- ⑦ 来源四分法标注覆盖
+- ⑧ 财务缩写首次出现标注中文全称
+
+新增 2 项内容充分性检查：
+- ⑨ **Gate 章节体量**：每个 Gate 章节 ≥ 200 行（低于此标准说明评估不充分）
+- ⑩ **合并完整性**：最终报告行数 ≥ 源文件总行数 × 95%（确保无内容丢失）
+
+**Step 6：更新 state.json**
+```json
+{
+  "phase": "report_finalized",
+  "finalReport": "04-final-report.md",
+  "conclusion": "推进/条件推进/停止",
+  "currentVersion": 1,
+  "qualityCheck": {
+    "gateCards": "PASS",
+    "financialThreshold": "PASS/FAIL",
+    "vetoCheck": "PASS/FAIL",
+    "confidenceAnnotation": "PASS/FAIL",
+    "conflictSummary": "PASS",
+    "stageLabels": "PASS",
+    "sourceAnnotation": "PASS",
+    "financialAbbreviation": "PASS",
+    "gateVolume": "PASS/FAIL",
+    "mergeIntegrity": "PASS/FAIL"
+  },
+  "completedAt": "{ISO时间}"
+}
+```
+
+**✅ Phase 5 完成标志**：`04-final-report.md` 存在 + 格式校验通过 + 质量终检 10 项通过
 
 ---
 
 ## Phase 5.5: HTML 生成 + 上传归档
 
-### 报告风格：麦肯锡深蓝
+### 核心原则：程序化生成，不依赖 AI
 
-**与 bd-eval 的差异**：bd-eval 用琥珀金/蓝白对阵两套，本 Skill 只用麦肯锡深蓝一种。
+HTML 报告生成是**纯程序行为**——用 Python 脚本将合并后的 Markdown 转换为 HTML，套用风格 12 骨架和配色。
+AI 不参与 HTML 内容生成，只负责：
+1. 选择配色方案
+2. 执行脚本命令
+3. 上传和归档
 
-**视觉规范**：
-- 主色：深蓝 `#1a3a5c`
-- 辅色：白色背景，浅灰背景 `#f5f7fa`
-- 字体：思源黑体 / Arial
-- 风格：结论先行、数据驱动、无装饰、无多余图片
-- **禁止**：灰色字体、元描述、修订说明
+### 报告风格：风格 12（CMS 投前评估专用）
 
-**Gate 结论卡样式**：
-```css
-.gate-card {
-  border-left: 4px solid #1a3a5c;
-  background: #f5f7fa;
-  padding: 16px;
-  margin: 16px 0;
-}
-.gate-pass { border-left-color: #34A853; }
-.gate-conditional { border-left-color: #FBBC05; }
-.gate-stop { border-left-color: #EA4335; }
+**4 套配色方案可选**：
+
+| 配色名 | 主色 | 适用场景 |
+|--------|------|----------|
+| mckinsey-navy | #1a3a5c | 默认，经典咨询风格 |
+| investment-blue | #1D4ED8 | 投行/金融报告 |
+| burgundy-wine | #7B2D3B | 稳重权威 |
+| forest-teal | #1B6B5A | 冷静理性 |
+
+用户未指定配色时，默认使用 **mckinsey-navy**。
+
+### CMS 专属组件（已内置于风格 12 骨架）
+
+- Gate 结论卡：`.gate-pass`（绿）/ `.gate-conditional`（黄）/ `.gate-stop`（红）
+- 置信度徽章：`.conf-a` / `.conf-b` / `.conf-c` / `.conf-d`
+- Battle 对抗审查：`.battle-auditor` / `.battle-executor`
+- 信息冲突框：`.conflict-box`
+- 一票否决框：`.veto-box`
+- 阶段标签：`.stage-a` / `.stage-b`
+- DRL 优先级：`.drl-p0` / `.drl-p1` / `.drl-p2`
+- 风险等级：`.risk-high` / `.risk-medium` / `.risk-low`
+- 中立审查框：`.neutral-review`
+
+### 生成命令
+
+```bash
+python3 scripts/convert-md-to-html.py \
+  "{品种目录}" \
+  {配色名} \
+  "{品种目录}/REPORT.html"
 ```
 
-**信息冲突标记样式**：
-```css
-.conflict-box {
-  background: #fff8e1;
-  border-left: 4px solid #f9a825;
-  padding: 12px 16px;
-  margin: 16px 0;
-}
+示例：
+```bash
+python3 scripts/convert-md-to-html.py \
+  MB-001-Mage-Biologics \
+  mckinsey-navy \
+  MB-001-Mage-Biologics/REPORT.html
 ```
 
-**中立审查框样式**：
-```css
-.neutral-review {
-  background: #f3f4f6;
-  border-left: 4px solid #607d8b;
-  padding: 12px 16px;
-  margin: 16px 0;
-}
+脚本自动完成：
+1. 读取 `04-final-report.md`
+2. 从 `state.json` 提取封面元信息
+3. 识别 Gate 结论卡、Battle 框、置信度标注等 CMS 专属结构
+4. 套用 skeleton.html 骨架 + 配色方案
+5. 输出完整 HTML 文件
+
+### 上传到 doc.20100706.xyz
+
+```bash
+curl -s -X POST https://doc.20100706.xyz/upload \
+  -F "file=@{品种目录}/REPORT.html;filename={品种名}-CMS投前评估报告.html"
 ```
 
-### 生成方式：调用 doc-viewer skill
-
-1. 读取 `projects/2605281/bd-eval-cms/{品种}/04-final-report.md`
-2. 切换到 doc-viewer skill 上下文
-3. 生成麦肯锡深蓝风格 HTML
-4. 保存到 `/tmp/report-cms-{slug}.html`
-5. 上传到 doc.20100706.xyz
-6. 返回 raw_url
+返回 `raw_url`，记录到 `state.json` 的 `reportHtmlUrl`。
 
 ### 归档操作
 
@@ -638,8 +668,6 @@ scripts/archive-links.sh \
   "{品种slug}" \
   "https://doc.20100706.xyz/raw/{report_id}"
 ```
-
-同时更新 `state.json` 的 `reportHtmlUrl`。
 
 ### 知识库自动同步（Phase 5.5 必执行）
 
@@ -650,33 +678,65 @@ scripts/archive-links.sh \
 - appKey：`mN6bVc2Xz9Lk4Jh7Gt5Rf3Wp1Yq8As0D`
 - projectId：`2060176831872499713`（产品引进知识库）
 
-**同步目录**：
-- 月份目录：`{YYMM}`（取 state.json 中 caseCode 的前4位，或当前日期）
-- 案件目录：`{caseCode}`（从 state.json 读取）
+**案件代号命名规范（v2026.5.31）**：
+
+格式：`YYMMDD-XXXX`（日期 + 4字母品种缩写）
+
+| 部分 | 说明 | 示例 |
+|------|------|------|
+| YYMMDD | 评估执行日期（6位） | 260531 |
+| XXXX | 品种4字母缩写（见下方映射表） | LNXB |
+
+**4字母缩写生成规则**：
+- 英文品种名：取前4个字母（去空格和连字符），大写。如 Gvoke HypoPen → GVHP
+- 中文品种名：取每个字拼音首字母，最多4个。如 乌司他丁 → WSTD
+- 已有缩写映射表（子Agent 必须使用此表中的缩写）：
+
+| 品种 | 缩写 | 品种 | 缩写 |
+|------|------|------|------|
+| 利奈昔巴特 | LNXB | 乌司他丁 | WSTD |
+| Gvoke HypoPen | GVOK | FABIOR | FABI |
+| 硫酸氢氯吡格雷片 | LSQL | 非索非那定干混悬剂 | FSFN |
+| DYX116 | DYXX | Humatrope | HUMA |
+| 馥霖安 | FLAA | 马来酸非尼拉敏滴眼液 | MLSF |
+| 注射用心肌肽 | ZSYX | | |
+
+新品种由子Agent 按规则自动生成（pypinyin 拼音首字母），写入 state.json 的 caseCode 字段。sync-to-knowledge-base.sh 会自动从 state.json 读取或从目录名生成，不需要手动指定。
+
+**同步目录**：`{YYMMDD}/{YYMMDD-XXXX}/`
+例如：`260531/260531-LNXB/`
+
+**调用方式**：
+
+```bash
+bash scripts/sync-to-knowledge-base.sh "{品种目录路径}"
+# 案件代号自动生成，无需手动指定
+# 也可手动指定：
+bash scripts/sync-to-knowledge-base.sh "{品种目录路径}" "260531-LNXB"
+```
+
+脚本会自动：
+1. 从 state.json 读取品种名
+2. 生成 `YYMMDD-XXXX` 格式的案件代号
+3. 将 caseCode 写入 state.json
+4. 上传所有文件
+5. 回写同步结果到 state.json 的 knowledgeBaseSync 字段
 
 **同步文件清单**（遍历品种目录，逐文件上传）：
 
 | 本地路径 | 知识库 folderName | fileName | fileSuffix |
 |---------|------------------|----------|-----------|
-| state.json | `{YYMM}/{caseCode}` | state | json |
-| 01-discovery.md | `{YYMM}/{caseCode}` | 01-discovery | md |
-| 03-battle-summary.md | `{YYMM}/{caseCode}` | 03-battle-summary | md |
-| 04-final-report.md | `{YYMM}/{caseCode}` | 04-final-report | md |
-| links.md | `{YYMM}/{caseCode}` | links | md |
-| execution-log.md | `{YYMM}/{caseCode}` | execution-log | md |
-| REPORT.html | `{YYMM}/{caseCode}` | REPORT | html |
-| 02-gate-by-chapter/*.md | `{YYMM}/{caseCode}/02-gate-by-chapter` | {原名去后缀} | md |
-| 02-gate-by-chapter/history/*.md | `{YYMM}/{caseCode}/02-gate-by-chapter/history` | {原名去后缀} | md |
-| battle/*.md | `{YYMM}/{caseCode}/battle` | {原名去后缀} | md |
-| references/REFERENCES.md | `{YYMM}/{caseCode}/references` | REFERENCES | md |
-| references/{前缀}/*.md | `{YYMM}/{caseCode}/references/{前缀}` | {原名去后缀} | md |
-
-**调用方式**：
-
-```bash
-bash scripts/sync-to-knowledge-base.sh "{品种目录路径}" "{案件代号}"
-# 示例：bash scripts/sync-to-knowledge-base.sh "projects/2605281/bd-eval-cms/利奈昔巴特" "2605-2901"
-```
+| state.json | `{YYMMDD}/{YYMMDD-XXXX}` | state | json |
+| 01-discovery.md | `{YYMMDD}/{YYMMDD-XXXX}` | 01-discovery | md |
+| 03-battle-summary.md | `{YYMMDD}/{YYMMDD-XXXX}` | 03-battle-summary | md |
+| 04-final-report.md | `{YYMMDD}/{YYMMDD-XXXX}` | 04-final-report | md |
+| links.md | `{YYMMDD}/{YYMMDD-XXXX}` | links | md |
+| execution-log.md | `{YYMMDD}/{YYMMDD-XXXX}` | execution-log | md |
+| REPORT.html | `{YYMMDD}/{YYMMDD-XXXX}` | REPORT | html |
+| 02-gate-by-chapter/*.md | `{YYMMDD}/{YYMMDD-XXXX}/02-gate-by-chapter` | {原名去后缀} | md |
+| battle/*.md | `{YYMMDD}/{YYMMDD-XXXX}/battle` | {原名去后缀} | md |
+| references/REFERENCES.md | `{YYMMDD}/{YYMMDD-XXXX}/references` | REFERENCES | md |
+| references/{前缀}/*.md | `{YYMMDD}/{YYMMDD-XXXX}/references/{前缀}` | {原名去后缀} | md |
 
 **调用模板**（单文件）：
 ```bash
@@ -728,39 +788,133 @@ curl -X POST 'https://sg-al-cwork-web.mediportal.com.cn/open-api/document-databa
 品种C: Phase1 → Phase2 → Phase3 → Phase4 → Phase5  （并行）
 ```
 
-**最大并发**：5个子Agent（sessions_spawn 上限）
+**最大并发**：3个品种子Agent（经验校准：4个并发导致模型 API 超时）
 
-**推荐策略**：5个品种并行跑完 Phase 1-2，再启动 Phase 3-5
+**推荐策略**：3个品种并行跑全流程。如需更大批次，分批执行，每批不超过 3 个。
+
+**强制 state.json 更新**：每个 Phase 完成后，子Agent 必须立即更新 state.json 的 phase 字段。这是断点续跑的基石，不可遗漏。
+
+```
+phase 枚举值：discovery_complete → routing_complete → evaluation_complete → battle_complete → report_finalized
+```
+
+**Gate 文件命名规范（强制）**：
+```
+02-gate-by-chapter/One-pager.md
+02-gate-by-chapter/Gate-1-premise.md
+02-gate-by-chapter/Gate-2-positioning.md
+02-gate-by-chapter/Gate-3-evidence.md
+02-gate-by-chapter/Gate-4-payment.md
+02-gate-by-chapter/Gate-5-cost.md
+02-gate-by-chapter/Gate-6-dealability.md
+```
+不允许其他变体命名（如 Gate-6-feasibility.md、Gate-4-payment-path.md）。重复文件会导致合并脚本出错。
+
+**完成检测**：不能依赖子Agent announce 回调（实测超时/丢失率约 50%）。主会话应通过磁盘扫描（检查 REPORT.html + grep -c '{{' == 0 + state.json phase == report_finalized）判断品种是否完成。
+
+**模型 fallback chain**：主模型失败时按序切换：
+1. evan-openai/glm-5.1（默认）
+2. evan-openai/MiniMax-M2.7-highspeed（第一备用）
+3. evan-openai/deepseek-v4-flash（第二备用）
+4. evan-openai/deepseek-v4-pro（最终备用）
+
+**断点续跑**：当品种因超时/失败中断时，读取 state.json 确定最后完成的 Phase，从下一个 Phase 补跑。补跑用备用模型。
 
 ---
 
-## 子Agent 超时应对
+## 子Agent 超时应对与断点续跑
 
-与 bd-eval 相同策略：
-1. 记录完成到第几个 Gate
-2. 主会话补全未完成 Gate
-3. 严重时手工编译最终报告
+**超时处理流程**：
+1. 子Agent 超时后，读取 state.json 确定最后完成的 Phase
+2. 检查磁盘文件确认实际完成进度（不信任 announce，以磁盘为准）
+3. 用备用模型 spawn 新子Agent，从断点 Phase 续跑
+4. 续跑 prompt 必须包含：品种目录路径、SKILL.md 路径、已完成 Phase 说明、需要执行的 Phase 列表
+5. 续跑成功后合并结果
+
+**模型超时 fallback**：如果默认模型超时，直接换备用模型重试，不重试同一模型。
+
+**经验教训（来自 Batch 1-2 实测）**：
+- 4 个品种并发会导致模型 API 全部超时，降到 3 个稳定
+- 子Agent 长任务后期可能忘记更新 state.json，prompt 里必须强调
+- announce 回调丢失率约 50%，必须用磁盘扫描替代
+- 子Agent 可能生成非标准 Gate 文件名，需要在 prompt 里强制指定
+
+---
+
+## Verify 规则（每个 Phase 完成后校验）
+
+子Agent 每完成一个 Phase，执行以下验证：
+
+| Phase | 验证条件 |
+|-------|----------|
+| Phase 1 | 01-discovery.md 存在 + state.json phase="discovery_complete" |
+| Phase 2 | battle/ROUTE-SELECTION-AUDITOR.md 存在 + state.json 有 routingDecision |
+| Phase 3 | 02-gate-by-chapter/ 下 One-pager + Gate 1-6 共 7 个文件，每个 ≥100 行 |
+| Phase 4 | 03-battle-summary.md 存在 + battle/ 下有 AUDITOR 文件 |
+| Phase 5 | 04-final-report.md 存在 + 行数 ≥ 源文件行数 × 95% |
+| Phase 5.5 | REPORT.html 存在 + `grep -c '{{' REPORT.html` == 0 |
+
+验证失败 → 重试一次（换模型）→ 仍失败 → 暂停并通知用户。
 
 ---
 
 ## 执行日志
 
-每个品种在 `projects/2605281/bd-eval-cms/{品种}/execution-log.md` 中维护：
+每个品种在 `{品种目录}/execution-log.md` 中维护：
 
-```
-## Phase 1 DISCOVERY
-- 时间: YYYY-MM-DD HH:MM
+```markdown
+## 执行日志 — {品种名}
+
+### Phase 1 DISCOVERY
+- 开始时间: YYYY-MM-DD HH:MM
+- 结束时间: YYYY-MM-DD HH:MM
+- 耗时: X 分钟
+- 模型: {model-name}
 - 搜索次数: X
+- Token 用量: ~Xk
+- 工具调用次数: X
 - 产品类型判断: {类型}
 - 业务主体判断: {主体}
+- 重试次数: 0
 
-## Phase 2 D-0 路由
-- 时间: YYYY-MM-DD HH:MM
+### Phase 2 路由
+- 开始时间: YYYY-MM-DD HH:MM
+- 结束时间: YYYY-MM-DD HH:MM
+- 耗时: X 分钟
+- 模型: {model-name}
 - 路由技能: {编号}
 - 路由置信度: {高/中/低}
-- 争议: （如有）
+- 重试次数: 0
 
-...（每Phase记录）
+### Phase 3 Gate 评估
+- 开始时间: YYYY-MM-DD HH:MM
+- 结束时间: YYYY-MM-DD HH:MM
+- 耗时: X 分钟
+- 模型: {model-name}
+- Gate 完成情况: Gate 1 ✅ Gate 2 ✅ ... Gate 6 ✅
+- Token 用量: ~Xk
+- 工具调用次数: X
+- 重试次数: 0
+
+### Phase 4 Battle
+- （同上格式）
+
+### Phase 5 报告合并
+- （同上格式）
+
+### Phase 5.5 HTML 生成
+- （同上格式）
+
+### 知识库同步
+- 同步时间: YYYY-MM-DD HH:MM
+- 成功/失败: X/Y
+
+### 总计
+- 总耗时: X 分钟
+- 总 Token: ~Xk
+- 总工具调用: X
+- 总重试: X
+- 使用模型: [model1, model2]
 ```
 
 ---

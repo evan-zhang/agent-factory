@@ -1,0 +1,76 @@
+{
+  "caseCode": "2605-3106",
+  "name": "非索非那定干混悬剂",
+  "displayName": "非索非那定干混悬剂",
+  "scheme": "B",
+  "businessEntity": "德镁/天津康哲",
+  "routedSkill": "A-8",
+  "routedChain": [
+    "D-1",
+    "D-2",
+    "A-8",
+    "D-3"
+  ],
+  "phase": "report_finalized",
+  "startedAt": "2026-05-31T07:45:00.000Z",
+  "currentVersion": 1,
+  "gateVersions": {
+    "One-pager": 1,
+    "Gate-1": 1,
+    "Gate-2": 1,
+    "Gate-3": 1,
+    "Gate-4": 1,
+    "Gate-5": 1,
+    "Gate-6": 1
+  },
+  "financialThresholdType": "改良型新药",
+  "routingDecision": {
+    "recommendedSkill": "A-8",
+    "chain": [
+      "D-1",
+      "D-2",
+      "A-8",
+      "D-3"
+    ],
+    "thresholdType": "改良型新药",
+    "rationale": "干混悬剂为3类仿制药（非4类改良型新药），适用A-8技能"
+  },
+  "discovery": {
+    "searches": 5,
+    "sources": [
+      "摩熵医药",
+      "赛柏蓝",
+      "医药魔方ByDrug"
+    ],
+    "productType": "3类仿制药（后发，非独家）",
+    "confidence": "中",
+    "referenceCount": 18
+  },
+  "finalReport": "04-final-report.md",
+  "conclusion": "不推荐引进（No-Go）",
+  "completedAt": "2026-05-31T08:10:00.000Z",
+  "qualityCheck": {
+    "gateCards": "PASS",
+    "financialThreshold": "FAIL",
+    "vetoCheck": "PASS",
+    "confidenceAnnotation": "PASS",
+    "conflictSummary": "PASS",
+    "stageLabels": "PASS",
+    "sourceAnnotation": "PASS",
+    "financialAbbreviation": "PASS",
+    "gateVolume": "PASS",
+    "mergeIntegrity": "PASS"
+  },
+  "reportHtmlUrl": "https://doc.20100706.xyz/view/e855f1cfe563",
+  "updateHistory": [],
+  "references": {
+    "file": "references/REFERENCES.md",
+    "count": 18,
+    "prefixes": [
+      "P1",
+      "OP",
+      "G1",
+      "G2"
+    ]
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "caseCode": "2605-3101",
+  "name": "乌司他丁",
+  "displayName": "乌司他丁（天普洛安®）",
+  "scheme": "B",
+  "businessEntity": "深康（待确认）",
+  "routedSkill": "A-5",
+  "routedChain": [
+    "D-1",
+    "D-2",
+    "A-5",
+    "D-3"
+  ],
+  "phase": "report_finalized",
+  "startedAt": "2026-05-31T14:00:00+08:00",
+  "completedAt": "2026-05-31T16:00:00+08:00",
+  "currentVersion": 1,
+  "gateVersions": {
+    "One-pager": 1,
+    "Gate-1": 1,
+    "Gate-2": 1,
+    "Gate-3": 1,
+    "Gate-4": 1,
+    "Gate-5": 1,
+    "Gate-6": 1
+  },
+  "financialThresholdType": "创新药",
+  "routingDecision": {
+    "recommendedSkill": "A-5",
+    "chain": [
+      "D-1",
+      "D-2",
+      "A-5",
+      "D-3"
+    ],
+    "thresholdType": "创新药",
+    "rationale": "已在中国获批上市的成熟生物制品，已有NMPA批文和20+年销售历史，CMS拟获取推广权/代理权。适用A-5已上市产品推广权引进评估框架。"
+  },
+  "discovery": {
+    "searches": 7,
+    "sources": [
+      "minimax-search"
+    ],
+    "productType": "已上市生物制品（独家品种）",
+    "confidence": "高",
+    "referenceCount": 3
+  },
+  "updateHistory": [],
+  "references": {
+    "file": "references/REFERENCES.md",
+    "count": 20,
+    "prefixes": [
+      "P1",
+      "OP",
+      "G1",
+      "G2",
+      "G3",
+      "G4",
+      "G5",
+      "G6"
+    ]
+  },
+  "finalReport": "04-final-report.md",
+  "conclusion": "不推荐",
+  "currentPhase": "Phase 5.5 完成",
+  "qualityCheck": {
+    "gateCards": "PASS",
+    "financialThreshold": "FAIL",
+    "vetoCheck": "FAIL",
+    "confidenceAnnotation": "PASS",
+    "conflictSummary": "PASS",
+    "stageLabels": "PASS",
+    "sourceAnnotation": "PASS",
+    "financialAbbreviation": "PASS",
+    "gateVolume": "PASS",
+    "mergeIntegrity": "PASS"
+  },
+  "reporterInfo": {
+    "reporter": "张荣赓",
+    "reportTime": "2026-05-25 14:07:00",
+    "description": "标的为成熟上市产品，是急性胰腺炎治疗的基础用药，已获多项权威指南高等级推荐。中国急性胰腺炎患者约1000万人，2023-2025 IMS数据销售13.7/12.6/13.1亿元，已纳入国家医保目录，参比制剂已停产，无仿制跟进，市场独占期长。但预估标的公司合作可能性较小。"
+  }
+}

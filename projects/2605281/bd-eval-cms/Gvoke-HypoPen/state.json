@@ -1,0 +1,83 @@
+{
+  "caseCode": "2605-3102",
+  "name": "Gvoke-HypoPen",
+  "displayName": "Gvoke HypoPen (dasiglucagon)",
+  "scheme": "B",
+  "businessEntity": "深康（待确认）",
+  "routedSkill": "A-1",
+  "routedChain": [
+    "D-1",
+    "D-2",
+    "A-1",
+    "D-3"
+  ],
+  "phase": "report_finalized",
+  "startedAt": "2026-05-31T13:57:00+08:00",
+  "completedAt": "2026-05-31T14:52:00+08:00",
+  "reportHtmlUrl": "https://doc.20100706.xyz/raw/29d8ac0fe35e",
+  "reportViewUrl": "https://doc.20100706.xyz/view/29d8ac0fe35e",
+  "currentVersion": 1,
+  "gateVersions": {
+    "One-pager": 1,
+    "Gate-1": 1,
+    "Gate-2": 1,
+    "Gate-3": 1,
+    "Gate-4": 1,
+    "Gate-5": 1,
+    "Gate-6": 1
+  },
+  "financialThresholdType": "创新药",
+  "finalReport": "04-final-report.md",
+  "conclusion": "条件推进",
+  "routingDecision": {
+    "recommendedSkill": "A-1",
+    "chain": [
+      "D-1",
+      "D-2",
+      "A-1",
+      "D-3"
+    ],
+    "thresholdType": "创新药",
+    "rationale": "dasiglucagon已获FDA/EMA批准上市，中国尚未注册，引进方式为License-in，注册分类为5.1类/6类（境外已上市境内未上市），完全匹配A-1技能定义",
+    "auditorVerdict": "有条件同意",
+    "auditorNotes": [
+      "注册分类应为5.1类/6类待确认",
+      "业务主体：深康主责+院外业务协同（双轨场景）",
+      "Baqsimi中国注册为关键先发竞争威胁"
+    ]
+  },
+  "discovery": {
+    "searches": 6,
+    "sources": [
+      "PMC/PubMed",
+      "Xeris官网公告",
+      "Fortune Business Insights",
+      "EMA",
+      "ClinicalTrials.gov",
+      "Patsnap"
+    ],
+    "productType": "创新药（海外已上市·中国未上市）",
+    "confidence": "高",
+    "referenceCount": 4
+  },
+  "qualityCheck": {
+    "gateCards": "PASS",
+    "financialThreshold": "PASS",
+    "vetoCheck": "PASS",
+    "confidenceAnnotation": "PASS",
+    "conflictSummary": "PASS",
+    "stageLabels": "PASS",
+    "sourceAnnotation": "PASS",
+    "financialAbbreviation": "PASS",
+    "gateVolume": "PASS",
+    "mergeIntegrity": "PASS"
+  },
+  "updateHistory": [],
+  "references": {
+    "file": "references/REFERENCES.md",
+    "count": 4,
+    "prefixes": [
+      "P1"
+    ]
+  }
+}

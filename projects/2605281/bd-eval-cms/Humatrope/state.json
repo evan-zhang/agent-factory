@@ -1,0 +1,85 @@
+{
+  "caseCode": "2605-3107",
+  "name": "Humatrope",
+  "displayName": "Humatrope（优猛茁）",
+  "scheme": "B",
+  "businessEntity": "深康（待确认）",
+  "routedSkill": "A-1",
+  "routedChain": [
+    "D-1",
+    "D-2",
+    "A-1",
+    "D-3"
+  ],
+  "phase": "report_finalized",
+  "startedAt": "2026-05-31T15:45:00+08:00",
+  "currentVersion": 1,
+  "gateVersions": {
+    "One-pager": 1,
+    "Gate-1": 1,
+    "Gate-2": 1,
+    "Gate-3": 1,
+    "Gate-4": 1,
+    "Gate-5": 1,
+    "Gate-6": 1
+  },
+  "financialThresholdType": "创新药",
+  "routingDecision": {
+    "recommendedSkill": "A-1",
+    "chain": [
+      "D-1",
+      "D-2",
+      "A-1",
+      "D-3"
+    ],
+    "thresholdType": "创新药",
+    "rationale": "Humatrope为礼来海外已上市生物制品（重组人生长激素），中国大陆未注册，需通过5.1类/6类路径申报，匹配A-1技能定义"
+  },
+  "discovery": {
+    "searches": 8,
+    "sources": [
+      "minimax web_search",
+      "drugs.com",
+      "NHSA",
+      "sina finance",
+      "wiseguyreports",
+      "bydrug"
+    ],
+    "productType": "创新药（生物制品，海外已上市中国未上市）",
+    "confidence": "高",
+    "referenceCount": 8
+  },
+  "updateHistory": [],
+  "references": {
+    "file": "references/REFERENCES.md",
+    "count": 8,
+    "prefixes": [
+      "P1"
+    ]
+  },
+  "finalReport": "04-final-report.md",
+  "conclusion": "停止（一票否决）",
+  "reportHtmlUrl": "https://doc.20100706.xyz/view/b18e15f97e1c",
+  "reportRawUrl": "https://doc.20100706.xyz/raw/b18e15f97e1c",
+  "completedAt": "2026-05-31T16:15:00+08:00",
+  "qualityCheck": {
+    "gateCards": "PASS",
+    "financialThreshold": "FAIL",
+    "vetoCheck": "FAIL",
+    "confidenceAnnotation": "PASS",
+    "conflictSummary": "PASS",
+    "stageLabels": "PASS",
+    "sourceAnnotation": "PASS",
+    "financialAbbreviation": "PASS",
+    "gateVolume": "PASS",
+    "mergeIntegrity": "PASS"
+  },
+  "kbSync": {
+    "lastSyncAt": "2026-05-31T16:20:00+08:00",
+    "syncedFiles": 49,
+    "failedFiles": [
+      "04-final-report.md (权限不足)"
+    ],
+    "status": "partial_success"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "name": "利奈昔巴特",
+  "displayName": "Linerixibat/Lynavoy",
+  "scheme": "B",
+  "businessEntity": "深康",
+  "routedSkill": "A-1",
+  "routedChain": ["D-1", "D-2", "A-1", "D-3", "A-2", "D-4"],
+  "phase": "discovery_complete",
+  "startedAt": "2026-05-28T23:53:00+08:00",
+  "completedAt": "2026-05-28T23:56:00+08:00",
+  "financialThresholdType": "创新药",
+  "routingDecision": {
+    "recommendedSkill": "A-1",
+    "skillType": "创新药",
+    "registrationCategory": "5.1类",
+    "approvalStatus": "FDA已批准（2026-03-19），中国NDA审评中",
+    "routingChain": "D-1 → D-2 → A-1 → D-3 → A-2 → D-4 → Gate1-6",
+    "financialThreshold": "IRR ≥ 15-25%（按创新药标准）",
+    "keyReferences": [
+      "REF-001: FDA批准Lynavoy 2026-03-19",
+      "REF-003: 6.9亿美元GSK-Alfasigma许可协议",
+      "REF-006: 中国NDA 2026-02-25受理，CDE优先审评",
+      "REF-007: 峰值销售预测5亿美元/年",
+      "REF-008: 全球胆汁淤积性瘙痒市场2025年14亿美元"
+    ],
+    "riskFlags": [
+      "Alfasigma为当前全球权益持有者，需与其洽谈中国区授权",
+      "Ocaliva已退市，Alfasigma在PBC领域有成功也有挫折",
+      "Volixibat等竞品在研，未来竞争加剧",
+      "分析师预测存在不确定性，5亿美元峰值销售为早期估计"
+    ]
+  },
+  "discovery": {
+    "searches": 10,
+    "webFetches": 12,
+    "referenceCount": 12,
+    "productType": "创新药",
+    "confidence": "高",
+    "keyData": {
+      "fdaApproval": "2026-03-19",
+      "chineseNdaStatus": "受理（优先审评）",
+      "globalDeal": "6.9亿美元（GSK→Alfasigma）",
+      "peakSalesForecast": "5亿美元/年",
+      "marketSize2025": "14亿美元",
+      "cagr2026to2035": "6.20%",
+      "pbcPruritusPrevalence": "89% of PBC patients"
+    }
+  },
+  "references": {
+    "file": "references/REFERENCES.md",
+    "count": 12,
+    "refs": [
+      "REF-001", "REF-002", "REF-003", "REF-004",
+      "REF-005", "REF-006", "REF-007", "REF-008",
+      "REF-009", "REF-010", "REF-011", "REF-012"
+    ]
+  }
+}

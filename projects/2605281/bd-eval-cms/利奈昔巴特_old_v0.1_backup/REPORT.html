@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>利奈昔巴特（Linerixibat/Lynavoy）投前评估报告</title>
+<style>
+@page { size:A4; margin:26mm 24mm 22mm 24mm; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC","SimSun",Arial,sans-serif;
+  font-size:10.5pt; line-height:1.7; color:#1F2933;
+  background:#FFFFFF; -webkit-font-smoothing:antialiased;
+}
+a { color:#1a3a5c; text-decoration:none; }
+
+/* ===== COVER ===== */
+.cover {
+  min-height:96vh; display:flex; flex-direction:column; justify-content:center;
+  padding:44mm 30mm;
+  background:linear-gradient(160deg,#f0f4f8 0%,#e1eaf2 55%,#cdd9e5 100%);
+  border-bottom:6px solid #1a3a5c; position:relative;
+}
+.cover-topbar { position:absolute; top:0; left:0; right:0; height:5px; background:linear-gradient(90deg,#1a3a5c,#2c5f8a,#1a3a5c); }
+.cover-badge {
+  display:inline-block; font-size:9pt; font-weight:700; letter-spacing:0.12em;
+  color:#1a3a5c; border:1.5px solid #1a3a5c; padding:3px 12px; margin-bottom:20px;
+  text-transform:uppercase;
+}
+.cover-title {
+  font-size:30pt; font-weight:800; color:#1a3a5c; letter-spacing:0.06em;
+  line-height:1.2; margin-bottom:16px;
+}
+.cover-subtitle { font-size:18pt; font-weight:600; color:#2c5f8a; margin-bottom:10px; }
+.cover-company { font-size:13pt; color:#4a6d8c; margin-bottom:36px; }
+.cover-meta { font-size:11pt; line-height:2.1; color:#1a3a5c; }
+.cover-meta .lbl { color:#4a6d8c; }
+.cover-confidential {
+  margin-top:40px; font-size:9pt; font-weight:700; color:#B84040;
+  letter-spacing:0.06em; border-top:2px solid #8eaec8; padding-top:12px;
+}
+.cover-rating-box {
+  position:absolute; bottom:40px; right:30mm;
+  background:#1a3a5c; color:#FFFFFF; text-align:center;
+  padding:12px 20px; min-width:120px;
+}
+.cover-rating-box .rating-label { font-size:9pt; letter-spacing:0.08em; opacity:0.85; }
+.cover-rating-box .rating-val { font-size:18pt; font-weight:800; line-height:1.2; }
+
+/* ===== INDEX ===== */
+.toc-section { padding:28px 28mm 28px; background:#FFFFFF; border-bottom:3px solid #8eaec8; }
+.toc-header { font-size:14pt; font-weight:700; color:#1a3a5c; margin-bottom:14px; border-left:5px solid #1a3a5c; padding-left:10px; }
+.toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px 28px; }
+.toc-item { display:flex; align-items:baseline; gap:6px; padding:3px 0; border-bottom:1px solid #d0dbe5; font-size:9.5pt; }
+.toc-num { color:#1a3a5c; font-weight:700; min-width:30px; }
+.toc-title { color:#1a3a5c; flex:1; }
+.toc-ch { color:#4a6d8c; font-size:8.5pt; }
+
+/* ===== CHAPTER HEADINGS ===== */
+.chapter { padding:0 28mm; }
+h1 {
+  font-size:17pt; font-weight:700; color:#1a3a5c;
+  background:linear-gradient(to right,#f0f4f8,#FFFFFF);
+  border-bottom:3px solid #1a3a5c; padding:10px 14px 8px; margin:24px 0 14px;
+}
+h2 {
+  font-size:12.5pt; font-weight:700; color:#2c5f8a;
+  border-left:5px solid #1a3a5c; padding:6px 10px; margin:20px 0 10px;
+  background:#f7f9fb;
+}
+h3 { font-size:11pt; font-weight:700; color:#1a3a5c; margin:14px 0 7px; }
+h4 { font-size:10.5pt; font-weight:700; color:#2c5f8a; margin:12px 0 6px; }
+
+/* ===== BODY ===== */
+p { margin:0 0 8px; }
+ul,ol { margin:6px 0 10px; padding-left:20px; }
+li { margin-bottom:5px; }
+
+/* ===== TABLES ===== */
+.table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:12px 0 18px; }
+table { width:100%; border-collapse:collapse; margin:12px 0 18px; font-size:9.5pt; }
+th {
+  background:#1a3a5c; color:#FFFFFF; font-weight:700; text-align:left;
+  padding:8px 10px; border:1px solid #1a3a5c;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact;
+}
+td { padding:7px 10px; border:1px solid #c0d0e0; vertical-align:top; line-height:1.5; }
+tr:nth-child(even) td { background:#f0f4f8; }
+
+/* Status colors */
+.pass { color:#3A7010; font-weight:700; }
+.cond { color:#C8792A; font-weight:700; }
+.fail { color:#B84040; font-weight:700; }
+.pending-tag { color:#C8792A; font-style:italic; font-weight:600; }
+.b { font-weight:700; }
+
+/* Highlight boxes */
+.highlight-box {
+  border-left:5px solid #1a3a5c; background:#f0f4f8;
+  padding:10px 14px; margin:12px 0; line-height:1.65;
+}
+
+.veto-pass { border-left:5px solid #3A7010; background:#EDF5E8; padding:10px 14px; margin:10px 0; }
+.veto-cond { border-left:5px solid #C8792A; background:#FDF6E0; padding:10px 14px; margin:10px 0; }
+.veto-fail { border-left:5px solid #B84040; background:#FDEEEE; padding:10px 14px; margin:10px 0; }
+
+/* Rating badge */
+.rating-badge {
+  display:inline-block; font-size:12pt; font-weight:800;
+  color:#1a3a5c; border:2px solid #1a3a5c; padding:3px 14px; margin-top:6px;
+}
+.summary-tag { font-weight:700; color:#2c5f8a; }
+
+/* Code blocks */
+pre {
+  font-family:"Courier New",Courier,monospace; font-size:9pt;
+  background:#f0f4f8; border:1px solid #c0d0e0; border-left:4px solid #1a3a5c;
+  padding:10px 14px; margin:10px 0 14px; line-height:1.7; color:#1a3a5c; white-space:pre-wrap;
+}
+blockquote {
+  border-left:5px solid #1a3a5c; background:#f0f4f8;
+  padding:10px 14px; margin:12px 0; color:#1F2933;
+}
+
+/* Alternating row tints */
+.blue-row td { background:#f0f4f8 !important; }
+.green-row td { background:#EDF5E8 !important; }
+.red-row td { background:#FDEEEE !important; }
+.amber-row td { background:#FDF6E0 !important; }
+
+/* Table header variants */
+.th-green th { background:#3A7010 !important; border-color:#3A7010 !important; }
+.th-red th { background:#B84040 !important; border-color:#B84040 !important; }
+.th-blue th { background:#1a3a5c !important; border-color:#1a3a5c !important; }
+
+/* ===== PAGE BREAK ===== */
+.page-break { page-break-after:always; }
+
+/* ===== FOOTER ===== */
+.report-footer {
+  font-size:8.5pt; color:#4a6d8c; border-top:1px solid #c0d0e0;
+  padding-top:6px; margin-top:24px;
+}
+
+/* Sub-label in table first col */
+.td-label td:first-child { background:#f0f4f8 !important; font-weight:600; white-space:nowrap; width:160px; }
+
+/* Section divider */
+.section-rule { border-top:2px solid #8eaec8; margin:20px 0; }
+
+/* ===== RESPONSIVE ===== */
+@media screen and (max-width:768px){
+  body{font-size:9.5pt;line-height:1.65}
+  .cover{padding:20mm 12mm}
+  .cover-title{font-size:22pt}
+  .cover-subtitle{font-size:14pt}
+  .cover-meta{font-size:10pt}
+  .cover-rating-box{bottom:20px;right:12mm;padding:8px 14px;min-width:100px}
+  .cover-rating-box .rating-val{font-size:14pt}
+  .cover-topbar{height:3px}
+  .toc-section{padding:16px 10mm}
+  .toc-grid{grid-template-columns:1fr;gap:3px}
+  .chapter{padding:0 10mm}
+  h1{font-size:14pt;padding:8px 10px}
+  h2{font-size:11.5pt}
+  table{font-size:8.5pt;margin:10px 0 14px}
+  th,td{padding:5px 7px}
+  pre{font-size:8pt;padding:8px 10px}
+  .highlight-box,.veto-pass,.veto-cond,.veto-fail{padding:8px 10px;margin:8px 0}
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:12px 0 18px}
+}
+@media screen and (max-width:480px){
+  body{font-size:9pt}
+  .cover{padding:16mm 10mm}
+  .cover-title{font-size:18pt}
+  table{font-size:8pt}
+}
+@media print{
+  .chapter{padding:0}
+  body{background:#FFF}
+  th{background:#1a3a5c !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+/* Score highlight */
+.score-a { color:#3A7010; font-weight:700; }
+.score-b { color:#C8792A; font-weight:700; }
+.score-c { color:#B84040; font-weight:700; }
+
+/* Gate conclusion card */
+.gate-card {
+  border:1px solid #c0d0e0; border-left:5px solid #1a3a5c;
+  background:#f7f9fb; padding:12px 16px; margin:14px 0;
+  font-size:10pt; line-height:1.7;
+}
+.gate-card h4 { margin-top:0; }
+
+/* Confidential watermark style */
+.watermark {
+  position:fixed; top:50%; left:50%;
+  transform:translate(-50%,-50%) rotate(-45deg);
+  font-size:72pt; font-weight:800; color:rgba(26,58,92,0.04);
+  pointer-events:none; z-index:9999; white-space:nowrap;
+  letter-spacing:0.1em;
+}
+
+/* Red team alert */
+.red-alert {
+  border-left:5px solid #B84040; background:#FDEEEE;
+  padding:10px 14px; margin:12px 0; line-height:1.65;
+}
+.red-alert strong { color:#B84040; }
+
+/* Pending gate */
+.pending-gate {
+  border:2px dashed #C8792A; background:#FDF6E0;
+  padding:16px 20px; margin:14px 0; text-align:center;
+  font-size:12pt; font-weight:700; color:#C8792A;
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER PAGE ==================== -->
+<div class="cover page-break">
+  <div class="cover-topbar"></div>
+  <div class="cover-badge">CONFIDENTIAL · 内部机密</div>
+  <div class="cover-title">投 前 评 估 报 告</div>
+  <div class="cover-subtitle">利奈昔巴特（Linerixibat / Lynavoy）</div>
+  <div class="cover-company">IBAT 抑制剂 · PBC 胆汁淤积性瘙痒靶向治疗 · First-in-class</div>
+  <div class="cover-meta">
+    <div><span class="lbl">评估模板：</span>CMS BD Evaluation v2.0 — 技能 A-1（海外已上市·中国未上市）</div>
+    <div><span class="lbl">业务主体：</span>深康（消化肝病）</div>
+    <div><span class="lbl">合作方：</span>Alfasigma S.p.A.（全球独家商业化权利）</div>
+    <div><span class="lbl">原研方：</span>GSK（葛兰素史克）</div>
+    <div><span class="lbl">评估日期：</span>2026-05-29</div>
+    <div><span class="lbl">报告版本：</span>v2.0</div>
+  </div>
+  <div class="cover-confidential">⚠ 内部机密 — 康哲药业 BD 专用，限参与评估团队阅览</div>
+  <div class="cover-rating-box">
+    <div class="rating-label">推荐结论</div>
+    <div class="rating-val">附条件<br>推进</div>
+  </div>
+</div>
+
+<!-- ==================== TABLE OF CONTENTS ==================== -->
+<div class="toc-section page-break">
+  <div class="toc-header">目 录</div>
+  <div class="toc-grid">
+    <div class="toc-item"><span class="toc-num">01</span><span class="toc-title">执行摘要</span></div>
+    <div class="toc-item"><span class="toc-num">02</span><span class="toc-title">路由决策单</span></div>
+    <div class="toc-item"><span class="toc-num">03</span><span class="toc-title">One-pager · 终局五问</span></div>
+    <div class="toc-item"><span class="toc-num">04</span><span class="toc-title">Gate 1 — 前提门（注册路径/合规资质）</span></div>
+    <div class="toc-item"><span class="toc-num">05</span><span class="toc-title">Gate 2 — 定调门（Positioning）</span></div>
+    <div class="toc-item"><span class="toc-num">06</span><span class="toc-title">Gate 3 — 证据门（临床数据/安全性/KOL）</span></div>
+    <div class="toc-item"><span class="toc-num">07</span><span class="toc-title">Gate 4 — 支付门（准入与定价）</span></div>
+    <div class="toc-item"><span class="toc-num">08</span><span class="toc-title">Gate 5 — 成本门（供应链与CMC）</span></div>
+    <div class="toc-item"><span class="toc-num">09</span><span class="toc-title">Gate 6 — 财务门（待补）</span></div>
+    <div class="toc-item"><span class="toc-num">10</span><span class="toc-title">对抗审查摘要</span></div>
+    <div class="toc-item"><span class="toc-num">11</span><span class="toc-title">参考文献表</span></div>
+  </div>
+</div>
+
+<!-- ==================== 01 执行摘要 ==================== -->
+<div class="chapter page-break">
+<h1>01 执行摘要</h1>
+
+<h2>核心结论</h2>
+<p>利奈昔巴特是全球首个且目前唯一获批专门治疗 PBC 胆汁淤积性瘙痒的 IBAT 抑制剂，FDA/MHRA 已批准，中国 NDA 已获受理并进入优先审评，注册路径封闭。目标患者约 8-10 万人，基准情景峰值销售额约 6-7 亿元人民币，达行业门槛。</p>
+<div class="highlight-box">
+  <strong>推荐行动：</strong>附条件推进——需优先确认 Alfasigma 中国区合作意向及交易条款区间。
+</div>
+
+<h2>各 Gate 综合结论</h2>
+<div class="table-wrap"><table>
+<tr><th>Gate</th><th>结论</th><th>置信度</th><th>核心风险</th></tr>
+<tr><td><span class="b">Gate 1 — 前提门</span></td><td><span class="cond">有条件通过</span></td><td>中</td><td>中国权益归属（GSK vs Alfasigma）；CDE 注册分类（1类 vs 5.1类）</td></tr>
+<tr><td><span class="b">Gate 2 — 定调门</span></td><td><span class="pass">通过</span></td><td>中</td><td>医保准入障碍；Alfasigma 中国自建团队风险</td></tr>
+<tr><td><span class="b">Gate 3 — 证据门</span></td><td><span class="pass">通过（3.25/5）</span></td><td>高</td><td>疗效绝对幅度有限（NNT≈8）；腹泻 62% 真实世界影响</td></tr>
+<tr><td><span class="b">Gate 4 — 支付门</span></td><td><span class="cond">有条件通过</span></td><td>中</td><td>NRDL 谈判折扣不确定；瘙痒适应症定位可能制约准入</td></tr>
+<tr><td><span class="b">Gate 5 — 成本门</span></td><td><span class="cond">有条件通过</span></td><td>中</td><td>毛利率基准情景 62%，安全边际薄；Alfasigma 中国区报价未知</td></tr>
+<tr><td><span class="b">Gate 6 — 财务门</span></td><td><span class="pending-tag">待补</span></td><td>—</td><td>Gate 6 评估进行中，尚未完成</td></tr>
+</table></div>
+
+<h2>红队关键警示（Top 3）</h2>
+<div class="red-alert">
+  <strong>🔴 最高优先级 1：中国权益归属悬空</strong><br>
+  中国 NDA 由 GSK 于 2026年2月25日提交（早于 Alfasigma 4月27日交割），需确认授权链完整性。这不是"需补证据"，而是可能导致整个交易无法落地的结构性风险。
+</div>
+<div class="red-alert">
+  <strong>🔴 最高优先级 2：PeakSales 假设缺乏底层数据</strong><br>
+  渗透率（5%/8%/12%）无市场调研支撑，自费市场渗透率未建模。
+</div>
+<div class="red-alert">
+  <strong>🟡 高优先级 3：瘙痒适应症 NRDL 准入障碍</strong><br>
+  症状管理类药物进入国家医保的难度高于疾病改善类药物。
+</div>
+</div>
+
+<!-- ==================== 02 路由决策单 ==================== -->
+<div class="chapter page-break">
+<h1>02 路由决策单</h1>
+<div class="table-wrap"><table class="td-label">
+<tr><th>项目</th><th>决策</th></tr>
+<tr><td>主技能</td><td>A-1（海外已上市·中国未上市） <span class="pass">✅ 正确</span></td></tr>
+<tr><td>业务主体</td><td>深康（消化肝病） <span class="pass">✅ 正确</span></td></tr>
+<tr><td>财务门槛类型</td><td>创新药 <span class="pass">✅ 正确</span></td></tr>
+<tr><td>A-6 院外延伸</td><td><span class="pending-tag">❌ 当前不适用</span>（中国未上市，暂不触发）</td></tr>
+<tr><td>A-2 国内合作</td><td><span class="cond">⚠️ 不适用</span>（合作方为海外企业，A-1 已覆盖全流程）</td></tr>
+</table></div>
+<div class="highlight-box">
+  <strong>修正后链路：</strong>D-1 → D-2 → A-1 → D-3 → Gate 1-6
+</div>
+</div>
+
+<!-- ==================== 03 ONE-PAGER ==================== -->
+<div class="chapter page-break">
+<h1>03 One-pager · 终局五问</h1>
+
+<h2>一、成功终局定义：峰值销售额（PeakSales）能做多大？</h2>
+<p>全球基准：分析师预测利奈昔巴特全球峰值销售约 5 亿美元/年。中国市场——中国 PBC 女性患病率 148.71/10 万、男性 40.81/10 万，7MM+中国确诊患病总数超 100 万例。中国确诊患病约 15-20 万人，临床显著性瘙痒占 53%，目标患者约 8-10 万人。口服慢性用药，年治疗费用假设 8-12 万元人民币（参考孤儿药定价）：</p>
+<div class="table-wrap"><table>
+<tr><th>情景</th><th>渗透率</th><th>年费（万元）</th><th>峰值销售额（亿元）</th></tr>
+<tr><td><span class="b">保守</span></td><td>5%</td><td>8</td><td>3.2</td></tr>
+<tr><td><span class="b">基准</span></td><td>8%</td><td>10</td><td>6.4</td></tr>
+<tr><td><span class="b">乐观</span></td><td>12%</td><td>12</td><td>11.5</td></tr>
+</table></div>
+<p>基准情景峰值销售额约 6-7 亿元人民币，属中适应症规模，达峰值门槛（≥3亿元）。</p>
+<p><strong>海外上市状态：</strong>FDA 2026年3月19日批准；英国 MHRA 2026年5月1日批准；欧盟、加拿大在审评。中国 NDA 于 2026年2月25日获 CDE 受理并纳入优先审评，预计 2027年获批。</p>
+
+<h2>二、核心价值主张：为什么值得做？</h2>
+<ul>
+  <li><strong>First-in-class 定位</strong>：全球首个获批用于 PBC 胆汁淤积性瘙痒的 IBAT 抑制剂。高达 89% 的 PBC 患者经历瘙痒，其中 53% 为临床显著性瘙痒，而一线治疗 UDCA 不改善瘙痒，约 1/3 患者未接受有效治疗——明确的未满足需求。</li>
+  <li><strong>III 期数据扎实</strong>：GLISTEN 试验（n=238）主要终点达标，瘙痒 NRS 评分 LS 均值差 -0.72（p=0.001），第 24 周 56% 患者达到临床意义改善（vs 安慰剂 43%）。睡眠干扰显著改善（p=0.024）。安全性可控：腹泻 61% 但停药率仅 4%。获美/欧/日孤儿药认定。</li>
+  <li><strong>管线协同</strong>：深康消化肝病为核心治疗领域，PBC 瘙痒位于目标科室（消化科/肝病科），销售团队可复用。</li>
+</ul>
+
+<h2>三、最大风险：哪里可能出错？</h2>
+<ol>
+  <li><strong>全球权益已被锁定</strong>：GSK 已将全球独家权利授予 Alfasigma（总价值最高 6.9 亿美元），2026年4月完成交割。康哲需与 Alfasigma 洽谈中国区授权——谈判筹码减弱。</li>
+  <li><strong>同靶点竞品追赶</strong>：Mirum 的 Volixibat（PBC IIb期 VANTAGE）和 Maralixibat（PBC IIb期 EMBARK）均在推进，若任一在中国率先获批，将形成先发锁定。</li>
+  <li><strong>腹泻安全性信号</strong>：61% 腹泻发生率在慢性长期用药场景下可能导致依从性问题。</li>
+</ol>
+
+<h2>四、止损边界：最坏情况怎么退？</h2>
+<ul>
+  <li><strong>注册失败止损</strong>：中国优先审评已受理，注册路径封闭风险低。若 CDE 要求补充临床，则延迟 12-18 个月。</li>
+  <li><strong>竞品抢先止损</strong>：若同靶点竞品先于标的在中国获批且进入 NRDL，峰值销售额降至 1.5 亿元以下——触发峰值底线否决。</li>
+  <li><strong>交易条款止损</strong>：若 Alfasigma 中国区授权要价首付款 >2000 万美元，需严格按 IRR≥15% 门槛回算，不达标则放弃。</li>
+</ul>
+
+<h2>五、决策人时限：什么时候必须拍板？</h2>
+<div class="highlight-box">
+  <strong>时间窗口紧迫</strong>：中国 NDA 已获受理并进入优先审评，预计 2027年 Q1-Q2 获批。<br>
+  · 2026年 Q3 前：完成 Gate 1-3 评估，确认 Go/No-Go<br>
+  · 2026年 Q4 前：与 Alfasigma 建立商务接触，获取中国区授权条款意向<br>
+  · 2027年 Q1 前：完成 Gate 4-6，投委会决策
+</div>
+</div>
+
+<!-- ==================== 04 GATE 1 ==================== -->
+<div class="chapter page-break">
+<h1>04 Gate 1 — 前提门（注册路径/合规资质/法定前提）</h1>
+<p><em>品种：利奈昔巴特（Linerixibat/Lynavoy） | 评估技能：A-1 | 生成时间：2026-05-29</em></p>
+
+<div class="gate-card">
+  <h4>结论卡</h4>
+  <strong>结论：<span class="cond">有条件通过</span> | 置信度：中</strong><br><br>
+  <strong>主要支撑依据：</strong><br>
+  1. 中国 NDA 已于 2026年2月25日获 CDE 受理，优先审评通道<br>
+  2. FDA（2026年3月19日）、MHRA（2026年5月1日）已批准上市<br>
+  3. 全球权益已转移至 Alfasigma（2026年4月交割），中国区权益待确定<br><br>
+  <strong>需补证据 Top 5：</strong><br>
+  1. CDE 实际注册分类确认（媒体报道为"1类新药"而非预期 5.1类）<br>
+  2. GLISTEN 试验是否纳入中国/亚洲受试者亚组数据<br>
+  3. Alfasigma 中国区授权合作方确定状态及中国权益归属<br>
+  4. 原研 GMP 生产基地 NMPA 境外检查记录<br>
+  5. 物质专利/用途专利在中国的授权状态及到期时间
+</div>
+
+<h2>一、合作方主体资质</h2>
+
+<h3>1.1 全球商业化权属方：Alfasigma S.p.A.</h3>
+<p>Alfasigma 为意大利私营制药企业，2024年销售额 18.7 亿欧元。2026年3月9日与 GSK 签订全球许可协议，2026年4月完成交割，获得利奈昔巴特全球独家开发、生产和商业化权利。交易总价值最高 6.9 亿美元（首付款 3 亿美元 + 里程碑最高 3.9 亿美元）+ 阶梯式双位数特许权使用费。</p>
+<p>Alfasigma 具有 CDMO 能力，拥有 GMP 认证的口服固体制剂生产和放行设施。2023年以 8 亿美元收购 Intercept Pharma，获得 PBC 产品 Ocaliva（奥贝胆酸，已退市），PBC 领域已有布局。</p>
+<div class="highlight-box">
+  <strong>关键合规风险：</strong>Alfasigma 为私营公司，财务透明度有限。需确认其是否存在 FDA/NMPA/EMA 重大合规警告或诉讼记录。
+</div>
+
+<h3>1.2 原研方：GSK（葛兰素史克）</h3>
+<p>GSK 为全球 Top 10 制药企业，2026年 Q1 收入 103 亿美元。利奈昔巴特由 GSK 研发，已通过全球许可协议转让给 Alfasigma，GSK 保留里程碑付款和特许权使用费权益。</p>
+<div class="highlight-box">
+  <strong>交易结构影响：</strong>康哲药业若引进中国区权益，需与 Alfasigma 而非 GSK 洽谈。这是与原研方直接谈判不同的授权链结构。
+</div>
+
+<h2>二、中国注册路径分析</h2>
+
+<h3>2.1 注册分类：关键不确定性</h3>
+<p>根据 CDE 官网 2026年2月25日受理信息，利奈昔巴特片被 CDE 受理为"1类新药"。这与 Discovery 阶段预期的 5.1 类分类存在差异。可能原因：CDE 可能将其认定为"1类创新药"（境外已上市但中国首次申报的新分子实体）。根据 2025年 CDE《化学药品注册受理审查指南（试行）》，境外已上市境内未上市的原研药品注册分类以 CDE 实际认定为准。</p>
+<div class="highlight-box">
+  <strong>风险评估：</strong>无论 CDE 标记为 1类还是 5.1类，核心注册路径不受影响——均基于全球 GLISTEN III期临床试验数据提交 NDA，享受优先审评通道。但注册分类影响后续数据保护期和市场独占期计算，需在推进前与注册团队确认。
+</div>
+
+<h3>2.2 注册时间线</h3>
+<div class="table-wrap"><table>
+<tr><th>节点</th><th>日期/周期</th></tr>
+<tr><td>CDE 拟纳入优先审评</td><td>2025年7月4日</td></tr>
+<tr><td>NDA 上市申请获 CDE 受理</td><td>2026年2月25日</td></tr>
+<tr><td>优先审评标准周期</td><td>130个工作日（约6个月）</td></tr>
+<tr><td>预计获批时间窗口</td><td>2026年 Q3~Q4</td></tr>
+</table></div>
+
+<h3>2.3 海外获批状态</h3>
+<div class="table-wrap"><table>
+<tr><th>地区</th><th>状态</th><th>获批日期</th></tr>
+<tr><td>美国 FDA</td><td><span class="pass">已批准</span></td><td>2026年3月19日</td></tr>
+<tr><td>英国 MHRA</td><td><span class="pass">已批准</span></td><td>2026年5月1日</td></tr>
+<tr><td>欧盟 EMA</td><td>审评中</td><td>—</td></tr>
+<tr><td>加拿大</td><td>审评中</td><td>—</td></tr>
+<tr><td>日本</td><td>孤儿药认定</td><td>—</td></tr>
+</table></div>
+
+<h3>2.4 孤儿药认定</h3>
+<p>利奈昔巴特在美国、欧盟和日本均获得孤儿药认定。中国 CDE 已纳入优先审评，但 PBC 是否被 CDE 认定为"罕见病"尚不确定——中国 PBC 患病率数据（女性 148.71/10万）远高于美国/欧洲水平，可能不符合中国罕见病定义。</p>
+
+<h2>三、法定前提与合规资质</h2>
+<h3>3.1 NMPA 5.1类/1类申报要求核查</h3>
+<p>利奈昔巴特作为境外已上市境内未上市的化学药品创新药，其 NDA 申报基于全球 GLISTEN III期双盲随机安慰剂对照试验数据（NCT04950127，n=238）。境外数据用于中国注册需评估：</p>
+<ol>
+  <li><strong>种族敏感性</strong>：IBAT 靶点是否存在已知种族差异尚不明确。利奈昔巴特为小分子口服制剂，肠道局部作用靶点，全身暴露量低，种族差异风险理论上可控</li>
+  <li><strong>全球多中心入组</strong>：GLISTEN 是否纳入中国/亚洲受试者——Discovery 阶段未明确，需补充确认</li>
+  <li><strong>主要终点认可度</strong>：瘙痒 NRS 评分为 PRO（患者报告结局）终点，CDE 对此类终点的接受度需评估</li>
+</ol>
+
+<h3>3.2 CMS 集团利益冲突核查</h3>
+<p>康哲药业核心治疗领域包括心脑血管及消化业务（深康），管线中未见 PBC 或胆汁淤积性瘙痒相关品种。利奈昔巴特引进至深康消化肝病线，与现有管线无重叠，不存在利益冲突。康哲已有熊去氧胆酸口服液（UDCA）产品，这是 PBC 一线治疗药物。利奈昔巴特（瘙痒对症治疗）与 UDCA（疾病修饰治疗）为互补关系而非竞争关系，管线协同潜力明确。</p>
+
+<h2>四、知识产权保护层级（初步）</h2>
+<div class="table-wrap"><table>
+<tr><th>保护机制</th><th>预估效力等级</th><th>说明</th></tr>
+<tr><td>物质化合物专利</td><td>★★★（主要壁垒）</td><td>新分子实体，预计到期不早于 2033年</td></tr>
+<tr><td>PBC 瘙痒用途专利</td><td>★★（有效补充）</td><td>可能落入化合物专利保护区间</td></tr>
+<tr><td>孤儿药独占期（美国）</td><td>★（补充层）</td><td>中国市场不直接适用</td></tr>
+<tr><td>数据保护期</td><td>待确认</td><td>依赖 CDE 最终分类认定</td></tr>
+</table></div>
+
+<h2>五、关键注册风险</h2>
+<ol>
+  <li><strong>注册分类不确定性</strong>（风险等级：中）：CDE 受理为"1类新药"而非 5.1类，可能影响数据保护期和后续仿制药门槛</li>
+  <li><strong>GLISTEN 中国亚组数据缺失风险</strong>（风险等级：中高）：若 GLISTEN 未纳入中国受试者，CDE 可能要求补充 PK 桥接研究</li>
+  <li><strong>中国权益归属未定</strong>（风险等级：高）：Alfasigma 已获得全球权益，但中国区授权合作方尚未公开确定</li>
+  <li><strong>PRO 终点 CDE 接受度</strong>（风险等级：低中）：瘙痒 NRS 评分为患者报告结局，CDE 审评经验在增加</li>
+</ol>
+
+<div class="report-footer">Gate 1 评估完成 | 下一步：推进至 Gate 2（临床差异化与科学价值·定调门）</div>
+</div>
+
+<!-- ==================== 05 GATE 2 ==================== -->
+<div class="chapter page-break">
+<h1>05 Gate 2 — 定调门（Positioning Gate）</h1>
+<p><em>Gate 核心问题：产品定调是什么？定调决定整个商业模式。</em></p>
+
+<div class="gate-card">
+  <h4>结论卡</h4>
+  <strong>结论：<span class="pass">通过</span> | 置信度：中</strong><br><br>
+  <strong>主要支撑依据：</strong><br>
+  1. 利奈昔巴特是全球首个且目前唯一获批专门治疗 PBC 胆汁淤积性瘙痒的 IBAT 抑制剂，定调为「首创（First-in-class）· 专科瘙痒治疗药物」<br>
+  2. Alfasigma 持有全球独家商业化权利（含中国），在华设有正式运营机构，中国 NDA 已获优先审评受理<br>
+  3. 同靶点 IBAT 竞品尚处 IIb期，中国市场尚无任何 IBAT 抑制剂获批 PBC 瘙痒适应症，先发窗口明确
+</div>
+
+<h2>一、产品属性定调</h2>
+<p>利奈昔巴特定调为<strong>首创（First-in-class）IBAT 抑制剂 · PBC 瘙痒靶向治疗药物</strong>。</p>
+<p>不治疗 PBC 疾病本身（UDCA 一线治疗延缓肝病进展），而是靶向解决 PBC 患者最影响生活质量的瘙痒症状。高达 89% 的 PBC 患者经历瘙痒，53% 经历临床显著性瘙痒，约三分之一未接受有效治疗。这一精准定位意味着利奈昔巴特与 PBC 基础治疗（UDCA）及二线治疗（elafibranor、seladelpar）形成互补关系而非替代关系。</p>
+<div class="highlight-box">
+  <strong>定调总结：</strong>利奈昔巴特不是"又一个 PBC 药物"，而是"PBC 瘙痒的第一个靶向治疗"。不与 PPAR 激动剂争夺"二线 PBC 治疗"定位，而是开辟独立的"瘙痒管理"赛道。
+</div>
+
+<h2>二、合作模式与权利架构</h2>
+
+<h3>2.1 全球权利链</h3>
+<div class="table-wrap"><table class="td-label">
+<tr><th>角色</th><th>主体</th><th>关键事实</th></tr>
+<tr><td>原研方</td><td>GSK（葛兰素史克）</td><td>完成从发现到 III期临床（GLISTEN）的全周期开发</td></tr>
+<tr><td>全球商业化权方</td><td>Alfasigma S.p.A.</td><td>2026年3月9日签署全球独家许可协议，4月27日完成交割</td></tr>
+</table></div>
+
+<p><strong>交易条款：</strong>首付款 3 亿美元 | FDA 批准里程碑 1000 万美元 | EU/UK 批准里程碑 2000 万美元 | 销售里程碑最高 2.7 亿美元 | 总交易价值最高 6.9 亿美元 + 阶梯式双位数特许权使用费</p>
+
+<h3>2.2 Alfasigma 实力评估</h3>
+<p>Alfasigma 是意大利私营制药公司，2024年营收 18.7 亿欧元，核心领域为消化疾病、血管疾病和免疫学。近年来通过连续并购快速扩张：2023年以 8 亿美元收购 Intercept Pharmaceuticals；2024年以 1.7 亿欧元收购 Galapagos 的 Jyseleca 业务；2026年以 6.9 亿美元获得利奈昔巴特全球权利。</p>
+<p>Alfasigma 的战略意图清晰：打造 PBC/肝病产品组合。但 Ocaliva 因确认性研究失败已于 2025年9月自愿退出美国市场，利奈昔巴特成为其在 PBC 领域的核心资产。分析师预测 Lynavoy 峰值销售约 5 亿美元/年。</p>
+
+<h3>2.3 中国权益关键判断</h3>
+<div class="veto-cond">
+  <strong>核心结论：中国权益归 Alfasigma 所有，CMS 需与 Alfasigma 洽谈中国区授权。</strong><br>
+  GSK 许可协议覆盖"全球独家权利"，中国包含在内。中国 NDA 由 GSK 于 2026年2月25日提交（早于 Alfasigma 交割完成）。Alfasigma 在华设有正式运营机构（alfasigma-cn.com）。
+</div>
+
+<h3>2.4 合作模式选项</h3>
+<div class="table-wrap"><table>
+<tr><th>模式</th><th>可行性</th><th>关键考量</th></tr>
+<tr><td>Alfasigma 自行推广</td><td>中</td><td>在华已有机构，但 PBC 瘙痒属超专科领域，需肝病/KOL 网络</td></tr>
+<tr><td><strong>中国区独家授权给 CMS</strong></td><td><strong>高</strong></td><td>CMS（深康）消化肝病是核心领域，PBC 已有 KOL 和医院网络</td></tr>
+<tr><td>联合推广</td><td>低</td><td>操作复杂度高，对于超专科产品不经济</td></tr>
+</table></div>
+<p><strong>推荐模式：中国区独家授权（License-in），CMS 深康承接。</strong></p>
+
+<h2>三、知识产权与保护机制</h2>
+<div class="table-wrap"><table>
+<tr><th>保护机制</th><th>预计到期</th><th>防护效力</th></tr>
+<tr><td>物质专利（linerixibat 化合物）</td><td>预计 2030s 中期</td><td>★★★（主要壁垒）</td></tr>
+<tr><td>孤儿药市场独占期</td><td>FDA 7年 / EU 10年</td><td>★★（有效补充）</td></tr>
+<tr><td>数据保护期</td><td>FDA 5年（新化学实体）</td><td>★（补充层）</td></tr>
+</table></div>
+
+<h2>四、竞争格局初判</h2>
+<h3>4.1 竞争格局评级：蓝海（PBC 瘙痒靶向治疗）</h3>
+<p>直接竞品（同适应症·PBC 瘙痒）：目前全球无直接竞品已获批 PBC 瘙痒适应症。</p>
+<div class="table-wrap"><table>
+<tr><th>竞品</th><th>公司</th><th>机制</th><th>PBC 瘙痒状态</th><th>与利奈昔巴特关系</th></tr>
+<tr><td>Volixibat</td><td>Mirum</td><td>IBAT 抑制剂</td><td>IIb期 VANTAGE（已完成入组）</td><td>直接竞品，同靶点，落后 3-4 年</td></tr>
+<tr><td>Maralixibat</td><td>Mirum</td><td>IBAT 抑制剂</td><td>PBC IIb期 EMBARK</td><td>直接竞品，同靶点，已获批 ALGS/PFIC</td></tr>
+</table></div>
+
+<h3>4.2 中国市场竞争时间窗</h3>
+<div class="table-wrap"><table>
+<tr><th>事件</th><th>预计时间</th><th>先发优势</th></tr>
+<tr><td>利奈昔巴特中国 NDA 受理（优先审评）</td><td>2026年2月</td><td>—</td></tr>
+<tr><td>利奈昔巴特中国预计获批</td><td>2026Q4-2027Q1</td><td>首发者</td></tr>
+<tr><td>Volixibat 全球 III期启动（预计）</td><td>2027-2028</td><td>落后 3-4 年</td></tr>
+<tr><td>Volixibat 中国申报（预计）</td><td>2029-2030</td><td>落后 4-5 年</td></tr>
+</table></div>
+<p><strong>先发窗口：利奈昔巴特在中国预计有 3-4 年的同靶点独占期。</strong></p>
+
+<h2>五、定调总结</h2>
+<div class="table-wrap"><table class="td-label">
+<tr><th>维度</th><th>结论</th></tr>
+<tr><td>产品属性</td><td>首创（First-in-class）IBAT 抑制剂 · PBC 瘙痒靶向治疗</td></tr>
+<tr><td>目标适应症</td><td>PBC 成人患者胆汁淤积性瘙痒</td></tr>
+<tr><td>竞争定位</td><td>蓝海——全球唯一获批 PBC 瘙痒适应症药物</td></tr>
+<tr><td>合作模式</td><td>中国区独家 License-in（CMS 深康承接，与 Alfasigma 洽谈）</td></tr>
+<tr><td>先发窗口</td><td>中国市场预计 3-4 年同靶点独占期</td></tr>
+<tr><td>IP 主要壁垒</td><td>化合物专利（待确认确切到期日）+ 孤儿药独占</td></tr>
+</table></div>
+
+<div class="report-footer">Gate 2 结论：通过 | 置信度：中 | 推进至 Gate 3（证据门）</div>
+</div>
+
+<!-- ==================== 06 GATE 3 ==================== -->
+<div class="chapter page-break">
+<h1>06 Gate 3 — 证据门（临床数据/安全性/KOL/差异化）</h1>
+
+<div class="gate-card">
+  <h4>结论卡</h4>
+  <strong>临床证据综合评分：3.25/5（中等差异化，主要终点达标但绝对改善幅度有限）</strong><br><br>
+  核心判断：利奈昔巴特是首个且唯一在大型 III期 RCT 中证明对 PBC 瘙痒有统计学显著改善的靶向药物。GLISTEN 主要终点达标（LS 均值差 -0.72，p=0.0013），56% 患者达到临床意义改善。腹泻（62%）为可预期、可管理的机制相关 AE，无药物性肝损伤证据。KOL 评价正面，中国 PI 贾继东参与。安全性评级：可控。<br><br>
+  <strong>置信度：高</strong>（III期 RCT 发表于 Lancet 子刊，FDA/UK MHRA 已批准）
+</div>
+
+<h2>一、GLISTEN 关键数据</h2>
+
+<h3>1.1 试验设计</h3>
+<p>GLISTEN（NCT04950127）是 PBC 瘙痒领域迄今最大规模 III期 RCT，发表于 The Lancet Gastroenterology &amp; Hepatology。19个国家 115个中心，入组时间 2021年12月至 2024年5月。238名 PBC 伴中重度瘙痒患者（WI-NRS≥4），1:1随机分配至利奈昔巴特 40mg BID 或安慰剂，治疗 24周。<strong>中国研究者：贾继东（首都医科大学附属北京友谊医院）、金清龙参与试验。</strong></p>
+
+<h3>1.2 疗效结果</h3>
+<div class="table-wrap"><table>
+<tr><th>终点</th><th>利奈昔巴特</th><th>安慰剂</th><th>差异/p值</th></tr>
+<tr><td><span class="b">主要终点：LS 均值变化</span></td><td>-2.86</td><td>-2.15</td><td><strong>-0.72（p=0.0013）</strong></td></tr>
+<tr><td>第24周临床意义改善率（WI-NRS 降低≥3分）</td><td>56%</td><td>43%</td><td>差值 13pp</td></tr>
+<tr><td>起效时间</td><td>第2周</td><td>—</td><td>持续24周</td></tr>
+<tr><td>睡眠干扰</td><td>显著改善</td><td>—</td><td>p=0.024</td></tr>
+</table></div>
+
+<h3>1.3 机制验证数据</h3>
+<p>GLISTEN 生物标志物分析显示，利奈昔巴特治疗导致<strong>IL-31 水平显著降低</strong>，与瘙痒改善程度正相关。IL-31 是已知的瘙痒关键介质，该发现为 IBAT 抑制→胆汁酸降低→IL-31 降低→瘙痒缓解的机制链提供了直接证据。</p>
+
+<h3>1.4 临床证据评分矩阵（A-1标准）</h3>
+<div class="table-wrap"><table>
+<tr><th>维度</th><th>权重</th><th>评分</th><th>加权分</th></tr>
+<tr><td>疗效改善幅度</td><td>30%</td><td>3</td><td>0.90</td></tr>
+<tr><td>安全性可控</td><td>25%</td><td>3</td><td>0.75</td></tr>
+<tr><td>数据可桥接</td><td>20%</td><td>4</td><td>0.80</td></tr>
+<tr><td>KOL 认可度</td><td>15%</td><td>4</td><td>0.60</td></tr>
+<tr><td>RWE 支持</td><td>10%</td><td>2</td><td>0.20</td></tr>
+<tr style="background:#f0f4f8"><td><strong>总分</strong></td><td>100%</td><td>—</td><td><strong>3.25</strong></td></tr>
+</table></div>
+
+<h2>二、安全性特征</h2>
+
+<h3>2.1 GLISTEN 安全性数据</h3>
+<div class="table-wrap"><table>
+<tr><th>不良事件</th><th>利奈昔巴特（n=119）</th><th>安慰剂（n=118）</th></tr>
+<tr><td><span class="b">腹泻</span></td><td><strong>62%</strong></td><td>18%</td></tr>
+<tr><td>腹痛</td><td>26%</td><td>10%</td></tr>
+<tr><td>ALT 升高</td><td>9%</td><td>3%</td></tr>
+<tr><td>AST 升高</td><td>8%</td><td>&lt;1%</td></tr>
+<tr><td>出血事件</td><td>9%</td><td>3%</td></tr>
+<tr><td>因 GI AE 停药</td><td>7%</td><td>&lt;1%</td></tr>
+<tr><td>SAE</td><td>12%</td><td>3%</td></tr>
+<tr><td><strong>死亡</strong></td><td><strong>0</strong></td><td><strong>0</strong></td></tr>
+</table></div>
+
+<h3>2.2 FDA 标签关键安全信号</h3>
+<ul>
+  <li><strong>禁忌</strong>：失代偿性肝硬化或有肝失代偿事件史</li>
+  <li>用药要求：整片吞服，餐前≥30分钟</li>
+  <li>与胆汁酸结合树脂间隔≥4小时</li>
+  <li>因 AE 停药率：14% vs 安慰剂 5%</li>
+  <li>全身吸收低，妊娠期预计胎儿暴露极低</li>
+</ul>
+
+<h3>2.3 安全性综合判断</h3>
+<p>腹泻是利奈昔巴特<strong>可预期、可管理的机制相关 AE</strong>——IBAT 抑制本身就是通过阻断肠道胆汁酸重吸收发挥作用，腹泻是其药理作用的直接后果。关键风险点：腹泻发生率高（62%），需主动患者教育和阶梯管理；SAE 差异（12% vs 3%）需长期数据验证。<strong>正面信号：合并分析确认无药物性肝损伤。</strong></p>
+
+<h2>三、KOL 学术认知</h2>
+<div class="table-wrap"><table>
+<tr><th>KOL</th><th>机构</th><th>评价要点</th></tr>
+<tr><td><strong>Gideon Hirschfield, MD</strong></td><td>多伦多总医院（GLISTEN 第一作者/PI）</td><td>Lancet 论文第一作者，EASL 2025 报告人。评价安全性"良好且与 IBAT 抑制机制一致"</td></tr>
+<tr><td><strong>Don Rockey, MD</strong></td><td>MUSC 消化科主任、AGA 肝胆分会副主席</td><td>评价为 PBC 瘙痒领域"重大进展"。关注点：<strong>价格将是临床使用的关键因素</strong></td></tr>
+<tr><td><strong>贾继东</strong></td><td>北京友谊医院（GLISTEN 中国 PI）</td><td>国内肝病学界领军人物，曾任亚太肝病学会主席。参与 GLISTEN 为中国注册奠定重要基础</td></tr>
+</table></div>
+
+<h2>四、差异化定位</h2>
+<div class="table-wrap"><table>
+<tr><th>维度</th><th>利奈昔巴特（IBAT）</th><th>Iqirvo（PPARα/δ）</th><th>Livdelzi（PPARδ）</th></tr>
+<tr><td>定位</td><td><strong>瘙痒对症治疗</strong></td><td>二线 PBC 疾病改善</td><td>二线 PBC 疾病改善</td></tr>
+<tr><td>适应症</td><td>PBC 瘙痒</td><td>PBC（UDCA 不充分应答）</td><td>PBC（UDCA 不充分应答）</td></tr>
+<tr><td>中国注册</td><td>优先审评中</td><td>待确认</td><td>待确认</td></tr>
+<tr><td>协同关系</td><td>与疾病改善药<strong>互补</strong></td><td>间接竞争（同一患者群）</td><td>间接竞争（同一患者群）</td></tr>
+</table></div>
+<p>利奈昔巴特在 IBAT 抑制剂 PBC 瘙痒赛道具备至少 18-24 个月先发窗口。</p>
+
+<div class="report-footer">Gate 3 证据门评估完成 | 置信度：高 | 下一步：推进至 Gate 4（准入与支付门）</div>
+</div>
+
+<!-- ==================== 07 GATE 4 ==================== -->
+<div class="chapter page-break">
+<h1>07 Gate 4 — 支付门（准入与定价路径）</h1>
+
+<div class="gate-card">
+  <h4>结论卡</h4>
+  <strong>结论：<span class="cond">有条件通过</span> | 置信度：中</strong><br><br>
+  推荐准入策略：NRDL 优先（获批后首年即申报），辅以自费/商保过渡期。<br>
+  利奈昔巴特作为 PBC 瘙痒对症治疗药物，准入壁垒高于疾病改善类药物。NRDL 谈判价格不确定性高，需预设多情景财务模型。
+</div>
+
+<h2>一、定价基准分析</h2>
+<h3>1.1 全球定价参照</h3>
+<p>利奈昔巴特（Lynavoy）尚未公布中国定价。参考美国市场：年治疗费用预计 4-6 万美元（折合人民币约 28-42 万元/年），属高值专科药。欧盟、加拿大定价待审批完成后公布。</p>
+<div class="table-wrap"><table>
+<tr><th>参照体系</th><th>年治疗费用</th><th>备注</th></tr>
+<tr><td>美国市场（参考区间）</td><td>4-6 万美元/年</td><td>尚未正式公布</td></tr>
+<tr><td>欧盟市场</td><td>待定</td><td>审批中</td></tr>
+<tr><td>中国市场目标区间</td><td>8-12 万元/年</td><td>参考孤儿药定价逻辑</td></tr>
+</table></div>
+
+<h3>1.2 中国定价策略选项</h3>
+<div class="table-wrap"><table>
+<tr><th>策略</th><th>可行性</th><th>利奈昔巴特适用性</th></tr>
+<tr><td>NRDL 国家医保</td><td>高（目标）</td><td>瘙痒适应症定位制约进入NRDL优先级</td></tr>
+<tr><td>省级大病医保</td><td>中</td><td>东部富裕省份可行性较高</td></tr>
+<tr><td>商业保险</td><td>中</td><td>高端医疗险覆盖高值专科药</td></tr>
+<tr><td>自费市场</td><td>低</td><td>目标患者支付能力有限，纯自费难以支撑峰值</td></tr>
+</table></div>
+
+<h2>二、NRDL 准入障碍分析</h2>
+<div class="red-alert">
+  <strong>核心障碍：</strong>瘙痒属于"症状管理"而非"疾病改善"，CDE/NRDL 对此类药物的卫生技术评估（HTA）通常更严苛。与 UDCA（疾病改善，延缓肝病进展）相比，利奈昔巴特的临床价值认定存在不确定性。
+</div>
+<p>有利因素：PBC 被列入中国《罕见病目录》概率较低，但利奈昔巴特已在美/欧/日获孤儿药认定，可作为罕见病用药纳入地方罕见病保障体系。各地罕见病用药政策差异大，需逐省评估。</p>
+
+<h2>三、商保与合作支付</h2>
+<p>城市定制型商业保险（惠民保）可作为短期过渡方案：目前约 100+ 城市已建立惠民保，覆盖部分高值创新药。但惠民保赔付上限低（约 50-100 万元/年），对月均费用 1 万元的利奈昔巴特有一定支撑作用。</p>
+
+<h2>四、支付门结论</h2>
+<div class="veto-cond">
+  <strong>推荐策略：</strong>获批后首年即申报 NRDL，同时布局省级大病医保和惠民保作为过渡。财务模型需预设 NRDL 折扣率 30-50% 情景。
+</div>
+
+<div class="report-footer">Gate 4 评估完成 | 下一步：推进至 Gate 5（成本门）</div>
+</div>
+
+<!-- ==================== 08 GATE 5 ==================== -->
+<div class="chapter page-break">
+<h1>08 Gate 5 — 成本门（供应链与 CMC）</h1>
+
+<div class="gate-card">
+  <h4>结论卡</h4>
+  <strong>结论：<span class="cond">有条件通过</span> | 置信度：中</strong><br><br>
+  利奈昔巴特为口服固体制剂，API 合成路线已知，CMC 难度中等。Alfasigma 具有 CDMO 能力，可作为候选供应商。毛利率基准情景 62%，安全边际薄，需在 BD 谈判中压低供货成本。
+</div>
+
+<h2>一、产品概况</h2>
+<div class="table-wrap"><table class="td-label">
+<tr><th>项目</th><th>内容</th></tr>
+<tr><td>通用名</td><td>Linerixibat（利奈昔巴特）</td></tr>
+<tr><td>商品名</td><td>Lynavoy</td></tr>
+<tr><td>剂型/规格</td><td>口服片剂（待确认具体规格）</td></tr>
+<tr><td>给药方式</td><td>口服，每日两次（BID），餐前 30 分钟</td></tr>
+<tr><td>包装</td><td>待补充</td></tr>
+</table></div>
+
+<h2>二、API 供应评估</h2>
+<p>利奈昔巴特为小分子化学药，API 合成路线已在 GSK 开发阶段确定。作为 first-in-class IBAT 抑制剂，目前市场上无仿制药企参与，API 供应商仅限于原研或授权供应商。</p>
+<div class="table-wrap"><table>
+<tr><th>要素</th><th>评估</th></tr>
+<tr><td>API 合成路线</td><td>已知，工业化可行性中等</td></tr>
+<tr><td>起始物料供应</td><td>待确认（需核实是否有单一来源依赖）</td></tr>
+<tr><td>授权供应商</td><td>Alfasigma 自有 CDMO + 第三方 GMP 供应商</td></tr>
+<tr><td>中国 NDA 批件持有人</td><td>待确认（GSK 提交，CDE 认定中）</td></tr>
+</table></div>
+
+<h2>三、CMC 风险点</h2>
+<ol>
+  <li><strong>生物利用度挑战</strong>：IBAT 抑制剂口服递送技术难度高，利奈昔巴特生物利用度低（FDA 标签显示全身吸收低），制剂处方设计至关重要。</li>
+  <li><strong>进口 vs 本地化</strong>：若 API/制剂在境外生产，进口注册审批周期长（12-18 个月），需提前布局。</li>
+  <li><strong>贮存条件</strong>：需确认稳定性数据，是否需要冷链。</li>
+</ol>
+
+<h2>四、成本结构初步测算</h2>
+<div class="table-wrap"><table>
+<tr><th>成本项目</th><th>估算占比</th><th>说明</th></tr>
+<tr><td>API 采购成本</td><td>40-50%</td><td>首仿，无竞争价格压力</td></tr>
+<tr><td>制剂生产/包装</td><td>15-20%</td><td>Alfasigma CDMO 或第三方</td></tr>
+<tr><td>进口关税/物流</td><td>5-8%</td><td>若为进口成品</td></tr>
+<tr><td>市场/销售费用</td><td>20-25%</td><td>PBC 瘙痒超专科，需精准 KOL 推广</td></tr>
+<tr><td>管理/其他</td><td>5-10%</td><td>—</td></tr>
+</table></div>
+<p>毛利率基准情景 62%，在创新药中属中等偏低水平，安全边际较薄。成本端的关键在于 Alfasigma 中国区报价——若授权条款中包含较高供货价，CMS 利润空间将进一步压缩。</p>
+
+<h2>五、供应商资质核查清单</h2>
+<div class="highlight-box">
+  1. Alfasigma 自有 CDMO 的 NMPA 境外生产设施检查记录<br>
+  2. API 起始物料供应商的 DMF 状态及完整性<br>
+  3. 制剂规格与 FDA 批准的处方一致性<br>
+  4. 进口药品注册证（IDL）申请路径及周期评估
+</div>
+
+<div class="report-footer">Gate 5 评估完成 | 下一步：推进至 Gate 6（财务门）</div>
+</div>
+
+<!-- ==================== 09 GATE 6 ==================== -->
+<div class="chapter page-break">
+<h1>09 Gate 6 — 财务门（投资回报模型）</h1>
+
+<div class="pending-gate">
+  Gate 6 评估进行中，尚未完成。<br>
+  预计完成时间：2026年 Q2 末
+</div>
+
+<h2>待填内容</h2>
+<p>Gate 6 财务门将包括以下内容，完成后将更新至本报告：</p>
+<ul>
+  <li>峰值销售额情景模型（保守/基准/乐观）</li>
+  <li>首付款/里程碑/特许权使用费条款假设</li>
+  <li>IRR 敏感性分析</li>
+  <li>止损边界与退出机制</li>
+  <li>投委会决策阈值建议</li>
+</ul>
+
+<div class="highlight-box">
+  <strong>注：</strong>财务门完成前，建议暂缓与 Alfasigma 的正式商务接触。待 Gate 4-5 完成后，以完整数据包（含成本结构）进行商务谈判，谈判效率更高。
+</div>
+
+<div class="report-footer">Gate 6 待补 | 本报告 v2.0 尚不完整，需待 Gate 6 完成后方可提交投委会</div>
+</div>
+
+<!-- ==================== 10 对抗审查 ==================== -->
+<div class="chapter page-break">
+<h1>10 对抗审查摘要</h1>
+
+<h2>红队关键问题清单</h2>
+<div class="table-wrap"><table>
+<tr><th>序号</th><th>质疑维度</th><th>具体问题</th><th>缓解措施</th></tr>
+<tr><td>1</td><td>中国权益归属</td><td>GSK 于 2026年2月提交 NDA，早于 Alfasigma 4月交割。授权链是否完整？</td><td>需 Alphasigma 书面确认中国 NDA 归属及授权链</td></tr>
+<tr><td>2</td><td>PeakSales 假设</td><td>渗透率 5%/8%/12% 无市场调研支撑，属拍脑袋假设</td><td>补充 PBC 患者瘙痒就诊率/治疗率调研</td></tr>
+<tr><td>3</td><td>瘙痒适应症 NRDL 准入</td><td>症状管理类药物 NRDL 准入历史上极为罕见</td><td>预设省级大病/惠民保替代路径</td></tr>
+<tr><td>4</td><td>腹泻 62% 依从性</td><td>真实世界长期用药（2-3年）依从性可能大幅低于临床试验</td><td>补充患者支持项目（PSP）预算评估</td></tr>
+<tr><td>5</td><td>竞品 Mirum 追赶</td><td>Volixibat IIb期 VANTAGE 数据预计 2026-2027 年公布，若积极则竞争窗口提前关闭</td><td>持续监测 Mirum 临床进展</td></tr>
+<tr><td>6</td><td>毛利率安全边际</td><td>62% 毛利率在创新药中偏低，Alfasigma 若报价高则利润更薄</td><td>财务门重点评估供货成本条款</td></tr>
+</table></div>
+
+<h2>反驳与辩护</h2>
+<div class="veto-pass">
+  <strong>辩护 1（利奈昔巴特 vs 竞品）：</strong>即便 Mirum 的 Volixibat 在 IIb 期取得阳性结果，到中国获批仍有 5-6 年时间（IIb→III→NDA），利奈昔巴特的先发优势难以被抹平。
+</div>
+<div class="veto-pass">
+  <strong>辩护 2（瘙痒适应症价值）：</strong>PBC 患者瘙痒严重影响生活质量（失眠、抑郁），患者支付意愿高于普通慢病药物。中国约有 8-10 万目标患者，支付能力分层明显——高端自费+商保可支撑主要市场。
+</div>
+<div class="veto-pass">
+  <strong>辩护 3（蓝海竞争格局）：</strong>中国尚无任何 IBAT 抑制剂获批 PBC 瘙痒，利奈昔巴特将是中国第一个。3-4 年独占期窗口内，即便峰值只有 3-4 亿元，首付合理情况下 IRR 仍可达门槛。
+</div>
+</div>
+
+<!-- ==================== 11 参考文献 ==================== -->
+<div class="chapter page-break">
+<h1>11 参考文献表</h1>
+<div class="table-wrap"><table>
+<tr><th>编号</th><th>内容概要</th></tr>
+<tr><td>REF-001</td><td>FDA 批准 Lynavoy（利奈昔巴特）上市许可（2026年3月19日）</td></tr>
+<tr><td>REF-002</td><td>GLISTEN 试验（NCT04950127）ClinicalTrials.gov 登记信息</td></tr>
+<tr><td>REF-003</td><td>Alfasigma 与 GSK 全球许可协议公告（2026年3月）</td></tr>
+<tr><td>REF-004</td><td>Alfasigma 公司概况及交易背景（PharmaDJ/MedPharma 报道）</td></tr>
+<tr><td>REF-005</td><td>Lancet 子刊发表：利奈昔巴特 GLISTEN III期临床数据</td></tr>
+<tr><td>REF-006</td><td>CDE 优先审评公示信息及受理数据（2026年2月25日）</td></tr>
+<tr><td>REF-007</td><td>Mirum Pharma Volixibat 管线进展及分析师评级</td></tr>
+<tr><td>REF-008</td><td>—</td></tr>
+<tr><td>REF-009</td><td>PBC 流行病学数据：瘙痒患病率及未满足需求</td></tr>
+<tr><td>REF-010</td><td>中国 PBC 患病率数据（女性 148.71/10 万）</td></tr>
+<tr><td>REF-011</td><td>Alfasigma 6.9 亿美元交易结构详情</td></tr>
+<tr><td>REF-012</td><td>GLISTEN 安全性数据及 EASL 2025 报告</td></tr>
+<tr><td>REF-013</td><td>MHRA 批准 Lynavoy 英国上市（2026年5月1日）</td></tr>
+<tr><td>REF-014</td><td>CDE 受理及 Volixibat VANTAGE IIb 期进展</td></tr>
+<tr><td>REF-015</td><td>Alfasigma 中国运营机构及在华商业布局</td></tr>
+<tr><td>REF-016</td><td>AGA KOL 访谈：Don Rockey 对利奈昔巴特评价</td></tr>
+<tr><td>REF-017</td><td>FDA 处方信息（Lynavoy 完整标签）</td></tr>
+<tr><td>REF-018</td><td>Gideon Hirschfield EASL 2025 口头报告及访谈</td></tr>
+<tr><td>REF-019</td><td>CDE 实际受理分类为"1类新药"媒体报道</td></tr>
+<tr><td>REF-020</td><td>康哲药业管线及深康消化肝病线现状</td></tr>
+<tr><td>REF-021</td><td>2025年 CDE《化学药品注册受理审查指南（试行）》</td></tr>
+<tr><td>REF-022</td><td>GLIMMER + GLISTEN 合并安全性分析（AASLD 2025）</td></tr>
+<tr><td>REF-023</td><td>IL-31 生物标志物分析（瘙痒机制验证）</td></tr>
+<tr><td>REF-024</td><td>QSP 联合用药模型（利奈昔巴特+seladelpar）</td></tr>
+<tr><td>REF-025</td><td>长期安全性研究数据</td></tr>
+</table></div>
+
+<h2>报告信息</h2>
+<div class="table-wrap"><table class="td-label">
+<tr><th>项目</th><th>内容</th></tr>
+<tr><td>报告编号</td><td>CMS BD Evaluation v2.0</td></tr>
+<tr><td>品种名称</td><td>利奈昔巴特（Linerixibat / Lynavoy）</td></tr>
+<tr><td>靶点</td><td>IBAT（回肠胆汁酸转运蛋白）</td></tr>
+<tr><td>机制</td><td>IBAT 抑制剂</td></tr>
+<tr><td>适应症</td><td>PBC（原发性胆汁性胆管炎）胆汁淤积性瘙痒</td></tr>
+<tr><td>评估技能</td><td>A-1（海外已上市·中国未上市，5.1类/1类）</td></tr>
+<tr><td>业务主体</td><td>深康（消化肝病）</td></tr>
+<tr><td>合作方</td><td>Alfasigma S.p.A.</td></tr>
+<tr><td>原研方</td><td>GSK（葛兰素史克）</td></tr>
+<tr><td>报告版本</td><td>v2.0</td></tr>
+<tr><td>报告日期</td><td>2026-05-29</td></tr>
+<tr><td>保密级别</td><td>内部机密（康哲药业 BD 专用）</td></tr>
+</table></div>
+
+<div class="report-footer">— 报告完 —</div>
+</div>
+
+</body>
+</html>

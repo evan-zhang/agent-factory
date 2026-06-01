@@ -1,0 +1,91 @@
+{
+  "caseCode": "2605-3104",
+  "name": "DYX116",
+  "displayName": "注射用DYX116（德源药业）",
+  "scheme": "B",
+  "businessEntity": "深康（待确认）",
+  "routedSkill": "A-2",
+  "routedChain": [
+    "D-1",
+    "D-2",
+    "A-2",
+    "D-3"
+  ],
+  "phase": "completed",
+  "startedAt": "2026-05-31T13:57:00+08:00",
+  "currentVersion": 1,
+  "gateVersions": {
+    "One-pager": 1,
+    "Gate-1": 1,
+    "Gate-2": 1,
+    "Gate-3": 1,
+    "Gate-4": 1,
+    "Gate-5": 1,
+    "Gate-6": 1
+  },
+  "financialThresholdType": "创新药",
+  "routingDecision": {
+    "recommendedSkill": "A-2",
+    "chain": [
+      "D-1",
+      "D-2",
+      "A-2",
+      "D-3"
+    ],
+    "thresholdType": "创新药",
+    "rationale": "国内Biotech（德源药业）自主研发1类创新药，GIPR/GLP-1R/GCGR三靶点激动剂，目前II期临床。A-2为最接近的评估框架（国内合作·创新药引进），需适配早期临床阶段的特殊风险评估。使用创新药财务门槛+ rNPV模型。"
+  },
+  "discovery": {
+    "searches": 7,
+    "sources": [
+      "MiniMax Search API"
+    ],
+    "productType": "创新药（1类新药，三靶点激动剂多肽）",
+    "confidence": "高",
+    "referenceCount": 5
+  },
+  "updateHistory": [],
+  "references": {
+    "file": "references/REFERENCES.md",
+    "count": 5,
+    "prefixes": [
+      "P1"
+    ]
+  },
+  "submitter": {
+    "name": "陈璇",
+    "time": "2026-05-29T17:58:00+08:00"
+  },
+  "productInfo": {
+    "indication": "降血糖、减体重、缓解脂肪肝",
+    "company": "德源药业",
+    "mechanism": "GIPR/GLP-1R/GCGR三重激动剂多肽",
+    "registrationClass": "1类新药",
+    "clinicalStage": "II期临床",
+    "globalStatus": "国内外尚无同类产品获批上市"
+  },
+  "finalReport": "04-final-report.md",
+  "conclusion": "有条件推进",
+  "qualityCheck": {
+    "gateCards": "PASS",
+    "financialThreshold": "FAIL",
+    "vetoCheck": "PASS",
+    "confidenceAnnotation": "PASS",
+    "conflictSummary": "PASS",
+    "stageLabels": "PASS",
+    "sourceAnnotation": "PASS",
+    "financialAbbreviation": "PASS",
+    "gateVolume": "PASS",
+    "mergeIntegrity": "PASS"
+  },
+  "completedAt": "2026-05-31T15:25:00+08:00",
+  "kbSync": {
+    "lastSyncAt": "2026-05-31T15:25:00+08:00",
+    "syncedFiles": 29,
+    "failedFiles": [
+      "04-final-report.md",
+      "REPORT.html"
+    ],
+    "status": "partial_success"
+  }
+}

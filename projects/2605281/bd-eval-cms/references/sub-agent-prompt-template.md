@@ -268,3 +268,57 @@
 
 写入:{输出文件路径}/One-pager.md
 ```
+
+---
+
+## 全流程子Agent 通用约束（v2026.5.31）
+
+以下约束适用于所有子Agent（全流程执行器、Gate撰写器、补跑执行器）：
+
+### 1. 强制 state.json 更新
+
+每完成一个 Phase，**必须立即**更新 `{品种目录}/state.json` 的 phase 字段：
+
+```
+Phase 1 完成 → phase = "discovery_complete"
+Phase 2 完成 → phase = "routing_complete"  
+Phase 3 完成 → phase = "evaluation_complete"
+Phase 4 完成 → phase = "battle_complete"
+Phase 5 完成 → phase = "report_finalized"
+```
+
+**这是最高优先级操作**。不要等到所有 Phase 都做完才更新，也不要忘记这一步。
+
+### 2. Gate 文件命名（严格遵守）
+
+只允许以下 7 个文件名：
+```
+02-gate-by-chapter/One-pager.md
+02-gate-by-chapter/Gate-1-premise.md
+02-gate-by-chapter/Gate-2-positioning.md
+02-gate-by-chapter/Gate-3-evidence.md
+02-gate-by-chapter/Gate-4-payment.md
+02-gate-by-chapter/Gate-5-cost.md
+02-gate-by-chapter/Gate-6-dealability.md
+```
+
+**不允许**：Gate-6-feasibility.md、Gate-4-payment-path.md、Gate-5-CMC-cost.md 等任何变体。
+
+### 3. 执行日志
+
+在 `{品种目录}/execution-log.md` 中记录每个 Phase 的：开始时间、结束时间、耗时、模型名、Token 用量、工具调用次数、重试次数。
+
+### 4. Phase 5.5 HTML 验证
+
+生成 REPORT.html 后，必须执行：
+```bash
+grep -c '{{' REPORT.html
+```
+结果必须为 0。如果不为 0，手动替换残留模板变量。
+
+### 5. 知识库同步
+
+HTML 验证通过后，执行知识库同步：
+```bash
+bash {SKILL目录}/scripts/sync-to-knowledge-base.sh "{品种目录}" "{案件代号}"
+```

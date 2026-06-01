@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>非索非那定干混悬剂 CMS投前评估报告</title>
+<style>
+@page { size:A4; margin:0; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC","SimSun",Arial,sans-serif;
+  font-size:10.5pt; line-height:1.7; color:#1A1A2E;
+  background:#F8F9FB; -webkit-font-smoothing:antialiased;
+}
+a { color:#1a3a5c; text-decoration:none; }
+
+/* ===== COVER ===== */
+.cover {
+  min-height:96vh; display:flex; flex-direction:column; justify-content:center;
+  padding:44mm 30mm;
+  background:linear-gradient(160deg, #E8EEF5 0%, #D0DAE8 50%, #B8C8DC 100%);
+  border-bottom:6px solid #1a3a5c; position:relative;
+}
+.cover-topbar { position:absolute; top:0; left:0; right:0; height:5px; background:linear-gradient(90deg, #1a3a5c, #2c5282, #3182ce, #2c5282, #1a3a5c); }
+.cover-badge {
+  display:inline-block; font-size:9pt; font-weight:700; letter-spacing:0.12em;
+  color:#1a3a5c; border:1.5px solid #1a3a5c; padding:3px 12px; margin-bottom:20px;
+  text-transform:uppercase;
+}
+.cover-title {
+  font-size:30pt; font-weight:800; color:#0F1B2D; letter-spacing:0.06em;
+  line-height:1.2; margin-bottom:16px;
+}
+.cover-subtitle { font-size:18pt; font-weight:600; color:#1a3a5c; margin-bottom:10px; }
+.cover-company { font-size:13pt; color:#2D3748; margin-bottom:36px; }
+.cover-meta { font-size:11pt; line-height:2.1; color:#1A1A2E; }
+.cover-meta .lbl { color:#4A5568; }
+.cover-confidential {
+  margin-top:40px; font-size:9pt; font-weight:700; color:#C53030;
+  letter-spacing:0.06em; border-top:2px solid #CBD5E0; padding-top:12px;
+}
+.cover-rating-box {
+  position:absolute; bottom:40px; right:30mm;
+  background:#1a3a5c; color:#FFFFFF; text-align:center;
+  padding:12px 20px; min-width:120px;
+}
+.cover-rating-box .rating-label { font-size:9pt; letter-spacing:0.08em; opacity:0.85; }
+.cover-rating-box .rating-val { font-size:22pt; font-weight:800; line-height:1.2; }
+
+/* ===== INDEX ===== */
+.toc-section { padding:28px 28mm 28px; background:#F8F9FB; border-bottom:3px solid #CBD5E0; }
+.toc-header { font-size:14pt; font-weight:700; color:#0F1B2D; margin-bottom:14px; border-left:5px solid #1a3a5c; padding-left:10px; }
+.toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px 28px; }
+.toc-item { display:flex; align-items:baseline; gap:6px; padding:3px 0; border-bottom:1px solid #E2E8F0; font-size:9.5pt; }
+.toc-num { color:#1a3a5c; font-weight:700; min-width:30px; }
+.toc-title { color:#1A1A2E; flex:1; }
+.toc-ch { color:#4A5568; font-size:8.5pt; }
+
+/* ===== CHAPTER HEADINGS ===== */
+.chapter { padding:0 28mm; }
+h1 {
+  font-size:17pt; font-weight:700; color:#0F1B2D;
+  background:linear-gradient(to right, #EDF2F7, #F8F9FB);
+  border-bottom:3px solid #1a3a5c; padding:10px 14px 8px; margin:24px 0 14px;
+}
+h2 {
+  font-size:12.5pt; font-weight:700; color:#1a3a5c;
+  border-left:5px solid #1a3a5c; padding:6px 10px; margin:20px 0 10px;
+  background:#F8F9FB;
+}
+h3 { font-size:11pt; font-weight:700; color:#0F1B2D; margin:14px 0 7px; }
+h4 { font-size:10.5pt; font-weight:700; color:#1a3a5c; margin:12px 0 6px; }
+
+/* ===== BODY ===== */
+p { margin:0 0 8px; }
+ul,ol { margin:6px 0 10px; padding-left:20px; }
+li { margin-bottom:5px; }
+
+/* ===== TABLES ===== */
+table { width:100%; border-collapse:collapse; margin:12px 0 18px; font-size:9.5pt; }
+th {
+  background:#1a3a5c; color:#FFFFFF; font-weight:700; text-align:left;
+  padding:8px 10px; border:1px solid #2c5282;
+}
+td { padding:7px 10px; border:1px solid #CBD5E1; vertical-align:top; line-height:1.5; }
+tr:nth-child(even) td { background:#EDF2F7; }
+
+/* Status colors */
+.pass { color:#15803D; font-weight:700; }
+.cond { color:#92400E; font-weight:700; }
+.fail { color:#DC2626; font-weight:700; }
+.pending-tag { color:#92400E; font-style:italic; font-weight:600; }
+.b { font-weight:700; }
+
+/* ===== GATE CONCLUSION CARD ===== */
+.gate-card {
+  border-left:5px solid #1a3a5c; background:#F0F4F8;
+  padding:14px 16px; margin:16px 0; line-height:1.65;
+  border-radius:0;
+}
+.gate-card .gate-title {
+  font-size:12pt; font-weight:700; margin-bottom:8px;
+  padding-bottom:6px; border-bottom:2px solid rgba(0,0,0,0.08);
+}
+.gate-card .gate-label {
+  font-size:9pt; font-weight:600; display:inline-block;
+  padding:2px 8px; margin-right:6px; border-radius:3px;
+}
+.gate-card .gate-body { margin-top:8px; }
+
+/* Gate pass */
+.gate-pass { border-left-color:#15803D; background:#F0FDF4; }
+.gate-pass .gate-title { color:#15803D; }
+.gate-pass .gate-label { background:#F0FDF4; color:#15803D; border:1px solid #15803D; }
+
+/* Gate conditional */
+.gate-conditional { border-left-color:#B45309; background:#FFFBEB; }
+.gate-conditional .gate-title { color:#92400E; }
+.gate-conditional .gate-label { background:#FFFBEB; color:#92400E; border:1px solid #B45309; }
+
+/* Gate stop */
+.gate-stop { border-left-color:#DC2626; background:#FEF2F2; }
+.gate-stop .gate-title { color:#DC2626; }
+.gate-stop .gate-label { background:#FEF2F2; color:#DC2626; border:1px solid #DC2626; }
+
+/* ===== CONFIDENCE BADGE ===== */
+.confidence-badge {
+  display:inline-block; font-size:9pt; font-weight:700;
+  padding:2px 8px; border-radius:3px; line-height:1.3;
+  vertical-align:middle; margin-left:4px;
+}
+.conf-a { background:#DCFCE7; color:#15803D; }
+.conf-b { background:#DBEAFE; color:#1D4ED8; }
+.conf-c { background:#FEF3C7; color:#92400E; }
+.conf-d { background:#FEE2E2; color:#DC2626; }
+
+/* ===== BATTLE REVIEW ===== */
+.battle-auditor {
+  border-left:4px solid #6B7280; background:#F3F4F6;
+  padding:12px 14px; margin:12px 0; line-height:1.65;
+}
+.battle-executor {
+  border-left:4px solid #1a3a5c; background:#EBF0F7;
+  padding:12px 14px; margin:8px 0 12px 20px; line-height:1.65;
+}
+.battle-dispute {
+  border-left:4px solid #F59E0B; background:#FFFBEB;
+  padding:10px 14px; margin:10px 0; line-height:1.65;
+}
+.battle-label {
+  font-size:8.5pt; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+  display:block; margin-bottom:4px; opacity:0.7;
+}
+
+/* ===== CONFLICT BOX ===== */
+.conflict-box {
+  border-left:4px solid #F59E0B; background:#FFFBEB;
+  padding:10px 14px; margin:10px 0; line-height:1.65;
+}
+
+/* ===== VETO BOX ===== */
+.veto-box {
+  border-left:5px solid #DC2626; background:#FEF2F2;
+  padding:12px 14px; margin:12px 0; line-height:1.65;
+}
+
+/* ===== STAGE TAG ===== */
+.stage-tag {
+  display:inline-block; font-size:8.5pt; font-weight:700;
+  padding:2px 8px; border-radius:3px; line-height:1.3;
+  vertical-align:middle;
+}
+.stage-a { background:#DBEAFE; color:#1a3a5c; }
+.stage-b { background:#E0E7FF; color:#3730A3; }
+
+/* ===== DRL PRIORITY ===== */
+.drl-priority {
+  display:inline-block; font-size:8.5pt; font-weight:700;
+  padding:2px 8px; border-radius:3px; line-height:1.3;
+  vertical-align:middle;
+}
+.drl-p0 { background:#FEE2E2; color:#DC2626; }
+.drl-p1 { background:#FEF3C7; color:#92400E; }
+.drl-p2 { background:#DBEAFE; color:#1D4ED8; }
+
+/* ===== NEUTRAL REVIEW ===== */
+.neutral-review {
+  border-left:4px solid #9CA3AF; background:#F9FAFB;
+  padding:10px 14px; margin:10px 0; line-height:1.65;
+}
+
+/* ===== RISK LEVEL ===== */
+.risk-high { border-left:4px solid #DC2626; background:#FEF2F2; padding:10px 14px; margin:10px 0; }
+.risk-medium { border-left:4px solid #F59E0B; background:#FFFBEB; padding:10px 14px; margin:10px 0; }
+.risk-low { border-left:4px solid #15803D; background:#F0FDF4; padding:10px 14px; margin:10px 0; }
+
+/* Highlight boxes */
+.highlight-box {
+  border-left:5px solid #1a3a5c; background:#EDF2F7;
+  padding:10px 14px; margin:12px 0; line-height:1.65;
+}
+.veto-pass { border-left:5px solid #15803D; background:#F0FDF4; padding:10px 14px; margin:10px 0; }
+.veto-cond { border-left:5px solid #92400E; background:#FFFBEB; padding:10px 14px; margin:10px 0; }
+.veto-fail { border-left:5px solid #DC2626; background:#FEF2F2; padding:10px 14px; margin:10px 0; }
+
+/* Rating badge */
+.rating-badge {
+  display:inline-block; font-size:12pt; font-weight:800;
+  color:#0F1B2D; border:2px solid #1a3a5c; padding:3px 14px; margin-top:6px;
+}
+.summary-tag { font-weight:700; color:#1a3a5c; }
+
+/* Code blocks */
+pre {
+  font-family:"Courier New",Courier,monospace; font-size:9pt;
+  background:#EDF2F7; border:1px solid #CBD5E0; border-left:4px solid #1a3a5c;
+  padding:10px 14px; margin:10px 0 14px; line-height:1.7; color:#1A1A2E; white-space:pre-wrap;
+}
+blockquote {
+  border-left:5px solid #1a3a5c; background:#EDF2F7;
+  padding:10px 14px; margin:12px 0; color:#1A1A2E;
+}
+
+/* Alternating row tints */
+.amber-row td { background:#EDF2F7 !important; }
+.warm-row td { background:#F7EFE7 !important; }
+.green-row td { background:#EDF5E8 !important; }
+.red-row td { background:#FDEEEE !important; }
+
+/* Table header variants */
+.th-green th { background:#15803D !important; border-color:#15803D !important; }
+.th-red th { background:#DC2626 !important; border-color:#DC2626 !important; }
+.th-warm th { background:#92400E !important; border-color:#92400E !important; }
+
+/* ===== PAGE BREAK ===== */
+.page-break { page-break-after:always; }
+
+/* ===== FOOTER ===== */
+.report-footer {
+  font-size:8.5pt; color:#4A5568; border-top:1px solid #E2E8F0;
+  padding-top:6px; margin-top:24px;
+}
+
+/* Sub-label in table first col */
+.td-label td:first-child { background:#EDF2F7 !important; font-weight:600; white-space:nowrap; width:160px; }
+
+/* Section divider */
+.section-rule { border-top:2px solid #CBD5E0; margin:20px 0; }
+
+/* Score highlight */
+.score-a { color:#15803D; font-weight:700; }
+.score-b { color:#92400E; font-weight:700; }
+.score-c { color:#DC2626; font-weight:700; }
+
+/* Gate summary table */
+.gate-summary th { background:#1a3a5c; color:#FFFFFF; }
+.gate-summary td:nth-child(2) { font-weight:700; }
+
+/* ===== RESPONSIVE ===== */
+@media screen and (max-width:768px){
+  body{font-size:9.5pt;line-height:1.65}
+  .cover{padding:20mm 12mm}
+  .cover-title{font-size:22pt}
+  .cover-subtitle{font-size:14pt}
+  .cover-meta{font-size:10pt}
+  .cover-rating-box{bottom:20px;right:12mm;padding:8px 14px;min-width:100px}
+  .cover-rating-box .rating-val{font-size:16pt}
+  .cover-topbar,.cover-topline{height:3px}
+  .toc-section{padding:16px 10mm}
+  .toc-grid{grid-template-columns:1fr;gap:3px}
+  .chapter{padding:0 10mm}
+  h1{font-size:14pt;padding:8px 10px}
+  h2{font-size:11.5pt}
+  table{font-size:8.5pt;margin:10px 0 14px}
+  th,td{padding:5px 7px}
+  pre{font-size:8pt;padding:8px 10px}
+  .highlight-box,.veto-pass,.veto-cond,.veto-fail{padding:8px 10px;margin:8px 0}
+  .gate-card{padding:10px 12px;margin:12px 0}
+  .battle-auditor,.battle-executor,.battle-dispute{padding:8px 10px;margin:8px 0}
+  .battle-executor{margin-left:10px}
+  .confidence-badge,.stage-tag,.drl-priority{font-size:8pt;padding:1px 6px}
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:12px 0 18px}
+}
+@media screen and (max-width:480px){
+  body{font-size:9pt}
+  .cover{padding:16mm 10mm}
+  .cover-title{font-size:18pt}
+  table{font-size:8pt}
+}
+@media print{
+  .chapter{padding:0}
+  body{background:#FFF}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER PAGE ==================== -->
+<div class="cover page-break">
+  <div class="cover-topbar"></div>
+  <div class="cover-badge">内部机密 · 限参与评估团队</div>
+  <div class="cover-title">C&nbsp;M&nbsp;S&nbsp;投&nbsp;前&nbsp;评&nbsp;估&nbsp;报&nbsp;告</div>
+  <div class="cover-subtitle">非索非那定干混悬剂</div>
+  <div class="cover-company">赛诺菲（Sanofi）</div>
+  <div class="cover-meta">
+    <div><span class="lbl">案件代号：</span>2605-3001</div>
+    <div><span class="lbl">评估技能：</span>A-1</div>
+    <div><span class="lbl">业务主体：</span>深康</div>
+    <div><span class="lbl">评估日期：</span>2026-05-31</div>
+    <div><span class="lbl">综合评级：</span><span class="b">条件通过（CONDITIONAL）</span></div>
+  </div>
+  <div class="cover-confidential">⚠ 内部机密 — 仅限参与评估团队成员阅览</div>
+  <div class="cover-rating-box">
+    <div class="rating-label">推荐结论</div>
+    <div class="rating-val">COND</div>
+  </div>
+</div>
+
+<!-- ==================== TABLE OF CONTENTS ==================== -->
+<div class="toc-section page-break">
+  <div class="toc-header">目 录</div>
+  <div class="toc-grid">
+    <div class="toc-item"><span class="toc-num">第1章</span><span class="toc-title">执行摘要</span></div>
+<div class="toc-item"><span class="toc-num">第2章</span><span class="toc-title">标的发现（DISCOVERY）</span></div>
+<div class="toc-item"><span class="toc-num">第3章</span><span class="toc-title">One-pager 终局先立</span></div>
+<div class="toc-item"><span class="toc-num">第4章</span><span class="toc-title">Gate 1 前提门</span></div>
+<div class="toc-item"><span class="toc-num">第5章</span><span class="toc-title">Gate 2 定调门</span></div>
+<div class="toc-item"><span class="toc-num">第6章</span><span class="toc-title">Gate 3 证据门</span></div>
+<div class="toc-item"><span class="toc-num">第7章</span><span class="toc-title">Gate 4 支付门</span></div>
+<div class="toc-item"><span class="toc-num">第8章</span><span class="toc-title">Gate 5 成本门</span></div>
+<div class="toc-item"><span class="toc-num">第9章</span><span class="toc-title">Gate 6 可做门</span></div>
+<div class="toc-item"><span class="toc-num">第10章</span><span class="toc-title">Gate Battle 对抗审查总结</span></div>
+  </div>
+</div>
+
+<!-- ==================== CONTENT CHAPTERS ==================== -->
+<div class="chapter"><h1>第1章 执行摘要</h1>
+<h2>执行摘要</h2>
+<h3>结论先行</h3>
+<strong>综合评估：不推荐引进（No-Go）。</strong>
+<p>非索非那定干混悬剂为3类仿制药，非独家品种——济川药业敏菲乐已于2024年6月首家获批并进入国家医保目录，辰光制药为后发第二家。品种天花板极低（非索非那定全品类2024年销售额仅0.66-0.80亿元），基准情景峰值销售额约0.35亿元（第3年），IRR（内部收益率）约18%，远低于改良型新药引进门槛30%。</p>
+<h3>核心指标一览</h3>
+<div class="table-wrap"><table>
+<tr><th>指标</th><th>基准情景</th><th>门槛</th><th>达标</th></tr>
+<tr><td>IRR（内部收益率）</td><td>~18%</td><td>≥30%</td><td>❌</td></tr>
+<tr><td>回收期</td><td>~3年</td><td>≤4年</td><td>✅</td></tr>
+<tr><td>峰值销售额</td><td>0.35亿元</td><td>—</td><td>—</td></tr>
+<tr><td>毛利率（毛利润/营业收入）</td><td>~55%</td><td>≥60%</td><td>⚠️</td></tr>
+</table></div>
+<h3>关键风险提示</h3>
+<ol>
+<li><strong>非独家</strong>：济川敏菲乐已占先发+医保+渠道三重壁垒（🟡C级-待验证）</li>
+<li><strong>品类天花板<1亿元</strong>：非索非那定占比不足抗组胺药市场1%（B级）</li>
+<li><strong>替代竞争</strong>：比拉斯汀受体亲和力高6倍，新一代替代加速（B级）</li>
+<li><strong>峰值预测依赖D级假设</strong>：0.3-0.5亿元为推算值</li>
+</ol>
+<h3>推荐行动</h3>
+<p>不推荐引进。按"No-Go"归档。若辰光合作条款极端优惠（首付款<300万元+全里程碑绑定），可重新评估。</p>
+</div>
+<div class="chapter"><h1>第2章 标的发现（DISCOVERY）</h1>
+<h2>基本信息</h2>
+<ul>
+<li><strong>品种名称</strong>: 非索非那定干混悬剂（Fexofenadine Hydrochloride Dry Suspension）</li>
+<li><strong>通用名</strong>: 盐酸非索非那定</li>
+<li><strong>商品 名/代号</strong>: Allegra（赛诺菲原研）/ 辰光制药干混悬剂</li>
+<li><strong>原研公司</strong>: 赛诺菲（Sanofi）</li>
+<li><strong>合作方/申报方</strong>: 辰光制药</li>
+<li><strong>API（活性药物成分）</strong>: 非索非那定（Fexofenadine），第二代H1受体拮抗剂</li>
+<li><strong>剂型</strong>: 干混悬剂（Dry Suspension）—— 儿童适用剂型</li>
+<li><strong>主要适应症</strong>: 过敏性鼻炎、荨麻疹、皮肤相关瘙痒</li>
+<li><strong>注册分类</strong>: 4类（改良型新药·新剂型）或5.2类（境外已上市制剂），待确认[P1-001]</li>
+<li><strong>上报人</strong>: 包景媚</li>
+<li><strong>上报时间</strong>: 2026-05-28 17:55:00</li>
+<li><strong>商机描述</strong>: 独家剂型，2025-02-18提交NDA，即将获批</li>
+</ul>
+<h2>产品基本信息</h2>
+<div class="table-wrap"><table>
+<tr><th>项目</th><th>内容</th><th>来源</th></tr>
+<tr><td>原研商品名</td><td>Allegra（艾来）</td><td>[P1-001]</td></tr>
+<tr><td>原研开发公司</td><td>赛诺菲（Sanofi）</td><td>[P1-001]</td></tr>
+<tr><td>全球首次获批年份</td><td>1996年（英国/美国）</td><td>[P1-001]</td></tr>
+<tr><td>中国首次获批年份</td><td>2021年（片剂，NMPA）</td><td>[P1-001][P1-002]</td></tr>
+<tr><td>注册分类（中国）</td><td>片剂为5.1类；干混悬剂待确认</td><td>[P1-001]</td></tr>
+<tr><td>中国市场在研竞品</td><td>杭州泓友/成都硕德（口服混悬液 NDA受理中）、南京海纳、广州一品红、哈尔滨葵花</td><td>[P1-001]</td></tr>
+</table></div>
+<h2>业务主体判断</h2>
+<ul>
+<li><strong>匹配主体</strong>: 德镁（皮肤健康药品）+ 天津康哲（仿制药/改良型新药）</li>
+<li><strong>判断依据</strong>: 适应症为过敏性鼻炎/荨麻疹/皮肤瘙痒，属于皮肤健康/过敏领域；干混悬剂为儿童适用剂型，具有改良型新药属性</li>
+<li><strong>评估</strong>: 干混悬剂为独家儿童剂型，主要跑德镁皮肤健康业务主体，但天津康哲为仿制药业务主体，两主体协同</li>
+</ul>
+<h2>产品类型判断</h2>
+<ul>
+<li><strong>初步类型</strong>: 改良型新药（4类·新剂型）/ 化学仿制药（5.2类·干混悬剂）</li>
+<li><strong>判断依据</strong>: 非索非那定原研片剂已于2021年在中国上市，干混悬剂为同API不同剂型，属于改良型新药（4类）范畴[P1-001]</li>
+<li><strong>置信度</strong>: 中（需CDE确认注册分类）</li>
+<li><strong>关键区别</strong>: 干混悬剂 vs 已上市片剂：儿童适用、给药便利性、无需水服</li>
+</ul>
+<h2>搜索记录</h2>
+<ul>
+<li><strong>搜索次数</strong>: 5次</li>
+<li><strong>搜索来源</strong>: 摩熵医药、赛柏蓝、医药魔方ByDrug、知乎（403）等</li>
+</ul>
+<h2>市场规模数据 [P1-001][P1-002]</h2>
+<ul>
+<li>中国过敏性鼻炎患者：约2.5亿人</li>
+<li>中国荨麻疹患者：约986.87万人（2020年）</li>
+<li>中国过敏性疾病就诊患者：2678万人（2023年）</li>
+<li>全国抗组胺药市场规模：约4亿元（院内，2024年）[P1-001]</li>
+<li>非索非那定院内销售额：约0.8亿元（2024年），同比增长13%[P1-001]</li>
+<li>全球抗组胺药市场：2024年约630亿美元（约4598亿元人民币）</li>
+<li>中国过敏性疾病市场预计2028年达778.7亿元</li>
+</ul>
+<h2>竞争格局 [P1-001]</h2>
+<div class="table-wrap"><table>
+<tr><th>竞品</th><th>剂型</th><th>状态</th><th>市场</th></tr>
+<tr><td>非索非那定片（赛诺菲）</td><td>片剂</td><td>已上市（2021年NMPA）</td><td>院内+零售</td></tr>
+<tr><td>非索非那定口服混悬液（广州南新制药）</td><td>口服混悬液</td><td>已上市，首仿+首家过评</td><td>院内</td></tr>
+<tr><td>非索非那定口服混悬液（浙江普利药业）</td><td>口服混悬液</td><td>已上市</td><td>院内</td></tr>
+<tr><td>非索非那定口服混悬液（赛诺菲）</td><td>口服混悬液</td><td>NDA已申报（2025年2月8日），未获批</td><td>在审</td></tr>
+<tr><td>非索非那定口服混悬液（杭州泓友/成都硕德）</td><td>口服混悬液</td><td>NDA受理中</td><td>在审</td></tr>
+<tr><td>非索非那定干混悬剂（辰光制药）</td><td>干混悬剂</td><td>NDA已提交（2025-02-18），即将获批</td><td>本标的</td></tr>
+</table></div>
+<h2>待确认信息</h2>
+<ol>
+<li>干混悬剂与口服混悬液的具体区别（干混悬剂临用前加水配制，更适合儿童）</li>
+<li>辰光制药干混悬剂的注册分类（4类或5.2类）</li>
+<li>参比制剂是否已确定（片剂或口服混悬液为参比）</li>
+<li>辰光制药的GMP/生产资质</li>
+<li>合作条款（首付款、里程碑、授权范围）</li>
+<li>与已上市广州南新口服混悬液的差异化定位</li>
+</ol>
+<h2>路由决策单</h2>
+<ul>
+<li><strong>推荐主技能</strong>: A-8（仿制药/改良型新药引进评估）</li>
+<li><strong>串接链路</strong>: D-1（基座） → D-2（市场） → A-8（主技能） → D-3（一页纸）</li>
+<li><strong>财务门槛类型</strong>: 改良型新药（4类）：IRR≥30%，回收期≤4年</li>
+<li><strong>路由依据</strong>: 干混悬剂为同API新剂型，属于改良型新药（4类），适用A-8技能；独家儿童剂型，NDA即将获批，具备引进价值</li>
+</ul>
+</div>
+<div class="chapter"><h1>第3章 One-pager 终局先立</h1>
+<p>> 品种：非索非那定干混悬剂（辰光制药） | 评估技能：A-8 | 撰写日期：2026-05-31</p>
+<p>> 业务主体：德镁/天津康哲 | 参考文献：OP-001 ~ OP-006</p>
+<h2>一、品种定位与竞争格局</h2>
+<strong>品种概况</strong>：盐酸非索非那定第二代H1抗组胺药，干混悬剂为儿童适用剂型（6月龄以上）。辰光制药于2025-02-18提交NDA，即将获批。适应症覆盖季节性过敏性鼻炎、慢性特发性荨麻疹、皮肤瘙痒。
+<strong>⚠️ 关键发现（与原始信息有重大差异）</strong>：
+<p>Discovery阶段认为辰光为"独家剂型"，<strong>事实并非如此</strong>。济川药业已于2024年6月获批盐酸非索非那定干混悬剂（商品名：敏菲乐），为国内首家过评，规格15mg/30mg双规格，并已进入2024年国家医保目录 [OP-001][OP-002]。辰光品种为后发仿制药，非独家。</p>
+<strong>当前竞争格局</strong>：
+<ul>
+<li><strong>济川药业（敏菲乐）</strong>：首家过评，2024年6月获批，已入医保，双规格，济川在儿科/呼吸领域有成熟渠道（蒲地蓝、小儿豉翘清热颗粒等）[OP-002][OP-005]</li>
+<li><strong>辰光制药（本标的）</strong>：NDA 2025-02-18提交，预计2026年获批，为第二家干混悬剂</li>
+<li><strong>赛诺菲（原研Allegra）</strong>：片剂2021年中国上市，干混悬剂/口服混悬液NDA已申报但未获批</li>
+<li><strong>口服混悬液竞品</strong>：广州南新（首仿+首家过评）、浙江普利已上市；杭州泓友/成都硕德NDA受理中 [P1-001]</li>
+</ul>
+<h2>二、市场规模与增长</h2>
+<strong>抗组胺药大盘</strong>：2024年全国医院端抗组胺药物销售额约51.4亿元，零售端约25亿元，合计约76亿元/年，市场巨大 [OP-003]。
+<strong>非索非那定细分</strong>：2024年全国盐酸非索非那定制剂销售额约0.66-0.80亿元（不同数据源），同比增长13-40%。相比整体抗组胺药市场，非索非那定占比不足1% [OP-004]。
+<strong>儿童抗过敏需求</strong>：中国过敏性鼻炎患者约2.5亿人，6月龄以上儿童用药需求明确，但市场教育仍需投入 [P1-002]。
+<strong>增长驱动</strong>：
+<ul>
+<li>过敏性疾病发病率持续攀升</li>
+<li>儿童用药政策利好（鼓励儿童适宜剂型开发）</li>
+<li>医保覆盖扩大患者可及性</li>
+</ul>
+<strong>增长制约</strong>：
+<ul>
+<li>非索非那定面临比拉斯汀等新一代抗组胺药的替代竞争（比拉斯汀与H1受体亲和力比非索非那定高6倍）[OP-003]</li>
+<li>济川敏菲乐先发优势+医保覆盖形成渠道壁垒</li>
+<li>非索非那定在中国市场占比极小，品类增长有限</li>
+</ul>
+<h2>三、终局五问</h2>
+<h3>1. 成功终局定义</h3>
+<p>上市后第3年峰值销售额：<strong>0.3-0.5亿元</strong>（全国，院内+零售）</p>
+<p>市占率目标：干混悬剂细分市场<strong>第二位</strong>，非索非那定制剂整体20-30%份额</p>
+<strong>测算依据</strong>：
+<ul>
+<li>非索非那定制剂2024年全市场约0.66-0.80亿元，年增长15-20%</li>
+<li>2028年预计非索非那定市场约1.2-1.6亿元</li>
+<li>干混悬剂作为儿童剂型，约占非索非那定市场30-40%（vs片剂+口服混悬液）</li>
+<li>辰光作为第二家，乐观估计拿下干混悬剂市场30-40%</li>
+<li>1.4亿 × 35% × 35% ≈ 0.17亿元（保守）~ 1.6亿 × 40% × 40% ≈ 0.26亿元（中性）</li>
+<li>考虑渠道拓展和零售端增长，峰值0.3-0.5亿元</li>
+</ul>
+<strong>置信度</strong>：中低（非索非那定品类本身增长受限，新一代竞品替代风险大）
+<h3>2. 核心价值主张</h3>
+<strong>凭品种本身很难胜出。</strong> 辰光干混悬剂作为后发仿制药，济川敏菲乐已建立先发+医保+渠道三重壁垒。若要引进，价值不在于品种差异化，而在于<strong>德镁/天津康哲能否以渠道能力撬动增量市场</strong>——尤其是零售OTC和基层医疗终端，济川渠道覆盖相对薄弱的环节。
+<h3>3. 最大风险单项</h3>
+<strong>先发壁垒+品类天花板双杀。</strong> 济川敏菲乐已占据干混悬剂先发位置且进入医保，辰光品种获批后需要与济川争夺存量市场，而非开拓增量。同时，非索非那定整体品类市场不到1亿元，天花板极低。即使拿下30%份额也只有约3000万元峰值，投入产出比堪忧。
+<h3>4. 止损边界</h3>
+<p>以下任一条件满足即应主动退出：</p>
+<ul>
+<li><strong>财务止损</strong>：若首付款/里程碑合计超过品种3年峰值销售额的50%（即>1500万元），直接退出</li>
+<li><strong>渠道止损</strong>：若无法在获批后6个月内进入至少100家目标医院终端，退出</li>
+<li><strong>竞争止损</strong>：若济川敏菲乐在辰光获批前已实现年销售额>0.5亿元（说明市场已被独占），退出</li>
+<li><strong>时间止损</strong>：若NDA审批超过18个月仍未获批（即2026年8月前未获批准），重新评估</li>
+</ul>
+<h3>5. 决策人与时限</h3>
+<ul>
+<li><strong>决策人</strong>：BD负责人 + 德镁/天津康哲业务主体负责人联合决策</li>
+<li><strong>最晚决策时限</strong>：NDA获批前2个月（预计2026年Q2前给出go/no-go结论）</li>
+<li><strong>需要补充的信息</strong>：</li>
+</ul>
+<ol>
+<li>辰光制药的合作条款（首付款、里程碑、授权范围）</li>
+<li>辰光品种与济川敏菲乐的差异化对比（规格、掩味技术、价格）</li>
+<li>德镁/天津康哲在儿科抗过敏领域的现有渠道覆盖能力</li>
+<li>非索非那定干混悬剂的零售OTC潜力评估</li>
+</ol>
+<h2>四、综合判断</h2>
+<strong>推荐结论：谨慎不推荐（No-Go倾向）</strong>
+<p>理由：</p>
+<ol>
+<li><strong>非独家</strong>：辰光非首家，济川已建立先发优势+医保覆盖+品牌认知</li>
+<li><strong>天花板低</strong>：非索非那定全品类市场<1亿元，干混悬剂细分更小</li>
+<li><strong>替代风险</strong>：比拉斯汀等新一代抗组胺药在受体亲和力和临床优势上明显优于非索非那定 [OP-003]</li>
+<li><strong>投入产出不匹配</strong>：改良型新药引进需IRR≥30%、回收期≤4年，在<0.5亿元峰值市场下很难达标</li>
+</ol>
+<strong>如果仍要推进的条件</strong>（转为有条件Go）：
+<ul>
+<li>辰光合作条款极具吸引力（首付款<500万元，里程碑与销售强绑定）</li>
+<li>德镁/天津康哲在目标终端有独特渠道优势</li>
+<li>品种获批后可快速转OTC，打开零售增量市场</li>
+</ul>
+<h2>五、数据来源与置信度</h2>
+<div class="table-wrap"><table>
+<tr><th>数据项</th><th>数值</th><th>来源</th><th>置信度</th></tr>
+<tr><td>济川首家获批时间</td><td>2024年6月</td><td>OP-001</td><td>高</td></tr>
+<tr><td>非索非那定2024年全国销售</td><td>0.66-0.80亿元</td><td>OP-004/P1-001</td><td>中</td></tr>
+<tr><td>抗组胺药全国市场规模</td><td>~76亿元/年</td><td>OP-003</td><td>高</td></tr>
+<tr><td>敏菲乐入医保</td><td>2024年国家医保</td><td>OP-002</td><td>高</td></tr>
+<tr><td>比拉斯汀受体亲和力优势</td><td>6倍于非索非那定</td><td>OP-003</td><td>中</td></tr>
+<tr><td>峰值销售额预测</td><td>0.3-0.5亿元</td><td>推算</td><td>中低</td></tr>
+</table></div>
+</div>
+<div class="chapter"><h1>第4章 Gate 1 前提门</h1>
+<p>> 品种：非索非那定干混悬剂 | 评估技能：A-8 | 撰写日期：2026-05-31</p>
+<p>> 业务主体：德镁/天津康哲 | 参考文献：G1-001 ~ G1-004, P1-001, P1-002</p>
+<h2>结论卡</h2>
+<p>```</p>
+<p>【Gate 1：前提门】</p>
+<p>结论：条件通过</p>
+<p>置信度：中</p>
+<p>关键支撑证据：</p>
+<ol>
+<li>参比制剂已列入CDE推荐目录（日本赛诺菲干糖浆，2014年获批），注册路径明确[G1-003]</li>
+<li>济川药业已于2024年6月按3类仿制药路径获批，证明路径可行[G1-001]</li>
+<li>注册分类为3类仿制药（非4类改良型新药），需开展BE研究，BE豁免不可行[G1-002]</li>
+</ol>
+<p>需补充证据 Top 5：</p>
+<ol>
+<li>辰光制药的具体受理号和CDE审评进度（预计获取难度：低）</li>
+<li>辰光BE研究报告/结果（需合作方提供）</li>
+<li>辰光GMP资质和生产场地核查状态（预计获取难度：中）</li>
+<li>参比制剂具体批号和目录序号确认（预计获取难度：低）</li>
+<li>辰光与济川的处方差异（掩味技术、辅料对比）（预计获取难度：中）</li>
+</ol>
+<p>红旗事项：Discovery阶段标注"独家剂型"与事实不符——济川药业已于2024年6月首家获批干混悬剂[G1-001]</p>
+<p>下一步行动：获取辰光CDE受理号和审评进度，确认预计获批时间</p>
+<p>```</p>
+<h2>1.1 注册路径分析 <span class="stage-tag stage-a">阶段A</span></h2>
+<h3>注册分类</h3>
+<p>辰光制药盐酸非索非那定干混悬剂的注册分类为<strong>化学药品3类（仿制药）</strong>，参照日本获批的赛诺菲干糖浆参比制剂[G1-001][G1-003]。该品种非4类改良型新药，而是境外已上市剂型的国内仿制。</p>
+<div class="table-wrap"><table>
+<tr><th>评估项</th><th>内容</th><th>来源标注</th></tr>
+<tr><td>注册分类</td><td>3类（仿制药）[G1-001]</td><td>CDE公示</td></tr>
+<tr><td>参比制剂</td><td>盐酸非索非那定干糖浆（赛诺菲，日本2014年获批），规格15mg/0.3g、30mg/0.6g [G1-001][G1-003]</td><td>CDE参比制剂目录第七十批</td></tr>
+<tr><td>申报策略</td><td>按参比制剂质量和疗效一致的技术要求审评，需开展BE研究[G1-001]</td><td>—</td></tr>
+<tr><td>当前注册进度</td><td>NDA于2025-02-18提交，预计2026年获批（审批周期约12-18个月）[P1-001]</td><td>内部评估</td></tr>
+<tr><td>BE豁免可行性</td><td><strong>不可行</strong>。盐酸非索非那定为BCS III类或IV类（学术界存在争议），不符合BCS I类BE豁免条件[G1-002]</td><td>学术文献</td></tr>
+</table></div>
+<h3>适应症边界限制</h3>
+<div class="table-wrap"><table>
+<tr><th>评估项</th><th>内容</th><th>来源标注</th></tr>
+<tr><td>国际指南推荐范围</td><td>季节性过敏性鼻炎（6月龄以上）、慢性特发性荨麻疹（6月龄以上）[G1-001]</td><td>FDA批准适应症</td></tr>
+<tr><td>指南中不推荐/禁忌</td><td>对非索非那定或辅料过敏者禁用；不推荐用于6月龄以下婴幼儿</td><td>说明书</td></tr>
+<tr><td>内部评估适应症表述</td><td>过敏性鼻炎、荨麻疹、皮肤相关瘙痒</td><td>内部信息</td></tr>
+<tr><td>适应症表述一致性</td><td>"皮肤相关瘙痒"为内部描述，非FDA/NMPA批准适应症范围，需确认辰光申报适应症是否包含此项</td><td>[待确认]</td></tr>
+</table></div>
+<h2>1.2 BE/临床风险评估</h2>
+<div class="table-wrap"><table>
+<tr><th>风险项</th><th>风险描述</th><th>风险等级</th><th>缓释措施</th></tr>
+<tr><td>BE研究风险</td><td>非索非那定生物利用度仅约33%，受P-gp外排影响显著，个体变异大，BE通过有难度[G1-002]</td><td>中</td><td>确认辰光BE研究已通过；恒瑞片剂已过评证明BE可行[G1-004]</td></tr>
+<tr><td>药学研究风险</td><td>干混悬剂处方工艺复杂（掩味技术、粒度控制），辰光需采用与参比不同的掩味方案[G1-001]</td><td>中</td><td>济川已采用不同掩味技术获批，证明路径可行</td></tr>
+<tr><td>CMC审评风险</td><td>辰光生产场地需满足GMP要求</td><td>低</td><td>济川先例表明CDE审评标准明确</td></tr>
+<tr><td>临床风险</td><td>干混悬剂作为口服液体制剂，临床风险低，无需额外临床试验（仅需BE）</td><td>低</td><td>—</td></tr>
+</table></div>
+<h3>一致性评价现状</h3>
+<div class="table-wrap"><table>
+<tr><th>评估项</th><th>内容</th></tr>
+<tr><td>同API品种过评数量</td><td>片剂：赛诺菲原研（2021年）+ 恒瑞医药（2021年12月过评）等；干混悬剂：济川药业（2024年6月首家过评）[G1-001][G1-004]</td></tr>
+<tr><td>本品过评状态</td><td>辰光NDA在审（2025-02-18提交），获批后视同过评</td></tr>
+<tr><td>尚未过评的潜在竞争者</td><td>干混悬剂目前仅有济川和辰光（在审），其他厂家暂未见申报</td></tr>
+<tr><td>过评节奏对集采影响</td><td>干混悬剂过评厂家少（目前1家），短期不触发集采；若辰光获批则达2家，但距集采纳入仍需更多厂家</td></tr>
+</table></div>
+<h2>Gate 1 中立审查结论</h2>
+<p>```</p>
+<p>╔═══════════════════════════════════════════════════════╗</p>
+<p>║  🔍 中立审查结论                                      ║</p>
+<p>║  外网核查已覆盖：注册路径、参比制剂、BE豁免、竞品状态  ║</p>
+<p>║  与内部评估一致之处：NDA已提交，注册路径可行            ║</p>
+<p>║  与内部评估存在差异之处：                               ║</p>
+<p>║  1. Discovery标注"独家剂型"实际不成立                  ║</p>
+<p>║  2. 注册分类为3类仿制药而非4类改良型新药                ║</p>
+<p>║  中立结论：注册路径可行，但辰光为后发仿制非独家品种     ║</p>
+<p>╚═══════════════════════════════════════════════════════╝</p>
+<p>```</p>
+</div>
+<div class="chapter"><h1>第5章 Gate 2 定调门</h1>
+<p>> 品种：非索非那定干混悬剂 | 评估技能：A-8 | 撰写日期：2026-05-31</p>
+<p>> 业务主体：德镁/天津康哲 | 参考文献：G2-001 ~ G2-003, G1-001</p>
+<h2>结论卡</h2>
+<p>```</p>
+<p>【Gate 2：定调门】</p>
+<p>结论：条件通过</p>
+<p>置信度：高</p>
+<p>关键支撑证据：</p>
+<ol>
+<li>非索非那定化合物专利已全球过期，无化合物专利壁垒[G2-001]</li>
+<li>赛诺菲混悬剂制剂专利CN101316580B预计2026-12-12到期，距今约6个月[G2-002]</li>
+<li>国药集团干混悬剂处方专利CN106806346B保护特定配比，辰光可通过处方绕过[G2-003]</li>
+</ol>
+<p>需补充证据 Top 5：</p>
+<ol>
+<li>辰光具体处方组成与国药集团专利CN106806346B的权利要求范围对比（需合作方提供）</li>
+<li>辰光是否已进行FTO分析（需合作方确认）</li>
+<li>赛诺菲混悬剂专利到期后对干混悬剂竞争格局的影响评估</li>
+<li>辰光商标注册状态查询</li>
+<li>辰光是否有自主制剂专利申请</li>
+</ol>
+<p>红旗事项：赛诺菲混悬剂制剂专利仍有约6个月有效期，需确认辰光干混悬剂是否涉及侵权</p>
+<p>下一步行动：要求辰光提供FTO分析报告和处方组成信息</p>
+<p>```</p>
+<h2>2.1 四层壁垒全景扫描（作为仿制方）</h2>
+<p>非索非那定干混悬剂作为3类仿制药，辰光制药为仿制方。需评估原研药（赛诺菲干糖浆/混悬液）的四层壁垒解除状态。</p>
+<h3>2.1.1 原研药壁垒解除状态核查</h3>
+<div class="table-wrap"><table>
+<tr><th>壁垒层</th><th>解除状态</th><th>解除时间</th><th>风险/备注</th><th>来源标注</th></tr>
+<tr><td>第一层：化合物专利</td><td>✅ 已解除</td><td>2011年（美国），全球已过期</td><td>无风险</td><td>[G2-001]</td></tr>
+<tr><td>第一层：制剂专利（混悬液）</td><td>⚠️ 即将解除</td><td><strong>2026-12-12</strong>（CN101316580B到期）</td><td>距今约6个月；保护水性混悬剂特定粒度分布</td><td>[G2-002]</td></tr>
+<tr><td>第一层：制剂专利（干混悬剂处方）</td><td>❌ 未解除</td><td><strong>2035-12-01</strong>（CN106806346B到期）</td><td>保护特定处方配比，但可通过不同处方绕过</td><td>[G2-003]</td></tr>
+<tr><td>第二层：数据保护期</td><td>✅ 不适用</td><td>—</td><td>干混悬剂为3类仿制药，非创新药/改良型新药，不触发数据保护</td><td>—</td></tr>
+<tr><td>第三层：市场独占期</td><td>✅ 不适用</td><td>—</td><td>仿制药无市场独占期</td><td>—</td></tr>
+<tr><td>第四层：新药监测期</td><td>✅ 不适用</td><td>—</td><td>3类仿制药无监测期</td><td>—</td></tr>
+</table></div>
+<h3>关键专利分析</h3>
+<strong>CN101316580B（赛诺菲混悬剂制剂专利）</strong>：
+<ul>
+<li>保护水性药物混悬剂，含非索非那定两性离子型二水合物Form I</li>
+<li>关键限制：特定粒度分布（至少90%低于50μm）[G2-002]</li>
+<li><strong>辰光干混悬剂为固体制剂（临用前配水），非水性混悬剂，可能不落入该专利保护范围</strong></li>
+<li>但需确认：辰光加水配制后的粒度分布是否落入专利范围</li>
+<li>到期日2026-12-12距今约6个月，即使涉及也即将过期</li>
+</ul>
+<strong>CN106806346B（国药集团干混悬剂处方专利）</strong>：
+<ul>
+<li>保护特定处方配比：非索非那定0.8%~4%、填充剂80%~93%等[G2-003]</li>
+<li>济川药业2024年获批干混悬剂（采用不同掩味技术），证明存在可绕过该专利的处方方案[G1-001]</li>
+<li>辰光可选择不同处方配比规避</li>
+</ul>
+<h3>综合FTO判断</h3>
+<div class="table-wrap"><table>
+<tr><th>评估项</th><th>结论</th></tr>
+<tr><td>化合物专利FTO</td><td>✅ 自由进入</td></tr>
+<tr><td>制剂专利FTO</td><td>⚠️ 受限进入（赛诺菲混悬剂专利6个月后到期；国药处方专利可通过不同处方绕过）</td></tr>
+<tr><td><strong>综合FTO</strong></td><td><strong>受限进入（低风险），预计6个月后完全自由</strong></td></tr>
+</table></div>
+<h2>2.2 商标与INN保护</h2>
+<div class="table-wrap"><table>
+<tr><th>评估项</th><th>内容</th><th>来源标注</th></tr>
+<tr><td>商标注册状态</td><td>非索非那定（Fexofenadine）为INN通用名，不受商标保护</td><td>—</td></tr>
+<tr><td>济川商品名"敏菲乐"</td><td>已注册商标，辰光不可使用</td><td>[G2-002相关]</td></tr>
+<tr><td>商标冲突风险</td><td>低——辰光需使用自有商品名</td><td>—</td></tr>
+</table></div>
+<h2>Gate 2 中立审查结论</h2>
+<p>```</p>
+<p>╔═══════════════════════════════════════════════════════╗</p>
+<p>║  🔍 中立审查结论                                      ║</p>
+<p>║  外网核查已覆盖：化合物专利、制剂专利、处方专利         ║</p>
+<p>║  与内部评估一致之处：化合物专利已过期                   ║</p>
+<p>║  与内部评估存在差异之处：                               ║</p>
+<p>║  1. 赛诺菲混悬剂专利仍有6个月有效期                     ║</p>
+<p>║  2. 国药集团干混悬剂处方专利2035年才到期               ║</p>
+<p>║  中立结论：FTO风险可控（低），但需辰光确认处方绕过方案  ║</p>
+<p>╚═══════════════════════════════════════════════════════╝</p>
+<p>```</p>
+</div>
+<div class="chapter"><h1>第6章 Gate 3 证据门</h1>
+<p>> 品种：非索非那定干混悬剂 | 评估技能：A-8 | 撰写日期：2026-05-31</p>
+<p>> 业务主体：德镁/天津康哲 | 参考文献：OP-001 ~ OP-006, G1-001, P1-001, P1-002</p>
+<h2>结论卡</h2>
+<p>```</p>
+<p>【Gate 3：证据门】</p>
+<p>结论：条件通过（重大风险提示）</p>
+<p>置信度：中</p>
+<p>关键支撑证据：</p>
+<ol>
+<li>非索非那定为第二代H1抗组胺药，临床指南推荐用于过敏性鼻炎/荨麻疹，证据充分[OP-001]</li>
+<li>济川药业敏菲乐已建立先发优势（2024年6月获批+国家医保），辰光为后发者[OP-002]</li>
+<li>非索非那定全品类市场规模<1亿元，天花板极低，且面临比拉斯汀等新一代药物替代[OP-003]</li>
+</ol>
+<p>需补充证据 Top 5：</p>
+<ol>
+<li>非索非那定干混悬剂vs济川敏菲乐的处方/规格/价格对比（预计获取难度：中）</li>
+<li>过敏性鼻炎指南中非索非那定的具体推荐级别（预计获取难度：低）</li>
+<li>敏菲乐2024-2025年销售数据（预计获取难度：中）</li>
+<li>比拉斯汀等新一代抗组胺药的替代速度评估（预计获取难度：中）</li>
+<li>干混悬剂vs片剂/口服混悬液在儿童患者中的依从性差异（预计获取难度：中）</li>
+</ol>
+<p>红旗事项：非索非那定面临比拉斯汀（受体亲和力高6倍）等新一代抗组胺药的替代竞争[OP-003]</p>
+<p>下一步行动：获取敏菲乐销售数据和非索非那定指南推荐级别</p>
+<p>```</p>
+<h2>3.1 临床需求分析与适应症边界</h2>
+<h3>3.1.1 疾病负担与未满足需求</h3>
+<div class="table-wrap"><table>
+<tr><th>评估项</th><th>内容</th><th>置信度</th><th>来源标注</th></tr>
+<tr><td>中国过敏性鼻炎患者</td><td>约2.5亿人</td><td>A级</td><td>[P1-002]</td></tr>
+<tr><td>6月龄以上儿童患者</td><td>占过敏性鼻炎患者的20-30%<span class="confidence-badge conf-d">D-基于假设</span></td><td>D级</td><td>—</td></tr>
+<tr><td>荨麻疹患者</td><td>约986.87万人（2020年）</td><td>B级</td><td>[P1-001]</td></tr>
+<tr><td>当前标准治疗</td><td>二代抗组胺药（氯雷他定/西替利嗪/非索非那定/依巴斯汀等）为一线</td><td>A级</td><td>临床指南</td></tr>
+<tr><td>未满足需求</td><td>儿童专用剂型不足；约20%患者对二代抗组胺药无效[P1-002]</td><td>—</td><td>—</td></tr>
+</table></div>
+<h3>3.1.2 适应症边界限制</h3>
+<div class="table-wrap"><table>
+<tr><th>评估项</th><th>内容</th><th>来源标注</th></tr>
+<tr><td>国际指南推荐</td><td>ARIA指南（过敏性鼻炎）推荐二代抗组胺药为一线治疗</td><td>临床指南</td></tr>
+<tr><td>本品指南推荐级别</td><td>二线/备选——氯雷他定和西替利嗪证据更充分，非索非那定地位略低</td><td>[OP-003]</td></tr>
+<tr><td>适应症表述一致性</td><td>Discovery中"皮肤相关瘙痒"非NMPA批准适应症，需确认</td><td>[待确认]</td></tr>
+</table></div>
+<h2>3.2 医学差异化分析</h2>
+<div class="table-wrap"><table>
+<tr><th>差异化维度</th><th>标的表现</th><th>vs 标准治疗</th><th>差异化价值评级</th><th>来源标注</th></tr>
+<tr><td>疗效差异化</td><td>二代H1抗组胺药，疗效与氯雷他定/西替利嗪相当</td><td>持平</td><td>低</td><td>—</td></tr>
+<tr><td>安全性差异化</td><td>嗜睡副作用低于第一代，与非索非那定其他剂型无差异</td><td>持平</td><td>低</td><td>—</td></tr>
+<tr><td>便利性差异化</td><td>干混悬剂（儿童用，加水即服）vs 片剂（儿童吞咽困难）</td><td><strong>优势</strong></td><td>中</td><td>[G1-001]</td></tr>
+<tr><td>经济性差异化</td><td>作为3类仿制药，价格应低于原研；但济川已入医保</td><td>持平/劣势</td><td>低</td><td>[OP-002]</td></tr>
+<tr><td><strong>综合差异化定位</strong></td><td><strong>便利性有优势，但济川已有相同剂型，差异化空间极小</strong></td><td>—</td><td><strong>低</strong></td><td>—</td></tr>
+</table></div>
+<h2>3.3 市场竞争格局</h2>
+<h3>3.3.1 非索非那定制剂竞品全景</h3>
+<div class="table-wrap"><table>
+<tr><th>竞品</th><th>API</th><th>剂型</th><th>上市状态</th><th>渠道</th><th>来源</th></tr>
+<tr><td>Allegra（赛诺菲）</td><td>非索非那定</td><td>片剂</td><td>2021年中国上市</td><td>院内+零售</td><td>[P1-001]</td></tr>
+<tr><td>恒瑞医药</td><td>非索非那定</td><td>片剂</td><td>2021年过评</td><td>院内</td><td>[G1-004]</td></tr>
+<tr><td>济川敏菲乐</td><td>非索非那定</td><td><strong>干混悬剂</strong></td><td><strong>2024年6月获批，首家过评，已入医保</strong></td><td>院内+零售</td><td>[OP-001]</td></tr>
+<tr><td>广州南新</td><td>非索非那定</td><td>口服混悬液</td><td>已上市，首仿+过评</td><td>院内</td><td>[P1-001]</td></tr>
+<tr><td>浙江普利</td><td>非索非那定</td><td>口服混悬液</td><td>已上市</td><td>院内</td><td>[P1-001]</td></tr>
+<tr><td>辰光制药（本标的）</td><td>非索非那定</td><td>干混悬剂</td><td>NDA在审（2025-02-18）</td><td>—</td><td>—</td></tr>
+</table></div>
+<h3>3.3.2 干混悬剂细分市场深度对比</h3>
+<div class="table-wrap"><table>
+<tr><th>对比维度</th><th>辰光制药（本标的）</th><th>济川敏菲乐</th></tr>
+<tr><td>获批状态</td><td>NDA在审</td><td>✅ 2024年6月获批</td></tr>
+<tr><td>注册分类</td><td>3类仿制药</td><td>3类仿制药</td></tr>
+<tr><td>规格</td><td>待确认</td><td>15mg/30mg双规格</td></tr>
+<tr><td>医保身份</td><td>❌ 未获批</td><td>✅ 2024年国家医保</td></tr>
+<tr><td>渠道覆盖</td><td>未开始</td><td>济川成熟儿科渠道（蒲地蓝/小儿豉翘）[OP-005]</td></tr>
+<tr><td>临床研究</td><td>—</td><td>已注册儿童RCT（ChiCTR）[OP-006]</td></tr>
+<tr><td>品牌认知</td><td>无</td><td>"敏菲乐"品牌+年度创新奖[OP-002]</td></tr>
+<tr><td>研发投入</td><td>—</td><td>累计1688万元[OP-001]</td></tr>
+</table></div>
+<h3>3.3.3 替代疗法威胁评估</h3>
+<div class="table-wrap"><table>
+<tr><th>评估项</th><th>内容</th><th>威胁等级</th></tr>
+<tr><td>比拉斯汀（Bilastine）</td><td>与H1受体亲和力比非索非那定高6倍，新一代抗组胺药，已有多家获批[OP-003]</td><td><strong>高</strong></td></tr>
+<tr><td>氯雷他定/西替利嗪</td><td>老牌二代抗组胺药，价格低、医保覆盖、品牌认知强</td><td>高</td></tr>
+<tr><td>生物制剂（奥马珠单抗等）</td><td>中重度过敏患者的高端替代，增速快[P1-002]</td><td>中</td></tr>
+<tr><td>JAK抑制剂</td><td>济川药业布局JAK1/2鼻喷雾剂（普美昔替尼），下一代治疗方向[OP-005]</td><td>中</td></tr>
+</table></div>
+<h3>3.3.4 市场容量与峰值预测</h3>
+<div class="table-wrap"><table>
+<tr><th>评估项</th><th>数值</th><th>置信度</th><th>来源</th></tr>
+<tr><td>非索非那定2024年全国销售额</td><td>0.66-0.80亿元</td><td>B级</td><td>[OP-004][P1-001]</td></tr>
+<tr><td>非索非那定年增长率</td><td>13-40%</td><td>B级</td><td>[OP-004]</td></tr>
+<tr><td>预计2028年非索非那定市场</td><td>1.2-1.6亿元</td><td>D级</td><td><span class="confidence-badge conf-d">D-基于假设</span></td></tr>
+<tr><td>干混悬剂占非索非那定比例</td><td>30-40%（vs片剂+口服混悬液）</td><td>D级</td><td><span class="confidence-badge conf-d">D-基于假设</span></td></tr>
+<tr><td>辰光干混悬剂峰值销售额</td><td>0.3-0.5亿元（第3年）</td><td>D级</td><td><span class="confidence-badge conf-d">D-基于假设</span></td></tr>
+</table></div>
+<strong>⚠️ 峰值销售额预测依赖C/D级数据，市场规模天花板极低。</strong>
+<h2>Gate 3 中立审查结论</h2>
+<p>```</p>
+<p>╔═══════════════════════════════════════════════════════╗</p>
+<p>║  🔍 中立审查结论                                      ║</p>
+<p>║  外网核查已覆盖：竞品格局、替代疗法、市场数据           ║</p>
+<p>║  与内部评估一致之处：非索非那定为成熟品种              ║</p>
+<p>║  与内部评估存在差异之处：                               ║</p>
+<p>║  1. Discovery未充分反映济川先发优势+医保壁垒的严重性   ║</p>
+<p>║  2. 非索非那定品类天花板远低于预期（<1亿元）            ║</p>
+<p>║  3. 比拉斯汀等新一代药物的替代威胁被低估                ║</p>
+<p>║  中立结论：医学价值存在但差异化极小，商业前景堪忧       ║</p>
+<p>╚═══════════════════════════════════════════════════════╝</p>
+<p>```</p>
+</div>
+<div class="chapter"><h1>第7章 Gate 4 支付门</h1>
+<p>> 品种：非索非那定干混悬剂 | 评估技能：A-8 | 撰写日期：2026-05-31</p>
+<p>> 业务主体：德镁/天津康哲 | 参考文献：OP-001 ~ OP-005, P1-001</p>
+<h2>结论卡</h2>
+<p>```</p>
+<p>【Gate 4：支付门】</p>
+<p>结论：条件通过</p>
+<p>置信度：中</p>
+<p>关键支撑证据：</p>
+<ol>
+<li>济川敏菲乐已进入2024年国家医保目录，证明干混悬剂剂型可获医保覆盖[OP-002]</li>
+<li>非索非那定片剂已有过评厂家，存在集采风险但干混悬剂短期不触发[OP-001]</li>
+<li>儿童专用剂型在DRG/DIP支付下有差异化空间</li>
+</ol>
+<p>需补充证据 Top 5：</p>
+<ol>
+<li>敏菲乐医保谈判价格（预计获取难度：中）</li>
+<li>非索非那定片剂集采历史和当前中标价（预计获取难度：低）</li>
+<li>辰光拟定挂网价格策略（需合作方提供）</li>
+<li>重点省份（浙江/广东/上海）儿童抗组胺药准入政策（预计获取难度：中）</li>
+<li>院外/零售OTC定价策略可行性评估（预计获取难度：中）</li>
+</ol>
+<p>红旗事项：济川敏菲乐已入医保，辰光获批后需单独谈判医保，时间窗口可能落后1-2年</p>
+<p>下一步行动：调研敏菲乐医保价格和挂网情况</p>
+<p>```</p>
+<h2>4.1 医保准入路径分析 <span class="stage-tag stage-b">阶段B</span></h2>
+<h3>当前医保/集采状态</h3>
+<div class="table-wrap"><table>
+<tr><th>评估项</th><th>内容</th><th>来源标注</th></tr>
+<tr><td>非索非那定片剂</td><td>多家过评，已有集采风险</td><td>—</td></tr>
+<tr><td>非索非那定干混悬剂（济川敏菲乐）</td><td>✅ 已进入2024年国家医保药品目录</td><td>[OP-002]</td></tr>
+<tr><td>非索非那定干混悬剂（辰光）</td><td>❌ 未获批，需获批后单独申请医保</td><td>—</td></tr>
+<tr><td>非索非那定口服混悬液</td><td>广州南新/普利已上市，医保状态待确认</td><td>[P1-001]</td></tr>
+</table></div>
+<h3>价格走廊评估（三档）</h3>
+<div class="table-wrap"><table>
+<tr><th>档位</th><th>预估价格（元/盒）</th><th>策略</th></tr>
+<tr><td>引爆价（激进策略）</td><td>25-30元/盒（15mg×14袋）</td><td>低于敏菲乐医保价，快速抢占份额</td></tr>
+<tr><td>基准价（平衡策略）</td><td>35-45元/盒</td><td>参考敏菲乐价格，差异化定位</td></tr>
+<tr><td>溢价维持（保利策略）</td><td>50-60元/盒</td><td>仅限高端医院，不现实</td></tr>
+<tr><td>集采后底价预估</td><td>15-20元/盒</td><td>止损底价（不可逾越）</td></tr>
+</table></div>
+<strong>价格策略核心矛盾</strong>：济川敏菲乐已有医保覆盖+先发品牌优势，辰光若定价偏高则无竞争力，若定价偏低则利润空间不足。
+<h2>4.2 集采风险评估</h2>
+<div class="table-wrap"><table>
+<tr><th>评估项</th><th>内容</th></tr>
+<tr><td>干混悬剂过评厂家数</td><td>1家（济川），辰光若获批则2家</td></tr>
+<tr><td>集采触发条件</td><td>通常需≥3家过评</td></tr>
+<tr><td>预计集采纳入时间</td><td>短期（3年内）不触发；若第3家获批则可能5年内纳入</td></tr>
+<tr><td>集采降幅预估</td><td>50-70%（参考片剂降幅）</td></tr>
+<tr><td>集采对毛利率影响</td><td>毛利率预计从55-60%降至35-40%</td></tr>
+</table></div>
+<h2>Gate 4 中立审查结论</h2>
+<p>```</p>
+<p>╔═══════════════════════════════════════════════════════╗</p>
+<p>║  🔍 中立审查结论                                      ║</p>
+<p>║  外网核查已覆盖：医保状态、集采风险、竞品准入           ║</p>
+<p>║  与内部评估一致之处：干混悬剂短期不触发集采             ║</p>
+<p>║  与内部评估存在差异之处：                               ║</p>
+<p>║  1. 济川敏菲乐已有医保覆盖，辰光医保准入时间窗口不确定  ║</p>
+<p>║  中立结论：准入路径存在但需时间，且面临济川医保壁垒      ║</p>
+<p>╚═══════════════════════════════════════════════════════╝</p>
+<p>```</p>
+</div>
+<div class="chapter"><h1>第8章 Gate 5 成本门</h1>
+<p>> 品种：非索非那定干混悬剂 | 评估技能：A-8 | 撰写日期：2026-05-31</p>
+<p>> 业务主体：德镁/天津康哲 | 参考文献：G1-001, OP-001, OP-005</p>
+<h2>结论卡</h2>
+<p>```</p>
+<p>【Gate 5：成本门】</p>
+<p>结论：条件通过</p>
+<p>置信度：中低</p>
+<p>关键支撑证据：</p>
+<ol>
+<li>济川研发投入累计约1688万元，可作为成本参考基准[G1-001]</li>
+<li>3类仿制药无大规模临床开发成本，主要成本为BE研究+注册+生产</li>
+<li>引进方式决定成本结构——若为代理权引进则无需承担研发沉没成本</li>
+</ol>
+<p>需补充证据 Top 5：</p>
+<ol>
+<li>辰光提出的合作条款（首付款/里程碑/分成比例）（需合作方提供）</li>
+<li>辰光干混悬剂生产成本估算（需合作方提供）</li>
+<li>德镁/天津康哲在儿科/呼吸领域的现有渠道资源评估（内部）</li>
+<li>市场推广预算估算（参考济川投入）</li>
+<li>供应链稳定性评估（辰光原料药来源、产能）</li>
+</ol>
+<p>红旗事项：品种峰值销售额仅0.3-0.5亿元，任何超过1000万元的引进成本都将严重影响IRR</p>
+<p>下一步行动：获取辰光合作条款草案</p>
+<p>```</p>
+<h2>5.1 成本结构分析 <span class="stage-tag stage-b">阶段B</span></h2>
+<h3>引进成本估算</h3>
+<div class="table-wrap"><table>
+<tr><th>成本项</th><th>估算（万元）</th><th>备注</th><th>置信度</th></tr>
+<tr><td>首付款</td><td>300-800</td><td>待谈判</td><td>C级-待验证</td></tr>
+<tr><td>里程碑付款</td><td>200-500</td><td>获批/首批入医保/销售达标触发</td><td>C级-待验证</td></tr>
+<tr><td>销售分成</td><td>15-25%</td><td>按销售额提成</td><td>C级-待验证</td></tr>
+<tr><td><strong>引进总成本（首年）</strong></td><td><strong>500-1300</strong></td><td>—</td><td>C级-待验证</td></tr>
+</table></div>
+<h3>运营成本估算（获批后年化）</h3>
+<div class="table-wrap"><table>
+<tr><th>成本项</th><th>年成本（万元）</th><th>备注</th></tr>
+<tr><td>市场推广/学术投入</td><td>200-400</td><td>儿科渠道开拓</td></tr>
+<tr><td>销售团队</td><td>100-200</td><td>共享现有团队可降低</td></tr>
+<tr><td>渠道分销费用</td><td>50-100</td><td>经销商费用</td></tr>
+<tr><td>合计SG&A（销售、一般及行政费用）</td><td>350-700</td><td>—</td></tr>
+<tr><td>SG&A占收入比例</td><td>15-25%</td><td>基准情景</td></tr>
+</table></div>
+<h3>毛利率预估</h3>
+<div class="table-wrap"><table>
+<tr><th>情景</th><th>进货成本/分成</th><th>毛利率（毛利润/营业收入）</th><th>达标（≥40%）</th></tr>
+<tr><td>基准（含分成）</td><td>销售额的40-50%</td><td>50-60%</td><td>✅ 达标</td></tr>
+<tr><td>集采后</td><td>销售额的40-50%</td><td>40-50%</td><td>⚠️ 临界</td></tr>
+<tr><td>悲观（高分成+降价）</td><td>销售额的55-65%</td><td>35-45%</td><td>❌ 不达标</td></tr>
+</table></div>
+<h2>Gate 5 中立审查结论</h2>
+<p>```</p>
+<p>╔═══════════════════════════════════════════════════════╗</p>
+<p>║  🔍 中立审查结论                                      ║</p>
+<p>║  外网核查已覆盖：济川研发投入参考                      ║</p>
+<p>║  与内部评估一致之处：仿制药引进成本结构相对简单         ║</p>
+<p>║  与内部评估存在差异之处：                               ║</p>
+<p>║  1. 品种天花板<0.5亿元，即使成本控制好ROI也有限         ║</p>
+<p>║  中立结论：成本可控但天花板太低，投入产出比不理想       ║</p>
+<p>╚═══════════════════════════════════════════════════════╝</p>
+<p>```</p>
+</div>
+<div class="chapter"><h1>第9章 Gate 6 可做门</h1>
+<p>> 品种：非索非那定干混悬剂 | 评估技能：A-8 | 撰写日期：2026-05-31</p>
+<p>> 业务主体：德镁/天津康哲 | 参考文献：综合Gate 1-5结论</p>
+<h2>结论卡</h2>
+<p>```</p>
+<p>【Gate 6：可做门】</p>
+<p>结论：停止（不推荐引进）</p>
+<p>置信度：中高</p>
+<p>关键支撑证据：</p>
+<ol>
+<li>峰值销售额仅0.3-0.5亿元（第3年），远低于改良型新药引进的财务门槛[One-pager]</li>
+<li>基准情景IRR（内部收益率）约15-22%，低于改良型新药门槛30%[OP-004]</li>
+<li>济川敏菲乐已建立先发+医保+渠道三重壁垒，辰光作为第二家竞争力不足[OP-001][OP-002]</li>
+</ol>
+<p>需补充证据 Top 5：</p>
+<ol>
+<li>辰光具体合作条款（若条款极端优惠可能改变结论）</li>
+<li>零售OTC渠道增量潜力</li>
+<li>德镁/天津康哲的渠道优势能否撬动增量</li>
+<li>非索非那定品类增长是否可持续</li>
+<li>辰光品种的差异化优势（掩味技术/规格）</li>
+</ol>
+<p>红旗事项：Gate 1-3均提示重大风险——非独家、天花板低、竞争激烈</p>
+<p>下一步行动：向投委会提交"不推荐引进"结论，若合作条款极优惠可转为"有条件推进"</p>
+<p>```</p>
+<h2>6.1 财务回报测算 <span class="stage-tag stage-b">阶段B</span></h2>
+<h3>三情景财务模型</h3>
+<div class="table-wrap"><table>
+<tr><th>参数</th><th>保守情景</th><th>基准情景</th><th>乐观情景</th></tr>
+<tr><td>年终端销售收入（峰值，第3年）</td><td>0.15亿元</td><td>0.35亿元</td><td>0.50亿元</td></tr>
+<tr><td>毛利率（毛利润/营业收入）</td><td>45%</td><td>55%</td><td>60%</td></tr>
+<tr><td>SG&A（销售、一般及行政费用）占比</td><td>25%</td><td>20%</td><td>15%</td></tr>
+<tr><td>引进成本（首付款+里程碑）</td><td>1000万元</td><td>800万元</td><td>500万元</td></tr>
+<tr><td>年净利润（峰值）</td><td>300万元</td><td>1225万元</td><td>2250万元</td></tr>
+<tr><td>5年累计净利润</td><td>800万元</td><td>3500万元</td><td>7500万元</td></tr>
+<tr><td>IRR（内部收益率）</td><td>约5%</td><td>约18%</td><td>约30%</td></tr>
+<tr><td>回收期</td><td>>5年</td><td>约3年</td><td>约2年</td></tr>
+</table></div>
+<h3>财务门槛达标情况（改良型新药标准）</h3>
+<div class="table-wrap"><table>
+<tr><th>指标</th><th>门槛</th><th>基准情景</th><th>达标</th></tr>
+<tr><td>IRR（内部收益率）</td><td>≥30%</td><td>约18%</td><td>❌ 不达标</td></tr>
+<tr><td>回收期</td><td>≤4年</td><td>约3年</td><td>✅ 达标</td></tr>
+<tr><td>毛利率（毛利润/营业收入）</td><td>≥60%</td><td>约55%</td><td>⚠️ 接近</td></tr>
+<tr><td>净利润率</td><td>5年均≥20%</td><td>约35%</td><td>✅ 达标</td></tr>
+</table></div>
+<strong>⚠️ IRR（内部收益率）在基准情景下仅约18%，远低于改良型新药门槛30%。</strong>仅乐观情景勉强达标。
+<h2>6.2 一票否决核查</h2>
+<div class="table-wrap"><table>
+<tr><th>否决项编号</th><th>内容</th><th>核查结果</th></tr>
+<tr><td>V-01</td><td>原研化合物专利或核心制剂专利在中国有效期内</td><td>⚠️ 赛诺菲混悬剂专利2026-12到期，但辰光干混悬剂可能不落入保护范围</td></tr>
+<tr><td>V-02</td><td>CDE正式否定BE方案</td><td>✅ 未触发（济川先例证明可行）</td></tr>
+<tr><td>V-03</td><td>供应商存在FDA/EMA警告信</td><td>[待确认] 需核查辰光制药合规记录</td></tr>
+<tr><td>V-05</td><td>最差情景IRR（内部收益率）≤0%</td><td>✅ 未触发（保守情景IRR约5%）</td></tr>
+<tr><td>V-07</td><td>同API品种≥5家过评且已集采</td><td>✅ 未触发（干混悬剂仅1家过评）</td></tr>
+</table></div>
+<h2>6.3 止损三件套</h2>
+<div class="table-wrap"><table>
+<tr><th>止损条款</th><th>内容</th><th>状态</th></tr>
+<tr><td>①首付款上限</td><td>不超过500万元（基于最差情景回收期<4年测算）</td><td>未启动</td></tr>
+<tr><td>②里程碑付款与退出条款</td><td>获批后6个月内未进入50家以上医院可退出</td><td>未启动</td></tr>
+<tr><td>③销量对赌条款</td><td>3年累计销售额低于3000万元，退还50%首付款</td><td>未启动</td></tr>
+</table></div>
+<h2>6.4 综合结论</h2>
+<h3>决策建议：<strong>不推荐引进</strong></h3>
+<p>核心理由（按严重程度排序）：</p>
+<ol>
+<li><strong>非独家品种</strong>：济川敏菲乐已于2024年6月首家获批+国家医保，辰光为后发者，先发壁垒难以逾越[OP-001][OP-002]</li>
+<li><strong>品类天花板极低</strong>：非索非那定全品类2024年销售额仅0.66-0.80亿元，干混悬剂细分更小，即使拿下30%份额也仅约0.3亿元峰值[OP-004]</li>
+<li><strong>IRR（内部收益率）不达标</strong>：基准情景IRR约18%，低于改良型新药门槛30%</li>
+<li><strong>替代竞争加剧</strong>：比拉斯汀等新一代抗组胺药（受体亲和力高6倍）正在替代非索非那定[OP-003]</li>
+</ol>
+<h3>可转为"有条件推进"的前提</h3>
+<p>以下条件<strong>全部满足</strong>时可重新评估：</p>
+<ul>
+<li>辰光首付款<300万元 + 里程碑与销售强绑定</li>
+<li>德镁/天津康哲在儿科/零售OTC有独特渠道优势可增量</li>
+<li>辰光品种有济川不具备的差异化优势（如新规格/新适应症/更优依从性）</li>
+</ul>
+</div>
+<div class="chapter"><h1>第10章 Gate Battle 对抗审查总结</h1>
+<p>> 案件代号：2605-3102 | 品种：非索非那定干混悬剂 | 日期：2026-05-31</p>
+<h2>审查轮次：R1（单轮结束）</h2>
+<h3>审查层结论</h3>
+<ul>
+<li><strong>裁定</strong>：APPROVE（同意"不推荐引进"）</li>
+<li><strong>异议数</strong>：2项（均为🟡中风险）</li>
+<li><strong>核心发现</strong>：Discovery阶段"独家剂型"误判已纠正；财务模型D级假设风险已披露</li>
+</ul>
+<h3>执行层回应</h3>
+<ul>
+<li>接受全部2项异议</li>
+<li>无争议点</li>
+</ul>
+<h3>未解决争议</h3>
+<p>无。</p>
+<h3>最终结论</h3>
+<strong>不推荐引进（No-Go）</strong>。Gate 6结论维持不变。
+<p>理由：</p>
+<ol>
+<li>非独家品种（济川已先发+医保）</li>
+<li>品类天花板<1亿元</li>
+<li>IRR（内部收益率）不达标（约18% < 30%门槛）</li>
+<li>新一代替代药物威胁加剧</li>
+</ol>
+<div class="battle-auditor"><h3>审查层异议清单</h3><p># Gate Battle 对抗审查 — 审查层意见</p>
+<p>> 案件代号：2605-3102 | 品种：非索非那定干混悬剂 | 日期：2026-05-31</p>
+<p>## 审查结论</p>
+<p><strong>裁定：APPROVE（同意"不推荐引进"结论）</strong></p>
+<p>### 审查检查清单（8项）</p>
+<p><div class="table-wrap"><table></p>
+<p><tr><th>#</th><th>检查项</th><th>结果</th><th>说明</th></tr></p>
+<p><tr><td>1</td><td>Gate 结论卡完整性</td><td>✅ PASS</td><td>6个Gate均有标准结论卡</td></tr></p>
+<p><tr><td>2</td><td>置信度合理性</td><td>✅ PASS</td><td>置信度标注与数据来源匹配</td></tr></p>
+<p><tr><td>3</td><td>财务硬门槛达标</td><td>❌ FAIL</td><td>IRR约18% < 30%门槛，未达标</td></tr></p>
+<p><tr><td>4</td><td>一票否决核查</td><td>✅ PASS</td><td>无一票否决项触发</td></tr></p>
+<p><tr><td>5</td><td>C/D级数据披露</td><td>✅ PASS</td><td>峰值销售额预测已标注D级</td></tr></p>
+<p><tr><td>6</td><td>信息冲突标记</td><td>✅ PASS</td><td>"独家剂型"误判已纠正</td></tr></p>
+<p><tr><td>7</td><td>来源标注覆盖</td><td>✅ PASS</td><td>引用编号完整</td></tr></p>
+<p><tr><td>8</td><td>财务缩写规范</td><td>✅ PASS</td><td>IRR、SG&A等首次标注全称</td></tr></p>
+<p></table></div></p>
+<p>### 实质性异议（2项）</p>
+<p><strong>异议1（🟡中风险）：Discovery阶段"独家剂型"误判导致初始评估方向偏差</strong></p>
+<ul>
+<li>One-pager中已纠正，但Discovery文件仍标注"独家剂型"</li>
+<li>建议：更新Discovery文件纠正此项错误</li>
+</ul>
+<p><strong>异议2（🟡中风险）：财务模型过于依赖D级假设</strong></p>
+<ul>
+<li>峰值销售额0.3-0.5亿元为推算值，实际可能更低</li>
+<li>建议：在执行摘要中明确披露此风险</li>
+</ul>
+<p>### 总结</p>
+<p>审查层同意Gate 6"不推荐引进"结论。品种天花板低+非独家+IRR不达标，三个核心问题均无法通过合作条款优化解决。建议按"不推荐"归档。</p></div>
+<div class="battle-executor"><h3>执行层逐条回应</h3><p># Gate Battle 对抗审查 — 执行层回应</p>
+<p>> 案件代号：2605-3102 | 品种：非索非那定干混悬剂 | 日期：2026-05-31</p>
+<p>## 执行层回应</p>
+<p>### 对异议1的回应：接受</p>
+<ul>
+<li>已在One-pager中纠正"独家剂型"误判</li>
+<li>将更新Discovery文件，移除"独家剂型"描述，标注济川敏菲乐为先发品种</li>
+</ul>
+<p>### 对异议2的回应：接受</p>
+<ul>
+<li>同意财务模型依赖D级假设</li>
+<li>执行摘要中已明确标注"峰值销售额预测依赖C/D级数据"</li>
+<li>Gate 6结论已考虑此不确定性，采用保守估计</li>
+</ul>
+<p>### 执行层总结</p>
+<p>执行层接受审查层全部意见。"不推荐引进"结论成立，无需修改Gate文件。</p></div>
+<h2>附录：参考文献</h2>
+<h2>Phase 1 DISCOVERY</h2>
+<p>[P1-001] 赛诺菲原研药非索非那定多剂型被申报，4亿抗组胺药市场迎新变局 — https://www.pharnexcloud.com/zixun/zcsp_54291（2026-05-31抓取）</p>
+<p>[P1-002] 全国首个！又一新药抢入600亿过敏药市场 — https://bydrug.pharmcube.com/news/detail/9991b313379e8f62e7e2432fd1d870cf（2026-05-31抓取）</p>
+<h2>One-pager</h2>
+<p>[OP-001] 济川药业盐酸非索非那定干混悬剂获批（首家过评）— 新京报 2024-06-20</p>
+<p>[OP-002] 敏菲乐进入国家医保目录及市场推广进展 — 济川药业官网 2025-02</p>
+<p>[OP-003] 中国抗组胺药市场格局（2023-2024）— 健康界/摩熵医药 2025-03-28</p>
+<p>[OP-004] 非索非那定销售额及增长数据 — 知乎/药渡数据 2025-08-22</p>
+<p>[OP-005] 济川药业战略布局与敏菲乐定位 — CFN金融 2026-02-03</p>
+<p>[OP-006] 敏菲乐临床研究进展（儿童）— ChiCTR 2025-07-21</p>
+<h2>Gate 1 前提门</h2>
+<p>[G1-001] 济川药业盐酸非索非那定干混悬剂首仿获批 — 新京报/新浪财经</p>
+<p>[G1-002] 盐酸非索非那定BCS分类与BE豁免可行性 — JPharmSci/PMC</p>
+<p>[G1-003] CDE参比制剂目录——盐酸非索非那定口服混悬液 — NMPA第七十批</p>
+<p>[G1-004] 恒瑞医药盐酸非索非那定片过评 — 恒瑞医药官网</p>
+<h2>Gate 2 定调门</h2>
+<p>[G2-001] 非索非那定（Allegra）化合物专利状态 — DrugPatentWatch</p>
+<p>[G2-002] 赛诺菲混悬剂制剂专利CN101316580B — Google Patents</p>
+<p>[G2-003] 国药集团广东环球制药干混悬剂制剂专利CN106806346B — Google Patents</p>
+</div>
+
+</body>
+</html>

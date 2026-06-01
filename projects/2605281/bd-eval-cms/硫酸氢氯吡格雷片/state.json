@@ -1,0 +1,89 @@
+{
+  "caseCode": "2605-3101",
+  "name": "硫酸氢氯吡格雷片",
+  "displayName": "硫酸氢氯吡格雷片（泰嘉）",
+  "scheme": "B",
+  "businessEntity": "深康",
+  "routedSkill": "A-5",
+  "routedChain": [
+    "D-1",
+    "D-2",
+    "A-5",
+    "A-6",
+    "D-3"
+  ],
+  "phase": "report_finalized",
+  "startedAt": "2026-05-31T13:58:00+08:00",
+  "currentVersion": 1,
+  "gateVersions": {
+    "One-pager": 1,
+    "Gate-1": 1,
+    "Gate-2": 1,
+    "Gate-3": 1,
+    "Gate-4": 1,
+    "Gate-5": 1,
+    "Gate-6": 1
+  },
+  "financialThresholdType": "仿制药",
+  "routingDecision": {
+    "recommendedSkill": "A-5",
+    "chain": [
+      "D-1",
+      "D-2",
+      "A-5",
+      "A-6",
+      "D-3"
+    ],
+    "thresholdType": "仿制药",
+    "rationale": "氯吡格雷为信立泰已在中国上市25年的成熟仿制药品种，已通过一致性评价并参与集采。本次评估性质为引进已上市品种推广权/商业权益，符合A-5技能定义。"
+  },
+  "discovery": {
+    "searches": 5,
+    "sources": [
+      "minimax"
+    ],
+    "productType": "已上市仿制药",
+    "confidence": "高",
+    "referenceCount": 5
+  },
+  "updateHistory": [],
+  "references": {
+    "file": "references/REFERENCES.md",
+    "count": 5,
+    "prefixes": [
+      "P1"
+    ]
+  },
+  "finalReport": "04-final-report.md",
+  "conclusion": "条件推进",
+  "qualityCheck": {
+    "gateCards": "PASS",
+    "financialThreshold": "PASS",
+    "vetoCheck": "PASS",
+    "confidenceAnnotation": "PASS",
+    "conflictSummary": "PASS",
+    "stageLabels": "PASS",
+    "sourceAnnotation": "FAIL",
+    "financialAbbreviation": "PASS",
+    "gateVolume": "PASS",
+    "mergeIntegrity": "PASS"
+  },
+  "completedAt": "2026-05-31T14:48:15.891129",
+  "reportHtmlUrl": "https://doc.20100706.xyz/view/eb6b3f39f69e",
+  "reportRawUrl": "https://doc.20100706.xyz/raw/eb6b3f39f69e",
+  "kbSync": {
+    "lastSyncAt": "2026-05-31T14:50:35.411601",
+    "syncedFiles": 27,
+    "status": "partial_success",
+    "failedFiles": [
+      "REPORT.html"
+    ]
+  },
+  "knowledgeBaseSync": {
+    "syncedAt": "2026-05-31T17:43:14.612754",
+    "syncedFiles": 33,
+    "failedFiles": 0,
+    "totalFiles": 33,
+    "caseCode": "2605-3103"
+  }
+}
