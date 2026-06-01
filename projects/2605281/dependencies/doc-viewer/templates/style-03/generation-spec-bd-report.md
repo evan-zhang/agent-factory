@@ -208,7 +208,7 @@ curl -s -X PUT "https://doc.20100706.xyz/api/{doc_id}" \
 
 ```python
 # 1. 读取 skeleton.html
-# 2. 从 amber.yml 读取所有 CSS token → strip 值两端的引号（YAML 语法需要，CSS 不需要）→ 替换
+# 2. 从 amber.yml 读取所有 CSS token → 替换
 # 3. 设置报告元数据（code, en, cn, company, date, template, perspective, rating, rating_short）
 # 4. 读取 markdown 文件
 # 5. 按 "# "（一级标题）拆分为章节列表

@@ -1,7 +1,7 @@
 ---
 name: doc-viewer
 description: "文件上传预览 + HTML 内容页面生成器。提供现成文件可直接上传预览；描述内容需求可自动生成风格化 HTML 页面并上传。触发词：上传文件、预览文件、生成链接、生成页面、HTML页面、宣传页、报告页面"
-version: "2.4.0"
+version: "2.6.0"
 homepage: https://github.com/evan-zhang/agent-factory/tree/master/projects/2605101/doc-viewer/
 issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=doc-viewer
 ---
@@ -83,15 +83,47 @@ URL=$(echo "$UPLOAD_RESP" | python3 -c "import sys,json; print(json.load(sys.std
 
 根据用户意图推荐风格：
 
-**推荐规则**：
+#### 风格分类体系
+
+**专用型（Domain-Specific）**：风格 03、11、12
+- 特点：有 color-themes、专用组件、不能随便填其他内容
+- 目录导航：按需开启（长文档推荐）
+- 适用：特定领域的专业文档（BD 报告、技术海报、投前评估）
+
+**系列型（Family）**：风格 02
+- 特点：6 套变体（02-A~F）共享 base，覆盖不同场景
+- 目录导航：按变体决定（封面不开启，内容页开启）
+- 适用：企业报告系统，多变体协同
+
+**通用型（General）**：风格 01、04、05、06、07、08、09、10
+- 特点：单一骨架，适配多种内容
+- 目录导航：✅ 默认开启（除超短内容）
+- 适用：通用内容页，灵活性高
+
+#### 推荐规则
 - 用户说「报告」「BD」「评估」「尽调」「投前」「文档」「分析」→ 推荐 **风格 03**
-  - 进一步判断配色：「琥珀金」「金色」→ amber（默认）；「阳光黄」「黄色」→ yellow
+  - 进一步判断配色：「琥珀金」「金色」→ amber（默认）；「阳光黄」「黄色」→ yellow；「投资蓝」「蓝色」「金融报告」→ investment-blue
 - 用户说「情报」「日报」「动态」「资讯」「新闻」→ 推荐 **风格 04**
 - 用户说「指标」「KPI」「数据」「数字」「看板」→ 推荐 **风格 05**
 - 用户说「产品介绍」「产品页」「服务页」→ 推荐 **风格 06**
+- 用户说「日系」「暖色」「极简」「Claude」「Arc」「Notion」「创作」「AI 产品页」→ 推荐 **风格 07**
+- 用户说「苹果」「Apple」「极简」「电影感」「keynote」→ 推荐 **风格 08**
+- 用户说「文档」「编辑器」「Notion」「笔记」「知识库」→ 推荐 **风格 09**
+- 用户说「开发者」「Stripe」「API」「代码」「开发者平台」→ 推荐 **风格 10**
+- 用户说「暗色」「Linear」「暗色主题」「高级感」「极客」「技术海报」「AI 教程」→ 推荐 **风格 11 + dark-technical**
+- 用户说「CMS评估」「投前评估」「康哲评估」「CMS报告」→ 推荐 **风格 12**
+  - 进一步判断配色：「麦肯锡」「深蓝」「咨询」→ mckinsey-navy（默认）；「投资蓝」「蓝色」「金融」→ investment-blue；「酒红」「勃艮第」→ burgundy-wine；「青绿」「森林」「ESG」→ forest-teal；未指定 → mckinsey-navy
 - 用户说「封面」「首页」→ 推荐 **风格 02-A** 或 **02-B**
 - 用户说「案例」「客户案例」→ 推荐 **风格 02-F**
 - 用户没明确偏好 → 推荐 **风格 01**
+
+> **📐 架构说明：样式 × 颜色 两个正交维度**
+> 
+> **样式（skeleton.html）**：决定页面结构、章节排版、组件布局。目前 style-01 ~ 11 代表 11 种结构方案。
+> 
+> **颜色（color-themes/*.yml）**：决定配色体系，只替换 CSS 变量值，不改变结构。同一套骨架换一套配色即可。
+> 
+> **适用场景**：同一份报告内容（如投资评估），可以套用 style-03 骨架 + investment-blue 配色来生成；同骨架换 amber 配色则变为 BD 报告风格。
 
 ### Step 2：素材收集
 
@@ -127,10 +159,16 @@ Agent 生成 HTML 前必须读取以下文件：
 |------|-----------|---------|
 | 风格 01 | `templates/style-01/design-token.md` | `templates/style-01/skeleton.html` | — |
 | 风格 02 | `templates/style-02/design-token.md` | `templates/style-02/skeleton.html` | — |
-| 风格 03 | `templates/style-03/design-token.md` | `templates/style-03/skeleton.html` | `templates/style-03/color-themes/amber.yml`（琥珀金）或 `yellow.yml`（阳光黄） |
+| 风格 03 | `templates/style-03/design-token.md` | `templates/style-03/skeleton.html` | `templates/style-03/color-themes/amber.yml`（琥珀金）或 `yellow.yml`（阳光黄）或 `investment-blue.yml`（投资蓝） |
 | 风格 04 | `templates/style-04/design-token.md` | `templates/style-04/skeleton.html` | — |
 | 风格 05 | `templates/style-05/design-token.md` | `templates/style-05/skeleton.html` | — |
 | 风格 06 | `templates/style-06/design-token.md` | `templates/style-06/skeleton.html` | — |
+| 风格 07 | `templates/style-07/design-token.md` | `templates/style-07/skeleton.html` | — |
+| 风格 08 | `templates/style-08/design-token.md` | `templates/style-08/skeleton.html` | — |
+| 风格 09 | `templates/style-09/design-token.md` | `templates/style-09/skeleton.html` | — |
+| 风格 10 | `templates/style-10/design-token.md` | `templates/style-10/skeleton.html` | — |
+| 风格 11 | `templates/style-11/design-token.md` | `templates/style-11/skeleton.html` | `templates/style-11/color-themes/dark-technical.yml`（暗色技术风）|
+| 风格 12 | `templates/style-12/design-token.md` | `templates/style-12/skeleton.html` | `templates/style-12/color-themes/mckinsey-navy.yml`（麦肯锡深蓝）或 `investment-blue.yml`（投资蓝）或 `burgundy-wine.yml`（勃艮第酒红）或 `forest-teal.yml`（森林青） |
 
 Design Token 包含：
 - **YAML front matter**：机器可读的 tokens（颜色、字体、间距、圆角）
@@ -163,7 +201,7 @@ Skeleton 包含：
 1. 读取 `reference-amber.html` 或 `reference-yellow.html`（根据配色选择）作为基底
 2. 保留其中的完整 CSS 样式（已替换好所有颜色值，不要修改）
 3. 只替换 body 部分的内容（封面信息、章节内容、目录）
-4. 如果必须从 skeleton.html 生成，**必须**将 `color-themes/*.yml` 中的所有值替换到 CSS 的 `{{变量}}` 中，再将内容填入 body 占位符。**注意**：YAML 中的双引号是 YAML 语法需要的，注入 CSS 变量前必须去掉值两端的引号，例如 `"#C9920A"` → `#C9920A`，`"6px solid #C9920A"` → `6px solid #C9920A`。
+4. 如果必须从 skeleton.html 生成，**必须**将 `color-themes/*.yml` 中的所有值替换到 CSS 的 `{{变量}}` 中，再将内容填入 body 占位符
 
 禁止事项：
 - 禁止输出包含 `{{` 或 `}}` 的 HTML 文件
@@ -258,6 +296,7 @@ curl -X PUT https://doc.20100706.xyz/api/{doc_id} \
 ## 可用风格一览
 
 ### 风格 01 — Data & AI Report（企业数据智能白皮书）
+**分类**：通用型
 
 综合风格，适合完整报告页面。蓝紫渐变主调，数据密集型。
 
@@ -268,6 +307,7 @@ curl -X PUT https://doc.20100706.xyz/api/{doc_id} \
 | `templates/style-01/style-01-data-ai-report.md` | 视觉说明与内容结构 |
 
 ### 风格 02 — Google Cloud / IDC 企业报告视觉系统（6 套变体）
+**分类**：系列型
 
 以 Google Yellow 为核心色，共享一套 base token，6 种变体覆盖不同场景。
 
@@ -283,14 +323,17 @@ curl -X PUT https://doc.20100706.xyz/api/{doc_id} \
 **Token 文件**：`templates/style-02/style-02*-DESIGN.md`
 
 ### 风格 03 — BD 投前评估报告（文档输出型）
+**分类**：专用型 | **目录导航**：按需开启
 
 A4 纵向，章节密集，表格整齐。专为导出 PDF/Word 设计。
 
 **配色方案（color-themes/）**：
-- **琥珀金（amber）**：深金 #C9920A，沉稳高端，适合高管/投资人对接（默认）
+- **琥珀金（amber）**：深金 #C9920A，沉稳高端，适合高管/BD报告（默认）
+- **暗色技术风（dark-technical）**：暗黑 #070707 + 橙红 #FF4A22，适合 AI 极客/技术海报报告
 - **阳光黄（yellow）**：亮黄 #F4B400，现代活力，适合内部审阅
+- **投资蓝（investment-blue）**：深海蓝 #1D4ED8，专业金融，适合投资报告
 
-用户说「琥珀金」「金色」→ amber；说「阳光黄」「黄色」→ yellow；未指定 → amber。
+用户说「琥珀金」「金色」→ amber；说「阳光黄」「黄色」→ yellow；说「投资蓝」「蓝色」「金融报告」→ investment-blue；未指定 → amber。
 
 | 文件 | 说明 |
 |------|------|
@@ -298,7 +341,9 @@ A4 纵向，章节密集，表格整齐。专为导出 PDF/Word 设计。
 | `templates/style-03/skeleton.html` | HTML 骨架（含 {{TOKEN}} 占位符） |
 | `templates/style-03/style-03-bd-report.md` | 视觉说明与内容结构 |
 | `templates/style-03/color-themes/amber.yml` | 琥珀金配色 Token |
+| `templates/style-03/color-themes/dark-technical.yml` | 暗色技术风配色 Token（橙红）|
 | `templates/style-03/color-themes/yellow.yml` | 阳光黄配色 Token |
+| `templates/style-03/color-themes/investment-blue.yml` | 投资蓝配色 Token |
 | `templates/style-03/reference-amber.html` | 琥珀金版完整参考范例（CG-0255） |
 | `templates/style-03/reference-yellow.html` | 阳光黄版完整参考范例（CG-0255） |
 
@@ -310,6 +355,7 @@ A4 纵向，章节密集，表格整齐。专为导出 PDF/Word 设计。
 5. 生成完整 HTML 并上传
 
 ### 风格 04 — 情报日报风（新闻/资讯列表）
+**分类**：通用型 | **目录导航**：✅ 默认开启
 
 大日期 + 小标题，报告名称收敛。适合每日情报汇总、动态速览。
 
@@ -319,6 +365,7 @@ A4 纵向，章节密集，表格整齐。专为导出 PDF/Word 设计。
 | `templates/style-04/skeleton.html` | HTML 骨架参考 |
 
 ### 风格 05 — 数据看板/指标卡风格
+**分类**：通用型 | **目录导航**：✅ 默认开启
 
 大数字 + 图表，适合 KPI 展示、数据概览。
 
@@ -328,6 +375,7 @@ A4 纵向，章节密集，表格整齐。专为导出 PDF/Word 设计。
 | `templates/style-05/skeleton.html` | HTML 骨架参考 |
 
 ### 风格 06 — 产品介绍页
+**分类**：通用型 | **目录导航**：✅ 默认开启
 
 多 section + Hero，适合产品/服务介绍页。
 
@@ -335,6 +383,71 @@ A4 纵向，章节密集，表格整齐。专为导出 PDF/Word 设计。
 |------|------|
 | `templates/style-06/design-token.md` | Design Token |
 | `templates/style-06/skeleton.html` | HTML 骨架参考 |
+
+### 风格 11 — Linear 暗色技术风（技术海报 + 仪表盘）
+**分类**：专用型 | **目录导航**：按需开启
+
+暗黑背景 + 橙红主色，技术海报风格，适合 Claude Code 深度教程 / AI 极客内容 / 开发者文档。
+
+**配色方案（color-themes/）**：
+- **dark-technical（暗色技术风）**：暗黑 #070707 + 橙红 #FF4A22 + 暖白文字，适合技术海报（默认）
+
+用户说「暗色」「Linear」「暗色主题」「高级感」「极客」「AI 教程」「技术海报」→ 推荐 style-11 + dark-technical。
+
+| 文件 | 说明 |
+|------|------|
+| `templates/style-11/design-token.md` | Design Token |
+| `templates/style-11/skeleton.html` | HTML 骨架（含 {{TOKEN}} 占位符）|
+| `templates/style-11/color-themes/dark-technical.yml` | 暗色技术风配色 Token（橙红主色）|
+
+**生成流程**：同风格 03，从 skeleton.html + color-themes/*.yml 生成。
+
+### 风格 12 — CMS 康哲药业投前评估报告（Gate门控型）
+**分类**：专用型 | **目录导航**：按需开启
+
+A4 纵向，专为 CMS 投前评估体系设计。Gate 结论卡 + Battle 对抗审查 + 置信度徽章 + 一票否决框。
+
+**配色方案（color-themes/）**：
+- **麦肯锡深蓝（mckinsey-navy）**：深蓝 #1a3a5c，经典咨询公司风格（默认）
+- **投资蓝（investment-blue）**：投资蓝 #1D4ED8，投行/基金报告风格
+- **勃艮第酒红（burgundy-wine）**：酒红 #7B2D3B，欧洲老牌药企风格
+- **森林青（forest-teal）**：青绿 #1B6B5A，现代药企/ESG 风格
+
+用户说「麦肯锡」「深蓝」「咨询」→ mckinsey-navy；说「投资蓝」「蓝色」「金融」→ investment-blue；说「酒红」「勃艮第」→ burgundy-wine；说「青绿」「森林」「ESG」→ forest-teal；未指定 → mckinsey-navy。
+
+| 文件 | 说明 |
+|------|------|
+| `templates/style-12/design-token.md` | Design Token |
+| `templates/style-12/skeleton.html` | HTML 骨架（含 {{TOKEN}} 占位符） |
+| `templates/style-12/style-12-cms-eval.md` | 视觉说明与内容结构 |
+| `templates/style-12/generation-spec.md` | 生成规范（Markdown→HTML映射） |
+| `templates/style-12/prompt.md` | 生成 prompt（给 Agent 用） |
+| `templates/style-12/color-themes/mckinsey-navy.yml` | 麦肯锡深蓝配色 Token |
+| `templates/style-12/color-themes/investment-blue.yml` | 投资蓝配色 Token |
+| `templates/style-12/color-themes/burgundy-wine.yml` | 勃艮第酒红配色 Token |
+| `templates/style-12/color-themes/forest-teal.yml` | 森林青配色 Token |
+| `templates/style-12/reference-mckinsey-navy.html` | 麦肯锡深蓝版完整参考范例（MB-001） |
+
+**CMS 专属组件**：
+- Gate 结论卡（`.gate-card` + `.gate-pass` / `.gate-conditional` / `.gate-stop`）
+- 置信度徽章（`.confidence-badge` + `.conf-a` / `.conf-b` / `.conf-c` / `.conf-d`）
+- Battle 对抗审查（`.battle-auditor` + `.battle-executor`）
+- 一票否决框（`.veto-box`）
+- 信息冲突框（`.conflict-box`）
+- 阶段标签（`.stage-tag` + `.stage-a` / `.stage-b`）
+- DRL 优先级（`.drl-priority` + `.drl-p0` / `.drl-p1` / `.drl-p2`）
+- 风险等级（`.risk-high` / `.risk-medium` / `.risk-low`）
+- 中立审查框（`.neutral-review`）
+
+**生成流程**：风格 12 提供专用 Python 转换脚本 `convert-md-to-html.py`，可直接从 Markdown 报告程序化生成 HTML，不需要 AI 手写 HTML。
+
+```bash
+python3 templates/style-12/convert-md-to-html.py <报告目录> <配色名> [输出路径]
+```
+
+脚本自动完成：读取 04-final-report.md → 提取封面元信息 → 识别 CMS 专属结构（Gate 结论卡、Battle 框、置信度标注等）→ 套用 skeleton.html + 配色 → 输出完整 HTML。
+
+如需 AI 手动生成（路径 B），则从 skeleton.html + color-themes/*.yml 生成，封面使用 CMS 专属字段（案件代号、评估技能、业务主体）。
 
 ---
 
