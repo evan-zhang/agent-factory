@@ -6,7 +6,7 @@ CMS 投前评估报告 Markdown → HTML 转换器
 用法：python3 convert-md-to-html.py <报告目录> <配色名> [输出路径]
 示例：python3 convert-md-to-html.py /path/to/MB-001-Mage-Biologics mckinsey-navy
 """
-import sys, os, re, json, yaml
+import sys, os, re, json
 import markdown
 from pathlib import Path
 
@@ -193,10 +193,29 @@ def convert_battle_sections(html_content):
     return html_content
 
 def convert_conflict_boxes(html_content):
-    """识别信息冲突标记"""
+    """识别信息冲突标记（支持 blockquote 和行内两种格式）"""
+    # blockquote 格式：> ⚠ **信息冲突**：...
+    html_content = re.sub(
+        r'>\s*⚠\s*\*\*信息冲突\*\*[：:]\s*(.+?)(?=\n(?!>)|\n##|\Z)',
+        lambda m: f'<div class="conflict-box">⚠ 信息冲突：{m.group(1).strip()}</div>',
+        html_content, flags=re.DOTALL
+    )
+    # 行内格式：**信息冲突**：...
     html_content = re.sub(
         r'\*\*信息冲突\*\*[：:]\s*(.+?)(?=\n\n|\n##|\Z)',
         lambda m: f'<div class="conflict-box">⚠ 信息冲突：{m.group(1)}</div>',
+        html_content, flags=re.DOTALL
+    )
+    return html_content
+
+def convert_highlight_boxes(html_content):
+    """识别核心结论框标记，转为 highlight-box 组件。
+    
+    匹配格式：> **核心结论**：...
+    """
+    html_content = re.sub(
+        r'>\s*\*\*核心结论\*\*[：:]\s*(.+?)(?=\n(?!>)|\n##|\Z)',
+        lambda m: f'<div class="highlight-box"><p><strong>核心结论：</strong>{m.group(1).strip()}</p></div>',
         html_content, flags=re.DOTALL
     )
     return html_content
@@ -498,6 +517,7 @@ def convert_chapter_content(text):
     text = convert_gate_boxes(text)       # 新版 blockquote Gate 结论卡
     text = convert_battle_sections(text)
     text = convert_conflict_boxes(text)
+    text = convert_highlight_boxes(text)  # 核心结论框
     text = convert_red_flags(text)        # 红旗框
     text = convert_veto_boxes(text)
     text = convert_stage_tags(text)
