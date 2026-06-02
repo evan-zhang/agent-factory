@@ -194,6 +194,60 @@ tr:nth-child(even) td { background:{{td-alt-bg}}; }
 .risk-medium { border-left:4px solid {{risk-medium-border}}; background:{{risk-medium-bg}}; padding:10px 14px; margin:10px 0; }
 .risk-low { border-left:4px solid {{risk-low-border}}; background:{{risk-low-bg}}; padding:10px 14px; margin:10px 0; }
 
+/* Gate 结论卡 (新版 gate-box) */
+.gate-box {
+    border: 2px solid #1a3a5c;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    background: #f8fafc;
+}
+.gate-box .gate-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #1a3a5c;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* 结论标签 (4色) */
+.conclusion-tag {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
+}
+.conclusion-tag.pass {
+    background: #d4edda;
+    color: #155724;
+}
+.conclusion-tag.conditional {
+    background: #fff3cd;
+    color: #856404;
+}
+.conclusion-tag.stop {
+    background: #f8d7da;
+    color: #721c24;
+}
+.conclusion-tag.pending {
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+/* 红旗框 */
+.red-flag {
+    background: #fff5f5;
+    border-left: 4px solid #c53030;
+    padding: 12px 16px;
+    margin: 16px 0;
+    border-radius: 0 4px 4px 0;
+}
+.red-flag strong {
+    color: #c53030;
+}
+
 /* Highlight boxes */
 .highlight-box {
   border-left:{{highlight-border}}; background:{{highlight-bg}};

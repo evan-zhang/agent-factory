@@ -201,6 +201,159 @@ def convert_conflict_boxes(html_content):
     )
     return html_content
 
+def convert_gate_boxes(html_content):
+    """识别新版 blockquote 格式的 Gate 结论卡，转为 gate-box 组件。
+    
+    支持两种格式：
+    1. blockquote 格式（新版）：
+       > **【Gate N：XXX门】**
+       > 结论：通过 / 条件通过 / 停止
+       > ...
+    2. 旧版格式：由 convert_gate_cards 处理
+    """
+    # 匹配 blockquote 中的 Gate 结论卡
+    # Markdown blockquote 转换后可能已经是 <blockquote> 或仍是 > 行
+    # 此函数在 markdown 解析前工作，匹配原始 > 开头的行
+    pattern = (
+        r'(?:^>\s*\*\*【Gate\s*(\d+)[:：]\s*(.+?)】\*\*\s*\n)'
+        r'((?:>\s*.*\n?)*)'
+    )
+
+    def gate_box_replacer(match):
+        gate_num = match.group(1)
+        gate_name = match.group(2).strip()
+        body_lines = match.group(3)
+
+        # 解析 body 行（去掉 > 前缀）
+        lines = []
+        for line in body_lines.strip().split('\n'):
+            line = re.sub(r'^>\s*', '', line).strip()
+            if line:
+                lines.append(line)
+
+        body_html = ''
+        for line in lines:
+            # 结论行：转换为 conclusion-tag
+            concl_match = re.match(r'(?:\*\*)?结论(?:\*\*)?[：:]\s*(.+)', line)
+            if concl_match:
+                concl_text = concl_match.group(1).strip()
+                concl_html = _convert_conclusion_tag(concl_text)
+                body_html += f'<p><strong>结论：</strong>{concl_html}</p>\n'
+            else:
+                # 其他行：基础 markdown 转换
+                line_html = md_to_html_basic(line)
+                body_html += line_html + '\n'
+
+        return (
+            f'<div class="gate-box">\n'
+            f'  <div class="gate-title">Gate {gate_num}：{gate_name}</div>\n'
+            f'  {body_html}'
+            f'</div>'
+        )
+
+    return re.sub(pattern, gate_box_replacer, html_content, flags=re.MULTILINE)
+
+def _convert_conclusion_tag(text):
+    """将结论文本转为 conclusion-tag span。"""
+    text = text.strip()
+    # 去掉可能的 markdown 加粗
+    text = re.sub(r'\*+', '', text)
+    # 匹配各种结论格式
+    if re.search(r'[✅✔✓]|通过', text) and not re.search(r'条件', text):
+        label = re.sub(r'[✅✔✓]\s*', '', text).strip() or '通过'
+        return f'<span class="conclusion-tag pass">{label}</span>'
+    elif re.search(r'[⚠⚠️]|条件通过', text):
+        label = re.sub(r'[⚠⚠️]\s*', '', text).strip() or '条件通过'
+        return f'<span class="conclusion-tag conditional">{label}</span>'
+    elif re.search(r'[❌✖]|停止', text):
+        label = re.sub(r'[❌✖]\s*', '', text).strip() or '停止'
+        return f'<span class="conclusion-tag stop">{label}</span>'
+    elif re.search(r'[⏳⏸]|待验证', text):
+        label = re.sub(r'[⏳⏸]\s*', '', text).strip() or '待验证'
+        return f'<span class="conclusion-tag pending">{label}</span>'
+    else:
+        # 无法识别的结论文本，根据关键词猜测
+        if '通过' in text and '条件' not in text:
+            return f'<span class="conclusion-tag pass">{text}</span>'
+        elif '条件' in text or '附条件' in text:
+            return f'<span class="conclusion-tag conditional">{text}</span>'
+        elif '停止' in text or '不推荐' in text:
+            return f'<span class="conclusion-tag stop">{text}</span>'
+        else:
+            return f'<span class="conclusion-tag pending">{text}</span>'
+
+def convert_conclusion_tags_in_html(html_content):
+    """在已转换为 HTML 的内容中，查找结论行中的结论文本并转为 conclusion-tag。
+    
+    处理 convert_gate_cards（旧版 Gate 结论卡）中的结论标签行。
+    """
+    # 匹配旧版 gate-card 中的结论标签行
+    # 格式如: <div class="gate-label">结论：通过</div>
+    # 或: 结论：✅通过 / 结论：⚠条件通过 / 结论：❌停止 / 结论：⏳待验证
+    def tag_replacer(match):
+        prefix = match.group(1)  # 结论：
+        text = match.group(2).strip()
+        tag_html = _convert_conclusion_tag(text)
+        return f'{prefix}{tag_html}'
+
+    # 在 gate-label div 内替换
+    html_content = re.sub(
+        r'(结论[：:])\s*([^<]+?)(?=</div>)',
+        tag_replacer,
+        html_content
+    )
+    return html_content
+
+def convert_red_flags(html_content):
+    """识别红旗标记，转为 red-flag 组件。
+    
+    支持格式：
+    > 🚩 **红旗**：...
+    > 🚩 **最高优先级红旗**：...
+    """
+    # 匹配 blockquote 中的红旗标记
+    # > 🚩 **红旗**：... 或 > 🚩 **最高优先级红旗**：...
+    # 第一行：捕获标题和首行内容
+    # 后续行：以 > 开头但不以 🚩 开头的续行
+    first_line_pat = r'^>\s*🚩\s*\*\*(.+?)\*\*[：:]\s*(.+)'  
+    continuation_pat = r'((?:\n>\s*(?!🚩).*)*)'
+    pattern = first_line_pat + continuation_pat
+
+    def red_flag_replacer(match):
+        flag_title = match.group(1).strip()
+        first_line = match.group(2).strip()
+        rest_lines = match.group(3) if match.lastindex and match.lastindex >= 3 else ''
+
+        # 收集续行
+        lines = [first_line]
+        if rest_lines:
+            for line in rest_lines.strip().split('\n'):
+                line = re.sub(r'^>\s*', '', line).strip()
+                if line:
+                    lines.append(line)
+
+        body = ' '.join(lines)
+        # 基础 markdown 转换
+        body_html = md_to_html_basic(body)
+
+        return (
+            f'<div class="red-flag">\n'
+            f'  <p><strong>🚩 {flag_title}：</strong>{body_html}</p>\n'
+            f'</div>'
+        )
+
+    html_content = re.sub(pattern, red_flag_replacer, html_content, flags=re.MULTILINE)
+
+    # 也处理非 blockquote 格式（行内红旗）
+    # 🚩 **红旗**：... 或 🚩 **最高优先级红旗**：...
+    html_content = re.sub(
+        r'🚩\s*\*\*(.+?)\*\*[：:]\s*(.+?)(?=\n\n|\n##|\n>|\Z)',
+        lambda m: f'<div class="red-flag">\n  <p><strong>🚩 {m.group(1).strip()}：</strong>{m.group(2).strip()}</p>\n</div>',
+        html_content, flags=re.DOTALL
+    )
+
+    return html_content
+
 def convert_veto_boxes(html_content):
     """识别一票否决标记"""
     html_content = re.sub(
@@ -342,8 +495,10 @@ def convert_chapter_content(text):
     """转换单个章节内容"""
     # 先处理特殊组件（这些会生成 HTML div，后续不再处理）
     text = convert_gate_cards(text)
+    text = convert_gate_boxes(text)       # 新版 blockquote Gate 结论卡
     text = convert_battle_sections(text)
     text = convert_conflict_boxes(text)
+    text = convert_red_flags(text)        # 红旗框
     text = convert_veto_boxes(text)
     text = convert_stage_tags(text)
     text = convert_confidence_badges(text)
