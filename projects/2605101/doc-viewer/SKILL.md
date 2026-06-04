@@ -1,7 +1,7 @@
 ---
 name: doc-viewer
 description: "文件上传预览 + HTML 内容页面生成器。提供现成文件可直接上传预览；描述内容需求可自动生成风格化 HTML 页面并上传。触发词：上传文件、预览文件、生成链接、生成页面、HTML页面、宣传页、报告页面"
-version: "2.6.0"
+version: "2.7.0"
 homepage: https://github.com/evan-zhang/agent-factory/tree/master/projects/2605101/doc-viewer/
 issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=doc-viewer
 ---
@@ -85,6 +85,11 @@ URL=$(echo "$UPLOAD_RESP" | python3 -c "import sys,json; print(json.load(sys.std
 
 #### 风格分类体系
 
+**程序化型（Programmatic）**：风格 13
+- 特点：Python 脚本直接将 Markdown 转为 HTML，不需要 AI 手写
+- 目录导航：自动从 ## 标题生成
+- 适用：任意结构的 Markdown 长文档，保留原章节，只做视觉渲染
+
 **专用型（Domain-Specific）**：风格 03、11、12
 - 特点：有 color-themes、专用组件、不能随便填其他内容
 - 目录导航：按需开启（长文档推荐）
@@ -101,6 +106,7 @@ URL=$(echo "$UPLOAD_RESP" | python3 -c "import sys,json; print(json.load(sys.std
 - 适用：通用内容页，灵活性高
 
 #### 推荐规则
+- 用户说「麦肯锡风格」「深蓝咨询」「Markdown转HTML报告」「咨询风格」→ 推荐 **风格 13**（程序化渲染，保留原结构）
 - 用户说「报告」「BD」「评估」「尽调」「投前」「文档」「分析」→ 推荐 **风格 03**
   - 进一步判断配色：「琥珀金」「金色」→ amber（默认）；「阳光黄」「黄色」→ yellow；「投资蓝」「蓝色」「金融报告」→ investment-blue
 - 用户说「情报」「日报」「动态」「资讯」「新闻」→ 推荐 **风格 04**
@@ -461,6 +467,36 @@ python3 templates/style-12/convert-md-to-html.py <报告目录> <配色名> [输
 | `design-standards/table-spec.md` | 表格规范：`.table-wrap`包裹、`width:100%`、移动端横向滚动 |
 | `design-standards/responsive-spec.md` | 多端适配：480px/768px 断点、三端字号对照 |
 | `design-standards/print-spec.md` | 打印/PDF：@page 边距、`pt` 单位、page-break |
+
+---
+
+| 文件 | 说明 |
+|------|------|
+| `templates/style-13/design-token.md` | Design Token + 视觉规范 |
+| `templates/style-13/report_renderer.py` | Python 渲染脚本（Markdown→HTML） |
+| `templates/style-13/example_report.md` | 示例 Markdown 报告 |
+
+**生成流程**：风格 13 不需要 AI 手写 HTML，直接调用 Python 脚本：
+
+```bash
+# 基础调用
+python3 templates/style-13/report_renderer.py input.md output.html
+
+# 指定标题
+python3 templates/style-13/report_renderer.py input.md output.html --title "报告标题"
+
+# 指定图片目录
+python3 templates/style-13/report_renderer.py input.md output.html --asset-dir ./assets
+
+# 不内嵌图片
+python3 templates/style-13/report_renderer.py input.md output.html --no-embed-images
+```
+
+**悬浮导航**：右侧固定悬浮按钮，点击展开可滚动的目录面板，支持滚动追踪高亮当前章节、顶部阅读进度条。点击面板外或选择章节后自动收起。
+
+**响应式**：PC 端（>780px）按钮右侧居中；平板（≤780px）按钮移至右下角；手机（≤480px）面板扩展至接近全宽，触控区域 44px 以上。打印时自动隐藏。
+
+**核心原则**：只做渲染，不改结构。保留用户 Markdown 原有章节顺序。
 
 ---
 
