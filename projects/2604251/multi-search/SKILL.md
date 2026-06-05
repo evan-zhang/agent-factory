@@ -4,7 +4,7 @@ description: 多源搜索降级工具包。环境能力探测 + 搜索/抓取降
 skillcode: multi-search
 homepage: https://github.com/evan-zhang/agent-factory
 source: projects/2604251/multi-search
-version: "1.2.0"
+version: "1.3.0"
 ---
 
 # multi-search
@@ -161,15 +161,60 @@ site:{辅助来源域名} {关键词}
 - 每轮每个指标至少 2 条查询，一条查不到不直接放弃
 - 切换搜索引擎时从第一轮重新开始
 
+## 配置与授权
+
+### 必装项
+
+以下组件必须安装配置，否则技能无法工作：
+
+| 组件 | 安装方式 | 用途 | 获取方式 |
+|------|---------|------|---------|
+| uv/uvx | `curl -LsSf https://astral.sh/uv/install.sh \| sh` | MiniMax MCP 运行环境 | 自动安装 |
+| mcporter（OpenClaw） | `npm install -g mcporter` | MCP 进程管理器（OpenClaw 运行时） | 自动安装 |
+| MiniMax Token Plan MCP | `uvx minimax-coding-plan-mcp -y` | 中文语义主力搜索引擎 | [Token Plan 订阅](https://platform.minimax.io/subscribe/token-plan)→控制台获取 API Key |
+
+### 选装项
+
+以下组件可选，按需安装可增强搜索和抓取能力：
+
+| 组件 | 安装方式 | 用途 | 获取方式 |
+|------|---------|------|---------|
+| Tavily Search | 设置 `TAVILY_API_KEY` 环境变量 | MiniMax 搜索回退 | [Tavily Dashboard](https://app.tavily.com/home) |
+| Exa AI | `mcporter add exa` 或手动写入 MCP 配置 | includeDomains 定向精准搜索 | [Exa Dashboard](https://dashboard.exa.ai/api-keys) |
+| Crawl4AI | `pip install -U crawl4ai && crawl4ai-setup` | 本地 JS 渲染 + Markdown 输出 | 开源（Python 3.9+） |
+| Scrapling | `pip install scrapling` | 反爬 + Cloudflare 绕过 | 开源（Python 3.9+） |
+
+### 无需配置即可用
+
+- **web_fetch**（OpenClaw 内置）— 零配置，直接调用，仅支持静态页面
+- **Jina Reader**（远程服务）— 零安装，通过 `https://r.jina.ai/{URL}` 即可调用，支持远程 JS 渲染
+
+### 配置文件位置
+
+- **OpenClaw 运行时**：`~/.mcporter/mcporter.json`（MCP 服务配置）
+- **Hermes 运行时**：`~/.hermes/config.yaml`（MCP 服务配置）
+
+## 问题反馈
+
+遇到问题请通过以下方式反馈：
+
+- **GitHub Issues**：https://github.com/evan-zhang/agent-factory/issues
+- **标题格式**：`[multi-search] 问题简述`
+- **建议包含的信息**：
+  - 重现步骤
+  - 运行时类型（OpenClaw / Hermes）
+  - setup-env.sh 的输出日志
+  - 相关配置文件内容（去除 API Key 后）
+
 ## 环境初始化
 
-使用 `scripts/setup-env.sh` 完成环境初始化：
+使用 `scripts/setup-env.sh` **全量安装向导**完成环境初始化。该脚本是交互式安装向导，引导用户逐步安装/配置所有必装和选装组件：
 
 ```bash
-# 基础初始化（交互式）
+# 全量安装（交互式，推荐）
 bash scripts/setup-env.sh
 
-# 带 API Key 初始化（非交互式）
+# 带 API Key（可跳过交互式输入）
 bash scripts/setup-env.sh --key sk-cp-j-xxx
 
 # 指定 API Host
@@ -179,13 +224,17 @@ bash scripts/setup-env.sh --key sk-cp-j-xxx --host https://api.minimax.chat
 MINIMAX_API_KEY=sk-cp-j-xxx bash scripts/setup-env.sh
 ```
 
-脚本会自动：
-1. 检测运行时（OpenClaw / Hermes）
-2. 检查/安装 uv（uvx）
-3. 配置 MiniMax MCP（写入对应位置）
-4. 验证搜索可用性
-5. 探测 4 级抓取能力（内置 → Jina Reader → Crawl4AI/Scrapling → curl）
-6. 输出完整工具清单
+脚本向导会：
+1. **Step 1-2**: 检测运行时 + 安装 uv/uvx/mcporter（必装）
+2. **Step 3-5**: 配置 + 验证 MiniMax MCP（必装）
+3. **Step 6**: 询问是否安装 Tavily Search（选装）
+4. **Step 7**: 询问是否安装 Exa AI（选装）
+5. **Step 8**: 探测 Jina Reader 连通性（零安装）
+6. **Step 9**: 询问是否安装 Crawl4AI（选装）
+7. **Step 10**: 询问是否安装 Scrapling（选装）
+8. 输出完整组件状态汇总（已装/未装/跳过）
+
+每个选装步骤会先检测是否已安装/已配置，已装则自动跳过并显示绿色。汇总输出以颜色标记清晰显示所有组件状态。
 
 ## 数据落盘
 
