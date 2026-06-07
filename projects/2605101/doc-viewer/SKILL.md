@@ -1,7 +1,7 @@
 ---
 name: doc-viewer
 description: "文件上传预览 + HTML 内容页面生成器 + 知识库存储。提供现成文件可直接上传预览；描述内容需求可自动生成风格化 HTML 页面并上传；用户配置知识库 appKey 后可选择将文件存储到个人知识库。触发词：上传文件、预览文件、生成链接、生成页面、HTML页面、宣传页、报告页面、知识库、存知识库"
-version: "2.8.0"
+version: "2.9.0"
 homepage: https://github.com/evan-zhang/agent-factory/tree/master/projects/2605101/doc-viewer/
 issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=doc-viewer
 metadata: {"openclaw":{"requires":{"env":["DOCVIEWER_KB_APPKEY"]},"primaryEnv":"DOCVIEWER_KB_APPKEY"}}
@@ -297,21 +297,37 @@ curl -s -X POST "https://sg-al-cwork-web.mediportal.com.cn/open-api/document-dat
 
 > `saveFileByPath` 接口会自动创建不存在的中间目录（包括 path 指定的文件夹）。
 
-### Step 4：获取访问链接
+### Step 4：换取 access-token
 
 ```bash
-# 获取 KB 分享短链（内部访问，需玄关账号登录）
-SHARE_URL=$(curl -s "https://sg-al-cwork-web.mediportal.com.cn/open-api/document-database/share/getShareUrl?fileId=<fileId>&source=open_api" \
-  -H "appKey: <kb.appKey>" | python3 -c "import sys,json; print(json.load(sys.stdin)['data'])")
+# 用 appKey 换取 access-token（doc-preview 接口需要）
+ACCESS_TOKEN=$(curl -s "https://sg-al-cwork-web.mediportal.com.cn/user/login/appkey?appCode=cms_gpt&appKey=<kb.appKey>" \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['xgToken'])")
 ```
 
-### Step 5：返回结果
+### Step 5：获取公网预览链接
+
+```bash
+# 调用文档预览服务，生成公网可访问的预览链接（5年有效期）
+PREVIEW_RESP=$(curl -s -X POST "https://sg-al-cwork-web.mediportal.com.cn/doc-preview/api/preview/ticket" \
+  -H "access-token: $ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"bizType\": \"kb\",
+    \"bizId\": \"<fileId>\",
+    \"format\": \"<后缀>\",
+    \"title\": \"<原始文件名>\"
+  }")
+PREVIEW_URL=$(echo "$PREVIEW_RESP" | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['previewUrl'])")
+```
+
+### Step 6：返回结果
 
 ```
 ✅ 已存储到知识库
 
 📁 路径：知识库 / <kb.path> / <文件名>
-🔗 链接：<shareUrl>（需玄关内部账号登录）
+🔗 预览链接：<previewUrl>（公网可访问，有效期 5 年）
 
 💡 提示：知识库中的文件通过玄关知识库网页端管理。
 ```
@@ -345,9 +361,18 @@ curl -s -X POST "https://sg-al-cwork-web.mediportal.com.cn/open-api/document-dat
     "resourceId": <新resourceId>,
     "versionStatus": 2
   }'
+
+# Step 3：重新获取预览链接
+ACCESS_TOKEN=$(curl -s "https://sg-al-cwork-web.mediportal.com.cn/user/login/appkey?appCode=cms_gpt&appKey=<kb.appKey>" \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['xgToken'])")
+PREVIEW_URL=$(curl -s -X POST "https://sg-al-cwork-web.mediportal.com.cn/doc-preview/api/preview/ticket" \
+  -H "access-token: $ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"bizType\":\"kb\",\"bizId\":\"<已有文件的fileId>\",\"format\":\"<后缀>\",\"title\":\"<文件名>\"}" \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['previewUrl'])")
 ```
 
-更新后：fileId 不变，知识库中生成新版本。
+更新后：fileId 不变，知识库中生成新版本，预览链接需重新获取。
 
 ---
 
@@ -389,9 +414,8 @@ curl -s -X POST "https://sg-al-cwork-web.mediportal.com.cn/open-api/document-dat
 | `POST /cwork-file/uploadWholeFile` | 物理文件上传，返回 resourceId |
 | `POST /document-database/file/saveFileByPath` | 绑定到 KB 节点，自动创建目录 |
 | `POST /document-database/file/updateFileVersion` | 更新 KB 文件版本 |
-| `GET /document-database/file/getDownloadInfo` | 获取下载/预览信息 |
-| `GET /document-database/share/getShareUrl` | 获取知识库分享短链 |
-| `GET /document-database/file/getLevel1Folders` | 获取顶级目录列表 |
+| `GET /user/login/appkey` | 用 appKey 换取 access-token（用于 doc-preview） |
+| `POST /doc-preview/api/preview/ticket` | 生成公网预览链接（Header: access-token） |
 
 ---
 
@@ -402,11 +426,11 @@ curl -s -X POST "https://sg-al-cwork-web.mediportal.com.cn/open-api/document-dat
 - HTML 返回 raw 链接，PDF 返回 view 链接
 
 ### 路径 C（知识库）
-- **访问限制**：KB 分享链接需要玄关内部账号登录，外部人员无法访问
-- **MinIO 直链有效期**：下载直链有效期 7 天，过期后需重新调用 getDownloadInfo 获取新链接
+- **公网预览链接**：通过 `doc-preview` 服务生成 `doc.aishuo.co` 链接，**公网可访问，有效期 5 年**
 - **文件管理**：删除或移动文件请通过玄关知识库网页端操作
 - **存储路径**：默认存储在 `知识库 / <kb.path> /` 下，可通过 `DOCVIEWER_KB_PATH` 配置覆盖
 - **支持格式**：推荐 md/html/pdf，任意格式均可上传
+- **access-token 有效期**：由系统管理，调用时每次重新换取即可
 
 ---
 
