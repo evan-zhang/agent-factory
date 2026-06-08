@@ -1,0 +1,36 @@
+{
+  "target_code": "ORG_2026_Q1_REG_001",
+  "target_name": "完成3个新品种注册",
+  "target_scope_match": true,
+  "evidence_id": "ev_001",
+  "evidence_type": "goal_report",
+  "evidence_level": "primary",
+  "evidence_source": "周报-2026-W23-张三",
+  "evidence_time": "2026-06-10T10:00:00Z",
+  "evidence_content": {
+    "summary": "本周完成了2个新品种的注册申报，预计Q1能完成目标",
+    "details": {
+      "progress": "已完成2/3",
+      "next_steps": "推进最后一个品种的注册流程"
+    },
+    "attachments": ["注册申报书.pdf", "进度表.xlsx"]
+  },
+  "evidence_confidence": 0.85,
+  "trace_path": [
+    "BP_System",
+    "Report_System",
+    "Weekly_Report_2026_W23",
+    "Zhang_San"
+  ],
+  "responsibility_chain": [
+    "公司",
+    "研发部",
+    "张三"
+  ],
+  "match_reason": "目标责任人周报中的直接汇报",
+  "exclude_reason": null,
+  "scope_note": "适用于2026 Q1的组织目标，责任人：张三",
+  "role_hint": "目标责任人",
+  "writeback_hint": "可作为主要证据支持绿灯判定",
+  "risk_flag": false
+}

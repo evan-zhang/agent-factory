@@ -1,0 +1,33 @@
+{
+  "name": "agent-bp-reviser-review",
+  "version": "1.0.0",
+  "description": "面向单个 BP 目标的证据驱动复核修订 skill",
+  "author": "BP System Team",
+  "created": "2026-06-06",
+  "type": "bp-revision-controller",
+  "category": "single-target-revision",
+  "dependencies": [],
+  "core_principles": [
+    "single_target",
+    "standard_first",
+    "user_feedback_downgrade",
+    "responsibility_chain_traceability",
+    "version_traceability",
+    "cross_target_readonly",
+    "session_rule_memory"
+  ],
+  "supported_scenarios": [
+    "target_status_revision",
+    "evidence_chain_review",
+    "color_text_update",
+    "judgment_logic_verification",
+    "batch_target_splitting"
+  ],
+  "workflow_steps": 9,
+  "core_objects": [
+    "TargetStandard",
+    "EvidenceBundle",
+    "RevisionOutput",
+    "TargetLocator"
+  ]
+}

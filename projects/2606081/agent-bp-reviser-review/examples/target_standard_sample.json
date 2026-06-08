@@ -1,0 +1,50 @@
+{
+  "target_code": "ORG_2026_Q1_REG_001",
+  "target_name": "完成3个新品种注册",
+  "layer": "goal",
+  "bp_type": "organization",
+  "period": {
+    "start": "2026-01-01",
+    "end": "2026-03-31"
+  },
+  "measurements": [
+    {
+      "metric": "注册数量",
+      "target": 3,
+      "current": 1
+    }
+  ],
+  "source": "BP_Management_System",
+  "scope": "全公司",
+  "effective_from": "2026-01-01",
+  "version": "1.0.0",
+  "conflict_policy": "prefer_latest",
+  "owner": "张三",
+  "responsibility_chain": [
+    "公司",
+    "研发部",
+    "张三"
+  ],
+  "evidence_hint": [
+    {
+      "type": "weekly_report",
+      "source": "周报系统",
+      "keywords": ["注册", "进展", "品种"]
+    },
+    {
+      "type": "monthly_report",
+      "source": "月报系统",
+      "keywords": ["目标", "达成"]
+    }
+  ],
+  "status_rule": {
+    "green_threshold": 0.9,
+    "yellow_threshold": 0.6,
+    "red_threshold": 0.3
+  },
+  "writeback_rule": {
+    "sync_color": true,
+    "sync_evidence": true,
+    "allow_cross_target": false
+  }
+}

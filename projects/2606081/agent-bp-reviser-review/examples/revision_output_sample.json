@@ -1,0 +1,54 @@
+{
+  "target_code": "ORG_2026_Q1_REG_001",
+  "target_name": "完成3个新品种注册",
+  "standard_applied": "1.0.0",
+  "revision_status": "approved",
+  "revision_action": "rewrite",
+  "revision_reason": "基于责任人周报证据（ev_001），目标进展良好，判灯为绿色",
+  "blocked_reason": null,
+  "requires_recompute": false,
+  "evidence_bundle_ref": [
+    "ev_001"
+  ],
+  "consistency_check": {
+    "passed": true,
+    "issues": []
+  },
+  "writeback_patch": {
+    "text_updates": [
+      {
+        "field": "target_status",
+        "old_value": "black",
+        "new_value": "green"
+      },
+      {
+        "field": "target_description",
+        "old_value": "无进展",
+        "new_value": "已完成2/3，进展良好"
+      }
+    ],
+    "color_updates": [
+      {
+        "target": "ORG_2026_Q1_REG_001",
+        "old_color": "black",
+        "new_color": "green"
+      }
+    ],
+    "evidence_updates": [
+      {
+        "evidence_id": "ev_001",
+        "action": "add",
+        "details": {
+          "status": "verified",
+          "level": "primary"
+        }
+      }
+    ]
+  },
+  "review_flag": false,
+  "recompute_scope": null,
+  "trace_id": "trace_20260606100000",
+  "confidence_after_revision": 0.85,
+  "user_note": "用户要求改成绿色，经证据验证后批准",
+  "gate_decision": "批准修订"
+}
