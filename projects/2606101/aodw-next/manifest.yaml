@@ -1,0 +1,110 @@
+# AODW Manifest (Level 1 metadata)
+version: 0.5.1
+last_updated_at: 2026-04-19T10:55:00+08:00
+summary_preferred: true
+
+rules:
+  - id: aodw-constitution
+    name: AODW Constitution
+    description: Kernel principles and universal standards for AODW.
+    path: 01-core/aodw-constitution.md
+
+  - id: ai-interaction-rules
+    name: AI Interaction Rules
+    description: Standard question/answer protocol and interaction constraints.
+    path: 01-core/ai-interaction-rules.md
+
+  - id: ai-knowledge-rules
+    name: AI Knowledge Rules
+    description: Documentation system, modules index, and knowledge sync rules.
+    path: 01-core/ai-knowledge-rules.md
+
+  - id: git-discipline
+    name: Git Discipline
+    description: Branching, commits, worktree management, and confirm-gated execution rules.
+    path: 01-core/git-discipline.md
+
+  - id: rt-manager
+    name: RT Manager
+    description: RT lifecycle, branch rules, and mandatory checks.
+    path: 02-workflow/rt-manager.md
+
+  - id: spec-full-profile
+    name: Spec-Full Profile
+    description: Full specification workflow for complex changes.
+    path: 02-workflow/spec-full-profile.md
+
+  - id: spec-autonomous-profile
+    name: Spec-Autonomous Profile
+    description: Fully autonomous AI-driven workflow with Ralph Loop and multi-agent collaboration.
+    path: 02-workflow/spec-autonomous-profile.md
+
+  - id: spec-lite-profile
+    name: Spec-Lite Profile
+    description: Lightweight workflow for low-risk changes.
+    path: 02-workflow/spec-lite-profile.md
+
+  - id: ui-workflow-rules
+    name: UI Workflow Rules
+    description: UI-specific process requirements and gates.
+    path: 02-workflow/ui-workflow-rules.md
+
+  - id: ai-coding-rules
+    name: AI Coding Rules
+    description: General coding standards and style constraints.
+    path: 03-standards/ai-coding-rules.md
+
+  - id: aodw-requirement-auditor
+    name: Requirement Auditor Rules
+    description: Spec-Full requirement audit rules and outputs.
+    path: 04-auditors/aodw-requirement-auditor-rules.md
+
+  - id: aodw-development-auditor
+    name: Development Auditor Rules
+    description: Implementation-phase audit rules covering code quality and spec compliance.
+    path: 04-auditors/aodw-development-auditor-rules.md
+
+  - id: aodw-full-auditor
+    name: Full Auditor Rules
+    description: Complete auditor rule set combining requirement and development audits.
+    path: 04-auditors/aodw-full-auditor-rules.md
+
+  - id: csf-thinking-framework
+    name: CSF Thinking Framework
+    description: Structured thinking framework for decision-making during spec and design phases.
+    path: 01-core/csf-thinking-framework.md
+
+  - id: module-doc-rules
+    name: Module Documentation Rules
+    description: Rules for writing and maintaining module-level documentation.
+    path: 01-core/module-doc-rules.md
+
+  - id: ai-project-overview-rules
+    name: AI Project Overview Rules
+    description: Rules for initializing and maintaining project overview file.
+    path: 01-core/ai-project-overview-rules.md
+
+  - id: rt-id-generation-rules
+    name: RT ID Generation Rules
+    description: Rules for generating and managing RT sequence IDs locally.
+    path: 02-workflow/rt-id-generation-rules.md
+
+  - id: ai-tools-init-rules
+    name: AI Tools Init Rules
+    description: Rules for initializing and verifying development tooling (ESLint, Prettier, Ruff, Black, etc.).
+    path: 05-tooling/ai-tools-init-rules.md
+
+  - id: ai-coding-rules-common
+    name: AI Coding Rules Common
+    description: Common coding standards shared across all tech stacks (file size, complexity, naming).
+    path: 03-standards/ai-coding-rules-common.md
+
+  - id: project-ai-overview
+    name: Project AI Overview
+    description: Current project tech stack, architecture, and module overview. Project-specific — must be rewritten for each project.
+    path: templates/ai-overview.template.md
+
+  - id: project-modules-index
+    name: Project Modules Index
+    description: Index of all modules in current project. Project-specific — updated after each RT completion (knowledge distillation).
+    path: templates/modules-index.template.yaml

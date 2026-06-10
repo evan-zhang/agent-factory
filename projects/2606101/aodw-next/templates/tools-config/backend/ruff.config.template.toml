@@ -1,0 +1,23 @@
+# Ruff 配置模板（TOML 片段）
+# 需要合并到 pyproject.toml 的 [tool.ruff] 部分
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+  "E",    # 基本语法错误
+  "F",    # 未使用变量、导入等
+  "I",    # import 排序
+  "PLR",  # 复杂度 & 过长函数（核心）
+]
+ignore = []
+
+# ✅ 重点拦截：
+# PLR0915 -> 函数语句过多（怪物函数）
+# PLR0912 -> 分支过多
+# PLR0911 -> return 过多
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]

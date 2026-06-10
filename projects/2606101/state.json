@@ -1,0 +1,15 @@
+{
+  "projectId": "2606101",
+  "projectName": "AODW - AI 编排开发工作流",
+  "skillName": "aodw-next",
+  "currentVersion": "0.5.1",
+  "status": "active",
+  "createdAt": "2026-06-10T21:17:00+08:00",
+  "currentStep": "imported",
+  "steps": {
+    "imported": {
+      "status": "completed",
+      "completedAt": "2026-06-10T21:17:00+08:00"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+# Black 配置模板（TOML 片段）
+# 需要合并到 pyproject.toml 的 [tool.black] 部分
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
