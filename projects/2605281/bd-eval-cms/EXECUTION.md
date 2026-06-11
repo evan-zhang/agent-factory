@@ -769,14 +769,78 @@ bash scripts/sync-to-knowledge-base.sh "{品种目录路径}" "260531-LNXB"
 | Phase 4 Battle | 20 min | 减少审查轮次到 1 轮 |
 | Phase 5 合并 | 5 min | 通常不超时 |
 
-### 断点续跑
+### 断点续跑（状态位机制 · v2026.6.11）
 
-当某个子Agent 超时时：
+**核心设计**：`state.json.gateStatus` 字段记录每个阶段的独立状态位，实现"AI 自启协议"。
 
-1. **记录已完成的 Gate 文件**（版本已写入 `02-gate-by-chapter/`）
-2. **Spawn 新子Agent 重跑超时 Gate**（注入 `本次是断点续跑，请从 checkpoint 继续`）
+**状态位枚举**：
+- `pending` — 未开始
+- `in_progress` — 子Agent 正在跑（带 `lastHeartbeat` 时间戳）
+- `completed` — 已完成
+- `failed` — 执行失败
+
+**标准 12 个状态位**：
+```
+phase-1, phase-2, one-pager, gate-0, gate-1, gate-2, gate-3, gate-4, gate-5, phase-4-battle, phase-5-merge, phase-5-5-html
+```
+
+**故障检测**：某个状态位为 `in_progress` 但 `lastHeartbeat` > 30 min 未更新 → 视为僵尸，自动标记为 `failed` → 续跑。
+
+### 智能续跑入口
+
+**商机池场景**（全自动静默）：
+
+```bash
+# 1. 商机入池
+mkdir bd-opportunities/260615-FOO/
+cp 合作方资料/* bd-opportunities/260615-FOO/
+
+# 2. 调度器（人不定时）抽出商机
+./scripts/run.sh 260615-FOO
+# → AI 读 state.json → 不存在 → 从 phase-1 全量启动
+# → 全程静默，跑完上传 doc.20100706.xyz
+```
+
+**手动场景**（指定重跑）：
+```bash
+./scripts/run.sh 260611-EPIO --status         # 查看状态
+./scripts/run.sh 260611-EPIO --rerun=Gate-3   # 显式重跑 Gate 3（同时置下游 pending）
+./scripts/run.sh 260611-EPIO --rerun=all      # 强制全量重跑
+./scripts/run.sh 260611-EPIO --mode=semi      # 半自动（每阶段后 push 确认）
+./scripts/run.sh --list                        # 列出所有项目状态
+```
+
+### AI 自启协议（必须遵循）
+
+当 AI 重新被调用运行某个项目时，必做 3 步（**不要向用户询问起点**）：
+
+1. **读 `state.json`**：检查是否存在 + 读 `gateStatus` + 读 `lastHeartbeat`
+2. **判定起点**：
+   - state.json 不存在 → 从 `phase-1` 全量启动
+   - 有 `in_progress` 且 heartbeat < 30min → 续跑该 Gate
+   - 有 `in_progress` 但 heartbeat > 30min → 标记 `failed`，续跑
+   - 有 `failed` → 续跑该 Gate
+   - 全部 `completed` → 报告"已完成"，等显式指令
+   - `--rerun=Gate-X` → 强制重跑该 Gate，同时把下游所有 Gate 置 `pending`
+3. **执行 + 更新状态**：启动对应 sub-agent，启动时写 `in_progress` + 更新 `lastHeartbeat`，完成时写 `completed` + 写 `lastHeartbeat`
+
+### 与旧版断点续跑的差异
+
+| 旧版（仅超时重跑） | 新版（状态位机制） |
+|---|---|
+| 只在子Agent 超时时触发 | 任何中断场景都可触发（包括商机池） |
+| 需要人判断"从哪里续" | AI 自动判定 |
+| 没有僵尸检测 | heartbeat > 30min 自动 fail |
+| state.json 改不改动 | state.json 加 `gateStatus` + `lastHeartbeat` + `inProgressGate` |
+| 不支持下游联动 | 重跑 Gate X → 下游全部 pending（保证一致性） |
+
+### 当某个子Agent 超时时
+
+1. **state.json 状态位保持 `in_progress`**（不重置为 pending）
+2. **Spawn 新子Agent 重跑**（注入 `本次是断点续跑，请从 checkpoint 继续`）
 3. **保留已抓取的参考文献**（不重新搜索已抓取的 URL）
-4. **更新 state.json** 中对应 Gate 版本 +1
+4. **更新 state.json**：状态位改 `completed`，`lastHeartbeat` 写新时间戳
+5. **下游联动**：如果当前 Gate 的下游也是 `pending` 状态，自动续跑下游
 
 ---
 

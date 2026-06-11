@@ -561,3 +561,94 @@ compatibility: Claude
 
 当评估某技能群时，读取对应的参考文件以获取完整的9模块定义与一票否决清单。
 **注意：增补条款与总规则配合使用，具有同等约束力，适用于全体系20个独立技能。**
+
+---
+
+## AI 自启协议（v2026.6.11 · 商机池场景）
+
+### 入口与模式
+
+```bash
+./scripts/run.sh <case-code>                     # 默认 auto 模式（商机池场景）
+./scripts/run.sh <case-code> --mode=semi         # 半自动（每完成一阶段 push 确认）
+./scripts/run.sh <case-code> --rerun=Gate-3      # 显式重跑指定 Gate
+./scripts/run.sh <case-code> --rerun=all         # 强制全量重跑
+./scripts/run.sh <case-code> --status            # 查看项目状态
+./scripts/run.sh --list                           # 列出商机池所有项目
+```
+
+**默认模式 = auto（全静默，商机池场景专用）**。
+**半自动模式 = semi**（保留用户介入点，每个 Gate 完成后 push 确认）。
+
+### AI 必做 3 步（不要向用户询问起点）
+
+1. **读 `state.json`**：检查 `gateStatus` 字段
+2. **判定起点**（按以下顺序）：
+   - state.json 不存在 → 从 `phase-1` 全量启动
+   - 有 `in_progress` 且 `lastHeartbeat` < 30 min → 续跑该 Gate
+   - 有 `in_progress` 但 `lastHeartbeat` > 30 min → 标记 `failed` 后续跑
+   - 有 `failed` → 续跑该 Gate
+   - 全部 `completed` → 报告"已完成"并退出
+   - `--rerun=Gate-X` → 强制重跑该 Gate + 下游全部置 `pending`
+3. **执行 + 更新状态**：spawn sub-agent 时写 `in_progress` + 更新 `lastHeartbeat`，完成时写 `completed`
+
+### 状态位 schema
+
+`state.json` 必含 12 个标准状态位：
+
+```json
+{
+  "gateStatus": {
+    "phase-1": "completed",
+    "phase-2": "completed",
+    "one-pager": "completed",
+    "gate-0": "completed",
+    "gate-1": "completed",
+    "gate-2": "completed",
+    "gate-3": "completed",
+    "gate-4": "completed",
+    "gate-5": "completed",
+    "phase-4-battle": "completed",
+    "phase-5-merge": "completed",
+    "phase-5-5-html": "completed"
+  },
+  "lastHeartbeat": "2026-06-11T19:25:00+08:00",
+  "inProgressGate": null
+}
+```
+
+### 商机池目录结构
+
+```
+bd-opportunities/             # = SKILL_ROOT（根目录即商机池）
+├── 260611-EPIO/              # 已完成项目
+│   ├── state.json            # 含 gateStatus 字段
+│   ├── 01-discovery.md
+│   ├── 02-gate-by-chapter/
+│   ├── 04-final-report.md
+│   └── REPORT.html
+├── 260615-FOO/               # 新商机（待启动）
+│   ├── 合作方资料/            # 用户投入的原始资料
+│   └── state.json            # 可选：预填元信息（caseCode、displayName）
+└── scripts/                  # 调度脚本
+    ├── run.sh                # 入口
+    ├── orchestrator-resume.sh # 续跑器
+    └── start-phase.sh        # 阶段执行器（占位）
+```
+
+### 适用与不适用场景
+
+| 适用场景 | 不适用场景 |
+|---|---|
+| 商机池批量化评估（多项目并行） | 单项目人工深度评估（每次都要 review） |
+| 报告模板固定（HTML + 麦肯锡风格） | 报告模板需要频繁更换 |
+| 业务规则稳定（财务硬门槛、Gate 流程） | 业务规则频繁迭代 |
+| 故障可承受（AI 自动重试 + 30min 心跳） | 故障成本极高（必须人工 verify） |
+
+### 实施检查清单
+
+- [ ] `state.json` 已添加 `gateStatus` 字段（12 个标准状态位）
+- [ ] `scripts/run.sh` + `orchestrator-resume.sh` + `start-phase.sh` 三个脚本已就绪
+- [ ] 项目目录命名规范：项目名可读，caseCode 写在 state.json 里
+- [ ] 商机池调度器（可选）：watcher 监听商机入池 → 自动调用 `run.sh <caseCode>`
+- [ ] 上传 doc.20100706.xyz 的 URL 已写入 `state.json.reportHtmlUrl`

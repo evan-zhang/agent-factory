@@ -1,10 +1,13 @@
 {
   "skillcode": "bd-eval-cms",
-  "version": "0.3.0",
-  "description": "CMS（康哲药业）投前评估体系 — 20个独立技能 + Gate 0~5 + Final门控",
+  "version": "0.4.0",
+  "description": "CMS（康哲药业）投前评估体系 — 20个独立技能 + Gate 0~5 + Final门控 + AI 自启协议（商机池自动续跑）",
   "dependencies": [
     "doc-viewer",
     "multi-search"
   ],
-  "scheme": "B"
+  "scheme": "B",
+  "changelog": {
+    "0.3.0->0.4.0": "新增 AI 自启协议：state.json.gateStatus 12 状态位 + heartbeat 僵尸检测 + run.sh/orchestrator-resume.sh/start-phase.sh 三脚本入口 + 项目名/caseCode 双向解析 + 下游联动"
+  }
 }
