@@ -1,10 +1,10 @@
 {
   "projectId": "2605281",
   "name": "bd-eval-cms",
-  "currentStep": "S4-development",
-  "version": "0.1.0",
+  "currentStep": "s5-testing",
+  "version": "0.2.0",
   "status": "active",
   "createdAt": "2026-05-28",
-  "updatedAt": "2026-05-29",
-  "notes": "Migrated from projects/2605152 — CMS专属投前评估体系"
+  "updatedAt": "2026-06-11",
+  "notes": "S4开发完成，15+药品评估数据积累丰富，E2E测试文档齐备，进入测试收口阶段。API引擎（bd-eval-engine）已独立为外部仓库，工厂仅保留Skill定义。"
 }
