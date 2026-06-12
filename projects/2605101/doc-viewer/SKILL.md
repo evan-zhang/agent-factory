@@ -1,7 +1,7 @@
 ---
 name: doc-viewer
 description: "Markdown → HTML 转换 + 多目标上传预览。输入 .md 文件，输出风格化 HTML（忠实/加工两种模式），可上传到 DocViewer（30 天公网链接）/ 玄关知识库（5 年内部分享链接）/ 自定义端点。触发词：上传文件、预览文件、生成链接、转 HTML、Markdown 转 HTML、报告页面、知识库、存知识库"
-version: "3.0.0"
+version: "3.0.1"
 homepage: https://github.com/evan-zhang/agent-factory/tree/master/projects/2605101/doc-viewer/
 issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=doc-viewer
 metadata: {"openclaw":{"requires":{"env":["DOCVIEWER_KB_APPKEY"]},"primaryEnv":"DOCVIEWER_KB_APPKEY"}}
@@ -41,7 +41,7 @@ metadata: {"openclaw":{"requires":{"env":["DOCVIEWER_KB_APPKEY"]},"primaryEnv":"
 ## 触发判断
 
 ```
-收到消息 + 一个 .md 文件
+收到消息
  ├─ 用户明确说"原样 / 忠实 / 不改 / 直接转"
  │   → Stage 1 忠实模式（风格 13）
  │
@@ -55,9 +55,14 @@ metadata: {"openclaw":{"requires":{"env":["DOCVIEWER_KB_APPKEY"]},"primaryEnv":"
  │
  └─ Stage 1 完成后
     ├─ 用户没指定 → Stage 2 (docviewer 默认)
-    ├─ "存知识库 / 5 年" → Stage 2 (kb)
+    ├─ "存知识库 / 知识库 / 5 年" → Stage 2 (kb)
     └─ "我自己处理" → 只给 HTML 文件，不上传
 ```
+
+**支持的文件类型**：
+- `.md` / `.markdown` → Stage 1 处理（md → HTML）
+- `.html` / `.htm` → 跳过 Stage 1，直接 Stage 2（已经是 HTML，原样上传）
+- 其他格式 → 不触发，请先转换为 md
 
 **注意**：doc-viewer **不做素材收集**。如果用户口述需求（没有 md 文件），请上游 skill 或通用助手先组织成 md 文件，再调 doc-viewer。
 
@@ -82,13 +87,14 @@ metadata: {"openclaw":{"requires":{"env":["DOCVIEWER_KB_APPKEY"]},"primaryEnv":"
 
 ### Step 1.0：模式选择（必做）
 
-按上方"触发判断"确定模式。如果不明确，**默认加工模式**。
+按上方"触发判断"确定模式。如果不明确，**默认加工模式**。加工模式的具体风格选择见下方"风格推荐规则"节。
 
 ### 模式 A：忠实模式（Faithful）
 
 固定使用风格 13，**当前只有一个默认皮肤**（13-a 浅色）。
 
 > 扩展口：将来可加 13-b（深蓝）、13-c（暖色）等主题变体，但**只改视觉皮肤，不改内容结构**。
+> ⚠️ **注意**：13-b 和 13-c 尚未实现。当前只能使用 13-a。如果用户要求 13-b/13-c，请告知「暂未实现，当前仅支持 13-a」。
 
 **输入**：.md 文件
 
@@ -242,7 +248,7 @@ URL=$(echo "$UPLOAD_RESP" | python3 -c "import sys,json; print(json.load(sys.std
 
 **前置条件**：用户已配置 `DOCVIEWER_KB_APPKEY`。
 
-**v3.0.0 新增**：
+**v2.10.0 引入（v3.0.0 保留）**：
 - **支持外部 projectId**：调用方可传 `projectId` 参数（如 `2060176831872499713`），跳过个人知识库自动获取
 - **支持外部 path**：调用方可传 `path` 参数覆盖默认 `DOCVIEWER_KB_PATH`
 - 当 `projectId` 未传入时，自动走个人知识库
@@ -543,8 +549,39 @@ preview_url = await doc_viewer.stage2_upload(
 
 ---
 
+## 从 v2.x 迁移到 v3.0.0
+
+v3.0.0 是破坏性变更，主要变化：
+
+- **输入限制为 Markdown 文件**：v2.x 接受的「口述需求」「文本」「现有 HTML」输入已移除
+- **新增双模式架构**：忠实模式（风格 13，原样渲染）vs 加工模式（风格 01-12，重构渲染，默认）
+- **要求上游提供 md**：doc-viewer 不做素材收集
+
+**迁移指南**：
+
+1. **口述需求用户**：如果之前习惯「帮我做个 XX 页面」口述生成，请：
+   - 手动写一个 .md 描述需求（标题、正文、数据点、表格）
+   - 发送给 doc-viewer 转换为 HTML
+
+2. **直接发 .html 的用户**：请改为发 .md 文件，doc-viewer 会自动转换后上传。
+
+3. **业务 skill 调用方**（如 bd-eval-cms）：调用方式不变（都是传 md 拿 HTML），无需调整。
+
+4. **期望「原样转 HTML」的用户**：明说「原样 / 忠实 / 不改内容」可走忠实模式（风格 13），md 原样保留只加视觉皮肤。
+
+**降级到 v2.10.0**（不推荐）：如必须保留 v2.x 习惯，切到 `git checkout v2.10.0 -- projects/2605101/doc-viewer/`。
+
+---
+
 ## 版本历史
 
+- **v3.0.1**（2026-06-12）：文档补丁，修复 v3.0.0 审计发现的 6 个问题
+  - 补「存知识库」触发词路径
+  - 补 .html 文件处理路径
+  - 加风格 13-b/13-c 未实现警告
+  - 修正「v3.0.0 新增」版本标注错误（实为 v2.10.0 引入）
+  - 加工模式 Step 1.0 加风格推荐规则引用
+  - 加「从 v2.x 迁移到 v3.0.0」迁移指南
 - **v3.0.0**（2026-06-12）：架构重构为"md → HTML 转换 + 上传预览"管道
   - 输入统一为 Markdown 文件（删除口述/文本/素材收集）
   - 拆分为忠实模式（风格 13）和加工模式（风格 01-12）
