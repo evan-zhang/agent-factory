@@ -1,7 +1,7 @@
 ---
 name: doc-viewer
-description: "Markdown → HTML 转换 + 多目标上传预览。输入 .md 文件，输出风格化 HTML（忠实/加工两种模式），可上传到 DocViewer（30 天公网链接）/ 玄关知识库（5 年内部分享链接）/ 自定义端点。触发词：上传文件、预览文件、生成链接、转 HTML、Markdown 转 HTML、报告页面、知识库、存知识库"
-version: "3.0.1"
+description: "Markdown → HTML 转换 + 多目标上传预览。输入 .md 或 .html 文件，输出风格化 HTML（忠实/加工两种模式），可上传到 DocViewer（30 天公网链接）/ 玄关知识库（5 年内部分享链接）/ 自定义端点。触发词：上传文件、预览文件、生成链接、转 HTML、Markdown 转 HTML、HTML 存知识库、HTML 上传、HTML 预览、报告页面、知识库、存知识库"
+version: "3.0.2"
 homepage: https://github.com/evan-zhang/agent-factory/tree/master/projects/2605101/doc-viewer/
 issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=doc-viewer
 metadata: {"openclaw":{"requires":{"env":["DOCVIEWER_KB_APPKEY"]},"primaryEnv":"DOCVIEWER_KB_APPKEY"}}
@@ -41,22 +41,27 @@ metadata: {"openclaw":{"requires":{"env":["DOCVIEWER_KB_APPKEY"]},"primaryEnv":"
 ## 触发判断
 
 ```
-收到消息
- ├─ 用户明确说"原样 / 忠实 / 不改 / 直接转"
- │   → Stage 1 忠实模式（风格 13）
+收到消息 + 一个文件
+ ├─ 文件是 .html / .htm
+ │   → 跳过 Stage 1，直接走 Stage 2（见下方"HTML 直传模式"）
+ │     ├─ 用户说"原样 / 不改" → 原样上传
+ │     ├─ 用户说"存知识库 / 5 年" → Stage 2 (kb)
+ │     └─ 没说 → Stage 2 (docviewer) 默认
  │
- ├─ 其他情况（默认）
- │   → Stage 1 加工模式
- │     ├─ 没说偏好 → 风格 01
- │     ├─ "报告 / BD / 评估" → 风格 03
- │     ├─ "麦肯锡 / 深蓝 / CMS" → 风格 12
- │     ├─ "情报 / 日报" → 风格 04
- │     └─ "好看 / 专业" → 风格 01
+ ├─ 文件是 .md / .markdown
+ │   ├─ 用户明确说"原样 / 忠实 / 不改 / 直接转"
+ │   │   → Stage 1 忠实模式（风格 13）
+ │   │
+ │   └─ 其他情况（默认）
+ │       → Stage 1 加工模式
+ │         ├─ 没说偏好 → 风格 01
+ │         ├─ "报告 / BD / 评估" → 风格 03
+ │         ├─ "麦肯锡 / 深蓝 / CMS" → 风格 12
+ │         ├─ "情报 / 日报" → 风格 04
+ │         └─ "好看 / 专业" → 风格 01
  │
- └─ Stage 1 完成后
-    ├─ 用户没指定 → Stage 2 (docviewer 默认)
-    ├─ "存知识库 / 知识库 / 5 年" → Stage 2 (kb)
-    └─ "我自己处理" → 只给 HTML 文件，不上传
+ └─ 其他文件格式
+     → 不触发，请先转换为 md 或 html
 ```
 
 **支持的文件类型**：
@@ -80,6 +85,48 @@ metadata: {"openclaw":{"requires":{"env":["DOCVIEWER_KB_APPKEY"]},"primaryEnv":"
 | 适合 | 已有完善结构的 md，不想被改 | md 内容好但缺专业排版 |
 
 **默认走加工模式**（风格 01）。理由：用户找 doc-viewer 通常是为了"专业排版"，不是"原样转"；原样转用 pandoc 即可。
+
+---
+
+## HTML 直传模式（跳过 Stage 1）
+
+**适用场景**：用户已经有 HTML 文件，只需要上传预览 / 存知识库 / 拿分享链接。
+
+**触发词**：
+- "上传这个 HTML"
+- "HTML 存知识库"
+- "HTML 预览 / 拿链接"
+- "这个页面帮我存起来"
+- 直接发一个 .html/.htm 文件
+
+**跳过 Stage 1**——不接受加工，原样走 Stage 2。
+
+**用户说话示例**：
+
+```
+用户：“这个 HTML 帮我存到知识库”
+  → 跳过 Stage 1，直接 Stage 2 (kb) 调 saveFileByPath + 5 年 preview ticket
+
+用户：“这是我的页面，拿一个 30 天分享链接”
+  → 跳过 Stage 1，直接 Stage 2 (docviewer)
+
+用户发来一个 xxx.html 文件
+  → 如果附带说"原样 / 直接" → 跳 Stage 1 忠实模式 = Stage 1 不加工（该文件已经是 HTML，不需转）
+  → 如果附带说"加工 / 优化" → 报错（HTML 不能被加工）
+  → 如果没说 → 默认走 Stage 2 (docviewer) 拿 30 天链接
+```
+
+**调用代码示例**：
+
+```python
+# Python 调用
+preview_url = await doc_viewer.stage2_upload(
+    html_path="/path/to/existing.html",
+    target="kb",  # 或 "docviewer" / "custom"
+    project_id="2060176831872499713",  # kb 模式必填
+    path="DocViewer/2026Q2"  # 可选，默认 DOCVIEWER_KB_PATH
+)
+```
 
 ---
 
@@ -575,7 +622,10 @@ v3.0.0 是破坏性变更，主要变化：
 
 ## 版本历史
 
-- **v3.0.1**（2026-06-12）：文档补丁，修复 v3.0.0 审计发现的 6 个问题
+- **v3.0.2**（2026-06-12）：加 HTML 直传模式明确入口
+  - frontmatter description 加「.html」输入说明 + 3 个 HTML 触发词
+  - 触发判断流程图拆分 .md / .html 两路，HTML 跳过 Stage 1
+  - 新增「## HTML 直传模式」章节，说明适用场景 / 触发词 / 调用代码
   - 补「存知识库」触发词路径
   - 补 .html 文件处理路径
   - 加风格 13-b/13-c 未实现警告
