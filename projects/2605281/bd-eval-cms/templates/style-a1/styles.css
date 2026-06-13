@@ -1,0 +1,482 @@
+/**
+ * Style A1 — CMS 投前评估报告专用样式
+ * 基于 A-1 原始模板需求，完整覆盖 TRTL-729 示例结构
+ *
+ * 设计原则：
+ * 1. 继承 Style 12 的麦肯锡深蓝视觉体系
+ * 2. 扩展 A-1 模板所需的所有结构能力
+ * 3. 保持 A4 纵向打印友好（pt 单位）
+ * 4. 支持七色/四职能层视觉体系
+ */
+
+/* ===== 全局设置 ===== */
+:root {
+  /* 主色调 - 麦肯锡深蓝 */
+  --primary: #1a3a5c;
+  --primary-dark: #0F1B2D;
+  --primary-light: #2c5282;
+
+  /* 中性色 */
+  --light-bg: #EDF2F7;
+  --bg-white: #F8F9FB;
+  --text-main: #1A1A2E;
+  --text-muted: #4A5568;
+
+  /* 状态色 */
+  --pass-green: #15803D;
+  --cond-amber: #92400E;
+  --fail-red: #DC2626;
+
+  /* 边框色 */
+  --border-color: #CBD5E1;
+  --footer-border: #E2E8F0;
+
+  /* 职能层色彩 */
+  --role-bd: #1a3a5c;      /* BD - 深蓝 */
+  --role-tech: #2563eb;    /* 技术 - 蓝 */
+  --role-comm: #7c3aed;    /* 商务 - 紫 */
+  --role-support: #059669;  /* 支持 - 绿 */
+  --role-ai: #db2777;      /* AI - 粉红 */
+  --role-decision: #dc2626; /* 决策 - 红 */
+  --role-pmo: #d97706;     /* PMO - 琥珀 */
+}
+
+/* ===== 密级与呈报对象栏 ===== */
+.classification-bar {
+  background: linear-gradient(135deg, #1a3a5c 0%, #0F1B2D 100%);
+  color: #FFFFFF;
+  padding: 6px 28mm;
+  font-size: 8.5pt;
+  font-weight: 600;
+  border-bottom: 1px solid #0F1B2D;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.classification-bar .recipients {
+  font-weight: 400;
+  opacity: 0.9;
+  font-size: 8pt;
+}
+
+/* ===== 结论框（conclusion-box）===== */
+.conclusion-box {
+  border-left: 5px solid #15803D;
+  background: #F0FDF4;
+  padding: 12px 14px;
+  margin: 12px 0;
+  line-height: 1.65;
+  border-radius: 0 4px 4px 0;
+}
+
+.conclusion-box::before {
+  content: "✓ 结论";
+  display: block;
+  font-size: 9pt;
+  font-weight: 700;
+  color: #15803D;
+  margin-bottom: 6px;
+}
+
+/* ===== 风险框（risk-box）===== */
+.risk-box {
+  border-left: 5px solid #DC2626;
+  background: #FEF2F2;
+  padding: 12px 14px;
+  margin: 12px 0;
+  line-height: 1.65;
+  border-radius: 0 4px 4px 0;
+}
+
+.risk-box::before {
+  content: "⚠ 风险";
+  display: block;
+  font-size: 9pt;
+  font-weight: 700;
+  color: #DC2626;
+  margin-bottom: 6px;
+}
+
+/* ===== 中立框（neutral-box）===== */
+.neutral-box {
+  border-left: 4px solid #64748B;
+  background: #F8FAFC;
+  padding: 10px 14px;
+  margin: 10px 0;
+  line-height: 1.65;
+  border-radius: 0 4px 4px 0;
+}
+
+/* ===== 一票否决框（veto-box）===== */
+.veto-box {
+  border-left: 5px solid #DC2626;
+  background: #FEE2E2;
+  padding: 12px 14px;
+  margin: 12px 0;
+  line-height: 1.65;
+  border-radius: 0 4px 4px 0;
+  border: 2px solid #DC2626;
+}
+
+.veto-box::before {
+  content: "🚫 一票否决项";
+  display: block;
+  font-size: 10pt;
+  font-weight: 700;
+  color: #DC2626;
+  margin-bottom: 8px;
+}
+
+/* ===== 冲突框（conflict-box）===== */
+.conflict-box {
+  border-left: 4px solid #F59E0B;
+  background: #FFFBEB;
+  padding: 10px 14px;
+  margin: 10px 0;
+  line-height: 1.65;
+  border-radius: 0 4px 4px 0;
+}
+
+.conflict-box::before {
+  content: "⚠ 信息冲突";
+  display: block;
+  font-size: 9pt;
+  font-weight: 700;
+  color: #F59E0B;
+  margin-bottom: 6px;
+}
+
+/* ===== 互斥规则约束框（exclusion-box）===== */
+.exclusion-box {
+  border: 2px solid #DC2626;
+  background: #FFF5F5;
+  padding: 12px 16px;
+  margin: 16px 0;
+  line-height: 1.6;
+  border-radius: 4px;
+}
+
+.exclusion-box::before {
+  content: "⚠ 业务主体互斥规则约束";
+  display: block;
+  font-size: 11pt;
+  font-weight: 700;
+  color: #DC2626;
+  margin-bottom: 8px;
+}
+
+.exclusion-box strong {
+  color: #991B1B;
+}
+
+/* ===== 术语表（glossary-table）===== */
+.glossary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 9pt;
+}
+
+.glossary-table th {
+  background: #1a3a5c;
+  color: #FFFFFF;
+  font-weight: 700;
+  padding: 8px 10px;
+  text-align: left;
+  border: 1px solid #0F1B2D;
+}
+
+.glossary-table td {
+  border: 1px solid #CBD5E1;
+  padding: 6px 10px;
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.glossary-table td:first-child {
+  font-weight: 600;
+  width: 35%;
+  background: #EDF2F7;
+}
+
+/* ===== One-pager 结构 ===== */
+.one-pager {
+  background: #F8FAFC;
+  border: 2px solid #1a3a5c;
+  padding: 16px;
+  margin: 16px 0;
+  line-height: 1.65;
+  border-radius: 4px;
+  page-break-inside: avoid;
+}
+
+.one-pager-header {
+  font-size: 13pt;
+  font-weight: 700;
+  color: #1a3a5c;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #1a3a5c;
+}
+
+.one-pager-section {
+  margin-bottom: 12px;
+}
+
+.one-pager-section-title {
+  font-size: 10pt;
+  font-weight: 700;
+  color: #1a3a5c;
+  margin-bottom: 6px;
+}
+
+/* ===== 职能层视觉体系 ===== */
+.role-bd { color: #1a3a5c; font-weight: 600; }
+.role-tech { color: #2563eb; font-weight: 600; }
+.role-comm { color: #7c3aed; font-weight: 600; }
+.role-support { color: #059669; font-weight: 600; }
+.role-ai { color: #db2777; font-weight: 600; }
+.role-decision { color: #dc2626; font-weight: 600; }
+.role-pmo { color: #d97706; font-weight: 600; }
+
+/* ===== 阶段标签 ===== */
+.stage-tag {
+  display: inline-block;
+  font-size: 8pt;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1.3;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.stage-a, .tag-a {
+  background: #DCFEF0;
+  color: #065F46;
+  border: 1px solid #065F46;
+}
+
+.stage-b, .tag-b {
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #92400E;
+}
+
+.stage-c, .tag-c {
+  background: #FEE2E2;
+  color: #991B1B;
+  border: 1px solid #991B1B;
+}
+
+/* ===== 页眉页脚（@page）===== */
+@page {
+  margin: 26mm 24mm 22mm 24mm;
+}
+
+@page :first {
+  margin: 0;
+}
+
+/* ===== 图表编号 ===== */
+.caption, figcaption {
+  font-size: 9pt;
+  color: #4A5568;
+  font-style: italic;
+  margin: 4px 0 8px;
+  text-align: center;
+}
+
+.figure-number {
+  font-weight: 700;
+  color: #1a3a5c;
+  margin-right: 4px;
+}
+
+/* ===== 内部水印 ===== */
+.watermark-internal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  font-size: 80pt;
+  font-weight: 900;
+  color: rgba(26, 58, 92, 0.03);
+  pointer-events: none;
+  z-index: -1;
+  white-space: nowrap;
+}
+
+/* ===== 涂黑标记 ===== */
+.redacted {
+  background: #000;
+  color: #000;
+  padding: 0 4px;
+  border-radius: 2px;
+  cursor: not-allowed;
+}
+
+/* ===== Gate 1-6 承载能力 ===== */
+/* Gate 4: 准入与定价路径 */
+.gate-4-pricing {
+  background: #F0FDF4;
+  border: 2px solid #15803D;
+  padding: 14px;
+  margin: 14px 0;
+  border-radius: 4px;
+}
+
+/* Gate 5: 供应链与 CMC */
+.gate-5-cmc {
+  background: #EFF6FF;
+  border: 2px solid #1d4ed8;
+  padding: 14px;
+  margin: 14px 0;
+  border-radius: 4px;
+}
+
+/* Gate 6: 交易结构与财务回报 */
+.gate-6-deal {
+  background: #FEF3C7;
+  border: 2px solid #D97706;
+  padding: 14px;
+  margin: 14px 0;
+  border-radius: 4px;
+}
+
+/* ===== 一票否决清单 ===== */
+.veto-list {
+  background: #FEE2E2;
+  border: 2px solid #DC2626;
+  padding: 14px;
+  margin: 14px 0;
+  border-radius: 4px;
+}
+
+.veto-list-title {
+  font-size: 11pt;
+  font-weight: 700;
+  color: #991B1B;
+  margin-bottom: 10px;
+}
+
+.veto-item {
+  margin-bottom: 8px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.veto-item::before {
+  content: "🚫";
+  position: absolute;
+  left: 0;
+  color: #DC2626;
+}
+
+/* ===== 红旗台账/风险登记表 ===== */
+.risk-ledger {
+  background: #FFFBEB;
+  border: 2px solid #F59E0B;
+  padding: 14px;
+  margin: 14px 0;
+  border-radius: 4px;
+}
+
+.risk-ledger-title {
+  font-size: 11pt;
+  font-weight: 700;
+  color: #92400E;
+  margin-bottom: 10px;
+}
+
+.risk-item {
+  margin-bottom: 8px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.risk-item::before {
+  content: "🚩";
+  position: absolute;
+  left: 0;
+  color: #F59E0B;
+}
+
+/* ===== 信息冲突附录 ===== */
+.conflict-appendix {
+  background: #FEF3C7;
+  border: 2px solid #D97706;
+  padding: 14px;
+  margin: 14px 0;
+  border-radius: 4px;
+}
+
+.conflict-appendix-title {
+  font-size: 11pt;
+  font-weight: 700;
+  color: #92400E;
+  margin-bottom: 10px;
+}
+
+/* ===== 参考文献外壳 ===== */
+.references-shell {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  padding: 14px;
+  margin: 14px 0;
+  border-radius: 4px;
+}
+
+.references-title {
+  font-size: 11pt;
+  font-weight: 700;
+  color: #1a3a5c;
+  margin-bottom: 10px;
+}
+
+.reference-item {
+  margin-bottom: 8px;
+  font-size: 9pt;
+  padding-left: 20px;
+  position: relative;
+  text-indent: -20px;
+}
+
+/* ===== 打印优化 ===== */
+@media print {
+  .classification-bar {
+    position: static;
+  }
+
+  .one-pager, .veto-list, .risk-ledger, .conflict-appendix {
+    page-break-inside: avoid;
+  }
+
+  .watermark-internal {
+    display: none;
+  }
+
+  body {
+    background: #FFF;
+  }
+}
+
+/* ===== 移动端适配 ===== */
+@media screen and (max-width: 768px) {
+  .classification-bar {
+    padding: 6px 10mm;
+    font-size: 7.5pt;
+  }
+
+  .exclusion-box, .veto-list, .risk-ledger {
+    padding: 10px 12px;
+  }
+
+  .one-pager {
+    padding: 12px;
+  }
+}

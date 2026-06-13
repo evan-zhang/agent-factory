@@ -1,0 +1,93 @@
+{
+  "version": "0.9.0",
+  "description": "A-7 多标的横向筛选 - 矩阵型报告",
+  "profile_type": "skill",
+  "skill_code": "A-7",
+  "skill_name": "多标的横向筛选",
+  "extends": "common",
+  "business_context": {
+    "market_scope": "多标的横向比较",
+    "evaluation_phase": "投资组合筛选",
+    "key_features": [
+      "多标的并列分析",
+      "矩阵式比较结构",
+      "优先级排序",
+      "筛选结论与建议",
+      "横向对比表格"
+    ]
+  },
+  "required_components": {
+    "boxes": {
+      "comparison-matrix": {
+        "selector": ".comparison-matrix",
+        "description": "横向对比矩阵",
+        "required": true,
+        "count_min": 1
+      },
+      "priority-box": {
+        "selector": ".priority-box",
+        "description": "优先级排序框",
+        "required": true,
+        "count_min": 1
+      },
+      "screening-conclusion": {
+        "selector": ".screening-conclusion",
+        "description": "筛选结论框",
+        "required": true,
+        "count_min": 1
+      }
+    },
+    "matrix_components": {
+      "target-table": {
+        "selector": ".target-table",
+        "description": "多标的对比表",
+        "required": true,
+        "count_min": 1
+      },
+      "ranking-list": {
+        "selector": ".ranking-list",
+        "description": "排名列表",
+        "required": true,
+        "count_min": 1
+      },
+      "decision-matrix": {
+        "selector": ".decision-matrix",
+        "description": "决策矩阵",
+        "required": true,
+        "count_min": 1
+      }
+    },
+    "visual_system": {
+      "rank-badge": {
+        "selector": ".rank-badge",
+        "description": "排名徽章",
+        "required": true,
+        "count_min": 1
+      },
+      "priority-tag": {
+        "selector": ".priority-tag",
+        "description": "优先级标签",
+        "required": true,
+        "count_min": 1
+      },
+      "comparison-highlight": {
+        "selector": ".comparison-highlight",
+        "description": "对比高亮",
+        "required": true,
+        "count_min": 1
+      }
+    }
+  },
+  "coverage_requirements": {
+    "minimum_coverage": 95,
+    "critical_components": [
+      "classification-bar",
+      "comparison-matrix",
+      "target-table",
+      "priority-box",
+      "screening-conclusion",
+      "confidence-badge",
+      "stage-tag"
+    ]
+  }
+}

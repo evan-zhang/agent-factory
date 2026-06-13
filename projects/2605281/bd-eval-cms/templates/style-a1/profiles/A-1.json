@@ -1,0 +1,160 @@
+{
+  "version": "0.9.0",
+  "description": "A-1 投前评估 - 海外已上市/中国未上市",
+  "profile_type": "skill",
+  "skill_code": "A-1",
+  "skill_name": "投前评估报告",
+  "extends": "common",
+  "business_context": {
+    "market_scope": "海外已上市/中国未上市",
+    "evaluation_phase": "投前尽职调查",
+    "key_features": [
+      "院内+院外双轨市场模型",
+      "Gate 1~6 全阶段评估",
+      "业务主体互斥规则约束",
+      "Battle 审查/执行对抗机制",
+      "One-pager 终局先立"
+    ]
+  },
+  "required_components": {
+    "boxes": {
+      "exclusion-box": {
+        "selector": ".exclusion-box",
+        "description": "业务主体互斥规则约束框",
+        "required": true,
+        "count_min": 1
+      }
+    },
+    "gate_components": {
+      "gate-card": {
+        "selector": ".gate-card",
+        "description": "Gate 结论卡",
+        "required": true,
+        "count_min": 2
+      },
+      "gate-pass": {
+        "selector": ".gate-pass",
+        "description": "Gate 通过状态",
+        "required": true,
+        "count_min": 1
+      },
+      "gate-conditional": {
+        "selector": ".gate-conditional",
+        "description": "Gate 条件通过状态",
+        "required": true,
+        "count_min": 1
+      },
+      "gate-stop": {
+        "selector": ".gate-stop",
+        "description": "Gate 停止状态",
+        "required": false,
+        "count_min": 0
+      }
+    },
+    "battle_components": {
+      "battle-auditor": {
+        "selector": ".battle-auditor",
+        "description": "Battle 审查层",
+        "required": true,
+        "count_min": 1
+      },
+      "battle-executor": {
+        "selector": ".battle-executor",
+        "description": "Battle 执行层",
+        "required": true,
+        "count_min": 1
+      },
+      "battle-dispute": {
+        "selector": ".battle-dispute",
+        "description": "Battle 争议点",
+        "required": false,
+        "count_min": 0
+      }
+    },
+    "one_pager": {
+      "one-pager": {
+        "selector": ".one-pager",
+        "description": "One-pager 终局先立结构",
+        "required": true,
+        "count_min": 1
+      },
+      "one-pager-header": {
+        "selector": ".one-pager-header",
+        "description": "One-pager 标题",
+        "required": true,
+        "count_min": 1
+      }
+    },
+    "gate_coverage": {
+      "gate-1-content": {
+        "selector": ".chapter:contains('Gate 1')",
+        "description": "Gate 1 内容承载",
+        "required": true,
+        "count_min": 1
+      },
+      "gate-2-content": {
+        "selector": ".chapter:contains('Gate 2')",
+        "description": "Gate 2 内容承载",
+        "required": true,
+        "count_min": 1
+      },
+      "gate-3-content": {
+        "selector": ".chapter:contains('Gate 3')",
+        "description": "Gate 3 临床与注册路径",
+        "required": false,
+        "count_min": 0
+      },
+      "gate-4-content": {
+        "selector": ".gate-4-pricing",
+        "description": "Gate 4 准入与定价路径",
+        "required": false,
+        "count_min": 0
+      },
+      "gate-5-content": {
+        "selector": ".gate-5-cmc",
+        "description": "Gate 5 供应链与 CMC",
+        "required": false,
+        "count_min": 0
+      },
+      "gate-6-content": {
+        "selector": ".gate-6-deal",
+        "description": "Gate 6 交易结构与财务回报",
+        "required": false,
+        "count_min": 0
+      }
+    },
+    "stage_tags": {
+      "stage-a": {
+        "selector": ".stage-a",
+        "description": "阶段A 标签",
+        "required": true,
+        "count_min": 1
+      },
+      "stage-b": {
+        "selector": ".stage-b",
+        "description": "阶段B 标签",
+        "required": false,
+        "count_min": 0
+      },
+      "stage-c": {
+        "selector": ".stage-c",
+        "description": "阶段C 标签",
+        "required": false,
+        "count_min": 0
+      }
+    }
+  },
+  "coverage_requirements": {
+    "minimum_coverage": 95,
+    "critical_components": [
+      "classification-bar",
+      "exclusion-box",
+      "gate-card",
+      "battle-auditor",
+      "battle-executor",
+      "one-pager",
+      "stage-tag",
+      "confidence-badge"
+    ]
+  }
+}

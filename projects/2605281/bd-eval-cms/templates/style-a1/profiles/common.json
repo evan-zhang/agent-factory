@@ -1,0 +1,118 @@
+{
+  "version": "0.9.0",
+  "description": "CMS BD 通用模板内核 - 通用必选组件定义",
+  "profile_type": "common",
+  "required_components": {
+    "structure": {
+      "classification-bar": {
+        "selector": ".classification-bar",
+        "description": "密级与呈报对象栏",
+        "required": true,
+        "count": 1
+      },
+      "cover-page": {
+        "selector": ".cover",
+        "description": "封面页",
+        "required": true,
+        "count": 1
+      },
+      "toc-section": {
+        "selector": ".toc-section",
+        "description": "目录章节",
+        "required": true,
+        "count": 1
+      },
+      "watermark": {
+        "selector": ".watermark-internal",
+        "description": "内部水印",
+        "required": true,
+        "count": 1
+      },
+      "header": {
+        "selector": "header",
+        "description": "页眉",
+        "required": true,
+        "count_min": 1
+      },
+      "footer": {
+        "selector": "footer",
+        "description": "页脚",
+        "required": true,
+        "count_min": 1
+      }
+    },
+    "boxes": {
+      "conclusion-box": {
+        "selector": ".conclusion-box",
+        "description": "结论框",
+        "required": true,
+        "count_min": 1
+      },
+      "risk-box": {
+        "selector": ".risk-box",
+        "description": "风险框",
+        "required": true,
+        "count_min": 1
+      },
+      "veto-box": {
+        "selector": ".veto-box",
+        "description": "一票否决框",
+        "required": true,
+        "count_min": 1
+      },
+      "conflict-box": {
+        "selector": ".conflict-box",
+        "description": "冲突框",
+        "required": true,
+        "count_min": 1
+      }
+    },
+    "tables": {
+      "glossary-table": {
+        "selector": ".glossary-table",
+        "description": "术语与缩写表",
+        "required": true,
+        "count_min": 1
+      },
+      "data-table": {
+        "selector": "table",
+        "description": "数据表格",
+        "required": true,
+        "count_min": 1
+      }
+    },
+    "visual_system": {
+      "confidence-badge": {
+        "selector": ".confidence-badge",
+        "description": "置信度徽章",
+        "required": true,
+        "count_min": 1
+      },
+      "stage-tag": {
+        "selector": ".stage-tag",
+        "description": "阶段标签",
+        "required": true,
+        "count_min": 1
+      }
+    },
+    "appendix": {
+      "references-shell": {
+        "selector": ".references-shell",
+        "description": "参考文献外壳",
+        "required": true,
+        "count_min": 1
+      }
+    }
+  },
+  "coverage_requirements": {
+    "minimum_coverage": 95,
+    "critical_components": [
+      "classification-bar",
+      "conclusion-box",
+      "risk-box",
+      "glossary-table",
+      "confidence-badge",
+      "stage-tag"
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "version": "0.9.0",
+  "description": "A-7 多标的横向筛选 - v0.9 通用模板内核测试",
+  "profile_type": "skill",
+  "skill_code": "A-7",
+  "extends": "common",
+  "expected_components": {
+    "note": "v0.9 专注于通用组件能力，高级业务组件（comparison-matrix等）将在后续版本实现"
+  },
+  "coverage_requirements": {
+    "minimum_coverage": 95,
+    "critical_components": [
+      "classification-bar",
+      "conclusion-box",
+      "risk-box",
+      "glossary-table",
+      "confidence-badge",
+      "stage-tag"
+    ]
+  }
+}

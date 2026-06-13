@@ -1,13 +1,18 @@
 {
   "skillcode": "bd-eval-cms",
-  "version": "0.4.0",
-  "description": "CMS（康哲药业）投前评估体系 — 20个独立技能 + Gate 0~5 + Final门控 + AI 自启协议（商机池自动续跑）",
+  "version": "0.9.0",
+  "description": "CMS（康哲药业）投前评估体系 — 20个独立技能 + Gate 0~5 + Final门控 + AI 自启协议（商机池自动续跑）+ v0.5.0 报告增强 4 项方法 + v0.6.0 玄关知识库接入 + v0.7.0 彻底解耦 doc-viewer + v0.7.1 报告零件化 + TL;DR 5 字段 + v0.8.0 Style A1 独立渲染方案 + v0.9.0 Style A1 通用模板内核升级（Profile 机制）",
   "dependencies": [
-    "doc-viewer",
     "multi-search"
   ],
   "scheme": "B",
   "changelog": {
+    "0.8.0->0.9.0": "Style A1 通用模板内核升级（方案三架构版 v0.9）：新增 Profile 机制，从单一 A-1 覆盖测试升级为 CMS BD 通用模板内核。新增 templates/style-a1/profiles/ 目录，包含 common.json + A-1.json/A-5.json/A-7.json 三个代表 profile。改造 expected-components 为 fixture-based 结构：fixtures/expected/common.json + by-skill/A-1.json/A-5.json/A-7.json。新增 A-5/A-7 fixture 文件（sample-a5.md/sample-a7.md）。改造 render.py 支持 profile 参数（向后兼容）。改造 test_render.py 支持多 profile 测试（A-1/A-5/A-7）。扩展 scripts/render_report.sh 支持 profile 参数（向后兼容）。更新 SKILL.md/SOP.md/design-token.md 说明 Style A1 是通用模板内核。代码增量：templates/style-a1/profiles/ (4 个 JSON)、templates/style-a1/fixtures/expected/ (重构)、templates/style-a1/fixtures/sample-*.md (+2)、render.py (profile 逻辑)、test_render.py (profile-based 测试)、scripts/render_report.sh (+profile 参数)、SKILL.md/SOP.md (更新说明)",
+    "0.7.1->0.8.0": "新增 Style A1 独立报告渲染方案：新增 templates/style-a1/ 目录，包含 skeleton.html、styles.css、render.py、design-token.md、color-themes/mckinsey-navy.yml、fixtures/sample-a1.md、fixtures/expected-components.json、test_render.py。完整覆盖 A-1 原始模板结构能力（密级栏、互斥规则框、One-pager、Gate 1-6、七色/四职能层视觉体系）。修改 config.yaml 新增 styleA1 配置，修改 scripts/render_report.sh 支持 a1 参数，保持 style-12/style-13 现有行为不变。更新 SKILL.md 和 references/SOP.md 说明推荐使用 Style A1。代码增量：templates/style-a1/ (新增~1800 行)、config.yaml (+6 行)、scripts/render_report.sh (+10 行)、SKILL.md (+8 行)、references/SOP.md (+15 行)",
+    "0.7.0->0.7.1": "SOP 报告零件化改造：SOP.md 新增 §6.5 (4 子节：6.5.1 报告由 N 个零件文件组成 / 6.5.2 每章顶部 TL;DR 5 字段 / 6.5.3 merge-report.sh 装配规则 / 6.5.4 增量更新与版本化备份)。sub-agent-prompt-template.md 升级：撰写规范 §1 改为 TL;DR 5 字段表格（取代旧版结论卡 blockquote 格式），旧版结论卡降为兼容补充。merge-report.sh 新增 v0.7.1 预检：02-gate-by-chapter/ 目录存在性 → 跳过旧案例；TL;DR 5 字段缺失报警退出（exit 2）；Gate 章节体量 <200 行超 1 个报警退出（exit 3）；Gate 6 依赖检查（mtime 软警告不退出）。JMKX003948 等旧案例不迁移，按旧模式继续工作。代码增量：references/SOP.md (+~128 行)、references/sub-agent-prompt-template.md (TL;DR 表格 + 编号重排)、scripts/merge-report.sh (+~110 行预检块)",
+    "0.6.0->0.7.0": "彻底解耦 doc-viewer skill：dependencies 中移除 doc-viewer@^2.10.0，style-12 / style-13 模板 + 配色 + 转换脚本全部内联到 bd-eval-cms/templates/。新增 scripts/render_report.sh 统一入口（根据 config.yaml.reportRenderer.defaultStyle / defaultColorTheme 调度）。config.yaml 字段 docViewer → reportRenderer。SOP.md / EXECUTION.md 全部去除 doc-viewer 引用。环境变量 $DOCVIEWER_KB_APPKEY 名名仍保留（传统协议名），以免影响其他技能。代码增量：templates/style-12/ (60K) + templates/style-13/ (32K) + scripts/render_report.sh (3K)；删除：dependencies/doc-viewer/ 整目录。",
+    "0.5.0->0.6.0": "接入 doc-viewer v2.10.0 范式 4：REPORT.html 不再上传 doc.20100706.xyz（30 天有效期），改走 4 步 Stage 2 API（uploadWholeFile → saveFileByPath → 换 access-token → doc-preview/ticket）上传到产品引进知识库（projectId=2060176831872499713），拿 5 年 doc.aishuo.co 长链接。新增 bd-eval-cms/config.yaml 定义业务固定参数（projectId / pathTemplate / format / previewTtlYears），AppKey 走 $DOCVIEWER_KB_APPKEY 环境变量（OpenClaw 动态注入）。sync-to-knowledge-base.sh 同步逻辑合并：REPORT.html 走 4 步 Stage 2，其他文件继续走 uploadContent。涉及文件：config.yaml（新增）、references/SOP.md 第 7.4 节（重写）、EXECUTION.md 上传归档段（改向）、scripts/sync-to-knowledge-base.sh（去硬编码 + 加 Stage 2 + 扩 state.json 回写）",
+    "0.4.0->0.5.0": "吸收参考报告 4 项方法：P1 临床证据五维度评分（Gate 2 强制量化，疗效30%+安全性25%+桥接20%+KOL15%+RWE10%，≥3.0通过）+ P3 One-pager 终局五问标准答法（5问5答：峰值/主体/假设可接受/止损/先发制人）+ P4 业务主体互斥规则约束框（v5-exclusion-box HTML 骨架，琉珀色边框）+ P6 数据置信度分级 A/B/C/D（4 个 confidence-tag 徽章：权威发布/可靠推算/内部判断/假设推算）。暂不启用 P2 院外市场深度分析（无 IQVIA/PDB 数据源）。涉及文件：SKILL.md（+~200 行）、templates/skeleton-cms.html（+3 block + 4 个 CSS 类）",
     "0.3.0->0.4.0": "新增 AI 自启协议：state.json.gateStatus 12 状态位 + heartbeat 僵尸检测 + run.sh/orchestrator-resume.sh/start-phase.sh 三脚本入口 + 项目名/caseCode 双向解析 + 下游联动"
   }
 }

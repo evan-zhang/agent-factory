@@ -1,0 +1,234 @@
+---
+name: mckinsey-navy
+label: 麦肯锡深蓝
+description: 经典咨询风格，深蓝主色调
+note: 默认主题，适用于正式 CMS BD 投前评估报告
+---
+
+# 主色调
+primary: "#1a3a5c"
+primary-dark: "#0F1B2D"
+primary-light: "#2c5282"
+
+# 中性色
+light-bg: "#EDF2F7"
+bg-white: "#F8F9FB"
+text-main: "#1A1A2E"
+text-muted: "#4A5568"
+
+# 状态色
+pass-green: "#15803D"
+cond-amber: "#92400E"
+fail-red: "#DC2626"
+
+# 边框色
+border-color: "#CBD5E1"
+footer-border: "#E2E8F0"
+
+# 封面色
+cover-gradient: linear-gradient(135deg, #1a3a5c 0%, #0F1B2D 100%)
+cover-border: 1px solid #0F1B2D
+cover-topbar-gradient: linear-gradient(90deg, #1a3a5c 0%, #2c5282 50%, #1a3a5c 100%)
+cover-badge-color: "#FFFFFF"
+cover-badge-border: 1px solid rgba(255,255,255,0.3)
+cover-title-color: "#FFFFFF"
+cover-subtitle-color: "#FFFFFF"
+cover-company-color: "rgba(255,255,255,0.9)"
+cover-meta-color: "rgba(255,255,255,0.85)"
+cover-meta-label-color: "rgba(255,255,255,0.7)"
+cover-confidential-color: "rgba(255,255,255,0.7)"
+cover-confidential-border: 1px solid rgba(255,255,255,0.2)
+rating-box-bg: "rgba(255,255,255,0.15)"
+rating-box-color: "#FFFFFF"
+
+# 目录色
+toc-bg: "#F8FAFC"
+toc-border: 1px solid #E2E8F0
+toc-header-color: "#1a3a5c"
+toc-header-border: 4px solid #1a3a5c
+toc-num-color: "#1a3a5c"
+toc-title-color: "#1A1A2E"
+toc-ch-color: "#4A5568"
+toc-item-border: 1px solid #F1F5F9
+
+# 章节标题色
+h1-color: "#FFFFFF"
+h1-bg: "#1a3a5c"
+h1-border: none
+h2-color: "#1a3a5c"
+h2-bg: "transparent"
+h2-border: 4px solid #1a3a5c
+h3-color: "#1A1A2E"
+h4-color: "#2c5282"
+
+# 表格色
+th-bg: "#EDF2F7"
+th-color: "#1A1A2E"
+th-border: 1px solid #CBD5E1
+td-border: 1px solid #CBD5E1
+td-alt-bg: "#F8FAFC"
+td-label-bg: "#EDF2F7"
+
+# Gate 卡片色
+gate-card-border: 4px solid transparent
+gate-card-padding: 12px 14px
+gate-card-bg: "#FFFFFF"
+gate-title-size: 12pt
+gate-label-size: 9pt
+badge-radius: 3px
+
+# Gate 通过
+gate-pass-border: "#15803D"
+gate-pass-bg: "#F0FDF4"
+gate-pass-text: "#166534"
+
+# Gate 条件通过
+gate-conditional-border: "#92400E"
+gate-conditional-bg: "#FEF3C7"
+gate-conditional-text: "#92400E"
+
+# Gate 停止
+gate-stop-border: "#DC2626"
+gate-stop-bg: "#FEE2E2"
+gate-stop-text: "#991B1B"
+
+# 置信度徽章
+confidence-a-bg: "#D1FAE5"
+confidence-a-text: "#065F46"
+confidence-b-bg: "#DBEAFE"
+confidence-b-text: "#1E40AF"
+confidence-c-bg: "#FEF3C7"
+confidence-c-text: "#92400E"
+confidence-d-bg: "#FEE2E2"
+confidence-d-text: "#991B1B"
+
+# Battle 审查
+battle-auditor-border: "#64748B"
+battle-auditor-bg: "#F1F5F9"
+battle-executor-border: "#1a3a5c"
+battle-executor-bg: "#F8FAFC"
+battle-dispute-border: "#F59E0B"
+
+# 冲突框
+conflict-border: "#F59E0B"
+conflict-bg: "#FFFBEB"
+
+# 一票否决框
+veto-box-border: "#DC2626"
+veto-box-bg: "#FEE2E2"
+
+# 中立框
+neutral-border: "#64748B"
+neutral-bg: "#F8FAFC"
+
+# 结论框
+conclusion-border: "#15803D"
+conclusion-bg: "#F0FDF4"
+
+# 风险框
+risk-box-border: "#DC2626"
+risk-box-bg: "#FEF2F2"
+
+# 互斥规则约束框
+exclusion-border: "#DC2626"
+exclusion-bg: "#FFF5F5"
+exclusion-text: "#991B1B"
+
+# 阶段标签
+stage-a-bg: "#DCFEF0"
+stage-a-text: "#065F46"
+stage-b-bg: "#FEF3C7"
+stage-b-text: "#92400E"
+stage-c-bg: "#FEE2E2"
+stage-c-text: "#991B1B"
+
+# DRL 优先级
+drl-p0-bg: "#FEE2E2"
+drl-p0-text: "#991B1B"
+drl-p1-bg: "#FEF3C7"
+drl-p1-text: "#92400E"
+drl-p2-bg: "#DBEAFE"
+drl-p2-text: "#1E40AF"
+
+# 风险等级
+risk-high-border: "#DC2626"
+risk-high-bg: "#FEE2E2"
+risk-medium-border: "#F59E0B"
+risk-medium-bg: "#FFFBEB"
+risk-low-border: "#15803D"
+risk-low-bg: "#F0FDF4"
+
+# 高亮框
+highlight-border: 4px solid #1a3a5c
+highlight-bg: "#F8FAFC"
+
+# 评级徽章
+rating-badge-color: "#1a3a5c"
+rating-badge-border: 2px solid #1a3a5c
+summary-tag-color: "#2c5282"
+
+# 代码块
+pre-bg: "#F8FAFC"
+pre-border: 1px solid #E2E8F0
+pre-accent: 4px solid #1a3a5c
+pre-color: "#1A1A2E"
+
+# 引用块
+blockquote-border: 4px solid #CBD5E1
+blockquote-bg: "#F8FAFC"
+blockquote-color: "#4A5568"
+
+# 表格变体
+th-green-bg: "#15803D"
+th-red-bg: "#DC2626"
+th-warm-bg: "#D97706"
+
+# 分隔线
+section-rule: 1px solid #E2E8F0
+
+# 评分高亮
+score-a: "#15803D"
+score-b: "#2c5282"
+score-c: "#92400E"
+
+# 分类栏
+classification-bar-bg: linear-gradient(135deg, #1a3a5c 0%, #0F1B2D 100%)
+classification-bar-color: "#FFFFFF"
+classification-bar-border: 1px solid #0F1B2D
+classification-bg: "rgba(26,58,92,0.9)"
+classification-color: "#FFFFFF"
+classification-border: 1px solid rgba(255,255,255,0.3)
+
+# One-pager
+one-pager-bg: "#F8FAFC"
+one-pager-border: 2px solid #1a3a5c
+
+# 职能层色彩
+role-bd: "#1a3a5c"
+role-tech: "#2563eb"
+role-comm: "#7c3aed"
+role-support: "#059669"
+role-ai: "#db2777"
+role-decision: "#dc2626"
+role-pmo: "#d97706"
+
+# 页脚
+footer-color: "#64748B"
+
+# 交替行色
+amber-row-bg: "#FEF3C7"
+warm-row-bg: "#F7EFE7"
+green-row-bg: "#EDF5E8"
+red-row-bg: "#FDEEEE"
+
+# 其他
+body-color: "#1A1A2E"
+link-color: "#1a3a5c"
+gate-title-color: "#1A1A2E"
+gate-label-color: "#4A5568"
+veto-pass-border: 4px solid #15803D
+veto-pass-bg: "#F0FDF4"
+veto-cond-border: 4px solid #92400E
+veto-cond-bg: "#FEF3C7"
+veto-fail-border: 4px solid #DC2626
+veto-fail-bg: "#FEE2E2"

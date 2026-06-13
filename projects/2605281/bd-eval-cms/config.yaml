@@ -1,0 +1,58 @@
+# bd-eval-cms 业务固定参数
+# 本文件定义业务级固定配置，调用方（sub-agent）无需询问用户，直接读取使用。
+# 用户不可配置、不允许覆盖。
+#
+# v0.7.0 重大变更：彻底解耦 doc-viewer skill，报告渲染改为自包含。
+#   - 原 docViewer 配置 → reportRenderer
+#   - 风格 12（强风格化 CMS 评估）+ 风格 13（程序化 Markdown→HTML）二选一
+#   - 模板、配色、转换脚本全部内联到 bd-eval-cms/templates/
+
+knowledgeBase:
+  # 玄关知识库 projectId（产品引进知识库）
+  # 来源：业务固定，CMO 评估业务专用空间
+  projectId: "2060176831872499713"
+  
+  # 路径模板（sync-to-knowledge-base.sh 与 REPORT.html 上传共用）
+  # 实际生成：{YYMMDD}/{YYMMDD-XXXX}/ （如 260531/260531-LNXB/）
+  pathTemplate: "{YYMMDD}/{YYMMDD-XXXX}"
+  
+  # 文件命名后缀（用于 doc-preview/ticket 接口的 format 字段）
+  format: "html"
+  
+  # preview 链接有效期（doc.aishuo.co 长链接，单位：年）
+  previewTtlYears: 5
+
+# 报告渲染器（v0.7.0 起，不再依赖 doc-viewer skill）
+reportRenderer:
+  # 支持的风格列表
+  styles: ["12", "13", "a1"]
+
+  # 默认风格（CMS 评估体系固定）
+  defaultStyle: "12"
+
+  # 默认配色（仅风格 12/a1 生效；风格 13 配色硬编码为 navy）
+  defaultColorTheme: "mckinsey-navy"
+
+  # 风格 12：强风格化 CMS 评估（Gate 卡片 / Battle 框 / 置信度徽章）
+  style12:
+    colorThemes: ["mckinsey-navy", "investment-blue", "burgundy-wine", "forest-teal"]
+    templateDir: "bd-eval-cms/templates/style-12/"
+    script: "convert-md-to-html.py"
+
+  # 风格 13：程序化 Markdown→HTML（保留原结构，加麦肯锡视觉）
+  style13:
+    colorThemes: ["navy"]  # 硬编码，不可改
+    templateDir: "bd-eval-cms/templates/style-13/"
+    script: "report_renderer.py"
+
+  # 风格 A1：完整 A-1 模板支持（新增独立 Style A1 报告渲染方案）
+  styleA1:
+    colorThemes: ["mckinsey-navy", "investment-blue", "burgundy-wine", "forest-teal"]
+    templateDir: "bd-eval-cms/templates/style-a1/"
+    script: "render.py"
+    description: "完整覆盖 A-1 原始模板结构和 TRTL-729 示例需求"
+
+# 凭证注入规范
+# AppKey（DOCVIEWER_KB_APPKEY）不写进本文件
+# 在 skill 执行时由 OpenClaw runtime 注入到环境变量（doc-viewer v2.10.0 协议）
+# 调用 sync-to-knowledge-base.sh 时直接读 $DOCVIEWER_KB_APPKEY 即可
