@@ -1,0 +1,29 @@
+interface:
+  display_name: "BP对象审计生成"
+  short_description: "审计、互动确认、生成并归档集团到个人全层级BP对象"
+  default_prompt: "Audit and rebuild the selected BP object with interactive user confirmation gates, following the workflow defined in SKILL.md."
+  version: "0.1.2"
+triggers:
+  - "BP 审计"
+  - "BP 对象"
+  - "BP 生成"
+  - "BP 确认"
+  - "BP 归档"
+  - "审计 BP"
+  - "生成 BP"
+  - "确认 BP"
+  - "集团 BP"
+  - "中心 BP"
+  - "部门 BP"
+  - "个人 BP"
+  - "承接关系"
+  - "康哲 BP"
+  - "业务计划"
+  - "annual business plan"
+  - "BP 目标"
+  - "BP 成果"
+  - "BP 关键举措"
+  - "BP 主责"
+policy:
+  # Claude Code specific: allow trigger without explicit slash command invocation
+  allow_implicit_invocation: true
