@@ -8,6 +8,19 @@ The BP system covers the full chain:
 
 Each organization level has a responsible owner. A level's target is achieved by the contribution set of its responsible person and key individuals.
 
+## 1.2 BP Object Granularity
+
+"One BP object" has different meanings at different levels. This must be confirmed before locking (see SKILL.md Step 0 and state `material_received`).
+
+| Level | One BP object equals |
+|---|---|
+| 集团 | One group objective, e.g., G-7 (with its outcomes and initiatives) |
+| 中心 / 业务公司 | One center objective, e.g., A3-1 (with its outcomes and initiatives) |
+| 部门 | One department's full BP (all objectives for that department) |
+| 关键岗位个人 | One individual's full BP (all objectives for that person) |
+
+When the user provides a full center BP document (e.g., all 10 center objectives), ask which objective to process first before locking. Never audit multiple objectives in one cycle unless the user explicitly asks for a batch summary.
+
 ## 2. Standard Semantic Chain
 
 Use one semantic structure across levels, but vary depth by management need:

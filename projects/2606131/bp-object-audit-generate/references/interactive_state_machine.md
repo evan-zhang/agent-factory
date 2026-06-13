@@ -12,6 +12,7 @@ Default loop:
 
 | State | Meaning | Allowed Next Step |
 |---|---|---|
+| `material_received` | User has provided a source document containing one or more BP objects | If one object: `object_locked`. If multiple objects: list them and ask user to select one, then `object_locked`. |
 | `object_locked` | One BP object and level are selected | source reading |
 | `sources_classified` | Sources are read and status-labeled | diagnosis |
 | `diagnosis_ready` | Issues and risks are identified | question block or draft if no issue |
@@ -20,10 +21,16 @@ Default loop:
 | `draft_generated` | BP object draft has been generated | closure check |
 | `closure_pending` | Draft has unresolved issues | ask question or revise |
 | `ready_to_archive` | User has confirmed and closure check passed | write Markdown |
-| `archived` | Markdown and package status files updated | next BP object |
+| `archived` | Markdown and package status files updated | After archiving, proactively list the next unprocessed BP object from the same source document (if any) and ask: "Would you like to continue with [next objective]?" Wait for user confirmation before locking the next object. Update `00_BP对象生成总目录.md` to reflect progress. |
 | `resumed` | User reopens a previously started BP object | load confirmed rules from archive file, re-enter at `diagnosis_ready` or `pending_user_confirmation` depending on prior progress |
 
 ## 3. Question Rules
+
+**Question preview.** Before asking the first question, produce a one-line summary stating the total number of required confirmations:
+
+> "本轮共发现 N 个需确认问题，将逐一提问。以下是第 1 个。"
+
+This sets user expectations and allows them to request a batch if they prefer.
 
 Ask one focused confirmation block at a time unless the user asks for a batch.
 

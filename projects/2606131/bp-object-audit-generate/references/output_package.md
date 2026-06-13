@@ -45,7 +45,7 @@ Update these when archiving confirmed or draft BP objects:
 
 | File | Purpose |
 |---|---|
-| `00_BP对象生成总目录.md` | Object list, level, status, file path |
+| `00_BP对象生成总目录.md` | Object list, level, status, file path. Maintain a **processing progress** section showing which objectives are 已归档 vs 待处理 when the source document contains multiple BP objects (see state `archived` in `interactive_state_machine.md`). |
 | `01_已确认规则与口径清单.md` | User-confirmed reusable rules |
 | `02_待确认问题清单.md` | Open issues and affected objects |
 | `03_来源读取与证据状态.md` | Source status by object |
