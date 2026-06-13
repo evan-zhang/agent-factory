@@ -23,7 +23,7 @@ issues: https://github.com/evan-zhang/agent-factory/issues/new?labels={skill-nam
 
 ---
 
-## B. 正文结构（≤ 80 行）
+## B. 正文结构（80-200 行，按复杂度浮动）
 
 ### 触发判断
 （描述什么情况下这个 Skill 应该被激活）
@@ -71,7 +71,7 @@ issues: https://github.com/evan-zhang/agent-factory/issues/new?labels={skill-nam
 ### 行数控制
 
 - frontmatter description：~100 词以内
-- SKILL.md 正文：≤ 80 行
+- SKILL.md 正文：80-200 行，按复杂度浮动（简单 80 / 中等 120 / 复杂 200）
 - 细节推入 `references/` 目录
 
 ### references/ 规范

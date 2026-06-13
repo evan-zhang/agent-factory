@@ -1,6 +1,6 @@
 # AF-SOP Skill 生产全流程规范
 
-- 版本：v5.2
+- 版本：v5.3
 - 状态：STABLE
 - 合并自：AF-SOP-01（v4.7）+ AF-SOP-02（v1.1）+ SKILL-QUALITY-PRINCIPLES（v1.2）
 - 合并日期：2026-04-19
@@ -146,7 +146,21 @@ S0 需求接收 → S1 需求澄清 → S2 需求固化 → S3 方案设计（S3
 
 包含：粒度决策、技术方案、数据流、API 规范（唯一真相源）、文件结构、用户体验、**认知扫描引用（如有）**。
 
-向用户展示摘要，请求确认后进入 S4。
+向用户展示摘要，请求确认后触发 B 类评审。
+
+#### 6.2.5 B 类评审（强制）
+
+DESIGN-01 完成后，Orchestrator 必须 spawn factory-reviewer 做 B 类独立评审（规范文档评审），再向用户展示结论请求确认。
+
+- 标准档模型（newapi-anthropic/claude-sonnet-4-6）
+- 评审结论存档到 `projects/{id}/reviews/{日期}-B-DESIGN-01-{评级}.md`
+- PASS → 向用户展示评审摘要，请求确认后进入 S4
+- CONDITIONAL_PASS → 列出必修项，Orchestrator 修复完成后逐项确认，记录至 DISCUSSION-LOG.md，确认后进入 S4
+- FAIL → 退回 S3b 重做，修复后重评
+- 详见 AF-REVIEW-SOP_独立评审标准流程.md §6
+
+---
+
 ## 7. S4: 开发实现
 
 ### 7.1 交付总管负责
@@ -160,8 +174,10 @@ S0 需求接收 → S1 需求澄清 → S2 需求固化 → S3 方案设计（S3
 | Tier | 内容 | 加载时机 | 预算 |
 |------|------|----------|------|
 | 1 | frontmatter description | 每次对话都加载 | ~100 词 |
-| 2 | SKILL.md 正文 | Skill 触发后加载 | **80 行以内** |
+| 2 | SKILL.md 正文 | Skill 触发后加载 | **80-200 行（按 skill 复杂度浮动）**：简单工具类 80 行以内；中等交互类 120 行以内；复杂业务流（如 BP / 合同 / 报告生成等需贯穿多步的 Skill）200 行以内 |
 | 3 | references/ 辅助文件 | 按需加载 | 不限 |
+
+浮动的判断依据：(1) 是否需多步状态机；(2) 是否含丰富的语义链/规则表；(3) 触发后一连贯多少次对话。简单 skill 紧凑优先，复杂 skill 可读性优先。
 
 细节只能向下移，不能向上堆。
 
@@ -204,7 +220,7 @@ zip -r ../builds/v{版本号}-$(date +%Y%m%d-%H%M).zip . \
 
 构建完测试包后，我自动执行以下检查并汇报结果：
 
-- SKILL.md 行数是否 ≤ 80 行
+- SKILL.md 行数是否在预算范围内（简单 80 / 中等 120 / 复杂 200）
 - frontmatter 是否有 name、description、version
 - description 是否含 3-5 个触发词
 - 引用的文件路径是否全部存在
@@ -230,7 +246,18 @@ zip -r ../builds/v{版本号}-$(date +%Y%m%d-%H%M).zip . \
 测试完成后回复 结果 或 问题。
 ```
 
-你测试完告诉我结果，有问题我修，没问题进入 S6 发布。
+你测试完告诉我结果，有问题我修，没问题触发 C 类评审。
+
+### 8.4 C 类评审（强制，高风险档）
+
+自动检查通过 + 用户测试无问题后，Orchestrator 必须 spawn factory-reviewer 做 C 类代码评审，使用高风险档模型（newapi-anthropic/claude-opus-4-8）。
+
+- 评审对象：scripts/ + SKILL.md 代码逻辑
+- 评审结论存档到 `projects/{id}/reviews/{日期}-C-CODE-01-{评级}.md`
+- PASS → 向用户展示评审摘要，请求确认后进入 S6
+- CONDITIONAL_PASS → 列出必修项，修复完成后逐项确认，记录至 DISCUSSION-LOG.md，确认后进入 S6
+- FAIL → 退回 S4 修复，修复后重评
+- 详见 AF-REVIEW-SOP_独立评审标准流程.md §6
 
 ---
 
@@ -249,6 +276,20 @@ zip -r ../releases/v{版本号}-$(date +%Y%m%d-%H%M).zip . \
 ---
 
 ## 10. S7: 交付确认
+
+### 10.1 D 类最终验收评审（强制，Reviewer + Validator 联合）
+
+用户验收前，Orchestrator 先触发 D 类最终验收评审：
+
+1. 先跑 Validator（格式/合规/必填项全清零）
+2. Validator PASS 后，spawn factory-reviewer 做 D 类综合评审（标准档）
+3. 评审结论存档到 `projects/{id}/reviews/{日期}-D-v{版本号}-{评级}.md`
+4. PASS → 向用户展示评审摘要，进入用户验收确认
+5. CONDITIONAL_PASS → 修复确认后进入用户验收
+6. FAIL → 退回对应阶段修复，重新走 S5→S7
+- 详见 AF-REVIEW-SOP_独立评审标准流程.md §6
+
+### 10.2 用户验收
 
 用户确认功能符合需求、体验良好、可以开始使用。
 如有反馈，回到对应阶段修复后重新测试发布。
@@ -324,3 +365,4 @@ zip -r ../releases/v{版本号}-$(date +%Y%m%d-%H%M).zip . \
 | v5.0 | 2026-04-19 | 合并 SOP-01 + SOP-02 + 质量原则为单一文档 |
 | v5.1 | 2026-04-19 | 简化发布流程：取消四重发布，改为单一 releases/ 打包 |
 | v5.2 | 2026-05-11 | S3 拆分为 S3a（认知扫描）+ S3b（方案生成）；新增 6.0 主动提示规则；更新 Analyst/Generator Agent 支持认知扫描 |
+| v5.3 | 2026-06-13 | 接入独立评审流程：S3 加 B 类评审（6.2.5）、S5 加 C 类评审（8.4）、S7 加 D 类最终验收评审（10.1）；引用 AF-REVIEW-SOP_独立评审标准流程.md |
