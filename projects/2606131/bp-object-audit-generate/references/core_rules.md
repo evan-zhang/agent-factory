@@ -137,3 +137,21 @@ Do not freeze formal BP text containing:
 9. key initiatives without process evidence or AI判灯 basis;
 10. unconfirmed facts, ownership, or business rules.
 
+
+## 10. Seven Audit Dimensions (Mandatory Exhaustive Check)
+
+Every BP object MUST be audited against the following 7 dimensions. No dimension may be skipped. The audit must be exhaustive and produce a judgment (✅ Pass / ⚠️ Need confirmation / ❌ Fail / 📊 Data missing) for each dimension before any confirmation question is asked (see SKILL.md Step 4.5 and state `dimension_audited` in `interactive_state_machine.md`).
+
+| # | Dimension | What to check | Judgment criterion |
+|---|---|---|---|
+| 1 | 层级边界 (Level boundary) | Does each objective belong to the correct organization level (group/center/department/individual)? Are boundaries between levels clean? | Objectives align with the level's responsibility scope; no cross-level leakage. |
+| 2 | OKR 语义 (OKR semantics) | Are objectives, key results, and initiatives written following the standard semantic chain (target → outcome → measure → initiative → owner → cascade → downstream → evidence)? | Each level uses the correct depth; semantic chain is intact. |
+| 3 | 成果验收 (Outcome acceptance) | For each outcome, is there an explicit measurable acceptance criterion (threshold, value, timing, deliverable)? | Every outcome has a numeric threshold or verifiable deliverable. |
+| 4 | 口径对齐 (Definition alignment) | Are scoring rules, time windows, denominators, and reference targets (e.g., "75分位", "YTD") explicitly defined? | No ambiguous or undefined口径 references. |
+| 5 | 证据路径 (Evidence path) | Does each key KR / initiative have a process evidence path so AI判灯 can determine status (red/yellow/green)? | Every key item has evidence source and frequency. |
+| 6 | 单主责 (Single owner) | Does each key KR / initiative have exactly one主责主体 (no co-primary ownership)? | Single named owner; co-owners are协办 not co-主责. |
+| 7 | 冻结规则 (Freeze rules) | Does the BP object violate any of the 10 freeze rules in § 6? (No placeholders, no empty thresholds, no "待完善" metrics, no "?" metrics, no typos, no numbers without口径, no key initiatives without owner, no key initiatives without cascade, no key initiatives without evidence, no unconfirmed facts.) | Zero violations. |
+
+If any dimension is judged ⚠️ or ❌, the corresponding issues MUST be entered into the question queue and asked one by one (see `interactive_state_machine.md` § 3 Question Rules).
+
+A dimension with insufficient data to judge MUST be marked 📊 Data missing, NOT left blank. Data missing itself becomes a question for the user.

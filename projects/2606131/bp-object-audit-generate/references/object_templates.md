@@ -63,10 +63,10 @@ Use this template for one confirmed or draft BP object.
 
 ## 2. Audit Table
 
-Use this table before asking questions or generating a draft.
+Use this table before asking questions or generating a draft. The 所属维度 column is mandatory and must reference one of the 7 dimensions in `core_rules.md` § 10 (level / OKR / acceptance / caliber / evidence / owner / freeze).
 
-| 编号 | 审计点 | 发现 | AI初步判断 | 是否需用户确认 |
-|---|---|---|---|---|
+| 编号 | 所属维度 | 审计点 | 发现 | AI初步判断 | 是否需用户确认 |
+|---|---|---|---|---|---|
 
 ## 3. Question Block
 

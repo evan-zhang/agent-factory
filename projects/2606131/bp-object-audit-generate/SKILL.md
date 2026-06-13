@@ -2,7 +2,7 @@
 name: bp-object-audit-generate
 description: Audit, question, confirm, generate, revise, and archive BP objects across group, center/business company, department, and key individual levels. Use when the user asks to rebuild, continue, diagnose, review, generate, confirm, write, freeze, or package annual BP content using the target-outcome-measure-initiative-responsibility-cascade logic, especially for 康哲集团 BP work, group-to-center-to-department-to-person承接, or interactive BP generation where the assistant must stop after each BP object, ask confirmation questions with options, and only generate or write after user confirmation.
 ---
-> **Evan 落地 v0.1.3（PROJECT_ROOT = `/Users/evan/Documents/BP`）** — v0.1.3 修复作者意见书的 5 个问题（粒度/入口/状态机前置/过渡/预告），缺省源材料「集团及中心BP/」缺失待补。
+> **Evan 落地 v0.1.4（PROJECT_ROOT = `/Users/evan/Documents/BP`）** — v0.1.4 修复陈舒婷反馈的「7 维度穷举遗漏」问题：core_rules § 10 定义 7 维度+状态机加 dimension_audited+审计表加维度列+SKILL.md 加红线 seven_dimensions_exhaustive 与 closure_self_check。
 
 # BP Object Audit Generate
 
@@ -29,6 +29,7 @@ The job is not simple writing. The job is to audit the BP object, identify struc
 | `single_accountable_owner` | Each key initiative should have one主责主体. Split rows when real ownership differs. |
 | `level_boundary_control` | Keep the BP object at the correct level. Group writes direction, minimum baseline, structural requirement, and承接入口; lower levels decode and amplify. |
 | `semantic_chain` | Use the chain: 目标 -> 成果 -> 衡量标准/最终验收物 -> 关键举措 -> 主责主体 -> 承接方式 -> 下级承接对象 -> 过程证据/AI判灯依据. |
+| `seven_dimensions_exhaustive` | Before any question, produce a complete audit table for the 7 dimensions in `references/core_rules.md` § 10. No dimension may be skipped or left blank. State `dimension_audited` is required before question-asking. |
 | `output_after_confirmation` | Write or archive Markdown only after the user confirms the generated object or explicitly asks for a draft file. |
 | `document_only` | Generate local documents and packages only. Do not push to remote systems, modify external BP platforms, SharePoint, or browser state without explicit user authorization. |
 
@@ -53,10 +54,10 @@ If the platform does not support file reading, see the **Embedded Minimum Rules*
 2. Read `references/core_rules.md` and `references/interactive_state_machine.md` (if file reading is available).
 3. Build a source reading list from `references/source_manifest.md` and the user's named files. If PROJECT_ROOT is not yet set, ask the user to confirm it before reading source files.
 4. Read only relevant source sections. Mark each source per `source_manifest.md` § 1.
-5. Audit the object against hierarchy, OKR semantics, SMART/measure clarity, ownership,承接方式, evidence, and freeze readiness.
-6. Produce an `审计判断` table with issues, AI preliminary judgment, and whether user confirmation is required.
-7. Ask one focused confirmation block at a time when needed (issue / risk / recommended option / 2-3 alternatives / ask user). See `object_templates.md` § 3. Before the first question, state the total number of required confirmations so the user can request a batch if they prefer.
-8. After each user answer, summarize the confirmed rule before proceeding.
+5. **7-dimension exhaustive audit (mandatory checkpoint).** Before asking any question, produce the dimension audit table from `references/core_rules.md` § 10. For each of the 7 dimensions, output ✅/⚠️/❌/📊 plus a one-line finding. The table itself is the audit judgment; no separate "审计判断" step is needed. Transition to state `dimension_audited` (see `references/interactive_state_machine.md`).
+6. Ask one focused confirmation block at a time for each ⚠️/❌/📊 row in the dimension table. Before the first question, state the total count so the user can request a batch if they prefer. See `object_templates.md` § 3.
+7. After each user answer, summarize the confirmed rule before proceeding.
+8. **Closure self-check.** Before generating the draft, re-verify every ⚠️/❌/📊 row is either confirmed by the user or explicitly recorded as待确认 in the package status files. See `references/output_package.md` § 4.
 9. Generate or revise the BP object only after required confirmations.
 10. Run a closure check: no unclear口径, no wrong level, no dual主责, no missing承接方式, no unsupported fact, no one-to-one empty hierarchy.
 11. If the user confirms, archive the BP object and update package status files per `references/output_package.md`. After archiving, proactively list the next unprocessed BP object from the same source document (if any) and ask whether to continue. See state `archived` in `references/interactive_state_machine.md`.

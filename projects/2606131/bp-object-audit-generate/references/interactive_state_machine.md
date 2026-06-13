@@ -14,8 +14,9 @@ Default loop:
 |---|---|---|
 | `material_received` | User has provided a source document containing one or more BP objects | If one object: `object_locked`. If multiple objects: list them and ask user to select one, then `object_locked`. |
 | `object_locked` | One BP object and level are selected | source reading |
-| `sources_classified` | Sources are read and status-labeled | diagnosis |
-| `diagnosis_ready` | Issues and risks are identified | question block or draft if no issue |
+| `sources_classified` | Sources are read and status-labeled | 7-dimension exhaustive audit |
+| `dimension_audited` | All 7 audit dimensions (level/OKR/acceptance/caliber/evidence/owner/freeze) have been judged ✅/⚠️/❌/📊 with a complete table output (see `core_rules.md` § 10 and SKILL.md Step 4.5). | question block if any ⚠️/❌/📊, else draft |
+| `diagnosis_ready` | Issues and risks are identified (legacy state, kept for compatibility; new flows should pass through `dimension_audited` first) | question block or draft if no issue |
 | `pending_user_confirmation` | At least one business rule requires user decision | ask one question |
 | `rule_confirmed` | User answer has been converted into a reusable rule | update draft or ask next question |
 | `draft_generated` | BP object draft has been generated | closure check |

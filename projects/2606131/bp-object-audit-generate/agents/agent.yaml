@@ -2,7 +2,7 @@ interface:
   display_name: "BP对象审计生成"
   short_description: "审计、互动确认、生成并归档集团到个人全层级BP对象"
   default_prompt: "Audit and rebuild the selected BP object with interactive user confirmation gates, following the workflow defined in SKILL.md."
-  version: "0.1.3"
+  version: "0.1.4"
 triggers:
   - "BP 审计"
   - "BP 对象"
