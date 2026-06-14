@@ -119,7 +119,7 @@ EOF
   done
   echo "看 [P1-001] [P1-002]" > "$dir/01-discovery.md"
   
-  # phase-2: P2 ≥2（章节路径为 02-gate-by-chapter/02-discovery.md，详见 SKILL.md）
+  # phase-2: P2 ≥2（章节路径为 02-discovery/01-background.md，详见 SKILL.md）
   mkdir -p "$dir/references/P2"
   for i in 1 2; do
     cat > "$dir/references/P2/P2-00$i.md" <<EOF
