@@ -114,6 +114,13 @@ check "curl" "[ -x '$(command -v curl 2>/dev/null || echo /dev/null)' ]" "安装
 check "python3" "[ -x '$(command -v python3 2>/dev/null || echo /dev/null)' ]" "安装 python3"
 check "~/.openclaw 目录" "[ -d '$HOME/.openclaw' ]" "确认 OpenClaw 已安装"
 
+# 4b. 知识库同步配置（v0.10.2）
+echo ""
+echo "── 知识库同步配置 ──"
+check "AppKey 环境变量" "[ -n \"${XG_BIZ_API_KEY:-${DOCVIEWER_KB_APPKEY:-}}\" ]" "配置 XG_BIZ_API_KEY（推荐）或 DOCVIEWER_KB_APPKEY 环境变量"
+check "config.yaml knowledgeBase" "[ -f '$SKILL_DIR/config.yaml' ] && grep -q 'projectId' '$SKILL_DIR/config.yaml'" "确认 config.yaml 含 knowledgeBase.projectId"
+check "sync-to-knowledge-base.sh" "[ -f '$SKILL_DIR/scripts/sync-to-knowledge-base.sh' ]" "确认知识库同步脚本存在"
+
 # 5. 脚本
 echo ""
 echo "── 脚本 ──"

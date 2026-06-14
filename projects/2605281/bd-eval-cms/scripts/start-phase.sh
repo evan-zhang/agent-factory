@@ -62,6 +62,31 @@ if [ "$GATE" = "phase-5-5-html" ]; then
     fi
     echo "✅ Preflight 检查通过"
     echo ""
+
+    # v0.10.2：Phase 5.5 preflight 通过后自动归档到知识库
+    # 可通过 BD_EVAL_CMS_SKIP_KB_SYNC=1 跳过（测试/回放场景）
+    SYNC_SCRIPT="$SCRIPT_DIR/sync-to-knowledge-base.sh"
+    if [ "${BD_EVAL_CMS_SKIP_KB_SYNC:-}" = "1" ]; then
+      echo "⏭️  已跳过知识库同步（BD_EVAL_CMS_SKIP_KB_SYNC=1）"
+      echo "   ⚠️  报告未归档！请后续手动执行："
+      echo "   bash scripts/sync-to-knowledge-base.sh \"$PROJECT_DIR\""
+    elif [ -f "$SYNC_SCRIPT" ]; then
+      echo "📦 开始知识库同步..."
+      if bash "$SYNC_SCRIPT" "$PROJECT_DIR"; then
+        echo "✅ 知识库同步完成"
+      else
+        echo "⚠️  知识库同步失败（退出码 $?）"
+        echo "   报告已渲染为本地 REPORT.html，但未归档到知识库"
+        echo "   请排查后手动补跑：bash scripts/sync-to-knowledge-base.sh \"$PROJECT_DIR\""
+        # 不将 gate 标记为 failed——本地 HTML 已生成，同步失败不应阻断交付
+        # sync 脚本会回写 state.json.reportHtmlStorage = 'kb-failed'
+      fi
+      echo ""
+    else
+      echo "⚠️  警告：未找到 sync-to-knowledge-base.sh，跳过知识库同步"
+      echo "   ⚠️  报告未归档！请后续手动执行："
+      echo "   bash scripts/sync-to-knowledge-base.sh \"$PROJECT_DIR\""
+    fi
   else
     echo "⚠️  警告：未找到 preflight-phase.sh，跳过前置条件检查"
   fi
