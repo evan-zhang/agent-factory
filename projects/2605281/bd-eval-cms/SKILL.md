@@ -21,7 +21,7 @@ description: |
 
 metadata:
   display_name: 医药BD评估体系（CMS）
-  version: 0.9.4
+  version: 0.9.4.1
 compatibility: Claude
 ---
 
@@ -102,6 +102,8 @@ OPPORTUNITY_ID=...
 **幂等**：同 `--opportunity` 重复调用视为续跑，不会覆盖现有 case。冲突时自动加 `-1 / -2` 后缀。
 
 **知识库归档路径（v0.9.4）**：`{rootDir}/{YYYYMM}/{caseCode}/`，如 `CPYJ/202606/CP202412200012/`。
+
+> 注意：YYYYMM = 评估月份（系统当天），**不是**商机 ID 里的业务日期。例如 12月发起评估 1月商机，照旧归到 12月目录。商机 ID 本身只是不透明 token，不参与路径语义。
 
 **详细规范**：`design/REQ-v0.9.4.md` + `design/DESIGN-v0.9.4.md`。
 **测试**：`bash scripts/test-run-opportunity.sh`（18 个用例）。

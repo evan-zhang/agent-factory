@@ -105,11 +105,21 @@ else
   fail "--opportunity 模式不对: $OPP_CODE"
 fi
 
-new_test "--opportunity 非法格式拒绝"
-if bash "$SCRIPT" --product "X" --company "Y" --opportunity "中文ID" --dry-run >/dev/null 2>&1; then
-  fail "中文 ID 应被拒"
+new_test "--opportunity 中文 ID 放行（v0.9.4.1：当成不透明 token）"
+# v0.9.4.1 改造：不再校验 ASCII 格式，商机 ID 是玄关不透明 token
+OUT_CN=$(cd "$SKILL_ROOT" && bash "$SCRIPT" --product "X" --company "Y" --opportunity "中文ID-001" --mode semi --dry-run 2>&1)
+CN_CODE=$(echo "$OUT_CN" | grep '^CASE_CODE=' | head -1 | cut -d= -f2-)
+if [ "$CN_CODE" = "中文ID-001" ]; then
+  pass "中文 ID 原样保留: $CN_CODE"
 else
-  pass "--opportunity 非法格式被拒"
+  fail "中文 ID 行为异常: $CN_CODE"
+fi
+
+new_test "--opportunity 含路径分隔符拒绝（防 shell 注入）"
+if bash "$SCRIPT" --product "X" --company "Y" --opportunity "abc/def" --dry-run >/dev/null 2>&1; then
+  fail "含 / 的 ID 应被拒"
+else
+  pass "含路径分隔符被拒"
 fi
 
 # 真实跑一次（用 semi 模式避免 orchestrator 干扰）
@@ -212,8 +222,6 @@ fi
 # 清理
 [ -n "$TEST_CASE_DIR" ] && rm -rf "$TEST_CASE_DIR"
 [ -n "$TEST_DIR3" ] && rm -rf "$TEST_DIR3"
-OUT4_DIR=$(echo "$OUT4" | grep '^CASE_PATH=' | head -1 | cut -d= -f2-)
-[ -n "$OUT4_DIR" ] && [ -d "$OUT4_DIR" ] && rm -rf "$OUT4_DIR"
 
 # ============ 汇总 ============
 echo ""

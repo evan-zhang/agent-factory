@@ -176,10 +176,12 @@ fi
 # ============ caseCode 生成 ============
 # v0.9.4 改造：去除 pypinyin 依赖，caseCode 不再含中文拼音首字母。
 # 优先级：--opportunity 外部值 > 兜底 YYMMDD-HHMMSS
-validate_opportunity() {
+# v0.9.4.1 简化：商机 ID 当成不透明 token，不再校验格式（玄关字段未来可变）。
+# 只防 shell 注入：拒绝空 / 含路径分隔符 / 空白字符。
+sanitize_opportunity() {
   local id="$1"
-  if [[ ! "$id" =~ ^[A-Za-z0-9_-]{3,64}$ ]]; then
-    echo "❌ 商机 ID 格式不合法：$id（仅允许 ASCII 字母数字 + 连字符，3-64 位）" >&2
+  if [ -z "$id" ] || [[ "$id" =~ [[:space:]/\] ]]; then
+    echo "❌ 商机 ID 非法：$id（不能为空 / 不能含空格 / 不能含路径分隔符）" >&2
     return 1
   fi
 }
@@ -217,7 +219,7 @@ same_opportunity() {
 
 # caseCode 优先级：--opportunity 外部值 > 兜底 YYMMDD-HHMMSS
 if [ -n "$OPPORTUNITY" ]; then
-  validate_opportunity "$OPPORTUNITY" || exit 1
+  sanitize_opportunity "$OPPORTUNITY" || exit 1
   BASE_CODE="$OPPORTUNITY"
 else
   BASE_CODE="$(date +%y%m%d-%H%M%S)"
