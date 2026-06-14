@@ -1,13 +1,12 @@
 # CMS 投前评估流水线（bd-eval-cms）
 
-> 康哲药业专属 BD 投前评估体系，基于 19 个技能 + 6-Gate 门控。
+> 康哲药业专属 BD 投前评估体系，基于 20 个独立技能 + Gate 0~5 门控。
 
 ## Skill 组成
 
 | Skill | 路径 | 必需 | 说明 |
 |-------|------|------|------|
 | bd-eval-cms | bd-eval-cms/ | ✅ | 主流水线 |
-| doc-viewer | dependencies/doc-viewer/ | ✅ | HTML 报告生成 |
 | multi-search | dependencies/multi-search/ | ✅ | 搜索基础设施 |
 
 ## 安装

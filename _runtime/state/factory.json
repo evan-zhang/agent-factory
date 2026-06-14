@@ -1,0 +1,6 @@
+{
+  "status": "active",
+  "lastUpdated": "2026-06-14T11:46:00+08:00",
+  "activeProjects": ["2605281"],
+  "note": "Rule-W26-01 重启后校验入口：读本文件确认工厂状态，再读 projects/{id}/state.json 确认项目进度"
+}

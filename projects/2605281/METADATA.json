@@ -1,8 +1,8 @@
 {
   "name": "bd-eval-cms",
-  "version": "0.1.0",
+  "version": "0.9.3",
   "displayName": "CMS投前评估流水线",
-  "description": "CMS（康哲药业）投前评估体系 — 基于19个技能 + 6-Gate门控的完整BD评估流水线",
+  "description": "CMS（康哲药业）投前评估体系 — 20个独立技能 + Gate 0~5 + Final门控 + Style A1 通用模板内核 + v0.9.1 质量护栏 + v0.9.2 单一入口 + v0.9.3 profile 收敛",
   "author": "evan",
   "license": "private",
   "triggers": [
@@ -24,13 +24,7 @@
       "path": "bd-eval-cms",
       "role": "main",
       "required": true,
-      "description": "CMS投前评估主流水线，含19个技能 + 6-Gate门控"
-    },
-    "doc-viewer": {
-      "path": "dependencies/doc-viewer",
-      "role": "main",
-      "required": true,
-      "description": "生成HTML报告（Phase 5.5 必须）"
+      "description": "CMS投前评估主流水线，含20个独立技能 + Gate 0~5门控"
     },
     "multi-search": {
       "path": "dependencies/multi-search",
