@@ -1,5 +1,9 @@
 # 运行时数据（不入 git）
 _runtime/
+# 例外：规则正本和项目状态必须进 git（具体到文件，绕开 _runtime/ 父忽略）
+!_runtime/experience/RULES.md
+!_runtime/state/README.md
+!_runtime/state/projects/
 
 # 构建产物
 builds/

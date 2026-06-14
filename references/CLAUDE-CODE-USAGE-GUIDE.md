@@ -1,6 +1,6 @@
-# OpenClaw 调用 Claude Code / Codex 指南 v4.0
+# OpenClaw 调用 Claude Code / Codex 指南 v5.0
 
-> 2026-04-24 | v3.0 → v4.0 新增 SSH 远程调用 Claude Code + MCP Web Search
+> 2026-06-14 | v4.0 → v5.0 **重大变更**：Claude Code / Codex 明确不负责**审计/审核/审查**职责，这类需求一律走 `factory-reviewer`。原因：CLI 工具与生成者同环境同上下文，独立性不成立。
 
 ---
 
@@ -8,10 +8,14 @@
 
 OpenClaw 通过 `exec` 工具调用 Claude Code CLI 或 OpenAI Codex CLI。两者各有适用场景：
 
-| 工具 | 模型 | API | 适用场景 |
-|------|------|-----|----------|
-| Claude Code | GLM 系列（智谱网关） | api.z.ai/api/anthropic | 代码生成、审查、文件编辑 |
-| OpenAI Codex | GPT-5.4（OpenAI 原生） | OpenAI 官方 | 联网搜索、研究、多步推理 |
+| 工具 | 模型 | API | 适用场景 | **不适用** |
+|------|------|-----|----------|------------|
+| Claude Code | GLM 系列（智谱网关） | api.z.ai/api/anthropic | 代码生成、文件编辑、多步调试 | **审计 / 审查 / 复盘** |
+| OpenAI Codex | GPT-5.4（OpenAI 原生） | OpenAI 官方 | 联网搜索、研究、多步推理 | **审计 / 审查 / 复盘** |
+| **factory-reviewer** | **newapi-anthropic/claude-sonnet-4-6 或 opus-4-8** | **anthropic-messages** | **所有独立审计/审核/审查/复盘** | 代码生成、研究 |
+
+> **铁律**：任何需要「独立视角」「结构化评分」「对生成者不信任」的工作 → `factory-reviewer`。详见 `AF-REVIEW-SOP_独立评审标准流程.md`。
+> 调用方式：`sessions_spawn(agentId="factory-reviewer", runtime="subagent", mode="run", cwd=..., task=...)`，高风险档 spawn 时额外传 `model: "newapi-anthropic/claude-opus-4-8"`。
 
 ---
 

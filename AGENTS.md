@@ -92,6 +92,7 @@ S1 背景了解 → Interview | S2 需求确认 → Interview | S3 方案设计 
 1. 每步修复后强制 verify：修复→验证→报告，三步缺一不可
 2. 诊断前先做环境健康检查：CPU（`ps aux --sort=-%cpu | head`）、磁盘（`df -h`）、异常进程
 3. life gateway 操作必须用 `launchctl kickstart gui/501/ai.openclaw.gateway.life`，不能用 `openclaw gateway restart`（后者不加载 .env）
+4. **重启后重新校验状态**：收到 “The gateway restart completed successfully.” system prompt 时，**禁止** 使用会话印象中的旧待办。必须：读 `_runtime/state/` 下 state.json → `memory_search` 24h 闭环记录 → 三项式回答（重启状态 + 真实待办来源 + 校验时间戳）。详见 `_runtime/experience/RULES.md` Rule-W26-01。
 
 ## 文件编辑锁
 
