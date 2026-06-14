@@ -1,8 +1,13 @@
 ---
 name: bp-object-audit-generate
+version: "0.1.9"
 description: Audit, question, confirm, generate, revise, and archive BP objects across group, center/business company, department, and key individual levels. Use when the user asks to rebuild, continue, diagnose, review, generate, confirm, write, freeze, or package annual BP content using the target-outcome-measure-initiative-responsibility-cascade logic, especially for 康哲集团 BP work, group-to-center-to-department-to-person承接, or interactive BP generation where the assistant must stop after each BP object, ask confirmation questions with options, and only generate or write after user confirmation.
 ---
-> **Evan 落地 v0.1.8（v0.1.7 补充 4 项 PARTIAL：陈舒婷 Q5/Q6 + 评审 Q2/Q3 修复）** — 升级 `references/dimension_audit_checklist.md`：Part 1 字段矩阵扩充至 23 个 BP 字段（含新增审查主体/跨周期兑现/字段名映射降级） + Part 2 维度 4 补充审查主体检查动作 + 跨周期兑现检查动作；维度 5 `downTaskList=[]` 改为单一路径（不下拆→✅、完整 BP 承接→⚠️、字段缺失→❌）；维度 6 边界情况明确"明确区分"判据。v0.1.7 首次新增 checklist（18 字段矩阵 + 七维度操作化）。v0.1.6 修复陈舒婷反馈的"同对象两版结果不一致"问题。v0.1.5 修复 v0.1.4 评审 6 项必修 + v0.1.5 评审 1 项中等问题（object_templates 闭合检查对齐 § 10）。本 skill 归类为「复杂业务流」档，SKILL.md 行数预算 200 行（按 SOP v2026.6.14 浮动）。
+> **Evan 落地 v0.1.9（规划书 v1.5 P0 对齐）** — 本版本对齐规划书 v1.5 评审报告 H 的 P0 项 11 项 patch：过程型表达 9 动词、8 类成果输出对象、下级承接对象/分工必显、承接方式唯一性、完整 BP 承接 5 必要条件、集团-中心边界 5 触发 + 6 分流、模糊承接词反写、经营/经营管理中心区分、AI 数字化与外来概念本地化、完整复盘版最小 gate（review_ready 状态）、triggers 补充 10 个。完整 P0/P1/P2 路线详见 `projects/2606131/reviews/2026-06-14-H-PLANNING-V15-DIFF.md`。
+>
+> **v0.1.8**（v0.1.7 补充 4 项 PARTIAL）— checklist 23 字段矩阵 + 维度 4 审查主体/跨周期兑现 + 维度 5 单一路径 + 维度 6 边界判据。
+>
+> 本 skill 归类为「复杂业务流」档，SKILL.md 行数预算 200 行（按 SOP v2026.6.14 浮动）。
 
 # BP Object Audit Generate
 
@@ -34,6 +39,8 @@ The job is not simple writing. The job is to audit the BP object, identify struc
 | `output_after_confirmation` | Write or archive Markdown only after the user confirms the generated object or explicitly asks for a draft file. |
 | `document_only` | Generate local documents and packages only. Do not push to remote systems, modify external BP platforms, SharePoint, or browser state without explicit user authorization. |
 | `field_level_audit` | 执行 7 维度审计时，必须按 `references/dimension_audit_checklist.md` 的字段矩阵和操作化定义逐项执行。checklist 是执行约束，不另行定义判断标准；判断标准唯一来源仍是 `references/core_rules.md` § 10。 |
+| `no_direct_freeze_cascade_mode` | 不得直接把 AI 预判的承接方式作为冻结结论；v0.2 接入 cascade_decision_card.md 后必须先输出判定卡并经用户确认（R44/R45）。 |
+| `review_gate_before_close` | 目标关闭前必须经过 `review_ready` 状态，完整复盘版通过用户确认才能进 `ready_to_archive`（R20/R31）。 |
 
 ## Progressive Loading
 

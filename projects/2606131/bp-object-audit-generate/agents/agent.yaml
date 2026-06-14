@@ -2,7 +2,7 @@ interface:
   display_name: "BP对象审计生成"
   short_description: "审计、互动确认、生成并归档集团到个人全层级BP对象"
   default_prompt: "Audit and rebuild the selected BP object with interactive user confirmation gates, following the workflow defined in SKILL.md."
-  version: "0.1.8"
+  version: "0.1.9"
 triggers:
   - "BP 审计"
   - "BP 对象"
@@ -13,6 +13,17 @@ triggers:
   - "BP 主责"
   - "部门 BP"
   - "个人 BP"
+  # v0.1.9 新增（v1.5 对齐）
+  - "集团-中心边界"
+  - "集团事项准入"
+  - "承接方式判定"
+  - "成果责任派发"
+  - "协同留痕"
+  - "轻量跟踪"
+  - "不下拆"
+  - "完整复盘版"
+  - "占位词反写"
+  - "经营责任中心"
 policy:
   # Claude Code specific: allow trigger without explicit slash command invocation
   allow_implicit_invocation: true

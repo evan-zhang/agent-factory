@@ -21,6 +21,7 @@ Default loop:
 | `rule_confirmed` | User answer has been converted into a reusable rule | update draft or ask next question |
 | `draft_generated` | BP object draft has been generated | closure check |
 | `closure_pending` | Draft has unresolved issues | ask question or revise |
+| `review_ready` | 单目标完整复盘版已生成，待用户确认（v1.5 §4.4.1 / R20/R31） | `ready_to_archive` after user confirms, or back to `dimension_audited` if rejected |
 | `ready_to_archive` | User has confirmed and closure check passed | write Markdown |
 | `archived` | Markdown and package status files updated | After archiving, proactively list the next unprocessed BP object from the same source document (if any) and ask: "Would you like to continue with [next objective]?" Wait for user confirmation before locking the next object. Update `00_BP对象生成总目录.md` to reflect progress. |
 | `resumed` | User reopens a previously started BP object | load confirmed rules from archive file, re-enter at `diagnosis_ready` or `pending_user_confirmation` depending on prior progress |
