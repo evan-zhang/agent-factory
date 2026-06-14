@@ -57,3 +57,6 @@ ${OPS_WORKSPACE}/
 08_infra/
 backups/
 references_v*.bak/
+
+# Skill 专用密钥文件（不入仓）
+**/.secrets/

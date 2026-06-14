@@ -117,7 +117,7 @@ check "~/.openclaw 目录" "[ -d '$HOME/.openclaw' ]" "确认 OpenClaw 已安装
 # 4b. 知识库同步配置（v0.10.2）
 echo ""
 echo "── 知识库同步配置 ──"
-check "AppKey 环境变量" "[ -n \"${XG_BIZ_API_KEY:-${DOCVIEWER_KB_APPKEY:-}}\" ]" "配置 XG_BIZ_API_KEY（推荐）或 DOCVIEWER_KB_APPKEY 环境变量"
+check "AppKey 文件" "[ -f '$SKILL_DIR/.secrets/kb_appkey' ]" "创建 .secrets/kb_appkey 文件并写入系统级 AppKey"
 check "config.yaml knowledgeBase" "[ -f '$SKILL_DIR/config.yaml' ] && grep -q 'projectId' '$SKILL_DIR/config.yaml'" "确认 config.yaml 含 knowledgeBase.projectId"
 check "sync-to-knowledge-base.sh" "[ -f '$SKILL_DIR/scripts/sync-to-knowledge-base.sh' ]" "确认知识库同步脚本存在"
 

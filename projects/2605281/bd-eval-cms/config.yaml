@@ -8,6 +8,11 @@
 #   - 模板、配色、转换脚本全部内联到 bd-eval-cms/templates/
 
 knowledgeBase:
+  # AppKey 文件路径（相对 skill 目录）
+  # 此 AppKey 是 bd-eval-cms 专享的系统级凭证，不写入本文件
+  # 安装时需手动创建 .secrets/kb_appkey 文件写入实际值
+  appKeyFile: ".secrets/kb_appkey"
+
   # 玄关知识库 projectId（产品引进知识库）
   # 来源：业务固定，CMO 评估业务专用空间
   projectId: "2060176831872499713"

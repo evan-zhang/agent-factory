@@ -23,30 +23,19 @@ set -euo pipefail
 CASE_DIR="$1"
 CASE_CODE="${2:-}"
 
-# 凭证注入：
-# - 优先读 XG_BIZ_API_KEY（cms-auth-skills 标准变量名，推荐）
-# - 向后兼容 DOCVIEWER_KB_APPKEY（旧变量名）
-# - 两都没配 → 报可操作错误
-APP_KEY="${XG_BIZ_API_KEY:-${DOCVIEWER_KB_APPKEY:-}}"
-if [ -z "$APP_KEY" ]; then
-  echo "❌ 错误：未检测到 AppKey"
-  echo "   请配置以下任一环境变量："
-  echo "     • XG_BIZ_API_KEY（推荐，cms-auth-skills 标准变量名）"
-  echo "     • DOCVIEWER_KB_APPKEY（旧变量名，向后兼容）"
-  echo "   获取方式：通过 cms-auth-skills 鉴权链路获取，或联系管理员配置"
-  exit 1
-fi
-
-# 从 config.yaml 读取固定 projectId / rootDir（业务固定，不允许覆盖）
-# v0.10.2：去掉 yq 依赖，改用 python3 解析（减少外部依赖）
+# 凭证注入（v0.10.2 修订）：
+# bd-eval-cms 专享系统级 AppKey —— 后台 BP 报告流水线使用，不走个人鉴权
+# 读取顺序：config.yaml 的 knowledgeBase.appKeyFile → 默认 .secrets/kb_appkey
+# 文件不存在或为空 → 报可操作错误
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_FILE="$SCRIPT_DIR/../config.yaml"
+SKILL_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+CONFIG_FILE="$SKILL_DIR/config.yaml"
 if [ ! -f "$CONFIG_FILE" ]; then
   echo "❌ 错误：未找到 config.yaml: $CONFIG_FILE"
   exit 1
 fi
 
-# 用 python3 读 config.yaml（纯字符串字段，不需要 yq）
+# read_config_field：用 python3 读 config.yaml（纯字符串字段，不需要 yq）
 read_config_field() {
   local field="$1"
   python3 -c "
@@ -60,6 +49,29 @@ with open('$CONFIG_FILE') as f:
 " 2>/dev/null
 }
 
+# 读取 appKeyFile 路径（默认 .secrets/kb_appkey）
+APPKEY_FILE=$(read_config_field appKeyFile)
+if [ -z "$APPKEY_FILE" ]; then
+  APPKEY_FILE=".secrets/kb_appkey"
+fi
+
+# 解析为绝对路径（相对 skill 目录）
+APPKEY_PATH="$SKILL_DIR/$APPKEY_FILE"
+if [ ! -f "$APPKEY_PATH" ]; then
+  echo "❌ 错误：未找到 AppKey 文件: $APPKEY_PATH"
+  echo "   请创建该文件并写入系统级 AppKey："
+  echo "     mkdir -p \"$(dirname "$APPKEY_PATH")\""
+  echo "     echo -n '你的AppKey' > \"$APPKEY_PATH\""
+  exit 1
+fi
+APP_KEY=$(cat "$APPKEY_PATH" | tr -d '[:space:]')
+if [ -z "$APP_KEY" ]; then
+  echo "❌ 错误：AppKey 文件为空: $APPKEY_PATH"
+  echo "   请写入有效的系统级 AppKey"
+  exit 1
+fi
+
+# 从 config.yaml 读取固定 projectId / rootDir（业务固定，不允许覆盖）
 PROJECT_ID=$(read_config_field projectId)
 if [ -z "$PROJECT_ID" ]; then
   echo "❌ 错误：config.yaml 中未配置 knowledgeBase.projectId"
