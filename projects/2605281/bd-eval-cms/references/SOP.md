@@ -822,7 +822,7 @@ FILE_ID=$(curl -s -X POST \
   -H "Content-Type: application/json" \
   -d "{
     \"projectId\": $PROJECT_ID,
-    \"path\": \"{YYMMDD}/{YYMMDD-XXXX}\",
+    \"path\": \"{YYYYMM}/{caseCode}\",
     \"name\": \"{品种名}-CMS投前评估报告.html\",
     \"fileType\": \"file\",
     \"resourceId\": $RESOURCE_ID,

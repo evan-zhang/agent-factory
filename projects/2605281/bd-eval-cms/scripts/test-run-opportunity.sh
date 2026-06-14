@@ -87,36 +87,29 @@ TEST_PRODUCT2="RNT2-$$"
 # orchestrator-resume.sh 不会创建实际报告，只会标 in_progress + 退出
 # 而 start-phase.sh 当前是占位实现，会在 state.json 写 in_progress 后 echo
 
-new_test "英文 product 缩写生成 (4字母大写)"
-ABBREV=$(python3 - "$TEST_PRODUCT" <<'PY'
-import sys, re
-name = sys.argv[1]
-ascii_letters = re.findall(r'[A-Za-z0-9]+', name)
-print(''.join(ascii_letters)[:4].upper())
-PY
-)
-if [ "$ABBREV" = "RUNT" ]; then
-  pass "英文 4字母缩写 = RUNT"
+new_test "caseCode 兑底格式 (YYMMDD-HHMMSS)"
+OUT_FALLBACK=$(cd "$SKILL_ROOT" && bash "$SCRIPT" --product "${TEST_PRODUCT}-FB" --company "FBCo" --mode semi --dry-run 2>&1)
+FB_CODE=$(echo "$OUT_FALLBACK" | grep '^CASE_CODE=' | head -1 | cut -d= -f2-)
+if echo "$FB_CODE" | grep -qE '^[0-9]{6}-[0-9]{6}$'; then
+  pass "兑底格式 OK: $FB_CODE"
 else
-  fail "英文 4字母缩写 = $ABBREV (期望 RUNT)"
+  fail "兑底格式不对: $FB_CODE"
 fi
 
-new_test "中文 product pypinyin 缩写"
-ABBREV_CN=$(python3 - "乌司他丁" <<'PY'
-import sys, re
-from pypinyin import lazy_pinyin, Style
-name = sys.argv[1]
-chinese_chars = re.findall(r'[\u4e00-\u9fff]+', name)
-chinese_part = ''
-for chunk in chinese_chars:
-    chinese_part += ''.join(lazy_pinyin(chunk, style=Style.FIRST_LETTER))
-print(chinese_part[:4].upper())
-PY
-)
-if [ "$ABBREV_CN" = "WSTD" ]; then
-  pass "中文 pypinyin 缩写 = WSTD"
+new_test "--opportunity 外部 ID 模式"
+OUT_OPP=$(cd "$SKILL_ROOT" && bash "$SCRIPT" --product "乌司他丁" --company "康哲" --opportunity "CP202412200012" --mode semi --dry-run 2>&1)
+OPP_CODE=$(echo "$OUT_OPP" | grep '^CASE_CODE=' | head -1 | cut -d= -f2-)
+if [ "$OPP_CODE" = "CP202412200012" ]; then
+  pass "--opportunity 模式 OK: $OPP_CODE"
 else
-  fail "中文 pypinyin 缩写 = $ABBREV_CN (期望 WSTD)"
+  fail "--opportunity 模式不对: $OPP_CODE"
+fi
+
+new_test "--opportunity 非法格式拒绝"
+if bash "$SCRIPT" --product "X" --company "Y" --opportunity "中文ID" --dry-run >/dev/null 2>&1; then
+  fail "中文 ID 应被拒"
+else
+  pass "--opportunity 非法格式被拒"
 fi
 
 # 真实跑一次（用 semi 模式避免 orchestrator 干扰）
@@ -192,12 +185,14 @@ else
   fail "--json - 模式失败"
 fi
 
-new_test "同日不同 product → 走 -1 / -2 后缀"
-# TEST_PRODUCT 已占 BASE_CODE 第一个；同缩写再 create 一个
-OUT4=$(cd "$SKILL_ROOT" && bash "$SCRIPT" --product "${TEST_PRODUCT}-ALT" --company "OtherCo" --mode semi 2>&1)
-# abbrev of "RUNT-$$-ALT" = RUNT，但 company 不同 → 应走 -1
-TEST_CODE4=$(echo "$OUT4" | grep '^CASE_CODE=' | head -1 | cut -d= -f2-)
-if echo "$TEST_CODE4" | grep -qE -- '(-1|-01|-02)$'; then
+new_test "同 --opportunity 重复调用 → 走 -1 后缀"
+# v0.9.4 改造：caseCode 用外部 ID 或 YYMMDD-HHMMSS（同秒才冲突）
+# 显式同 --opportunity 制造冲突
+TEST_OPP="TESTDUP-$$"
+OUT4A=$(cd "$SKILL_ROOT" && bash "$SCRIPT" --product "ProductA" --company "CoA" --opportunity "${TEST_OPP}-1" --mode semi 2>&1)
+OUT4B=$(cd "$SKILL_ROOT" && bash "$SCRIPT" --product "ProductB" --company "CoB" --opportunity "${TEST_OPP}-1" --mode semi 2>&1)
+TEST_CODE4=$(echo "$OUT4B" | grep '^CASE_CODE=' | head -1 | cut -d= -f2-)
+if echo "$TEST_CODE4" | grep -qE -- '(-1|-01)$'; then
   pass "冲突后缀生效: $TEST_CODE4"
 else
   fail "冲突后缀未生效: $TEST_CODE4"

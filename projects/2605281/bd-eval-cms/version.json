@@ -1,12 +1,13 @@
 {
   "skillcode": "bd-eval-cms",
-  "version": "0.9.3",
-  "description": "CMS（康哲药业）投前评估体系 — 20个独立技能 + Gate 0~5 + Final门控 + AI 自启协议（商机池自动续跑）+ Style A1 通用模板内核 + v0.9.1 质量护栏（Phase 5.5 preflight / TTL 文案严谨化 / 渲染同步硬隔离） + v0.9.2 单一入口（run-opportunity.sh 商机驱动 + opportunity_id 幂等 + 17 用例测试）",
+  "version": "0.9.4",
+  "description": "CMS（康哲药业）投前评估体系 — 20个独立技能 + Gate 0~5 + Final门控 + Style A1 通用模板内核 + v0.9.1 质量护栏 + v0.9.2 单一入口 + v0.9.3 profile 收敛 + v0.9.4 商机 ID 接入 + 知识库路径重构",
   "dependencies": [
     "multi-search"
   ],
   "scheme": "B",
   "changelog": {
+    "0.9.3->0.9.4": "v0.9.4 新功能：接入外部商机 ID（--opportunity CP202412200012）作为 caseCode 主优先级，兑底 YYMMDD-HHMMSS；去除 pypinyin 隐藏依赖（Issue #74 P1）；产品引进知识库路径重设计：根目录 2605→CPYJ，月份目录 YYMMDD→YYYYMM，路径模板 {ROOT}/{YYYYMM}/{caseCode}/；测试 17→18 用例全过。",
     "0.9.2->0.9.3": "profile 收敛版：删除 A-5/A-7 profile 收敛到单一 A-1 active，profiles/registry.json 简化，fixtures/expected/by-skill/A-5.json + A-7.json + sample-a-5.md + sample-a-7.md 删除，render.py / test_render.py / render_report.sh 注释收敛 A-5/A-7 提及移除，smoke/run_smoke_test.sh 删除 A-5/A-7 调用，design/DISCUSSION-LOG.md 追加 v0.9.3 记录。回归测试 4/4 套件全过，260613-SMQT/REPORT.html 0 字节 diff，Epioxa/REPORT.html 0 字节 diff。保持 v0.9.1 质量护栏 + v0.9.2 单一入口不变。",
     "0.9.1->0.9.2": "单一入口版：新增 scripts/run-opportunity.sh，支持 --product/--company 必填 + --indication/--region/--notes/--ext/--scheme/--mode 可选，以及 --json 文件/stdin 形式输入。自动生成 YYMMDD-XXXX caseCode，opportunity_id 格式 = caseCode::product::company 实现幂等续跑；同日同 product+company 重复调用不会覆盖现有 case，冲突自动加 -1/-2 后缀。新增 00-opportunity.md 留底原始输入。新 case 初始化 state.json 12 gateStatus=pending + 完整 opportunity 元数据。auto 模式调 orchestrator-resume.sh 自驱 Phase 1→5.5；semi 模式只初始化等待人工确认；--dry-run 零副作用。stdout 输出 4 个结构化 prefix（CASE_PATH/CASE_CODE/PHASE_STATUS/OPPORTUNITY_ID）供程序解析。新增 scripts/test-run-opportunity.sh 17 用例 + references/opportunity.example.json JSON 模板 + design/REQ-v0.9.2.md + design/DESIGN-v0.9.2.md。SKILL.md frontmatter description 增加单一入口触发词并新增 Step 1.5 调用小节；EXECUTION.md 替换快速开始为程序调用示例 + 新增 单一入口脚本 章节。保持 v0.9.1 质量护栏不变（preflight / TTL / 硬隔离 / health-check / changelog）。",
     "0.9.0->0.9.1": "质量护栏版：新增 scripts/preflight-phase.sh 与 scripts/test-preflight-phase.sh，在 Phase 5.5 HTML 生成前强制校验 state.json、04-final-report.md、01-discovery.md、One-pager、Gate 0~5、Battle 产物，并要求 state.json.gateStatus 中所有前置 gate 均为 completed；render_report.sh 与 start-phase.sh 默认接入 preflight（测试/历史回放可用 BD_EVAL_CMS_SKIP_PREFLIGHT=1 跳过）。修正 doc.aishuo.co 链接 TTL 文案为长期预览/配置记录为 5y/实际有效期由服务端策略决定。明确 bd-eval-cms 侧硬隔离：render_report.sh 只做本地渲染，sync-to-knowledge-base.sh 只做知识库同步，不调用 doc-viewer 生成/上传一体化路径。保持旧上传流程清理，删除 batch-upload.sh，不纳入 style-13 Mermaid 修复。",

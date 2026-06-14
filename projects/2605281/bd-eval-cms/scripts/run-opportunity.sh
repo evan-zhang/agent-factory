@@ -42,6 +42,7 @@ SCHEME="B"
 MODE="auto"
 EXT_PATHS=()
 JSON_PATH=""
+OPPORTUNITY=""   # 外部商机 ID（CP202412200012），传入则作为 caseCode
 DRY_RUN=false
 SHOW_HELP=false
 
@@ -60,6 +61,7 @@ run-opportunity.sh — bd-eval-cms 单一入口
   --company CO          公司名称
 
 可选：
+  --opportunity ID     外部商机 ID（如 CP202412200012），作为 caseCode
   --indication IND      适应症
   --region REG          目标地区
   --notes TXT           业务备注
@@ -94,6 +96,7 @@ while [ $# -gt 0 ]; do
     --scheme)    shift; SCHEME="${1:-}"; shift ;;
     --mode)      shift; MODE="${1:-}"; shift ;;
     --ext)       shift; EXT_PATHS+=("${1:-}"); shift ;;
+    --opportunity) shift; OPPORTUNITY="${1:-}"; shift ;;
     --json)      shift; JSON_PATH="${1:-}"; shift ;;
     --dry-run)   DRY_RUN=true; shift ;;
     --help|-h)   SHOW_HELP=true; shift ;;
@@ -134,6 +137,8 @@ if [ -n "$JSON_PATH" ]; then
   [ -n "$_s" ] && SCHEME="$_s"
   _m=$(printf '%s' "$JSON_CONTENT" | jq -r '.mode // empty')
   [ -n "$_m" ] && MODE="$_m"
+  _o=$(printf '%s' "$JSON_CONTENT" | jq -r '.opportunity // empty')
+  [ -n "$_o" ] && OPPORTUNITY="$_o"
   # ext array → bash array
   if printf '%s' "$JSON_CONTENT" | jq -e '.ext' >/dev/null 2>&1; then
     while IFS= read -r line; do
@@ -169,55 +174,23 @@ if [ ${#EXT_PATHS[@]} -gt 0 ]; then
 fi
 
 # ============ caseCode 生成 ============
-generate_abbrev() {
-  local name="$1"
-  python3 - "$name" <<'PY'
-import sys
-import re
-try:
-    from pypinyin import lazy_pinyin, Style
-except Exception:
-    lazy_pinyin = None
-    Style = None
-
-name = sys.argv[1].strip()
-if not name:
-    print("XXXX")
-    sys.exit(0)
-
-# 提取所有 ASCII 字母数字
-ascii_letters = re.findall(r'[A-Za-z0-9]+', name)
-ascii_part = ''.join(ascii_letters)[:4].upper()
-
-# 提取所有中文字符 → pypinyin 首字母
-chinese_chars = re.findall(r'[\u4e00-\u9fff]+', name)
-chinese_part = ''
-for chunk in chinese_chars:
-    if lazy_pinyin is not None and Style is not None:
-        initials = lazy_pinyin(chunk, style=Style.FIRST_LETTER)
-        chinese_part += ''.join(initials)
-    else:
-        chinese_part += 'X'  # 无 pypinyin 兜底
-chinese_part = chinese_part[:4].upper()
-
-# 拼接：英文字母优先，不足 4 位用拼音首字母补齐
-combined = (ascii_part + chinese_part)[:4]
-combined = combined.ljust(4, 'X')
-print(combined)
-PY
+# v0.9.4 改造：去除 pypinyin 依赖，caseCode 不再含中文拼音首字母。
+# 优先级：--opportunity 外部值 > 兜底 YYMMDD-HHMMSS
+validate_opportunity() {
+  local id="$1"
+  if [[ ! "$id" =~ ^[A-Za-z0-9_-]{3,64}$ ]]; then
+    echo "❌ 商机 ID 格式不合法：$id（仅允许 ASCII 字母数字 + 连字符，3-64 位）" >&2
+    return 1
+  fi
 }
 
 # 规范化 product/company 用于 opportunity_id。
-# 规则：ASCII 保留；中文转 pinyin；其余字符转 -；避免纯中文输入被归一化为空。
+# 规则：ASCII 字母数字 + 连字符保留；中文原样保留（避免依赖拼音库）；
+# 空格/其他字符转 -。
 normalize_id() {
   python3 - "$1" <<'PY'
 import re
 import sys
-try:
-    from pypinyin import lazy_pinyin
-except Exception:
-    lazy_pinyin = None
-
 text = sys.argv[1].strip()
 out = []
 for ch in text:
@@ -225,11 +198,8 @@ for ch in text:
         out.append(ch)
     elif ch.isspace():
         out.append('-')
-    elif '\u4e00' <= ch <= '\u9fff':
-        if lazy_pinyin is not None:
-            out.append(lazy_pinyin(ch)[0])
-        else:
-            out.append('x')
+    elif '一' <= ch <= '鿿':
+        out.append(ch)
     else:
         out.append('-')
 slug = ''.join(out)
@@ -245,9 +215,13 @@ same_opportunity() {
     "$state_file" >/dev/null 2>&1
 }
 
-DATE_PREFIX="$(date +%y%m%d)"
-ABBREV="$(generate_abbrev "$PRODUCT")"
-BASE_CODE="${DATE_PREFIX}-${ABBREV}"
+# caseCode 优先级：--opportunity 外部值 > 兜底 YYMMDD-HHMMSS
+if [ -n "$OPPORTUNITY" ]; then
+  validate_opportunity "$OPPORTUNITY" || exit 1
+  BASE_CODE="$OPPORTUNITY"
+else
+  BASE_CODE="$(date +%y%m%d-%H%M%S)"
+fi
 
 # ============ 唯一性 / 冲突处理 ============
 BASE_DIR="$SKILL_ROOT/$BASE_CODE"

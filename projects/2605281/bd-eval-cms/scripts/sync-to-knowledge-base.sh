@@ -10,13 +10,13 @@
 # 示例：bash scripts/sync-to-knowledge-base.sh "projects/2605281/bd-eval-cms/利奈昔巴特"
 #        bash scripts/sync-to-knowledge-base.sh "projects/2605281/bd-eval-cms/利奈昔巴特" "260531-LNXB"
 #
-# 案件代号生成规则（优先级从高到低）：
+# 案件代号生成规则（优先级从高到低，v0.9.4）：
 #   1. 手动传入第二个参数
-#   2. state.json 中已有的 caseCode（如果符合 YYMMDD-XXXX 格式）
-#   3. 自动生成：YYMMDD-{4字母品种缩写}
+#   2. state.json 中已有的 caseCode
+#   3. 兜底生成：YYMMDD-HHMMSS
 #
-# 目录结构：{ROOT}/{YYMMDD}/{YYMMDD-XXXX}/
-# 例如：2605/260613/260613-SMQT/
+# 目录结构（v0.9.4）：{ROOT}/{YYYYMM}/{caseCode}/
+# 例如：CPYJ/202606/CP202412200012/
 
 set -euo pipefail
 
@@ -92,35 +92,6 @@ except:
 # 从品种名生成 4 字母缩写
 # 中文品种名：取每个字的拼音首字母（最多 4 个）
 # 英文品种名：取前 4 个辅音字母（大写）
-generate_code() {
-  local name="$1"
-  python3 -c "
-import re
-name = '$name'.strip()
-if not name:
-    print('UNKN')
-elif re.match(r'^[a-zA-Z]', name):
-    # 英文名：取前4个字母（大写），去掉空格和连字符
-    clean = re.sub(r'[^a-zA-Z]', '', name).upper()
-    print(clean[:4] if len(clean) >= 4 else clean.ljust(4, 'X'))
-else:
-    # 中文名：用拼音首字母
-    try:
-        from pypinyin import lazy_pinyin
-        pinyin_list = lazy_pinyin(name)
-        initials = ''.join([p[0].upper() for p in pinyin_list])
-        print(initials[:4] if len(initials) >= 4 else initials.ljust(4, 'X'))
-    except ImportError:
-        # 没有 pypinyin，用 Unicode 编码映射
-        # 取前4个字符的 Unicode 编码后两位
-        codes = [str(ord(c) % 10000).zfill(4)[:4] for c in name[:4]]
-        print(''.join(codes)[:4])
-" 2>/dev/null
-}
-
-# 生成日期部分 YYMMDD
-DATE_PART=$(date +%y%m%d)
-
 # 确定案件代号
 if [ -n "$CASE_CODE" ]; then
   # 手动传入
@@ -147,24 +118,16 @@ except:
   fi
 fi
 
-# 如果还是没有，自动生成
+# 如果还是没有，自动生成（v0.9.4：不依赖 pypinyin，兜底 YYMMDD-HHMMSS）
 if [ -z "$CASE_CODE" ]; then
-  PRODUCT_NAME=$(read_product_name)
-  if [ -n "$PRODUCT_NAME" ]; then
-    ABBR=$(generate_code "$PRODUCT_NAME")
-    CASE_CODE="${DATE_PART}-${ABBR}"
-    echo "案件代号：自动生成 → $CASE_CODE（品种：${PRODUCT_NAME}）"
-  else
-    # 兜底：用目录名
-    DIR_NAME=$(basename "$CASE_DIR")
-    ABBR=$(generate_code "$DIR_NAME")
-    CASE_CODE="${DATE_PART}-${ABBR}"
-    echo "案件代号：从目录名生成 → $CASE_CODE（目录：${DIR_NAME}）"
-  fi
+  CASE_CODE="$(date +%y%m%d-%H%M%S)"
+  echo "案件代号：兜底生成 → $CASE_CODE"
 fi
 
-# 日期目录取日期前 6 位（YYMMDD）；完整知识库路径由 rootDir/YYMMDD/CASE_CODE 组成
-DATE_DIR="${CASE_CODE:0:6}"
+# 路径规则（v0.9.4 改造）：{rootDir}/{YYYYMM}/{caseCode}/
+# YYYYMM = 业务月（系统当天，标识本项目正式评估的月份）
+# caseCode = 外部商机 ID（如 CP202412200012）或 YYMMDD-HHMMSS
+DATE_DIR="$(date +%Y%m)"
 KB_CASE_PATH="${KB_ROOT_DIR}/${DATE_DIR}/${CASE_CODE}"
 
 echo ""

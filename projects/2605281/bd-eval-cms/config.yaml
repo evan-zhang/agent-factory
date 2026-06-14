@@ -12,12 +12,14 @@ knowledgeBase:
   # 来源：业务固定，CMO 评估业务专用空间
   projectId: "2060176831872499713"
   
-  # 知识库根目录（产品引进知识库按项目批次归档）
-  rootDir: "2605"
+  # 知识库根目录（产品引进知识库）
+  rootDir: "CPYJ"
 
-  # 路径模板（sync-to-knowledge-base.sh 与 REPORT.html 上传共用）
-  # 实际生成：{ROOT}/{YYMMDD}/{YYMMDD-XXXX}/ （如 2605/260613/260613-SMQT/）
-  pathTemplate: "{ROOT}/{YYMMDD}/{YYMMDD-XXXX}"
+  # 路径模板（v0.9.4）：{ROOT}/{YYYYMM}/{caseCode}/
+  # YYYYMM = 业务月（系统当天，标识正式评估的月份）
+  # caseCode = 外部商机 ID（如 CP202412200012）或 YYMMDD-HHMMSS
+  # 实际生成：CPYJ/202606/CP202412200012/
+  pathTemplate: "{ROOT}/{YYYYMM}/{caseCode}"
   
   # 文件命名后缀（用于 doc-preview/ticket 接口的 format 字段）
   format: "html"

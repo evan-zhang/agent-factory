@@ -21,7 +21,7 @@ description: |
 
 metadata:
   display_name: 医药BD评估体系（CMS）
-  version: 0.9.3
+  version: 0.9.4
 compatibility: Claude
 ---
 
@@ -57,17 +57,18 @@ compatibility: Claude
 
 禁止因外部 `writing` 技能不可用而停止路由、评估或报告生成。
 
-## Step 1.5：单一入口调用（v0.9.2+）
+## Step 1.5：单一入口调用（v0.9.2+，v0.9.4 增强）
 
-业务程序/流水线/cron 任务可以通过 **一个命令** 启动一次完整评估，只需提供品种名 + 公司名：
+业务程序/流水线/cron 任务可以通过 **一个命令** 启动一次完整评估，只需提供品种名 + 公司名 + 外部商机 ID（可选）：
 
 **Flag 形式**：
 
 ```bash
 bash scripts/run-opportunity.sh \
-  --product "TRTL-729" \
-  --company "TestCo Pharma" \
-  [--indication "非小细胞肺癌"] \
+  --product "乌司他丁" \
+  --company "康哲药业" \
+  --opportunity "CP202412200012" \   # v0.9.4 外部商机 ID（可选，作为 caseCode）
+  [--indication "急性费腺炎"] \
   [--region "中国大陆"] \
   [--notes "靶向药引进评估"] \
   [--ext /path/to/material.pdf] \
@@ -80,12 +81,12 @@ bash scripts/run-opportunity.sh \
 
 ```bash
 bash scripts/run-opportunity.sh --json /path/to/opportunity.json
-echo '{"product":"...","company":"..."}' | bash scripts/run-opportunity.sh --json -
+echo '{"product":"...","company":"...","opportunity":"CP202412200012"}' | bash scripts/run-opportunity.sh --json -
 ```
 
 **自动行为**：
 
-- 生成唯一 caseCode（`YYMMDD-XXXX`）
+- caseCode 生成规则（v0.9.4）：传 `--opportunity` 则用传入值（如 `CP202412200012`），否则兑底 `YYMMDD-HHMMSS`
 - 创建 case 目录 + `state.json` 12 gateStatus
 - 写 `00-opportunity.md` 留底原始输入
 - 调 `orchestrator-resume.sh` 自驱 Phase 1→5.5
@@ -98,10 +99,12 @@ PHASE_STATUS=...
 OPPORTUNITY_ID=...
 ```
 
-**幂等**：同日同 `(product, company)` 重复调用视为续跑，不会覆盖现有 case。冲突时自动加 `-1 / -2` 后缀。
+**幂等**：同 `--opportunity` 重复调用视为续跑，不会覆盖现有 case。冲突时自动加 `-1 / -2` 后缀。
 
-**详细规范**：`design/REQ-v0.9.2.md` + `design/DESIGN-v0.9.2.md`。
-**测试**：`bash scripts/test-run-opportunity.sh`（17 个用例）。
+**知识库归档路径（v0.9.4）**：`{rootDir}/{YYYYMM}/{caseCode}/`，如 `CPYJ/202606/CP202412200012/`。
+
+**详细规范**：`design/REQ-v0.9.4.md` + `design/DESIGN-v0.9.4.md`。
+**测试**：`bash scripts/test-run-opportunity.sh`（18 个用例）。
 **示例**：`references/opportunity.example.json`。
 
 
