@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>bd-eval-cms v0.7.0 — 工作流全景</title>
+<style>
+/* ============================================
+   基础
+============================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg-deep: #0A0E1A;
+  --bg-mid: #111827;
+  --bg-card: rgba(20, 30, 50, 0.65);
+  --line: rgba(99, 153, 255, 0.18);
+  --line-bright: rgba(99, 153, 255, 0.4);
+  --accent-cyan: #5EEAD4;
+  --accent-blue: #60A5FA;
+  --accent-purple: #C084FC;
+  --accent-pink: #F472B6;
+  --accent-amber: #FCD34D;
+  --accent-red: #FCA5A5;
+  --accent-green: #86EFAC;
+  --text-1: #F1F5F9;
+  --text-2: #94A3B8;
+  --text-3: #64748B;
+  --gradient-hero: linear-gradient(135deg, #60A5FA 0%, #C084FC 50%, #F472B6 100%);
+  --gradient-cyan: linear-gradient(135deg, #5EEAD4 0%, #60A5FA 100%);
+  --gradient-warm: linear-gradient(135deg, #FCD34D 0%, #F472B6 100%);
+  --gradient-cool: linear-gradient(135deg, #5EEAD4 0%, #C084FC 100%);
+  --shadow-glow: 0 0 60px rgba(96, 165, 250, 0.25);
+}
+html, body { width: 100%; height: 100%; overflow: hidden; }
+body {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", -apple-system, Arial, sans-serif;
+  background: var(--bg-deep);
+  color: var(--text-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+}
+/* 全局背景：星云 */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(96, 165, 250, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(192, 132, 252, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(94, 234, 212, 0.08) 0%, transparent 60%);
+  z-index: -2;
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(99, 153, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 153, 255, 0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ============================================
+   Slides 容器
+============================================ */
+.deck { width: 100vw; height: 100vh; position: relative; }
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  padding: 5vh 6vw;
+  opacity: 0; visibility: hidden;
+  transform: translateX(60px) scale(0.96);
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+}
+.slide.active { opacity: 1; visibility: visible; transform: translateX(0) scale(1); }
+.slide.prev { transform: translateX(-60px) scale(0.96); }
+
+/* ============================================
+   导航栏
+============================================ */
+.nav {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  padding: 8px 16px;
+  z-index: 100;
+  font-size: 13px;
+  color: var(--text-2);
+  box-shadow: var(--shadow-glow);
+}
+.nav button {
+  background: transparent; border: none; color: var(--accent-blue);
+  font-size: 18px; cursor: pointer;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+.nav button:hover { background: rgba(96, 165, 250, 0.15); }
+.nav .progress { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 60px; text-align: center; }
+.nav .progress b { color: var(--accent-cyan); }
+.nav .title { color: var(--text-2); font-size: 12px; margin: 0 8px; }
+
+.toc-bar {
+  position: fixed; top: 24px; right: 24px;
+  display: flex; flex-direction: column; gap: 4px;
+  z-index: 100;
+  padding: 12px 16px;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 11px;
+  color: var(--text-3);
+  max-height: 80vh; overflow-y: auto;
+  backdrop-filter: blur(20px);
+}
+.toc-bar a {
+  color: var(--text-2);
+  text-decoration: none;
+  padding: 3px 0;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+.toc-bar a:hover, .toc-bar a.active { color: var(--accent-cyan); }
+.toc-bar a.active { font-weight: 600; }
+
+/* ============================================
+   共用元素
+============================================ */
+.kicker {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+  margin-bottom: 20px;
+  padding: 4px 12px;
+  background: rgba(94, 234, 212, 0.08);
+  border: 1px solid rgba(94, 234, 212, 0.25);
+  border-radius: 100px;
+}
+.kicker::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent-cyan);
+  box-shadow: 0 0 12px var(--accent-cyan);
+}
+h1.title { font-size: clamp(36px, 5vw, 64px); font-weight: 800; line-height: 1.15; margin-bottom: 18px; letter-spacing: -0.02em; }
+h1.title.gradient { background: var(--gradient-hero); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+h1.title.cool { background: var(--gradient-cyan); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.subtitle { font-size: clamp(16px, 1.8vw, 22px); color: var(--text-2); max-width: 720px; line-height: 1.55; }
+.subtitle b { color: var(--text-1); font-weight: 700; }
+.section-num {
+  font-size: clamp(80px, 12vw, 160px); font-weight: 900; line-height: 1;
+  background: var(--gradient-hero); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  position: absolute; top: 8vh; right: 6vw;
+  opacity: 0.15;
+  z-index: 0;
+  letter-spacing: -0.05em;
+}
+
+/* ============================================
+   Slide 1: 封面
+============================================ */
+.cover { text-align: center; }
+.cover .pre {
+  font-size: 13px; color: var(--text-3); letter-spacing: 0.3em;
+  text-transform: uppercase; margin-bottom: 24px;
+  font-weight: 600;
+}
+.cover h1 {
+  font-size: clamp(48px, 7vw, 96px);
+  font-weight: 900; line-height: 1.05;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #F1F5F9 0%, #5EEAD4 50%, #60A5FA 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: -0.03em;
+}
+.cover .tag {
+  display: inline-block; padding: 6px 18px;
+  background: rgba(192, 132, 252, 0.12);
+  border: 1px solid rgba(192, 132, 252, 0.35);
+  color: var(--accent-purple);
+  border-radius: 100px; font-size: 13px; font-weight: 600;
+  margin: 0 6px;
+}
+.cover .meta-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  margin-top: 64px; max-width: 880px;
+}
+.cover .meta-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px 16px;
+  text-align: left;
+  backdrop-filter: blur(20px);
+}
+.cover .meta-card .lbl { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+.cover .meta-card .val { font-size: 18px; font-weight: 700; color: var(--text-1); }
+.cover .meta-card .val small { color: var(--accent-cyan); font-size: 12px; margin-left: 4px; }
+
+/* ============================================
+   Slide 2: 数字大屏
+============================================ */
+.metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1100px; width: 100%; }
+.metric {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 28px 24px;
+  backdrop-filter: blur(20px);
+  position: relative; overflow: hidden;
+  transition: transform 0.3s, border-color 0.3s;
+}
+.metric:hover { transform: translateY(-4px); border-color: var(--line-bright); }
+.metric::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--gradient-cyan);
+}
+.metric:nth-child(2)::after { background: var(--gradient-warm); }
+.metric:nth-child(3)::after { background: var(--gradient-cool); }
+.metric .num { font-size: clamp(40px, 5vw, 64px); font-weight: 900; line-height: 1; margin-bottom: 8px;
+  background: var(--gradient-cyan); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.metric:nth-child(2) .num { background: var(--gradient-warm); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.metric:nth-child(3) .num { background: var(--gradient-cool); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.metric .lbl { font-size: 14px; color: var(--text-2); font-weight: 600; margin-bottom: 6px; }
+.metric .sub { font-size: 12px; color: var(--text-3); line-height: 1.55; }
+
+/* ============================================
+   Slide 3: 物理结构（目录树视觉化）
+============================================ */
+.tree {
+  font-family: "JetBrains Mono", "SF Mono", "Courier New", monospace;
+  font-size: clamp(12px, 1.2vw, 15px);
+  line-height: 1.85;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 28px 32px;
+  max-width: 920px; width: 100%;
+  backdrop-filter: blur(20px);
+  white-space: pre;
+  overflow-x: auto;
+}
+.tree .d { color: var(--text-3); }
+.tree .f { color: var(--accent-cyan); font-weight: 600; }
+.tree .c { color: var(--accent-amber); }
+.tree .com { color: var(--text-3); font-style: italic; }
+
+/* ============================================
+   Slide 4: 规范层 vs 执行层（两栏对比）
+============================================ */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1200px; width: 100%; }
+.pane {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 32px;
+  backdrop-filter: blur(20px);
+  position: relative;
+}
+.pane.norm { border-top: 4px solid var(--accent-cyan); }
+.pane.exec { border-top: 4px solid var(--accent-purple); }
+.pane h3 { font-size: 24px; margin-bottom: 4px; }
+.pane.norm h3 { color: var(--accent-cyan); }
+.pane.exec h3 { color: var(--accent-purple); }
+.pane .role { font-size: 13px; color: var(--text-2); margin-bottom: 20px; }
+.pane .file {
+  display: inline-block; padding: 4px 10px;
+  background: rgba(96, 165, 250, 0.1);
+  border-radius: 4px; font-family: monospace; font-size: 12px;
+  color: var(--accent-blue);
+  margin-bottom: 16px;
+}
+.pane ul { list-style: none; }
+.pane li { padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; color: var(--text-1); display: flex; gap: 10px; }
+.pane li::before { content: '›'; color: var(--accent-cyan); font-weight: 700; flex-shrink: 0; }
+.pane.exec li::before { color: var(--accent-purple); }
+.pane li b { color: var(--text-1); font-weight: 700; }
+.pane li span { color: var(--text-2); }
+
+/* ============================================
+   Slide 5: D-0 路由决策树
+============================================ */
+.router {
+  max-width: 1100px; width: 100%;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.router .q-row {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 14px;
+  border-left: 3px solid var(--accent-blue);
+}
+.router .q-row.yes { border-left-color: var(--accent-green); }
+.router .q-row.no { border-left-color: var(--text-3); }
+.router .q { color: var(--text-1); font-weight: 600; }
+.router .a { color: var(--accent-cyan); font-weight: 700; font-family: "JetBrains Mono", monospace; padding: 3px 8px; background: rgba(94, 234, 212, 0.1); border-radius: 4px; }
+.router .a.fin { color: var(--accent-amber); background: rgba(252, 211, 77, 0.12); font-size: 16px; padding: 6px 14px; }
+.router .a.fin2 { color: var(--accent-green); background: rgba(134, 239, 172, 0.12); font-size: 16px; padding: 6px 14px; }
+
+/* ============================================
+   Slide 6: Gate 框架（7 卡片横向）
+============================================ */
+.gates { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; max-width: 1200px; width: 100%; }
+.gate {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 12px;
+  text-align: center;
+  backdrop-filter: blur(20px);
+  position: relative;
+  transition: transform 0.3s;
+}
+.gate:hover { transform: translateY(-3px); }
+.gate .num {
+  font-size: 22px; font-weight: 900; margin-bottom: 4px;
+  background: var(--gradient-cyan); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.gate .name { font-size: 13px; font-weight: 700; color: var(--text-1); margin-bottom: 6px; }
+.gate .desc { font-size: 10px; color: var(--text-2); line-height: 1.4; }
+.gate.final { border-color: rgba(252, 211, 77, 0.4); }
+.gate.final .num { background: var(--gradient-warm); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+/* ============================================
+   Slide 7: 五维评分条形图
+============================================ */
+.scores { max-width: 920px; width: 100%; }
+.score-row {
+  display: grid; grid-template-columns: 120px 1fr 60px 100px;
+  align-items: center; gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.score-row:last-child { border-bottom: 2px solid var(--accent-amber); padding-top: 18px; }
+.score-row .lbl { font-size: 14px; font-weight: 700; color: var(--text-1); }
+.score-row .bar-bg {
+  height: 24px;
+  background: rgba(99, 153, 255, 0.1);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+.score-row .bar {
+  height: 100%;
+  background: var(--gradient-cyan);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: flex-end;
+  padding: 0 8px;
+  font-size: 11px; color: var(--bg-deep); font-weight: 700;
+  transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.score-row .bar.warm { background: var(--gradient-warm); }
+.score-row .bar.cool { background: var(--gradient-cool); }
+.score-row .bar.pink { background: var(--gradient-warm); }
+.score-row .v { font-size: 18px; font-weight: 800; color: var(--accent-cyan); text-align: right; }
+.score-row .w { font-size: 12px; color: var(--text-2); text-align: right; }
+.score-row.total { font-size: 18px; }
+.score-row.total .lbl { color: var(--accent-amber); font-size: 16px; }
+.score-row.total .v { color: var(--accent-amber); font-size: 32px; }
+
+/* ============================================
+   Slide 8: 流水线时间线
+============================================ */
+.timeline { max-width: 1100px; width: 100%; position: relative; }
+.timeline::before {
+  content: ''; position: absolute;
+  left: 32px; top: 24px; bottom: 24px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--accent-cyan), var(--accent-blue), var(--accent-purple), var(--accent-pink), var(--accent-amber));
+  opacity: 0.5;
+}
+.tl-item {
+  display: grid; grid-template-columns: 64px 1fr;
+  gap: 20px;
+  padding: 16px 0;
+  align-items: start;
+}
+.tl-item .dot {
+  width: 64px; height: 64px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 18px;
+  color: var(--bg-deep);
+  position: relative; z-index: 1;
+  background: var(--gradient-cyan);
+  box-shadow: 0 0 24px rgba(94, 234, 212, 0.4);
+}
+.tl-item.p2 .dot { background: var(--gradient-cool); box-shadow: 0 0 24px rgba(96, 165, 250, 0.4); }
+.tl-item.p3 .dot { background: var(--gradient-warm); box-shadow: 0 0 24px rgba(192, 132, 252, 0.4); }
+.tl-item.p4 .dot { background: var(--gradient-warm); box-shadow: 0 0 24px rgba(244, 114, 182, 0.4); }
+.tl-item.p5 .dot { background: linear-gradient(135deg, #FCD34D 0%, #F472B6 100%); box-shadow: 0 0 24px rgba(252, 211, 77, 0.4); }
+.tl-item.p55 .dot { background: linear-gradient(135deg, #FCD34D 0%, #5EEAD4 100%); box-shadow: 0 0 24px rgba(252, 211, 77, 0.4); }
+.tl-item .body { padding-top: 8px; }
+.tl-item .name { font-size: 20px; font-weight: 800; color: var(--text-1); margin-bottom: 6px; }
+.tl-item .desc { font-size: 13px; color: var(--text-2); line-height: 1.6; margin-bottom: 6px; }
+.tl-item .badges { display: flex; gap: 6px; flex-wrap: wrap; }
+.tl-item .badge { font-size: 11px; padding: 2px 8px; background: rgba(99, 153, 255, 0.1); color: var(--text-2); border-radius: 100px; border: 1px solid var(--line); }
+.tl-item .badge.good { background: rgba(134, 239, 172, 0.1); color: var(--accent-green); border-color: rgba(134, 239, 172, 0.3); }
+.tl-item .badge.warn { background: rgba(252, 211, 77, 0.1); color: var(--accent-amber); border-color: rgba(252, 211, 77, 0.3); }
+.tl-item .badge.bad { background: rgba(252, 165, 165, 0.1); color: var(--accent-red); border-color: rgba(252, 165, 165, 0.3); }
+
+/* ============================================
+   Slide 9: 工具栈网格
+============================================ */
+.tools { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; max-width: 1100px; width: 100%; }
+.tool {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 16px;
+  font-family: "JetBrains Mono", monospace;
+  position: relative;
+  transition: all 0.3s;
+}
+.tool:hover { border-color: var(--line-bright); transform: translateY(-2px); }
+.tool .name { font-size: 13px; color: var(--accent-cyan); font-weight: 700; margin-bottom: 4px; }
+.tool .desc { font-family: inherit; font-size: 11px; color: var(--text-2); line-height: 1.5; }
+.tool .ver { position: absolute; top: 12px; right: 12px; font-size: 9px; color: var(--text-3); padding: 1px 6px; background: rgba(99, 153, 255, 0.08); border-radius: 100px; }
+.tool.highlight { background: linear-gradient(135deg, rgba(192, 132, 252, 0.12), rgba(96, 165, 250, 0.08)); border-color: rgba(192, 132, 252, 0.3); }
+
+/* ============================================
+   Slide 10: 状态机（JSON 美化）
+============================================ */
+.json-block {
+  font-family: "JetBrains Mono", "SF Mono", monospace;
+  font-size: 13px; line-height: 1.75;
+  background: var(--bg-mid);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px 28px;
+  max-width: 920px; width: 100%;
+  white-space: pre;
+  overflow-x: auto;
+  color: var(--text-2);
+}
+.json-block .k { color: var(--accent-cyan); }
+.json-block .s { color: var(--accent-amber); }
+.json-block .n { color: var(--accent-purple); }
+.json-block .p { color: var(--accent-pink); }
+.json-block .m { color: var(--text-3); font-style: italic; }
+
+.facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; max-width: 920px; width: 100%; margin-top: 24px; }
+.fact { background: var(--bg-card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.fact .ic { font-size: 18px; margin-bottom: 6px; }
+.fact .lbl { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; }
+.fact .val { font-size: 14px; color: var(--text-1); font-weight: 600; margin-top: 4px; }
+
+/* ============================================
+   Slide 11: 对账表
+============================================ */
+.diff { max-width: 1100px; width: 100%; }
+.diff-row {
+  display: grid; grid-template-columns: 1.2fr 1.4fr 1.4fr 1fr;
+  gap: 14px;
+  padding: 14px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  align-items: center;
+}
+.diff-row.head { background: rgba(96, 165, 250, 0.08); border-color: rgba(96, 165, 250, 0.3); font-weight: 700; color: var(--accent-blue); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; }
+.diff-row .phase { font-weight: 700; color: var(--text-1); }
+.diff-row .sop { color: var(--text-2); }
+.diff-row .actual { color: var(--text-1); }
+.diff-row .status { font-size: 11px; padding: 3px 10px; border-radius: 100px; text-align: center; font-weight: 700; }
+.diff-row .status.good { background: rgba(134, 239, 172, 0.12); color: var(--accent-green); }
+.diff-row .status.warn { background: rgba(252, 211, 77, 0.12); color: var(--accent-amber); }
+.diff-row .status.bad { background: rgba(252, 165, 165, 0.12); color: var(--accent-red); }
+.summary-bar {
+  margin-top: 24px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, rgba(252, 211, 77, 0.08), rgba(244, 114, 182, 0.06));
+  border: 1px solid rgba(252, 211, 77, 0.3);
+  border-radius: 12px;
+}
+.summary-bar .big { font-size: 48px; font-weight: 900; background: var(--gradient-warm); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
+.summary-bar .lbl { font-size: 13px; color: var(--text-2); margin-top: 4px; }
+
+/* ============================================
+   Slide 12: 版本演进
+============================================ */
+.versions { max-width: 1100px; width: 100%; display: flex; flex-direction: column; gap: 10px; }
+.v-row {
+  display: grid; grid-template-columns: 80px 1fr 140px;
+  align-items: center; gap: 16px;
+  padding: 12px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 14px;
+  border-left: 3px solid var(--text-3);
+}
+.v-row.curr { border-left-color: var(--accent-amber); background: linear-gradient(90deg, rgba(252, 211, 77, 0.08), transparent); }
+.v-row.future { border-left-color: var(--accent-pink); opacity: 0.7; border-style: dashed; }
+.v-row .v { font-family: monospace; font-weight: 800; color: var(--accent-cyan); font-size: 16px; }
+.v-row.curr .v { color: var(--accent-amber); }
+.v-row.future .v { color: var(--accent-pink); }
+.v-row .d { color: var(--text-2); }
+.v-row .date { color: var(--text-3); font-size: 12px; text-align: right; font-family: monospace; }
+
+/* ============================================
+   Slide 13: 末页
+============================================ */
+.endpage { text-align: center; }
+.endpage h1 { font-size: clamp(40px, 6vw, 80px); margin-bottom: 24px;
+  background: linear-gradient(135deg, #5EEAD4 0%, #60A5FA 50%, #C084FC 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.endpage .links { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; max-width: 900px; }
+.endpage a { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; background: var(--bg-card); border: 1px solid var(--line); border-radius: 8px; color: var(--accent-cyan); text-decoration: none; font-size: 14px; transition: all 0.3s; }
+.endpage a:hover { border-color: var(--accent-cyan); transform: translateY(-2px); }
+
+/* ============================================
+   打印
+============================================ */
+@media print {
+  .nav, .toc-bar { display: none; }
+  .slide { position: relative; height: 100vh; page-break-after: always; opacity: 1; visibility: visible; transform: none; }
+  body { overflow: visible; }
+  body::before, body::after { display: none; }
+  .slide { background: white; color: #111; }
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ==================== Slide 1: 封面 ==================== -->
+  <section class="slide active" data-title="封面">
+    <div class="cover" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+      <div class="pre">AGENT FACTORY · 2026 · CONFIDENTIAL</div>
+      <h1>bd-eval-cms<br>工作流全景</h1>
+      <div style="margin: 8px 0 32px;">
+        <span class="tag">CMS 投前评估</span>
+        <span class="tag">v0.7.0</span>
+        <span class="tag">Agent Factory</span>
+      </div>
+      <p class="subtitle" style="text-align: center;">
+        从 <b>物理结构</b> 到 <b>状态机</b> · 从 <b>D-0 路由</b> 到 <b>6-Gate 评估</b><br>
+        一次 <b>真实品种</b>（JMKX003948）的执行对账 · 一份 <b>v0.7.1 路线图</b>
+      </p>
+      <div class="meta-grid">
+        <div class="meta-card"><div class="lbl">Skill</div><div class="val">bd-eval-cms <small>v0.7.0</small></div></div>
+        <div class="meta-card"><div class="lbl">规模</div><div class="val">20 技能 <small>+ 1 工具包</small></div></div>
+        <div class="meta-card"><div class="lbl">阶段</div><div class="val">7 阶段 <small>Phase 1~5.5</small></div></div>
+        <div class="meta-card"><div class="lbl">整理</div><div class="val">造物 <small>2026-06-12</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== Slide 2: 数字大屏 ==================== -->
+  <section class="slide" data-title="速览">
+    <span class="section-num">01</span>
+    <div class="kicker">速览</div>
+    <h1 class="title gradient">一份数字全景</h1>
+    <p class="subtitle" style="margin-bottom: 36px;">5 秒钟看懂 bd-eval-cms 的体量与覆盖范围</p>
+    <div class="metrics">
+      <div class="metric">
+        <div class="num">20<span style="font-size: 0.4em; color: var(--text-3); font-weight: 600;"> + 1</span></div>
+        <div class="lbl">独立技能</div>
+        <div class="sub">A/B/C/D/E 五大群组 + 1 个治理工具包</div>
+      </div>
+      <div class="metric">
+        <div class="num">6+1</div>
+        <div class="lbl">Gate 评估</div>
+        <div class="sub">Gate 0~5 + Final · 防漏审映射表</div>
+      </div>
+      <div class="metric">
+        <div class="num">5.5</div>
+        <div class="lbl">执行阶段</div>
+        <div class="sub">DISCOVERY → 路由 → 6-Gate → Battle → 合并 → HTML/KB</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== Slide 3: 物理结构 ==================== -->
+  <section class="slide" data-title="物理结构">
+    <span class="section-num">02</span>
+    <div class="kicker">物理结构</div>
+    <h1 class="title cool">一棵树看懂全部家当</h1>
+    <p class="subtitle" style="margin-bottom: 28px;">3 个核心入口（<b>SKILL.md / EXECUTION.md / run.sh</b>）+ 20 技能 + 11 脚本 + 4 模板</p>
+    <pre class="tree"><span class="d">bd-eval-cms/</span>
+├── <span class="f">SKILL.md</span>        <span class="com"># 规范层入口（Step 1~11 路由 + 触发词）</span>
+├── <span class="f">EXECUTION.md</span>    <span class="com"># 执行层入口（Phase 1~5.5 流水线）</span>
+├── <span class="f">config.yaml</span>     <span class="com"># 业务固定参数（v0.6.0 起）</span>
+├── <span class="f">version.json</span>    <span class="com"># 0.7.0 + changelog</span>
+│
+├── <span class="d">references/</span>  <span class="com"># 流程文档库（30+ 文件）</span>
+│   ├── <span class="c">00_CMS-投前评估技能体系总规则.md</span>  <span class="com"># 顶层规范 70KB</span>
+│   ├── <span class="c">D-0_bd-evaluation-router.md</span>      <span class="com"># 路由器决策树</span>
+│   ├── <span class="c">A-0 ~ A-8 / B-1~B-3 / C-1~C-3 / D-1~D-3 / E-1</span>  <span class="com"># 20 个技能</span>
+│   └── <span class="c">SOP.md</span>                          <span class="com"># 完整操作规范 36KB</span>
+│
+├── <span class="d">templates/</span>   <span class="com"># 风格模板（v0.7.0 自包含）</span>
+│   ├── <span class="c">style-12/</span>  <span class="com"># 专用型 CMS Eval（mckinsey-navy 等 4 配色）</span>
+│   ├── <span class="c">style-13/</span>  <span class="com"># 程序化 Markdown→HTML</span>
+│   └── <span class="c">style-03-color/</span>  <span class="com"># 琥珀金兼容</span>
+│
+├── <span class="d">scripts/</span>     <span class="com"># 11 个执行入口</span>
+│   ├── <span class="c">run.sh</span> / <span class="c">orchestrator-resume.sh</span>     <span class="com"># 主入口 + 续跑</span>
+│   ├── <span class="c">render_report.sh</span> / <span class="c">sync-to-knowledge-base.sh</span>  <span class="com"># v0.7.0 新增</span>
+│   └── <span class="c">convert-md-to-html.py</span>          <span class="com"># 风格 12 转换</span>
+│
+└── <span class="d">{品种目录}/</span>  <span class="com"># 每品种一个目录</span>
+    ├── <span class="f">state.json</span>        <span class="com"># 状态机（12 个 gateStatus）</span>
+    ├── <span class="f">04-final-report.md</span>  <span class="com"># Phase 5 合并的最终报告</span>
+    └── <span class="f">REPORT.html</span>       <span class="com"># 渲染后 HTML（5 年长链接）</span></pre>
+  </section>
+
+  <!-- ==================== Slide 4: 规范层 vs 执行层 ==================== -->
+  <section class="slide" data-title="两入口">
+    <span class="section-num">03</span>
+    <div class="kicker">两入口设计</div>
+    <h1 class="title">规范层 <span style="color: var(--text-3);">vs</span> 执行层</h1>
+    <p class="subtitle" style="margin-bottom: 32px;">同一个 skill，两个不同的"读者"</p>
+    <div class="split">
+      <div class="pane norm">
+        <div class="file">SKILL.md</div>
+        <h3>规范层</h3>
+        <div class="role">给 Agent 读 · 决定"做什么"</div>
+        <ul>
+          <li><span>触发词 + 11 步必做（Step 1~11）</span></li>
+          <li><b>D-0 路由</b><span>（20 个技能之一）</span></li>
+          <li><span>一票否决清单（8 条）</span></li>
+          <li><span>Gate 0~5 + Final 评估框架</span></li>
+          <li><span>业务主体互斥规则</span></li>
+          <li><span>财务硬门槛（3 类产品）</span></li>
+          <li><span>One-pager 终局先立</span></li>
+          <li><span>报告骨架（HTML 麦肯锡风格）</span></li>
+        </ul>
+      </div>
+      <div class="pane exec">
+        <div class="file">EXECUTION.md</div>
+        <h3>执行层</h3>
+        <div class="role">给 sub-agent 读 · 决定"怎么做"</div>
+        <ul>
+          <li><b>Phase 1</b><span>DISCOVERY · 5 次联网搜索</span></li>
+          <li><b>Phase 2</b><span>D-0 路由 + 技能确认 Battle</span></li>
+          <li><b>Phase 3</b><span>逐 Gate 深度评估（6-Gate）</span></li>
+          <li><b>Phase 4</b><span>Gate Battle 对抗审查</span></li>
+          <li><b>Phase 5</b><span>报告合并 + 质量终检</span></li>
+          <li><b>Phase 5.5</b><span>HTML 生成 + 上传归档</span></li>
+          <li><span>断点续跑（state.json 状态机）</span></li>
+          <li><span>心跳超时 → 标记僵尸</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== Slide 5: D-0 路由决策树 ==================== -->
+  <section class="slide" data-title="D-0 路由">
+    <span class="section-num">04</span>
+    <div class="kicker">D-0 路由器</div>
+    <h1 class="title gradient">一层层问 7 个问题</h1>
+    <p class="subtitle" style="margin-bottom: 24px;">从「标的名称」到「技能编号」的最短路径 · 决策树</p>
+    <div class="router">
+      <div class="q-row"><span class="a">Q1</span><span class="q">是否为 CMS 自主研发（Sponsor/全球 IP）？</span><span class="a">→ A-3</span></div>
+      <div class="q-row"><span class="a">Q2</span><span class="q">是否国际市场（港澳台/东南亚/GCC/澳新/拉美）？</span><span class="a">→ C-1 / C-2 / C-3</span></div>
+      <div class="q-row"><span class="a">Q3</span><span class="q">是否需要批量横向比选（3+ 标的）？</span><span class="a">→ A-7</span></div>
+      <div class="q-row"><span class="a">Q4</span><span class="q">是否为医美产品（注射/器械/能量源设备）？</span><span class="a">→ B-1 / B-2</span></div>
+      <div class="q-row"><span class="a">Q5</span><span class="q">是否为消费健康/OTC？</span><span class="a">→ B-3</span></div>
+      <div class="q-row"><span class="a">Q6</span><span class="q">是否为国内 Biotech（股权+商业化双引擎）？</span><span class="a">→ A-2 + E-1</span></div>
+      <div class="q-row yes" style="background: linear-gradient(90deg, rgba(94, 234, 212, 0.12), transparent);"><span class="a">Q7</span><span class="q">化学药品类型（3/4 类仿制 / 创新 / 代理 / 生物类似 / 已上市 / Rx→OTC）？</span><span class="a fin">→ A-1 / A-2 / A-4 / A-5 / A-6 / A-8</span></div>
+      <div class="q-row no" style="background: rgba(134, 239, 172, 0.05); border-left-color: var(--accent-green);"><span class="a">兜底</span><span class="q" style="font-size: 13px;">通用综合评估</span><span class="a fin2">→ D-1 / D-2 / D-3 / E-1</span></div>
+    </div>
+    <p class="subtitle" style="margin-top: 24px; font-size: 14px; color: var(--accent-cyan);"><b>JMKX003948 实例</b>：HIF-2α 创新药 + 国内 Biotech → <b style="color: var(--accent-amber);">A-1（国内未上市创新药引进）</b></p>
+  </section>
+
+  <!-- ==================== Slide 6: Gate 框架 ==================== -->
+  <section class="slide" data-title="Gate 框架">
+    <span class="section-num">05</span>
+    <div class="kicker">评估框架</div>
+    <h1 class="title cool">6 + 1 道门</h1>
+    <p class="subtitle" style="margin-bottom: 30px;">以终为始 · One-pager 终局先立 · 防漏审映射表</p>
+    <div class="gates">
+      <div class="gate"><div class="num">G0</div><div class="name">准入门</div><div class="desc">5 必填<br>+ 8 条一票否决</div></div>
+      <div class="gate"><div class="num">G1</div><div class="name">前提门</div><div class="desc">海外注册<br>III 期数据</div></div>
+      <div class="gate"><div class="num">G2</div><div class="name">定调门</div><div class="desc">MoA +<br>五维评分 ≥ 3.0</div></div>
+      <div class="gate"><div class="num">G3</div><div class="name">商业门</div><div class="desc">市场规模<br>竞争格局</div></div>
+      <div class="gate"><div class="num">G4</div><div class="name">支付门</div><div class="desc">NPV +<br>峰值销售</div></div>
+      <div class="gate"><div class="num">G5</div><div class="name">成本门</div><div class="desc">交易结构<br>首付款</div></div>
+      <div class="gate final"><div class="num">F</div><div class="name">终审</div><div class="desc">投委会<br>Battle 通过</div></div>
+    </div>
+    <p class="subtitle" style="margin-top: 32px; font-size: 13px; color: var(--text-2);">
+      <b style="color: var(--accent-amber);">JMKX003948 破例</b> · G2 评分 2.30（&lt; 3.0 阈值）· 破例前置：杭煜 MAH 资质确认 + 默示许可 + II 期 PoC 启动
+    </p>
+  </section>
+
+  <!-- ==================== Slide 7: 五维评分 ==================== -->
+  <section class="slide" data-title="五维评分">
+    <span class="section-num">06</span>
+    <div class="kicker">Gate 2 评分</div>
+    <h1 class="title">2.30 / 5.0</h1>
+    <p class="subtitle" style="margin-bottom: 32px;">五维评分 v0.5.0 P1 方法 · 未达 3.0 阈值 · 破例推进</p>
+    <div class="scores">
+      <div class="score-row">
+        <div class="lbl">疗效 Efficacy</div>
+        <div class="bar-bg"><div class="bar" style="width: 75%;">30%</div></div>
+        <div class="v">2.5</div>
+        <div class="w">× 0.30 = 0.75</div>
+      </div>
+      <div class="score-row">
+        <div class="lbl">安全性 Safety</div>
+        <div class="bar-bg"><div class="bar warm" style="width: 75%;">25%</div></div>
+        <div class="v">3.0</div>
+        <div class="w">× 0.25 = 0.75</div>
+      </div>
+      <div class="score-row">
+        <div class="lbl">桥接 Bridging</div>
+        <div class="bar-bg"><div class="bar cool" style="width: 40%;">20%</div></div>
+        <div class="v">2.0</div>
+        <div class="w">× 0.20 = 0.40</div>
+      </div>
+      <div class="score-row">
+        <div class="lbl">KOL 意愿</div>
+        <div class="bar-bg"><div class="bar pink" style="width: 30%;">15%</div></div>
+        <div class="v">2.0</div>
+        <div class="w">× 0.15 = 0.30</div>
+      </div>
+      <div class="score-row">
+        <div class="lbl">RWE 真实世界</div>
+        <div class="bar-bg"><div class="bar" style="width: 10%;">10%</div></div>
+        <div class="v">1.0</div>
+        <div class="w">× 0.10 = 0.10</div>
+      </div>
+      <div class="score-row total">
+        <div class="lbl">加权合计</div>
+        <div class="bar-bg"></div>
+        <div class="v">2.30</div>
+        <div class="w" style="color: var(--accent-amber);">&lt; 3.0 阈值 · 破例</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== Slide 8: 流水线时间线 ==================== -->
+  <section class="slide" data-title="流水线">
+    <span class="section-num">07</span>
+    <div class="kicker">流水线</div>
+    <h1 class="title cool">5.5 个阶段 · 一气呵成</h1>
+    <p class="subtitle" style="margin-bottom: 30px;">Phase 1 → 5.5 · sub-agent 串行 + 并行混合</p>
+    <div class="timeline">
+      <div class="tl-item p1">
+        <div class="dot">1</div>
+        <div class="body">
+          <div class="name">DISCOVERY 宽度搜索</div>
+          <div class="desc">5 次 web_search（流行病学 / 竞品 / 临床 / 监管 / 商业）→ 产出 P1-001~005 参考文献</div>
+          <div class="badges"><span class="badge good">✅ 4/5 完成</span><span class="badge">P1-001~005</span></div>
+        </div>
+      </div>
+      <div class="tl-item p2">
+        <div class="dot">2</div>
+        <div class="body">
+          <div class="name">D-0 路由 + Battle</div>
+          <div class="desc">A-1 vs A-2 vs A-3 对抗，Orchestrator 拍板</div>
+          <div class="badges"><span class="badge good">✅ 路由 A-1</span><span class="badge warn">⚠ 跳 Battle</span></div>
+        </div>
+      </div>
+      <div class="tl-item p3">
+        <div class="dot">3</div>
+        <div class="body">
+          <div class="name">逐 Gate 深度评估</div>
+          <div class="desc">每 Gate 一份子报告 · sub-agent 并行执行</div>
+          <div class="badges"><span class="badge bad">❌ 跳整阶段</span><span class="badge warn">写 7 章代替 6 Gate</span></div>
+        </div>
+      </div>
+      <div class="tl-item p4">
+        <div class="dot">4</div>
+        <div class="body">
+          <div class="name">Gate Battle 对抗审查</div>
+          <div class="desc">每 Gate 出 2 份独立评估 · Orchestrator 仲裁</div>
+          <div class="badges"><span class="badge bad">❌ 未做</span></div>
+        </div>
+      </div>
+      <div class="tl-item p5">
+        <div class="dot">5</div>
+        <div class="body">
+          <div class="name">报告合并 + 质量终检</div>
+          <div class="desc">merge-report.sh 把 P1~G0~G5 + 附录合并 · 必填项 + 引用来源 + 置信度分级</div>
+          <div class="badges"><span class="badge good">✅ 详细版 31KB / 729 行</span><span class="badge">7 章 + 6 附录</span></div>
+        </div>
+      </div>
+      <div class="tl-item p55">
+        <div class="dot">5.5</div>
+        <div class="body">
+          <div class="name">HTML 生成 + 玄关 KB 上传</div>
+          <div class="desc">v0.7.0 重写 · 风格 12/13 渲染 · 4 步 curl 上传玄关知识库（5 年长链接）</div>
+          <div class="badges"><span class="badge good">✅ 完整</span><span class="badge">2 个链接入库</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== Slide 9: 工具栈 ==================== -->
+  <section class="slide" data-title="工具栈">
+    <span class="section-num">08</span>
+    <div class="kicker">工具栈</div>
+    <h1 class="title gradient">11 个执行入口</h1>
+    <p class="subtitle" style="margin-bottom: 30px;">从「主入口」到「上传归档」 · 全部 shell 化</p>
+    <div class="tools">
+      <div class="tool highlight"><div class="ver">v0.4.0</div><div class="name">run.sh</div><div class="desc">主入口 · 接受 caseCode / 项目名</div></div>
+      <div class="tool"><div class="ver">v0.4.0</div><div class="name">orchestrator-resume.sh</div><div class="desc">智能续跑器 · state.json 状态机</div></div>
+      <div class="tool"><div class="ver">v0.4.0</div><div class="name">start-phase.sh</div><div class="desc">阶段启动器 · sub-agent 占位</div></div>
+      <div class="tool"><div class="ver">v0.4.0</div><div class="name">bd-eval-cms-health-check.sh</div><div class="desc">环境健康检查</div></div>
+      <div class="tool highlight"><div class="ver">v0.7.0</div><div class="name">render_report.sh</div><div class="desc">风格 12/13 统一渲染入口</div></div>
+      <div class="tool highlight"><div class="ver">v0.7.0</div><div class="name">sync-to-knowledge-base.sh</div><div class="desc">玄关 4 步上传 + state.json 回写</div></div>
+      <div class="tool"><div class="ver">v0.7.0</div><div class="name">convert-md-to-html.py</div><div class="desc">风格 12 转换</div></div>
+      <div class="tool"><div class="ver">v0.5.0</div><div class="name">cms-report-to-html.py</div><div class="desc">风格 03 琥珀金兼容</div></div>
+      <div class="tool"><div class="ver">v0.4.0</div><div class="name">merge-report.sh</div><div class="desc">Phase 5 报告合并</div></div>
+      <div class="tool"><div class="ver">v0.4.0</div><div class="name">archive-links.sh</div><div class="desc">归档到 links.md</div></div>
+      <div class="tool"><div class="ver">v0.4.0</div><div class="name">batch-upload.sh</div><div class="desc">批量上传</div></div>
+      <div class="tool"><div class="ver">v0.4.0</div><div class="name">upgrade-from-zip.sh</div><div class="desc">升级工具</div></div>
+    </div>
+  </section>
+
+  <!-- ==================== Slide 10: 状态机 ==================== -->
+  <section class="slide" data-title="状态机">
+    <span class="section-num">09</span>
+    <div class="kicker">状态机</div>
+    <h1 class="title cool">state.json 驱动 AI 自启</h1>
+    <p class="subtitle" style="margin-bottom: 20px;">12 个 gateStatus · heartbeat 续跑 · 商机池批量</p>
+<pre class="json-block">{
+  <span class="k">"caseCode"</span>: <span class="s">"240625-JMKX"</span>,
+  <span class="k">"productName"</span>: <span class="s">"JMKX003948滴眼液"</span>,
+  <span class="k">"stage"</span>: <span class="s">"S3-detailed-report-completed"</span>,
+  <span class="k">"gateStatus"</span>: {
+    <span class="k">"G0_industry"</span>: <span class="s">"pending"</span>,
+    <span class="k">"G1_target"</span>: <span class="s">"pending"</span>,
+    <span class="k">"G2_clinical"</span>: <span class="s">"pending"</span>,
+    <span class="k">"G3_market"</span>: <span class="s">"pending"</span>,
+    <span class="k">"G4_business_model"</span>: <span class="s">"pending"</span>,
+    <span class="k">"G5_competitive"</span>: <span class="s">"pending"</span>,
+    <span class="k">"G_final"</span>: <span class="s">"pending"</span>
+  },
+  <span class="k">"reportRenderer"</span>: { <span class="k">"style"</span>: <span class="n">12</span>, <span class="k">"colorTheme"</span>: <span class="s">"mckinsey-navy"</span> },
+  <span class="k">"reportHtmlUrl"</span>: <span class="s">"https://doc.aishuo.co/vukii9m8"</span>,
+  <span class="k">"reportHtmlStorage"</span>: <span class="s">"kb"</span>,
+  <span class="k">"reportHtmlTtl"</span>: <span class="s">"5y"</span>,
+  <span class="k">"lastHeartbeat"</span>: <span class="s">"2026-06-12T13:38:13"</span>
+}</pre>
+    <div class="facts">
+      <div class="fact"><div class="ic">⏸</div><div class="lbl">中断续跑</div><div class="val">run.sh 自动检测 gateStatus</div></div>
+      <div class="fact"><div class="ic">💀</div><div class="lbl">心跳超时</div><div class="val">&gt;30 min 自动标记僵尸</div></div>
+      <div class="fact"><div class="ic">📦</div><div class="lbl">商机池</div><div class="val">run.sh --list 批量跑</div></div>
+    </div>
+  </section>
+
+  <!-- ==================== Slide 11: 对账表 ==================== -->
+  <section class="slide" data-title="执行对账">
+    <span class="section-num">10</span>
+    <div class="kicker">真实对账</div>
+    <h1 class="title">JMKX003948 跑流程复盘</h1>
+    <p class="subtitle" style="margin-bottom: 24px;">理论 vs 实际 · 暴露 v0.7.1 SOP 待补漏洞</p>
+    <div class="diff">
+      <div class="diff-row head"><div>阶段</div><div>标准 SOP</div><div>实际跑的</div><div style="text-align: center;">状态</div></div>
+      <div class="diff-row"><div class="phase">Phase 1</div><div class="sop">5 次 web_search + 6 篇 ref</div><div class="actual">4 次 web_search</div><div style="text-align: center;"><span class="status warn">缺 1-2 次</span></div></div>
+      <div class="diff-row"><div class="phase">Phase 2</div><div class="sop">D-0 + Battle</div><div class="actual">路由 A-1 无 Battle</div><div style="text-align: center;"><span class="status warn">跳 Battle</span></div></div>
+      <div class="diff-row"><div class="phase">Phase 3</div><div class="sop">每 Gate 独立 sub-agent</div><div class="actual">跳 Gate 直写 7 章</div><div style="text-align: center;"><span class="status bad">跳整阶段</span></div></div>
+      <div class="diff-row"><div class="phase">Phase 4</div><div class="sop">每 Gate 对抗</div><div class="actual">跳</div><div style="text-align: center;"><span class="status bad">跳整阶段</span></div></div>
+      <div class="diff-row"><div class="phase">Phase 5</div><div class="sop">merge-report.sh</div><div class="actual">Orchestrator 写</div><div style="text-align: center;"><span class="status warn">跳脚本</span></div></div>
+      <div class="diff-row"><div class="phase">Phase 5.5</div><div class="sop">render + sync</div><div class="actual">render + sync + 手动风格 13</div><div style="text-align: center;"><span class="status good">✅ 完整</span></div></div>
+    </div>
+    <div class="summary-bar">
+      <div>
+        <div class="big">50%</div>
+        <div class="lbl">流程覆盖率 · 3/6 阶段完整执行</div>
+      </div>
+      <div>
+        <div class="big">4</div>
+        <div class="lbl">v0.7.1 SOP 待补漏洞</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== Slide 12: 版本演进 ==================== -->
+  <section class="slide" data-title="版本演进">
+    <span class="section-num">11</span>
+    <div class="kicker">版本演进</div>
+    <h1 class="title cool">8 个月 · 7 个版本</h1>
+    <p class="subtitle" style="margin-bottom: 26px;">从 0.1.0 初版到 v0.7.0 全面自包含</p>
+    <div class="versions">
+      <div class="v-row"><div class="v">v0.1.0</div><div class="d">初版</div><div class="date">2024-12</div></div>
+      <div class="v-row"><div class="v">v0.2.0</div><div class="d">18 技能基础</div><div class="date">2025-03</div></div>
+      <div class="v-row"><div class="v">v0.3.0</div><div class="d">业务主体互斥规则</div><div class="date">2025-06</div></div>
+      <div class="v-row"><div class="v">v0.4.0</div><div class="d">AI 自启协议（state.json + heartbeat）</div><div class="date">2025-09</div></div>
+      <div class="v-row"><div class="v">v0.5.0</div><div class="d">报告增强 4 项方法（P1-P6）</div><div class="date">2026-02</div></div>
+      <div class="v-row"><div class="v">v0.6.0</div><div class="d">范式 4 接入玄关知识库（5 年长链接）</div><div class="date">2026-06-11</div></div>
+      <div class="v-row curr"><div class="v">v0.7.0</div><div class="d"><b>彻底解耦 doc-viewer + 自包含风格 12/13</b></div><div class="date">2026-06-12</div></div>
+      <div class="v-row future"><div class="v">v0.7.1</div><div class="d">补 SOP 7.4 + Phase 3/4 强制要求</div><div class="date">— 待办 —</div></div>
+    </div>
+  </section>
+
+  <!-- ==================== Slide 13: 末页 ==================== -->
+  <section class="slide" data-title="联系">
+    <div class="endpage">
+      <div class="kicker" style="margin: 0 auto 24px;">谢谢观看</div>
+      <h1>建一座<br>可被复用的工厂</h1>
+      <p class="subtitle" style="text-align: center; margin: 0 auto 40px;">
+        从一次"破例"到一份"SOP" · 从一个品种到一批品种<br>
+        <b style="color: var(--accent-cyan);">造物</b> 在 <b>Agent Factory</b> 等你
+      </p>
+      <div class="links">
+        <a href="https://doc.aishuo.co/vukii9m8" target="_blank">📄 JMKX003948 风格 12 报告</a>
+        <a href="https://doc.aishuo.co/kr6k7q92" target="_blank">📄 JMKX003948 风格 13 报告</a>
+        <a href="https://github.com/evan-zhang/agent-factory" target="_blank">🐙 GitHub · evan-zhang/agent-factory</a>
+        <a href="https://docs.openclaw.ai" target="_blank">📘 OpenClaw Docs</a>
+      </div>
+      <p style="margin-top: 56px; color: var(--text-3); font-size: 12px; letter-spacing: 0.2em;">
+        ⌨ 键盘 ← / → 翻页 · 顶部右侧目录跳转
+      </p>
+    </div>
+  </section>
+
+</div>
+
+<!-- ==================== 导航栏 ==================== -->
+<nav class="nav">
+  <button id="prev" title="上一页 (←)">‹</button>
+  <span class="progress"><b id="cur">1</b> / <span id="total">13</span></span>
+  <button id="next" title="下一页 (→)">›</button>
+  <span class="title" id="title">封面</span>
+</nav>
+
+<!-- ==================== 目录 ==================== -->
+<aside class="toc-bar" id="toc"></aside>
+
+<script>
+(function() {
+  const deck = document.getElementById('deck');
+  const slides = deck.querySelectorAll('.slide');
+  const total = slides.length;
+  const prev = document.getElementById('prev');
+  const next = document.getElementById('next');
+  const cur = document.getElementById('cur');
+  const tot = document.getElementById('total');
+  const title = document.getElementById('title');
+  const toc = document.getElementById('toc');
+  let idx = 0;
+
+  tot.textContent = total;
+
+  // Build TOC
+  slides.forEach((s, i) => {
+    const a = document.createElement('a');
+    a.href = '#';
+    a.textContent = (i+1).toString().padStart(2,'0') + ' · ' + (s.dataset.title || ('Slide ' + (i+1)));
+    a.addEventListener('click', e => { e.preventDefault(); go(i); });
+    toc.appendChild(a);
+  });
+  const tocLinks = toc.querySelectorAll('a');
+
+  function go(n) {
+    n = Math.max(0, Math.min(total-1, n));
+    slides[idx].classList.remove('active');
+    if (idx > 0) slides[idx].classList.add('prev');
+    setTimeout(() => slides.forEach(s => s.classList.remove('prev')), 600);
+    idx = n;
+    setTimeout(() => {
+      slides[idx].classList.add('active');
+      cur.textContent = idx + 1;
+      title.textContent = slides[idx].dataset.title || ('Slide ' + (idx+1));
+      tocLinks.forEach((a, i) => a.classList.toggle('active', i === idx));
+    }, 50);
+  }
+
+  prev.addEventListener('click', () => go(idx - 1));
+  next.addEventListener('click', () => go(idx + 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); go(idx + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(idx - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(total - 1); }
+  });
+
+  // Init TOC active
+  tocLinks[0]?.classList.add('active');
+})();
+</script>
+
+</body>
+</html>

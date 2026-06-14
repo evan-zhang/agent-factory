@@ -1,0 +1,11 @@
+{
+  "product": "TRTL-729",
+  "company": "TestCo Pharma",
+  "indication": "非小细胞肺癌",
+  "region": "中国大陆",
+  "notes": "靶向药引进评估。优先路径 5.1 类进口注册。",
+  "scheme": "B",
+  "mode": "auto",
+  "ext": [],
+  "businessEntityHint": "深康"
+}

@@ -1,0 +1,205 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bd-eval-cms/schemas/profile-schema-v0.9.1.json",
+  "title": "BD-Eval-CMS Profile Schema v0.9.1",
+  "description": "Schema for validating profile structure in bd-eval-cms v0.9.1. Defines minimum required fields for both common and skill profiles.",
+  "type": "object",
+  "definitions": {
+    "component_spec": {
+      "type": "object",
+      "description": "Component specification with selector and requirements",
+      "properties": {
+        "selector": {
+          "type": "string",
+          "description": "CSS selector for the component"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the component"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Whether the component is required"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Expected exact count (alternative to count_min)"
+        },
+        "count_min": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Minimum required count"
+        }
+      },
+      "required": ["selector", "description"]
+    },
+    "fail_policy": {
+      "type": "object",
+      "description": "Failure policy for profile rendering",
+      "properties": {
+        "missing_profile": {
+          "type": "string",
+          "enum": ["fail", "warn", "ignore"],
+          "description": "Action when profile is missing"
+        },
+        "invalid_profile_schema": {
+          "type": "string",
+          "enum": ["fail", "warn", "ignore"],
+          "description": "Action when profile schema is invalid"
+        },
+        "missing_required_component": {
+          "type": "string",
+          "enum": ["fail", "warn", "ignore"],
+          "description": "Action when required component is missing"
+        },
+        "unreplaced_template_token": {
+          "type": "string",
+          "enum": ["fail", "warn", "ignore"],
+          "description": "Action when template token is unreplaced"
+        },
+        "missing_optional_component": {
+          "type": "string",
+          "enum": ["fail", "warn", "ignore"],
+          "description": "Action when optional component is missing"
+        },
+        "missing_reference_shell": {
+          "type": "string",
+          "enum": ["fail", "warn", "ignore"],
+          "description": "Action when references shell is missing"
+        }
+      }
+    },
+    "coverage_requirements": {
+      "type": "object",
+      "description": "Coverage requirements for profile validation",
+      "properties": {
+        "minimum_coverage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Minimum required coverage percentage"
+        },
+        "critical_components": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of critical component IDs that must be present"
+        }
+      },
+      "required": ["minimum_coverage"]
+    }
+  },
+  "oneOf": [
+    {
+      "description": "Common profile schema",
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^0\\.9\\.1$",
+          "description": "Profile version must be 0.9.1"
+        },
+        "profile_type": {
+          "const": "common",
+          "description": "Profile type identifier"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable profile description"
+        },
+        "required_components": {
+          "type": "object",
+          "description": "Required components organized by category",
+          "patternProperties": {
+            ".*": {
+              "type": "object",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/definitions/component_spec"
+                }
+              }
+            }
+          }
+        },
+        "coverage_requirements": {
+          "$ref": "#/definitions/coverage_requirements"
+        }
+      },
+      "required": ["version", "profile_type", "required_components", "coverage_requirements"]
+    },
+    {
+      "description": "Skill profile schema",
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^0\\.9\\.1$",
+          "description": "Profile version must be 0.9.1"
+        },
+        "profile_type": {
+          "const": "skill",
+          "description": "Profile type identifier"
+        },
+        "skill_code": {
+          "type": "string",
+          "pattern": "^[A-Z]-[0-9]$",
+          "description": "Skill code in format A-1, A-5, etc."
+        },
+        "skill_name": {
+          "type": "string",
+          "description": "Human-readable skill name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable profile description"
+        },
+        "extends": {
+          "const": "common",
+          "description": "Base profile to extend"
+        },
+        "business_context": {
+          "type": "object",
+          "description": "Business context information",
+          "properties": {
+            "market_scope": {
+              "type": "string",
+              "description": "Market scope description"
+            },
+            "evaluation_phase": {
+              "type": "string",
+              "description": "Evaluation phase description"
+            },
+            "key_features": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Key features of this skill profile"
+            }
+          }
+        },
+        "required_components": {
+          "type": "object",
+          "description": "Required components organized by category",
+          "patternProperties": {
+            ".*": {
+              "type": "object",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/definitions/component_spec"
+                }
+              }
+            }
+          }
+        },
+        "coverage_requirements": {
+          "$ref": "#/definitions/coverage_requirements"
+        },
+        "fail_policy": {
+          "$ref": "#/definitions/fail_policy"
+        }
+      },
+      "required": ["version", "profile_type", "skill_code", "skill_name", "extends", "required_components", "coverage_requirements"]
+    }
+  ]
+}

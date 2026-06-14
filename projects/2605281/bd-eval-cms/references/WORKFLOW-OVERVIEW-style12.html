@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>bd-eval-cms Skill 完整工作流整理</title>
+<style>
+@page { size:A4; margin:0; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC","SimSun",Arial,sans-serif;
+  font-size:10.5pt; line-height:1.7; color:#1A1A2E;
+  background:#F8F9FB; -webkit-font-smoothing:antialiased;
+}
+a { color:#1a3a5c; text-decoration:none; }
+
+/* ===== COVER ===== */
+.cover {
+  min-height:96vh; display:flex; flex-direction:column; justify-content:center;
+  padding:44mm 30mm;
+  background:linear-gradient(160deg, #E8EEF5 0%, #D0DAE8 50%, #B8C8DC 100%);
+  border-bottom:6px solid #1a3a5c; position:relative;
+}
+.cover-topbar { position:absolute; top:0; left:0; right:0; height:5px; background:linear-gradient(90deg, #1a3a5c, #2c5282, #3182ce, #2c5282, #1a3a5c); }
+.cover-badge {
+  display:inline-block; font-size:9pt; font-weight:700; letter-spacing:0.12em;
+  color:#1a3a5c; border:1.5px solid #1a3a5c; padding:3px 12px; margin-bottom:20px;
+  text-transform:uppercase;
+}
+.cover-title {
+  font-size:30pt; font-weight:800; color:#0F1B2D; letter-spacing:0.06em;
+  line-height:1.2; margin-bottom:16px;
+}
+.cover-subtitle { font-size:18pt; font-weight:600; color:#1a3a5c; margin-bottom:10px; }
+.cover-company { font-size:13pt; color:#2D3748; margin-bottom:36px; }
+.cover-meta { font-size:11pt; line-height:2.1; color:#1A1A2E; }
+.cover-meta .lbl { color:#4A5568; }
+.cover-confidential {
+  margin-top:40px; font-size:9pt; font-weight:700; color:#C53030;
+  letter-spacing:0.06em; border-top:2px solid #CBD5E0; padding-top:12px;
+}
+.cover-rating-box {
+  position:absolute; bottom:40px; right:30mm;
+  background:#1a3a5c; color:#FFFFFF; text-align:center;
+  padding:12px 20px; min-width:120px;
+}
+.cover-rating-box .rating-label { font-size:9pt; letter-spacing:0.08em; opacity:0.85; }
+.cover-rating-box .rating-val { font-size:22pt; font-weight:800; line-height:1.2; }
+
+/* ===== INDEX ===== */
+.toc-section { padding:28px 28mm 28px; background:#F8F9FB; border-bottom:3px solid #CBD5E0; }
+.toc-header { font-size:14pt; font-weight:700; color:#0F1B2D; margin-bottom:14px; border-left:5px solid #1a3a5c; padding-left:10px; }
+.toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px 28px; }
+.toc-item { display:flex; align-items:baseline; gap:6px; padding:3px 0; border-bottom:1px solid #E2E8F0; font-size:9.5pt; }
+.toc-num { color:#1a3a5c; font-weight:700; min-width:30px; }
+.toc-title { color:#1A1A2E; flex:1; }
+.toc-ch { color:#4A5568; font-size:8.5pt; }
+
+/* ===== CHAPTER HEADINGS ===== */
+.chapter { padding:0 28mm; }
+h1 {
+  font-size:17pt; font-weight:700; color:#0F1B2D;
+  background:linear-gradient(to right, #EDF2F7, #F8F9FB);
+  border-bottom:3px solid #1a3a5c; padding:10px 14px 8px; margin:24px 0 14px;
+}
+h2 {
+  font-size:12.5pt; font-weight:700; color:#1a3a5c;
+  border-left:5px solid #1a3a5c; padding:6px 10px; margin:20px 0 10px;
+  background:#F8F9FB;
+}
+h3 { font-size:11pt; font-weight:700; color:#0F1B2D; margin:14px 0 7px; }
+h4 { font-size:10.5pt; font-weight:700; color:#1a3a5c; margin:12px 0 6px; }
+
+/* ===== BODY ===== */
+p { margin:0 0 8px; }
+ul,ol { margin:6px 0 10px; padding-left:20px; }
+li { margin-bottom:5px; }
+
+/* ===== TABLES ===== */
+table { width:100%; border-collapse:collapse; margin:12px 0 18px; font-size:9.5pt; }
+th {
+  background:#1a3a5c; color:#FFFFFF; font-weight:700; text-align:left;
+  padding:8px 10px; border:1px solid #2c5282;
+}
+td { padding:7px 10px; border:1px solid #CBD5E1; vertical-align:top; line-height:1.5; }
+tr:nth-child(even) td { background:#EDF2F7; }
+
+/* Status colors */
+.pass { color:#15803D; font-weight:700; }
+.cond { color:#92400E; font-weight:700; }
+.fail { color:#DC2626; font-weight:700; }
+.pending-tag { color:#92400E; font-style:italic; font-weight:600; }
+.b { font-weight:700; }
+
+/* ===== GATE CONCLUSION CARD ===== */
+.gate-card {
+  border-left:5px solid #1a3a5c; background:#F0F4F8;
+  padding:14px 16px; margin:16px 0; line-height:1.65;
+  border-radius:0;
+}
+.gate-card .gate-title {
+  font-size:12pt; font-weight:700; margin-bottom:8px;
+  padding-bottom:6px; border-bottom:2px solid rgba(0,0,0,0.08);
+}
+.gate-card .gate-label {
+  font-size:9pt; font-weight:600; display:inline-block;
+  padding:2px 8px; margin-right:6px; border-radius:3px;
+}
+.gate-card .gate-body { margin-top:8px; }
+
+/* Gate pass */
+.gate-pass { border-left-color:#15803D; background:#F0FDF4; }
+.gate-pass .gate-title { color:#15803D; }
+.gate-pass .gate-label { background:#F0FDF4; color:#15803D; border:1px solid #15803D; }
+
+/* Gate conditional */
+.gate-conditional { border-left-color:#B45309; background:#FFFBEB; }
+.gate-conditional .gate-title { color:#92400E; }
+.gate-conditional .gate-label { background:#FFFBEB; color:#92400E; border:1px solid #B45309; }
+
+/* Gate stop */
+.gate-stop { border-left-color:#DC2626; background:#FEF2F2; }
+.gate-stop .gate-title { color:#DC2626; }
+.gate-stop .gate-label { background:#FEF2F2; color:#DC2626; border:1px solid #DC2626; }
+
+/* ===== CONFIDENCE BADGE ===== */
+.confidence-badge {
+  display:inline-block; font-size:9pt; font-weight:700;
+  padding:2px 8px; border-radius:3px; line-height:1.3;
+  vertical-align:middle; margin-left:4px;
+}
+.conf-a { background:#DCFCE7; color:#15803D; }
+.conf-b { background:#DBEAFE; color:#1D4ED8; }
+.conf-c { background:#FEF3C7; color:#92400E; }
+.conf-d { background:#FEE2E2; color:#DC2626; }
+
+/* ===== BATTLE REVIEW ===== */
+.battle-auditor {
+  border-left:4px solid #6B7280; background:#F3F4F6;
+  padding:12px 14px; margin:12px 0; line-height:1.65;
+}
+.battle-executor {
+  border-left:4px solid #1a3a5c; background:#EBF0F7;
+  padding:12px 14px; margin:8px 0 12px 20px; line-height:1.65;
+}
+.battle-dispute {
+  border-left:4px solid #F59E0B; background:#FFFBEB;
+  padding:10px 14px; margin:10px 0; line-height:1.65;
+}
+.battle-label {
+  font-size:8.5pt; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+  display:block; margin-bottom:4px; opacity:0.7;
+}
+
+/* ===== CONFLICT BOX ===== */
+.conflict-box {
+  border-left:4px solid #F59E0B; background:#FFFBEB;
+  padding:10px 14px; margin:10px 0; line-height:1.65;
+}
+
+/* ===== VETO BOX ===== */
+.veto-box {
+  border-left:5px solid #DC2626; background:#FEF2F2;
+  padding:12px 14px; margin:12px 0; line-height:1.65;
+}
+
+/* ===== STAGE TAG ===== */
+.stage-tag {
+  display:inline-block; font-size:8.5pt; font-weight:700;
+  padding:2px 8px; border-radius:3px; line-height:1.3;
+  vertical-align:middle;
+}
+.stage-a { background:#DBEAFE; color:#1a3a5c; }
+.stage-b { background:#E0E7FF; color:#3730A3; }
+
+/* ===== DRL PRIORITY ===== */
+.drl-priority {
+  display:inline-block; font-size:8.5pt; font-weight:700;
+  padding:2px 8px; border-radius:3px; line-height:1.3;
+  vertical-align:middle;
+}
+.drl-p0 { background:#FEE2E2; color:#DC2626; }
+.drl-p1 { background:#FEF3C7; color:#92400E; }
+.drl-p2 { background:#DBEAFE; color:#1D4ED8; }
+
+/* ===== NEUTRAL REVIEW ===== */
+.neutral-review {
+  border-left:4px solid #9CA3AF; background:#F9FAFB;
+  padding:10px 14px; margin:10px 0; line-height:1.65;
+}
+
+/* ===== RISK LEVEL ===== */
+.risk-high { border-left:4px solid #DC2626; background:#FEF2F2; padding:10px 14px; margin:10px 0; }
+.risk-medium { border-left:4px solid #F59E0B; background:#FFFBEB; padding:10px 14px; margin:10px 0; }
+.risk-low { border-left:4px solid #15803D; background:#F0FDF4; padding:10px 14px; margin:10px 0; }
+
+/* Highlight boxes */
+.highlight-box {
+  border-left:5px solid #1a3a5c; background:#EDF2F7;
+  padding:10px 14px; margin:12px 0; line-height:1.65;
+}
+.veto-pass { border-left:5px solid #15803D; background:#F0FDF4; padding:10px 14px; margin:10px 0; }
+.veto-cond { border-left:5px solid #92400E; background:#FFFBEB; padding:10px 14px; margin:10px 0; }
+.veto-fail { border-left:5px solid #DC2626; background:#FEF2F2; padding:10px 14px; margin:10px 0; }
+
+/* Rating badge */
+.rating-badge {
+  display:inline-block; font-size:12pt; font-weight:800;
+  color:#0F1B2D; border:2px solid #1a3a5c; padding:3px 14px; margin-top:6px;
+}
+.summary-tag { font-weight:700; color:#1a3a5c; }
+
+/* Code blocks */
+pre {
+  font-family:"Courier New",Courier,monospace; font-size:9pt;
+  background:#EDF2F7; border:1px solid #CBD5E0; border-left:4px solid #1a3a5c;
+  padding:10px 14px; margin:10px 0 14px; line-height:1.7; color:#1A1A2E; white-space:pre-wrap;
+}
+blockquote {
+  border-left:5px solid #1a3a5c; background:#EDF2F7;
+  padding:10px 14px; margin:12px 0; color:#1A1A2E;
+}
+
+/* Alternating row tints */
+.amber-row td { background:#EDF2F7 !important; }
+.warm-row td { background:#F7EFE7 !important; }
+.green-row td { background:#EDF5E8 !important; }
+.red-row td { background:#FDEEEE !important; }
+
+/* Table header variants */
+.th-green th { background:#15803D !important; border-color:#15803D !important; }
+.th-red th { background:#DC2626 !important; border-color:#DC2626 !important; }
+.th-warm th { background:#92400E !important; border-color:#92400E !important; }
+
+/* ===== PAGE BREAK ===== */
+.page-break { page-break-after:always; }
+
+/* ===== FOOTER ===== */
+.report-footer {
+  font-size:8.5pt; color:#4A5568; border-top:1px solid #E2E8F0;
+  padding-top:6px; margin-top:24px;
+}
+
+/* Sub-label in table first col */
+.td-label td:first-child { background:#EDF2F7 !important; font-weight:600; white-space:nowrap; width:160px; }
+
+/* Section divider */
+.section-rule { border-top:2px solid #CBD5E0; margin:20px 0; }
+
+/* Score highlight */
+.score-a { color:#15803D; font-weight:700; }
+.score-b { color:#92400E; font-weight:700; }
+.score-c { color:#DC2626; font-weight:700; }
+
+/* Gate summary table */
+.gate-summary th { background:#1a3a5c; color:#FFFFFF; }
+.gate-summary td:nth-child(2) { font-weight:700; }
+
+/* ===== RESPONSIVE ===== */
+@media screen and (max-width:768px){
+  body{font-size:9.5pt;line-height:1.65}
+  .cover{padding:20mm 12mm}
+  .cover-title{font-size:22pt}
+  .cover-subtitle{font-size:14pt}
+  .cover-meta{font-size:10pt}
+  .cover-rating-box{bottom:20px;right:12mm;padding:8px 14px;min-width:100px}
+  .cover-rating-box .rating-val{font-size:16pt}
+  .cover-topbar,.cover-topline{height:3px}
+  .toc-section{padding:16px 10mm}
+  .toc-grid{grid-template-columns:1fr;gap:3px}
+  .chapter{padding:0 10mm}
+  h1{font-size:14pt;padding:8px 10px}
+  h2{font-size:11.5pt}
+  table{font-size:8.5pt;margin:10px 0 14px}
+  th,td{padding:5px 7px}
+  pre{font-size:8pt;padding:8px 10px}
+  .highlight-box,.veto-pass,.veto-cond,.veto-fail{padding:8px 10px;margin:8px 0}
+  .gate-card{padding:10px 12px;margin:12px 0}
+  .battle-auditor,.battle-executor,.battle-dispute{padding:8px 10px;margin:8px 0}
+  .battle-executor{margin-left:10px}
+  .confidence-badge,.stage-tag,.drl-priority{font-size:8pt;padding:1px 6px}
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:12px 0 18px}
+}
+@media screen and (max-width:480px){
+  body{font-size:9pt}
+  .cover{padding:16mm 10mm}
+  .cover-title{font-size:18pt}
+  table{font-size:8pt}
+}
+@media print{
+  .chapter{padding:0}
+  body{background:#FFF}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER PAGE ==================== -->
+<div class="cover page-break">
+  <div class="cover-topbar"></div>
+  <div class="cover-badge">内部机密 · 限参与评估团队</div>
+  <div class="cover-title">C&nbsp;M&nbsp;S&nbsp;投&nbsp;前&nbsp;评&nbsp;估&nbsp;报&nbsp;告</div>
+  <div class="cover-subtitle">Skill Workflow Documentation</div>
+  <div class="cover-company">康哲药业（CMS）</div>
+  <div class="cover-meta">
+    <div><span class="lbl">案件代号：</span>SKILL-2026-0612</div>
+    <div><span class="lbl">评估技能：</span>bd-eval-cms v0.7.0</div>
+    <div><span class="lbl">业务主体：</span>Agent Factory / SKILL 工厂</div>
+    <div><span class="lbl">评估日期：</span>2026-06-12</div>
+    <div><span class="lbl">综合评级：</span><span class="b">v0.7.0 生产就绪</span></div>
+  </div>
+  <div class="cover-confidential">⚠ 内部机密 — 仅限参与评估团队成员阅览</div>
+  <div class="cover-rating-box">
+    <div class="rating-label">推荐结论</div>
+    <div class="rating-val">PROD</div>
+  </div>
+</div>
+
+<!-- ==================== TABLE OF CONTENTS ==================== -->
+<div class="toc-section page-break">
+  <div class="toc-header">目 录</div>
+  <div class="toc-grid">
+    <div class="toc-item"><span class="toc-num">一、</span><span class="toc-title">一、Skill 物理结构</span></div>
+<div class="toc-item"><span class="toc-num">二、</span><span class="toc-title">二、规范层 vs 执行层（两入口设计）</span></div>
+<div class="toc-item"><span class="toc-num">三、</span><span class="toc-title">三、D-0 路由器决策树（核心路由）</span></div>
+<div class="toc-item"><span class="toc-num">四、</span><span class="toc-title">四、Gate 0~5 + Final 评估框架（核心）</span></div>
+<div class="toc-item"><span class="toc-num">五、</span><span class="toc-title">五、完整流水线（Phase 1~5.5）</span></div>
+<div class="toc-item"><span class="toc-num">六、</span><span class="toc-title">六、Orchestrator 工具栈</span></div>
+<div class="toc-item"><span class="toc-num">七、</span><span class="toc-title">七、状态机（state.json）</span></div>
+<div class="toc-item"><span class="toc-num">八、</span><span class="toc-title">八、JMKX003948 真实跑流程对账</span></div>
+<div class="toc-item"><span class="toc-num">九、</span><span class="toc-title">九、版本演进</span></div>
+<div class="toc-item"><span class="toc-num">十、</span><span class="toc-title">十、相关链接</span></div>
+  </div>
+</div>
+
+<!-- ==================== CONTENT CHAPTERS ==================== -->
+<div class="chapter"><h1>一、Skill 物理结构</h1><pre><code class="language-">bd-eval-cms/
+├── SKILL.md                          # 规范层入口（Step 1~11 路由 + 触发词）
+├── EXECUTION.md                      # 执行层入口（Phase 1~5.5 流水线）
+├── config.yaml                       # 业务固定参数（v0.6.0 起，projectId / path / 风格）
+├── version.json                      # 0.7.0 + changelog + dependencies
+├── VERSION                           # 顶层版本号
+│
+├── references/                       # 流程文档库
+│   ├── 00_CMS-投前评估技能体系总规则.md         # 顶层规范
+│   ├── 00_体系总规则增补条款_v1.1.md
+│   ├── 00_体系总规则增补条款_v1.5.md
+│   ├── D-0_bd-evaluation-router.md             # 路由器决策树
+│   ├── A-0 ~ A-8 / B-1~B-3 / C-1~C-3 / D-1~D-3 / E-1  # 20 个技能定义
+│   ├── SOP.md                                   # 完整操作规范（80KB）
+│   ├── sub-agent-prompt-template.md             # sub-agent 提示词模板
+│   └── WORKFLOW-OVERVIEW.md                     # 本文档
+│
+├── templates/                        # 风格模板
+│   ├── skeleton-cms.html             # v0.5.0 加的 CMS 专用骨架
+│   ├── style-12/                     # 专用型 CMS Eval（mckinsey-navy 等 4 配色）
+│   ├── style-13/                     # 程序化 Markdown→HTML
+│   └── style-03-color/               # v0.5.0 琥珀金风格兼容（amber.yml）
+│
+├── scripts/                          # 11 个执行入口
+│   ├── run.sh                        # 主入口（接受 caseCode / 项目名）
+│   ├── orchestrator-resume.sh        # 智能续跑器（state.json 状态机）
+│   ├── start-phase.sh                # 阶段启动器（sub-agent 占位）
+│   ├── render_report.sh              # v0.7.0 报告渲染统一入口
+│   ├── sync-to-knowledge-base.sh     # v0.7.0 玄关 4 步上传
+│   ├── convert-md-to-html.py         # 风格 12 转换
+│   ├── cms-report-to-html.py         # 风格 03 琥珀金兼容
+│   ├── merge-report.sh               # Phase 5 报告合并
+│   ├── archive-links.sh              # 归档到 links.md
+│   ├── batch-upload.sh               # 批量上传
+│   ├── bd-eval-cms-health-check.sh   # 健康检查
+│   └── upgrade-from-zip.sh           # 升级工具
+│
+└── {品种目录}/                       # 每个品种一个子目录
+    ├── state.json                    # 状态机（12 个 gateStatus 状态位）
+    ├── 04-final-report.md            # Phase 5 合并的最终报告
+    ├── REPORT.html                   # 渲染后 HTML（v0.7.0 起 5 年长链接）
+    ├── references/P1-P6/             # 各 Phase 产出
+    └── EXT/                          # 用户外部资料注入</code></pre>
+<div class="section-rule"></div></div><div class="page-break"></div>
+<div class="chapter"><h1>二、规范层 vs 执行层（两入口设计）</h1><table><tr><td>层</td><td>文件</td><td>角色</td><td>内容</td></tr></table>
+<table><tr><td>**规范层**</td><td>`SKILL.md`</td><td>给 Agent 读</td><td>触发词 + Step 1~11（路由 + 11 步必做）</td></tr></table>
+<table><tr><td>**执行层**</td><td>`EXECUTION.md`</td><td>给 sub-agent 读</td><td>Phase 1~5.5 流水线（操作细节）</td></tr></table>
+<p><b>SKILL.md Step 1~11</b>（11 步必做）：</p>
+<table><tr><td>Step</td><td>内容</td></tr></table>
+<table><tr><td>1</td><td>确认输出工具链（非阻塞）</td></tr></table>
+<table><tr><td>2</td><td>**D-0 路由**（按产品类型 + 业务主体路由到 20 个技能之一）</td></tr></table>
+<table><tr><td>3</td><td>总规则三框架融合</td></tr></table>
+<table><tr><td>4</td><td>一票否决清单（8 条，体系级不可豁免）</td></tr></table>
+<table><tr><td>5</td><td>Gate 0~5 + Final 评估</td></tr></table>
+<table><tr><td>6</td><td>业务主体互斥规则</td></tr></table>
+<table><tr><td>7</td><td>财务硬门槛（创新药 / 仿制药 / 医美三类）</td></tr></table>
+<table><tr><td>8</td><td>One-pager 终局先立</td></tr></table>
+<table><tr><td>9</td><td>报告骨架（HTML 麦肯锡风格）</td></tr></table>
+<table><tr><td>10</td><td>报告归档</td></tr></table>
+<table><tr><td>11</td><td>与其他 skill 协同</td></tr></table>
+<p><b>EXECUTION.md Phase 1~5.5</b>（5.5 个阶段流水线）：</p>
+<table><tr><td>阶段</td><td>内容</td></tr></table>
+<table><tr><td>Phase 1</td><td>DISCOVERY（宽度搜索 + 业务主体识别）</td></tr></table>
+<table><tr><td>Phase 2</td><td>D-0 路由 + 技能确认 Battle</td></tr></table>
+<table><tr><td>Phase 3</td><td>逐 Gate 深度评估（6-Gate）</td></tr></table>
+<table><tr><td>Phase 4</td><td>Gate Battle 对抗审查</td></tr></table>
+<table><tr><td>Phase 5</td><td>报告合并 + 质量终检</td></tr></table>
+<table><tr><td>Phase 5.5</td><td>HTML 生成 + 上传归档（v0.7.0 重写为玄关知识库 5 年长链接）</td></tr></table>
+<div class="section-rule"></div></div><div class="page-break"></div>
+<div class="chapter"><h1>三、D-0 路由器决策树（核心路由）</h1><pre><code class="language-">输入：标的名称 / 产品类型 / 业务主体
+
+├── 是否为 CMS 自主研发（Sponsor/全球 IP）？
+│   └── YES → A-3（自主研发管线）
+│
+├── 是否为国际市场（港澳台/东南亚/GCC/澳新/拉美）？
+│   ├── 单品单市场 → C-1
+│   ├── 单品多市场 → C-2
+│   └── 组合策略 → C-3
+│
+├── 是否需要批量横向比选（3+ 标的）？
+│   └── YES → A-7（多标的筛选）
+│
+├── 是否为医美产品（注射/器械/能量源设备）？
+│   ├── 单标的引进 → B-1
+│   └── 组合复盘 → B-2
+│
+├── 是否为消费健康/OTC？
+│   └── YES → B-3
+│
+├── 是否为国内 Biotech（股权+商业化双引擎）？
+│   └── YES → A-2 + E-1
+│
+├── 化学药品类型
+│   ├── 3类/4类高壁垒仿制药 → A-8
+│   ├── 国内未上市引进（创新药）→ A-1
+│   ├── 国内代理权/推广权 → A-2
+│   ├── 生物类似药 → A-4
+│   ├── 已上市产品权益 → A-5
+│   ├── Rx 转 OTC → A-6
+│
+└── 通用综合评估
+    ├── 综合尽调 → D-1
+    ├── 市场全景 → D-2
+    ├── One-pager → D-3
+    └── 股权深度尽调 → E-1</code></pre>
+<p><b>JMKX003948 路由实例</b>：</p>
+<ul><li>HIF-2α 创新药（全球 IP 不在 CMS）→ A-1</li></ul>
+<ul><li>滴眼液（眼科）→ A-1 主评估</li></ul>
+<ul><li>国内 Biotech 济煜医药 → 业务主体 = A-2 范畴，但合作模式偏 A-1 引进</li></ul>
+<ul><li>**最终技能编号**：**A-1（国内未上市创新药引进）**</li></ul>
+<div class="section-rule"></div></div><div class="page-break"></div>
+<div class="chapter"><h1>四、Gate 0~5 + Final 评估框架（核心）</h1><blockquote>**以终为始 · One-pager 终局先立 · 防漏审映射表**</blockquote>
+<table><tr><td>Gate</td><td>名称</td><td>必填项</td><td>拒绝条件</td></tr></table>
+<table><tr><td>**Gate 0**</td><td>准入门</td><td>5 必填（标的/类型/主体/区域/价格区间）+ 8 条一票否决</td><td>一票否决 8 条命中即终止</td></tr></table>
+<table><tr><td>**Gate 1**</td><td>前提门</td><td>海外注册 + III 期数据 + MoA 清晰</td><td>海外未注册 + III 期无数据 = 否决</td></tr></table>
+<table><tr><td>**Gate 2**</td><td>定调门</td><td>MoA + 临床证据五维评分（≥ 3.0）</td><td>临床评分 < 3.0 = 否决（**JMKX003948 破例**）</td></tr></table>
+<table><tr><td>**Gate 3**</td><td>商业门</td><td>市场规模 + 竞争格局 + 渗透率</td><td>竞品 > 5 家 + 渗透率 < 3% = 否决</td></tr></table>
+<table><tr><td>**Gate 4**</td><td>支付门</td><td>财务回报测算 + NPV + 峰值销售</td><td>NPV < 0 或 IRR < 8% = 否决</td></tr></table>
+<table><tr><td>**Gate 5**</td><td>成本门</td><td>交易结构 + 供应协议 + 首付款</td><td>首付款 > 估值 30% = 风险预警</td></tr></table>
+<table><tr><td>**Final**</td><td>终审</td><td>投委会决策包 + One-pager + Battle 对抗通过</td><td>任何 Battle 不通过 = 退回</td></tr></table>
+<h2>Gate 2 临床证据五维评分（v0.5.0 P1 方法）</h2>
+<table><tr><td>维度</td><td>权重</td><td>JMKX003948 评分</td><td>加权分</td></tr></table>
+<table><tr><td>疗效</td><td>30%</td><td>2.5</td><td>0.75</td></tr></table>
+<table><tr><td>安全性</td><td>25%</td><td>3.0</td><td>0.75</td></tr></table>
+<table><tr><td>桥接</td><td>20%</td><td>2.0</td><td>0.40</td></tr></table>
+<table><tr><td>KOL</td><td>15%</td><td>2.0</td><td>0.30</td></tr></table>
+<table><tr><td>RWE</td><td>10%</td><td>1.0</td><td>0.10</td></tr></table>
+<table><tr><td>**合计**</td><td>100%</td><td></td><td>**2.30（未达 3.0 阈值，破例推进）**</td></tr></table>
+<div class="section-rule"></div></div><div class="page-break"></div>
+<div class="chapter"><h1>五、完整流水线（Phase 1~5.5）</h1><h2>Phase 1: DISCOVERY（5 次联网搜索 + 6 篇参考文献）</h2>
+<ul><li>**输入**：用户给的标的背景</li></ul>
+<ul><li>**操作**：web_search 5 次（流行病学 / 竞品 / 临床 / 监管 / 商业），产出 P1-001~005 参考文献</li></ul>
+<ul><li>**输出**：`{品种目录}/P1-discovery.md` + `references/P1/` 5 个文件</li></ul>
+<ul><li>**完成标志**：`P1/` 目录创建</li></ul>
+<ul><li>**JMKX003948**：✅（4 次 web_search 补全：济煜医药管线、Belzutifan 竞品、抗 VEGF 销售数据）</li></ul>
+<h2>Phase 2: D-0 路由 + 技能确认 Battle</h2>
+<ul><li>**D-0 路由决策树**（见上）</li></ul>
+<ul><li>**技能确认 Battle**：A-1 vs A-2 vs A-3 必做对抗，Orchestrator 拍板</li></ul>
+<ul><li>**JMKX003948**：✅ 路由 A-1</li></ul>
+<h2>Phase 3: 逐 Gate 深度评估（6-Gate）</h2>
+<ul><li>**每个 Gate 一份子报告**：`G0-industry.md` / `G1-target.md` / `G2-clinical.md` / ...</li></ul>
+<ul><li>**sub-agent 并行执行**（Gate 间不依赖）</li></ul>
+<ul><li>**Battle 对抗**（每个 Gate 完成触发 sub-agent 互相攻击）</li></ul>
+<ul><li>**JMKX003948**：⚠️（Orchestrator 跳过 Gate 直接写 7 章总报告，**违反 SOP**）</li></ul>
+<h2>Phase 4: Gate Battle 对抗审查</h2>
+<ul><li>**每个 Gate 出 2 份独立评估**（sub-agent A vs B）</li></ul>
+<ul><li>**Orchestrator 仲裁**：采纳 / 部分采纳 / 重跑</li></ul>
+<ul><li>**JMKX003948**：❌（未做）</li></ul>
+<h2>Phase 5: 报告合并 + 质量终检</h2>
+<ul><li>**merge-report.sh** 把 P1~G0~G5 + 附录合并成 `04-final-report.md`</li></ul>
+<ul><li>**质量终检**：必填项 + 引用来源 + 数据置信度分级</li></ul>
+<ul><li>**JMKX003948**：✅（详细版 31KB / 729 行 / 7 章 + 6 附录）</li></ul>
+<h2>Phase 5.5: HTML 生成 + 上传归档（v0.7.0 重写）</h2>
+<ul><li>**风格选择**：`config.yaml.reportRenderer.defaultStyle`（12 或 13）</li></ul>
+<ul><li>**本地渲染**：`render_report.sh <品种目录> [12|13] [配色]`</li></ul>
+<ul><li>**玄关知识库 4 步**（`sync-to-knowledge-base.sh`）：</li></ul>
+<p>1. <code>uploadWholeFile</code> → resourceId</p>
+<p>2. <code>saveFileByPath</code> → fileId（项目编号 = 业务主目录）</p>
+<p>3. 换 <code>access-token</code>（xgToken）</p>
+<p>4. <code>doc-preview/ticket</code> → previewUrl（<b>5 年长链接</b>）</p>
+<ul><li>**state.json 回写**：reportHtmlUrl / reportHtmlFileId / reportHtmlStorage=kb / reportHtmlTtl=5y</li></ul>
+<ul><li>**JMKX003948**：✅</li></ul>
+<ul><li>风格 12：https://doc.aishuo.co/vukii9m8</li></ul>
+<ul><li>风格 13：https://doc.aishuo.co/kr6k7q92</li></ul>
+<div class="section-rule"></div></div><div class="page-break"></div>
+<div class="chapter"><h1>六、Orchestrator 工具栈</h1><table><tr><td>工具</td><td>来源</td><td>用途</td></tr></table>
+<table><tr><td>`run.sh`</td><td>v0.4.0 起</td><td>主入口，caseCode 解析 → 续跑</td></tr></table>
+<table><tr><td>`orchestrator-resume.sh`</td><td>v0.4.0 起</td><td>state.json 状态机，AI 自启协议</td></tr></table>
+<table><tr><td>`start-phase.sh`</td><td>v0.4.0 起</td><td>阶段启动器（占位实现，需补 sub-agent）</td></tr></table>
+<table><tr><td>`bd-eval-cms-health-check.sh`</td><td>v0.4.0 起</td><td>环境健康检查（CPU/磁盘/依赖）</td></tr></table>
+<table><tr><td>`render_report.sh`</td><td>v0.7.0 新增</td><td>风格 12/13 统一渲染入口</td></tr></table>
+<table><tr><td>`sync-to-knowledge-base.sh`</td><td>v0.7.0 重写</td><td>玄关 4 步上传 + state.json 回写</td></tr></table>
+<table><tr><td>`merge-report.sh`</td><td>v0.4.0 起</td><td>Phase 5 报告合并</td></tr></table>
+<table><tr><td>`archive-links.sh`</td><td>v0.4.0 起</td><td>归档到 links.md</td></tr></table>
+<div class="section-rule"></div></div><div class="page-break"></div>
+<div class="chapter"><h1>七、状态机（state.json）</h1><pre><code class="language-json">{
+  "caseCode": "240625-JMKX",
+  "productName": "JMKX003948滴眼液",
+  "stage": "S3-detailed-report-completed",
+  "gateStatus": {
+    "G0_industry": "pending",
+    "G1_target": "pending",
+    "G2_clinical": "pending",   
+    "G3_market": "pending",
+    "G4_business_model": "pending",
+    "G5_competitive": "pending",
+    "G_final": "pending"
+  },
+  "lastHeartbeat": "ISO-8601",
+  "inProgressGate": "gate-2",
+  "reportRenderer": { 
+    "style": "12", 
+    "colorTheme": "mckinsey-navy" 
+  },
+  "reportHtmlUrl": "https://doc.aishuo.co/vukii9m8",
+  "reportHtmlStorage": "kb",
+  "reportHtmlTtl": "5y",
+  "reportHtmlFileId": 2065307535446990849,
+  "knowledgeBaseSync": {
+    "syncedAt": "2026-06-12T13:38:13",
+    "syncedFiles": 2,
+    "kbPath": "240625/240625-JMKX/"
+  }
+}</code></pre>
+<p><b>状态机驱动 AI 自启协议</b>：</p>
+<ul><li>任何阶段中断 → 下次 `run.sh` 自动检测 `gateStatus` 续跑</li></ul>
+<ul><li>心跳超时（>30 min）→ 标记僵尸</li></ul>
+<ul><li>商机池批量跑 → `run.sh --list` 列出所有项目状态</li></ul>
+<div class="section-rule"></div></div><div class="page-break"></div>
+<div class="chapter"><h1>八、JMKX003948 真实跑流程对账</h1><table><tr><td>阶段</td><td>标准 SOP</td><td>我实际跑的</td><td>差异</td></tr></table>
+<table><tr><td>Phase 1 DISCOVERY</td><td>5 次 web_search + 6 篇 ref</td><td>4 次 web_search</td><td>缺 1-2 次</td></tr></table>
+<table><tr><td>Phase 2 路由</td><td>D-0 + Battle</td><td>路由 A-1 无 Battle</td><td>跳 Battle</td></tr></table>
+<table><tr><td>Phase 3 6-Gate</td><td>每 Gate 独立 sub-agent</td><td>跳 Gate 直写 7 章</td><td>**跳整阶段**</td></tr></table>
+<table><tr><td>Phase 4 Battle</td><td>每 Gate 对抗</td><td>跳</td><td>跳整阶段</td></tr></table>
+<table><tr><td>Phase 5 合并</td><td>merge-report.sh</td><td>Orchestrator 写</td><td>跳脚本</td></tr></table>
+<table><tr><td>Phase 5.5 HTML</td><td>render + sync</td><td>render + sync + 手动风格 13</td><td>完整</td></tr></table>
+<p><b>流程覆盖率</b>：<b>50%</b>（执行了 3/6 阶段，3 阶段跳过）</p>
+<p><b>已知 SOP 漏洞</b>（v0.7.1 待补）：</p>
+<p>1. SOP 7.4 缺 S3 详细报告硬性要求 → Orchestrator 可手糊 7 章骨架代替 sub-agent</p>
+<p>2. Phase 3 6-Gate 独立 sub-agent 没强制 → Orchestrator 可跳 Gate 直写</p>
+<p>3. Phase 4 Battle 对抗没强制 → Orchestrator 可跳 Battle</p>
+<p>4. <code>start-phase.sh</code> 还是占位实现 → 没真接 sub-agent</p>
+<div class="section-rule"></div></div><div class="page-break"></div>
+<div class="chapter"><h1>九、版本演进</h1><table><tr><td>版本</td><td>关键变更</td><td>日期</td></tr></table>
+<table><tr><td>v0.1.0</td><td>初版</td><td>2024-12</td></tr></table>
+<table><tr><td>v0.2.0</td><td>18 技能基础</td><td>2025-03</td></tr></table>
+<table><tr><td>v0.3.0</td><td>业务主体互斥规则</td><td>2025-06</td></tr></table>
+<table><tr><td>v0.4.0</td><td>AI 自启协议（state.json + heartbeat）</td><td>2025-09</td></tr></table>
+<table><tr><td>v0.5.0</td><td>报告增强 4 项方法（P1-P6）</td><td>2026-02</td></tr></table>
+<table><tr><td>v0.6.0</td><td>范式 4 接入玄关知识库（5 年长链接）</td><td>2026-06-11</td></tr></table>
+<table><tr><td>**v0.7.0**</td><td>**彻底解耦 doc-viewer + 自包含风格 12/13**</td><td>**2026-06-12**</td></tr></table>
+<table><tr><td>v0.7.1</td><td>补 SOP 7.4 + Phase 3/4 强制要求（待办）</td><td>-</td></tr></table>
+<div class="section-rule"></div></div><div class="page-break"></div>
+<div class="chapter"><h1>十、相关链接</h1><ul><li>**风格 12 报告**（JMKX003948 详细版）：https://doc.aishuo.co/vukii9m8</li></ul>
+<ul><li>**风格 13 报告**（JMKX003948 详细版）：https://doc.aishuo.co/kr6k7q92</li></ul>
+<ul><li>**SKILL.md**：`bd-eval-cms/SKILL.md`</li></ul>
+<ul><li>**EXECUTION.md**：`bd-eval-cms/EXECUTION.md`</li></ul>
+<ul><li>**SOP.md**：`bd-eval-cms/references/SOP.md`</li></ul>
+<ul><li>**D-0 路由器**：`bd-eval-cms/references/D-0_bd-evaluation-router.md`</li></ul>
+<ul><li>**总规则**：`bd-eval-cms/references/00_CMS-投前评估技能体系总规则.md`</li></ul>
+<div class="section-rule"></div>
+<p>_本文档为 v0.7.0 工作流整理，下一次更新将纳入 v0.7.1 SOP 修补内容。_</p></div><div class="page-break"></div>
+
+</body>
+</html>
