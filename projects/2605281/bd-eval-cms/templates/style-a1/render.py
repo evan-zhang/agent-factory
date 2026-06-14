@@ -509,7 +509,6 @@ def convert_confidence_badges(html_content):
 
 def convert_glossary_tables(html_content):
     """转换术语表"""
-    # 更灵活的术语表转换
     pattern = r'## 术语与缩写表\s*[：:]?\s*\n+(.*?)\n*(?=\n##|$)'
 
     def glossary_replacer(match):
@@ -518,11 +517,18 @@ def convert_glossary_tables(html_content):
 
         result = ['<table class="glossary-table">', '<thead><tr><th>术语</th><th>解释</th></tr></thead><tbody>']
 
-        for line in lines:
+        for idx, line in enumerate(lines):
+            # 跳过分隔线（|------|------|）
+            if re.match(r'^\|[\s\-:|]+\|$', line):
+                continue
+            # 跳过 Markdown 表头行（thead 已硬编码）
+            if idx == 0:
+                continue
             if '|' in line and not line.startswith('#'):
-                parts = [p.strip() for p in line.split('|')]
-                if len(parts) >= 2:
-                    result.append(f'<tr><td>{parts[0]}</td><td>{parts[1]}</td></tr>')
+                # 去掉首尾空元素（"| BD | xxx |".split('|') → ['', ' BD ', ' xxx ', '']）
+                cells = [c.strip() for c in line.split('|')[1:-1]]
+                if len(cells) >= 2:
+                    result.append(f'<tr><td>{cells[0]}</td><td>{cells[1]}</td></tr>')
 
         result.append('</tbody></table>')
         return '\n'.join(result)
@@ -652,7 +658,12 @@ def convert_chapters(md_content):
             ch_title = ch_match.group(2)
 
             cn_num_map = {'一': '1', '二': '2', '三': '3', '四': '4', '五': '5',
-                         '六': '6', '七': '7', '八': '8', '九': '9', '十': '10'}
+                         '六': '6', '七': '7', '八': '8', '九': '9', '十': '10',
+                         '十一': '11', '十二': '12', '十三': '13', '十四': '14',
+                         '十五': '15', '十六': '16', '十七': '17', '十八': '18',
+                         '十九': '19', '二十': '20', '二十一': '21', '二十二': '22',
+                         '二十三': '23', '二十四': '24', '二十五': '25', '二十六': '26',
+                         '二十七': '27', '二十八': '28', '二十九': '29', '三十': '30'}
             num = cn_num_map.get(ch_num_str, ch_num_str)
 
             chapters_html.append(f'<div class="chapter"><h1>第{num}章 {ch_title}</h1>')
