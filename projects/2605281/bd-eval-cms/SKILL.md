@@ -17,9 +17,11 @@ description: |
 
   即使用户表述模糊，只要涉及CMS业务主体（深康/德镁/维盛/院外业务/天津康哲/康联达）下的产品引进或BD工作，都应立即触发本技能。
 
+  单一入口触发词（v0.9.2+）：新商机入池 / 跑一个品种 / 走完整评估 / 全链路评估 / 从品种名+公司名启动 / 自动跑全链路 / 商机驱动。
+
 metadata:
   display_name: 医药BD评估体系（CMS）
-  version: 0.9.0
+  version: 0.9.2
 compatibility: Claude
 ---
 
@@ -54,6 +56,54 @@ compatibility: Claude
 正式报告默认输出HTML。若当前环境存在专用写作/HTML生成技能，可优先调用；若不存在，不得阻塞评估，应直接按本技能的HTML结构、视觉规范和章节规则生成。
 
 禁止因外部 `writing` 技能不可用而停止路由、评估或报告生成。
+
+## Step 1.5：单一入口调用（v0.9.2+）
+
+业务程序/流水线/cron 任务可以通过 **一个命令** 启动一次完整评估，只需提供品种名 + 公司名：
+
+**Flag 形式**：
+
+```bash
+bash scripts/run-opportunity.sh \
+  --product "TRTL-729" \
+  --company "TestCo Pharma" \
+  [--indication "非小细胞肺癌"] \
+  [--region "中国大陆"] \
+  [--notes "靶向药引进评估"] \
+  [--ext /path/to/material.pdf] \
+  [--scheme B] \
+  [--mode auto] \
+  [--dry-run]
+```
+
+**JSON 形式（stdin 或文件）**：
+
+```bash
+bash scripts/run-opportunity.sh --json /path/to/opportunity.json
+echo '{"product":"...","company":"..."}' | bash scripts/run-opportunity.sh --json -
+```
+
+**自动行为**：
+
+- 生成唯一 caseCode（`YYMMDD-XXXX`）
+- 创建 case 目录 + `state.json` 12 gateStatus
+- 写 `00-opportunity.md` 留底原始输入
+- 调 `orchestrator-resume.sh` 自驱 Phase 1→5.5
+- stdout 输出结构化 prefix，程序可解析：
+
+```
+CASE_PATH=...
+CASE_CODE=...
+PHASE_STATUS=...
+OPPORTUNITY_ID=...
+```
+
+**幂等**：同日同 `(product, company)` 重复调用视为续跑，不会覆盖现有 case。冲突时自动加 `-1 / -2` 后缀。
+
+**详细规范**：`design/REQ-v0.9.2.md` + `design/DESIGN-v0.9.2.md`。
+**测试**：`bash scripts/test-run-opportunity.sh`（17 个用例）。
+**示例**：`references/opportunity.example.json`。
+
 
 ---
 
@@ -805,10 +855,53 @@ bd-opportunities/             # = SKILL_ROOT（根目录即商机池）
 | 业务规则稳定（财务硬门槛、Gate 流程） | 业务规则频繁迭代 |
 | 故障可承受（AI 自动重试 + 30min 心跳） | 故障成本极高（必须人工 verify） |
 
+### Phase 5.5 质量护栏与硬隔离路径（v0.9.1）
+
+#### Preflight 前置检查
+在 Phase 5.5 HTML 生成前，系统自动执行 readiness preflight 检查，确保关键产物齐全：
+
+**检查项**：
+- `state.json` 存在且 JSON 有效
+- `04-final-report.md` 存在且非空
+- 关键上游产物存在（`01-discovery.md`、`02-gate-by-chapter/One-pager.md`、Gate 0~5 文件、Battle 产物）
+- `state.json.gateStatus` 必须存在，且 Phase 5.5 前置 gate 全部为 `completed`
+
+**使用方法**：
+```bash
+# 自动调用（render_report.sh 默认执行）
+bash scripts/render_report.sh <品种目录>
+
+# 手动检查
+bash scripts/preflight-phase.sh <品种目录>
+
+# 跳过检查（测试/历史回放用）
+BD_EVAL_CMS_SKIP_PREFLIGHT=1 bash scripts/render_report.sh <品种目录>
+```
+
+#### 硬隔离路径
+bd-eval-cms 从 v0.7.0 起彻底解耦 doc-viewer skill，实施硬隔离路径：
+
+**报告渲染路径**（`scripts/render_report.sh`）：
+- 仅负责本地报告渲染（Markdown → HTML）
+- 不执行任何上传操作
+- 支持三种风格：Style A1（推荐）、Style 12、Style 13
+
+**知识库同步路径**（`scripts/sync-to-knowledge-base.sh`）：
+- 仅负责知识库同步（文件上传 + `state.json` 回写）
+- 不负责报告渲染
+- 支持产品引进知识库（doc.aishuo.co 长期预览链接）
+
+**关键约束**：
+- 不得调用 doc-viewer 生成/上传一体化路径
+- 两个脚本独立执行，职责清晰
+- 环境变量 `$DOCVIEWER_KB_APPKEY` 仅用于知识库同步
+
 ### 实施检查清单
 
 - [ ] `state.json` 已添加 `gateStatus` 字段（12 个标准状态位）
 - [ ] `scripts/run.sh` + `orchestrator-resume.sh` + `start-phase.sh` 三个脚本已就绪
 - [ ] 项目目录命名规范：项目名可读，caseCode 写在 state.json 里
 - [ ] 商机池调度器（可选）：watcher 监听商机入池 → 自动调用 `run.sh <caseCode>`
-- [ ] 上传 doc.20100706.xyz 的 URL 已写入 `state.json.reportHtmlUrl`
+- [ ] 产品引进知识库链接已写入 `state.json.reportHtmlUrl`
+- [ ] Phase 5.5 preflight 检查已启用（v0.9.1 质量护栏）
+- [ ] 硬隔离路径已确认（渲染 vs 同步分离）

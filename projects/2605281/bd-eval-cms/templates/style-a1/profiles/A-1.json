@@ -1,5 +1,5 @@
 {
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "A-1 投前评估 - 海外已上市/中国未上市",
   "profile_type": "skill",
   "skill_code": "A-1",
@@ -87,19 +87,19 @@
     },
     "gate_coverage": {
       "gate-1-content": {
-        "selector": ".chapter:contains('Gate 1')",
+        "selector": ".chapter:-soup-contains('Gate 1')",
         "description": "Gate 1 内容承载",
         "required": true,
         "count_min": 1
       },
       "gate-2-content": {
-        "selector": ".chapter:contains('Gate 2')",
+        "selector": ".chapter:-soup-contains('Gate 2')",
         "description": "Gate 2 内容承载",
         "required": true,
         "count_min": 1
       },
       "gate-3-content": {
-        "selector": ".chapter:contains('Gate 3')",
+        "selector": ".chapter:-soup-contains('Gate 3')",
         "description": "Gate 3 临床与注册路径",
         "required": false,
         "count_min": 0

@@ -1,6 +1,10 @@
 #!/bin/bash
 # render_report.sh — bd-eval-cms 报告渲染统一入口
-# 内部调用，不依赖 doc-viewer skill（v0.7.0 起彻底解耦）
+#
+# 硬隔离职责：
+#   本脚本仅负责本地报告渲染（Markdown → HTML），不执行任何上传操作
+#   知识库同步由 scripts/sync-to-knowledge-base.sh 独立负责
+#   不得调用 doc-viewer 生成/上传一体化路径（v0.7.0 起彻底解耦）
 #
 # 用法：
 #   bash render_report.sh <品种目录> [风格] [配色] [输出HTML路径] [profile]
@@ -11,7 +15,7 @@
 #   配色        选填，风格 12/a1 时有效（mckinsey-navy / investment-blue / burgundy-wine / forest-teal）
 #                       风格 13 时忽略（硬编码 navy）
 #   输出HTML    选填，默认 <品种目录>/REPORT.html
-#   profile     选填，仅风格 a1 时有效（A-1/A-5/A-7 等），默认从 Markdown 元数据自动检测
+#   profile     选填，仅风格 a1 时有效（默认 A-1），默认从 Markdown 元数据自动检测
 #
 # 示例：
 #   bash render_report.sh bd-eval-cms/260612-TEST
@@ -76,6 +80,23 @@ fi
 if [ ! -f "$CASE_DIR/04-final-report.md" ]; then
   echo "❌ 错误：未找到 04-final-report.md: $CASE_DIR/04-final-report.md"
   exit 1
+fi
+
+# ========== Phase 5.5 Readiness Preflight ==========
+# 在渲染前执行前置条件检查，确保关键产物齐全
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PREFLIGHT_SCRIPT="$SCRIPT_DIR/preflight-phase.sh"
+
+if [ -f "$PREFLIGHT_SCRIPT" ]; then
+  if ! bash "$PREFLIGHT_SCRIPT" "$CASE_DIR"; then
+    echo "❌ 错误：Preflight 检查失败，无法进行渲染"
+    echo "💡 如为测试/历史回放，可设置 BD_EVAL_CMS_SKIP_PREFLIGHT=1 跳过检查"
+    exit 1
+  fi
+  echo ""
+else
+  echo "⚠️  警告：未找到 preflight-phase.sh，跳过前置条件检查"
+  echo "   建议修复以确保报告质量"
 fi
 
 # ========== 调度 ==========

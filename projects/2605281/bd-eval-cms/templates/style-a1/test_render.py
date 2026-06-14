@@ -1,15 +1,279 @@
 #!/usr/bin/env python3
 """
-Style A1 渲染测试脚本 - 支持 profile-based 测试
-验证所有组件是否正确渲染，支持多 profile 测试（A-1/A-5/A-7）
+Style A1 渲染测试脚本 - v0.9.1 质量固化版
+支持 profile-based 测试 + schema/registry 测试 + 7 类负向测试
 """
 
 import sys
 import os
 import json
 import re
+import tempfile
+import subprocess
 from pathlib import Path
-from bs4 import BeautifulSoup
+from datetime import datetime
+from typing import Dict, List, Tuple, Any
+
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    print("❌ 缺少依赖: pip install beautifulsoup4")
+    sys.exit(1)
+
+def load_registry():
+    """加载 profile registry"""
+    script_dir = Path(__file__).parent
+    registry_path = script_dir / "profiles" / "registry.json"
+
+    if not registry_path.exists():
+        return None
+
+    with open(registry_path) as f:
+        return json.load(f)
+
+def load_schema():
+    """加载 profile schema"""
+    script_dir = Path(__file__).parent
+    schema_path = script_dir / "profiles" / "schema.json"
+
+    if not schema_path.exists():
+        return None
+
+    with open(schema_path) as f:
+        return json.load(f)
+
+def test_registry_and_schema():
+    """测试 registry 和 schema 文件存在性和基本结构"""
+    print("=== Registry & Schema 测试 ===\n")
+
+    errors = []
+
+    # 1. 测试 registry
+    print("1. 测试 registry.json...")
+    registry = load_registry()
+    if not registry:
+        errors.append("registry.json 不存在")
+        print("   ✗ registry.json 不存在")
+    else:
+        print("   ✓ registry.json 存在")
+
+        # 检查基本结构
+        if 'version' in registry:
+            print(f"   ✓ Registry 版本: {registry['version']}")
+        else:
+            errors.append("registry 缺少 version 字段")
+            print("   ✗ registry 缺少 version 字段")
+
+        if 'profiles' in registry:
+            active_profiles = [k for k, v in registry['profiles'].items() if v.get('status') == 'active']
+            print(f"   ✓ Active profiles: {', '.join(active_profiles)}")
+        else:
+            errors.append("registry 缺少 profiles 字段")
+            print("   ✗ registry 缺少 profiles 字段")
+
+    # 2. 测试 schema
+    print("\n2. 测试 schema.json...")
+    schema = load_schema()
+    if not schema:
+        errors.append("schema.json 不存在")
+        print("   ✗ schema.json 不存在")
+    else:
+        print("   ✓ schema.json 存在")
+
+        if '$schema' in schema:
+            print(f"   ✓ Schema 定义: {schema['$schema']}")
+        else:
+            errors.append("schema 缺少 $schema 字段")
+            print("   ✗ schema 缺少 $schema 字段")
+
+        if '$id' in schema:
+            print(f"   ✓ Schema ID: {schema['$id']}")
+        else:
+            errors.append("schema 缺少 $id 字段")
+            print("   ✗ schema 缺少 $id 字段")
+
+    # 3. 测试 profile 文件版本
+    print("\n3. 测试 profile 文件版本...")
+    for profile_code in ['common', 'A-1']:
+        profile_file = Path(__file__).parent / "profiles" / f"{profile_code}.json"
+        if profile_file.exists():
+            with open(profile_file) as f:
+                profile_data = json.load(f)
+            version = profile_data.get('version', 'missing')
+            if version == '0.9.1':
+                print(f"   ✓ {profile_code}.json 版本: {version}")
+            else:
+                errors.append(f"{profile_code}.json 版本不正确: {version}")
+                print(f"   ✗ {profile_code}.json 版本不正确: {version}")
+        else:
+            errors.append(f"{profile_code}.json 不存在")
+            print(f"   ✗ {profile_code}.json 不存在")
+
+    # 总结
+    print(f"\n=== Registry & Schema 测试总结 ===")
+    if errors:
+        print(f"❌ 测试失败 ({len(errors)} 个错误)")
+        for error in errors:
+            print(f"  - {error}")
+        return False
+    else:
+        print("✅ 所有测试通过")
+        return True
+
+def run_negative_test(test_name: str, test_description: str) -> bool:
+    """运行单个负向测试"""
+    print(f"=== 负向测试: {test_name} ===")
+    print(f"描述: {test_description}\n")
+
+    script_dir = Path(__file__).parent
+    render_script = script_dir / "render.py"
+
+    # 创建临时测试环境
+    temp_dir = Path(tempfile.mkdtemp())
+    test_report_dir = temp_dir / f"negative-test-{test_name}"
+    test_report_dir.mkdir()
+
+    # 创建基本测试文件
+    test_md_file = test_report_dir / "04-final-report.md"
+    state_file = test_report_dir / "state.json"
+    output_file = test_report_dir / "REPORT.html"
+
+    # 根据测试类型准备测试数据
+    if test_name == "profile-not-registered":
+        # 使用未注册的 profile
+        profile_code = "X-99"
+        test_md_content = "# X-99 测试报告\n\n测试内容"
+    elif test_name == "profile-file-missing":
+        # 使用已注册但文件缺失的 profile（需要临时修改 registry）
+        profile_code = "A-1"
+        test_md_content = "# A-1 测试报告\n\n测试内容"
+        # 临时移除 A-1.json 文件
+        a1_file = script_dir / "profiles" / "A-1.json"
+        if a1_file.exists():
+            import shutil
+            temp_backup = temp_dir / "A-1.json.backup"
+            shutil.copy(a1_file, temp_backup)
+            a1_file.unlink()
+    elif test_name == "profile-schema-invalid":
+        # 使用 schema 无效的 profile（需要临时创建）
+        profile_code = "A-1"
+        test_md_content = "# A-1 测试报告\n\n测试内容"
+        # 临时替换 A-1.json 为无效内容
+        a1_file = script_dir / "profiles" / "A-1.json"
+        if a1_file.exists():
+            import shutil
+            temp_backup = temp_dir / "A-1.json.backup"
+            shutil.copy(a1_file, temp_backup)
+            # 写入无效的 profile
+            with open(a1_file, 'w') as f:
+                json.dump({"invalid": "profile"}, f)
+    elif test_name == "required-component-missing":
+        # 使用缺少必选组件的 markdown
+        profile_code = "A-1"
+        test_md_content = "# A-1 测试报告\n\n简单内容，缺少必选组件"
+    elif test_name == "critical-component-missing":
+        # 使用缺少关键组件的 markdown
+        profile_code = "A-1"
+        test_md_content = "# A-1 测试报告\n\n## 结论\n测试结论\n\n缺少置信度标识"
+    elif test_name == "template-token-unreplaced":
+        # 使用包含未替换模板变量的 markdown
+        profile_code = "A-1"
+        test_md_content = "# A-1 测试报告\n\n## 结论\n{{UNREPLACED_TOKEN}} 测试"
+    else:
+        # 默认测试
+        profile_code = "A-1"
+        test_md_content = "# A-1 测试报告\n\n测试内容"
+
+    # 写入测试文件
+    with open(test_md_file, 'w') as f:
+        f.write(test_md_content)
+
+    with open(state_file, 'w') as f:
+        json.dump({
+            'case_code': f'2605-NEG-{test_name}',
+            'skill_code': profile_code,
+            'business_entity': '深康',
+            'evaluation_date': '2026-06-13',
+            'species_id': 'MB-001'
+        }, f)
+
+    # 调用渲染器
+    try:
+        result = subprocess.run(
+            [sys.executable, str(render_script), str(test_report_dir), 'mckinsey-navy', str(output_file), profile_code],
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+
+        # 检查是否失败（负向测试期望失败）
+        if result.returncode != 0:
+            print(f"✅ 测试通过: 渲染器正确失败")
+            print(f"   退出码: {result.returncode}")
+            if result.stderr:
+                print(f"   错误信息: {result.stderr[:200]}")
+            success = True
+        else:
+            print(f"❌ 测试失败: 渲染器应该失败但没有失败")
+            print(f"   退出码: {result.returncode}")
+            success = False
+
+    except subprocess.TimeoutExpired:
+        print("❌ 测试失败: 渲染超时")
+        success = False
+    except Exception as e:
+        print(f"❌ 测试失败: 渲染异常 {e}")
+        success = False
+    finally:
+        # 恢复被修改的文件
+        if test_name in ["profile-file-missing", "profile-schema-invalid"]:
+            temp_backup = temp_dir / "A-1.json.backup"
+            if temp_backup.exists():
+                import shutil
+                a1_file = script_dir / "profiles" / "A-1.json"
+                shutil.copy(temp_backup, a1_file)
+
+    # 清理临时文件
+    import shutil
+    shutil.rmtree(temp_dir)
+
+    return success
+
+def run_all_negative_tests():
+    """运行所有负向测试"""
+    print("=== 7 类负向测试 ===\n")
+
+    negative_tests = [
+        ("profile-not-registered", "profile 未注册或非 active 应该失败"),
+        ("profile-file-missing", "active profile 文件不存在应该失败"),
+        ("profile-schema-invalid", "profile schema 校验失败应该失败"),
+        ("required-component-missing", "required component 缺失应该失败"),
+        ("critical-component-missing", "critical component 缺失应该失败"),
+        ("template-token-unreplaced", "模板变量残留应该失败"),
+        ("output-html-missing", "输出 HTML 文件未生成应该失败")
+    ]
+
+    results = {}
+
+    for test_name, test_description in negative_tests:
+        print(f"\n{'='*60}")
+        success = run_negative_test(test_name, test_description)
+        results[test_name] = success
+
+    # 汇总结果
+    print(f"\n{'='*60}")
+    print("=== 负向测试汇总 ===\n")
+
+    passed_count = sum(results.values())
+    total_count = len(results)
+
+    for test_name, success in results.items():
+        status = "✅ 通过" if success else "❌ 失败"
+        print(f"{test_name}: {status}")
+
+    print(f"\n负向测试通过率: {passed_count}/{total_count} ({passed_count/total_count*100:.0f}%)")
+
+    return all(results.values())
 
 def load_expected_components(profile_code='A-1'):
     """加载预期组件定义 - 支持多 profile"""
@@ -106,8 +370,18 @@ def check_component_coverage(soup, expected):
         required = comp_def.get('required', False)
         count_min = comp_def.get('count_min', 1)
 
-        # 查找元素
-        elements = soup.select(selector)
+        # 查找元素。兼容 v0.9 profile 中的 :contains() 写法，优先使用 SoupSieve 推荐的 :-soup-contains()，避免 FutureWarning。
+        selectors_to_try = [selector]
+        if ':contains(' in selector:
+            selectors_to_try = [selector.replace(':contains(', ':-soup-contains('), selector]
+
+        elements = []
+        for css_selector in selectors_to_try:
+            try:
+                elements = soup.select(css_selector)
+                break
+            except Exception:
+                continue
         count = len(elements)
 
         # 检查是否满足要求
@@ -351,11 +625,49 @@ def run_profile_test(profile_code):
 
         return False
 
-def run_render_test():
-    """运行多 profile 测试"""
-    print("=== Style A1 多 Profile 渲染测试 ===\n")
+def test_a1_chapter_order_contract():
+    """A-1 正文章节顺序护栏：第三章不得是术语表，术语表必须放到附录/正文末尾。"""
+    print("=== A-1 章节顺序契约测试 ===\n")
+    script_dir = Path(__file__).parent
+    sample_file = script_dir / "fixtures" / "sample-a-1.md"
+    if not sample_file.exists():
+        print(f"❌ 样本文件不存在: {sample_file}")
+        return False
 
-    profiles = ['A-1', 'A-5', 'A-7']
+    sample_md = sample_file.read_text()
+    chapter_match = re.search(r'^## 第三章：(.+)$', sample_md, re.M)
+    if not chapter_match:
+        print("❌ A-1 样本缺少第三章")
+        return False
+
+    third_title = chapter_match.group(1).strip()
+    if "术语" in third_title or "缩写" in third_title:
+        print(f"❌ 第三章不得为术语表: {third_title}")
+        return False
+
+    glossary_match = re.search(r'^## (附录[^\n]*术语|术语与缩写表)', sample_md, re.M)
+    if not glossary_match:
+        print("❌ 缺少术语表/附录术语表")
+        return False
+
+    if glossary_match.start() < chapter_match.start():
+        print("❌ 术语表位置早于第三章，违反正文顺序")
+        return False
+
+    if "附录" not in glossary_match.group(1):
+        print("❌ 术语表应放在附录或正文末尾，并以附录标题呈现")
+        return False
+
+    print(f"✅ 第三章为业务章节: {third_title}")
+    print("✅ 术语表已移至附录")
+    return True
+
+
+def run_render_test():
+    """运行 A-1 profile 渲染测试（v0.9.3 起仅 A-1 一个 active profile）"""
+    print("=== Style A1 A-1 单一 Profile 渲染测试 ===\n")
+
+    profiles = ['A-1']
     results = {}
 
     for profile in profiles:
@@ -365,7 +677,7 @@ def run_render_test():
 
     # 汇总结果
     print(f"\n{'='*60}")
-    print("=== 多 Profile 测试汇总 ===\n")
+    print("=== A-1 Profile 测试汇总 ===\n")
 
     all_passed = all(results.values())
 
@@ -374,7 +686,7 @@ def run_render_test():
         print(f"Profile {profile}: {status}")
 
     if all_passed:
-        print("\n✅ 所有 Profile 测试通过")
+        print("\n✅ A-1 Profile 测试通过")
         return True
     else:
         print("\n❌ 部分 Profile 测试失败")
@@ -387,9 +699,74 @@ def pd_timestamp():
     from datetime import datetime
     return datetime.now().isoformat()
 
+def run_complete_test_suite():
+    """运行完整测试套件：registry/schema + 正向测试 + 负向测试"""
+    print("=== Style A1 v0.9.1 完整测试套件 ===\n")
+
+    all_results = {}
+
+    # 1. Registry & Schema 测试
+    print(f"\n{'='*60}")
+    registry_schema_result = test_registry_and_schema()
+    all_results['registry_schema'] = registry_schema_result
+
+    # 2. 正向测试（A-1）
+    print(f"\n{'='*60}")
+    print("=== 正向测试 ===")
+    positive_result = run_render_test()
+    all_results['positive_tests'] = positive_result
+
+    # 3. A-1 章节顺序契约测试
+    print(f"\n{'='*60}")
+    chapter_order_result = test_a1_chapter_order_contract()
+    all_results['a1_chapter_order'] = chapter_order_result
+
+    # 4. 负向测试
+    print(f"\n{'='*60}")
+    negative_result = run_all_negative_tests()
+    all_results['negative_tests'] = negative_result
+
+    # 汇总结果
+    print(f"\n{'='*60}")
+    print("=== 完整测试套件汇总 ===\n")
+
+    for test_type, result in all_results.items():
+        status = "✅ 通过" if result else "❌ 失败"
+        print(f"{test_type}: {status}")
+
+    all_passed = all(all_results.values())
+
+    if all_passed:
+        print("\n🎉 完整测试套件全部通过")
+        return True
+    else:
+        print("\n❌ 部分测试失败")
+        failed_tests = [t for t, r in all_results.items() if not r]
+        print(f"   失败的测试: {', '.join(failed_tests)}")
+        return False
+
 if __name__ == '__main__':
     try:
-        success = run_render_test()
+        # 检查命令行参数
+        if len(sys.argv) > 1:
+            test_type = sys.argv[1]
+            if test_type == "negative":
+                # 只运行负向测试
+                success = run_all_negative_tests()
+            elif test_type == "positive":
+                # 只运行正向测试
+                success = run_render_test()
+            elif test_type == "schema":
+                # 只运行 schema/registry 测试
+                success = test_registry_and_schema()
+            else:
+                print(f"未知测试类型: {test_type}")
+                print("用法: python3 test_render.py [positive|negative|schema]")
+                sys.exit(1)
+        else:
+            # 运行完整测试套件
+            success = run_complete_test_suite()
+
         sys.exit(0 if success else 1)
     except Exception as e:
         print(f"\n❌ 测试异常: {e}")

@@ -1,0 +1,66 @@
+{
+  "version": "0.9.1",
+  "description": "Profile registry for bd-eval-cms v0.9.1 - v0.9.3 收敛为单一 A-1 profile（所有历史 case 100% 走同一份 style-a1 骨架）",
+  "default_profile": "A-1",
+  "default_profile_usage": "single_active_skeleton",
+  "registry_metadata": {
+    "schema_version": "0.9.1",
+    "last_updated": "2026-06-14",
+    "refactor_note": "v0.9.3 内部清理：A-5/A-7 收敛为 A-1 单一骨架。18 个历史 case 100% 走同一份 style-a1，无业务差异化需求。",
+    "total_active_profiles": 1,
+    "total_planned_profiles": 17
+  },
+  "profiles": {
+    "A-1": {
+      "status": "active",
+      "file": "A-1.json",
+      "description": "通用投前评估骨架（v0.9.3 起唯一 profile，覆盖历史 A-1/A-5/A-7 全部业务场景）",
+      "coverage_level": "validated",
+      "extends": "common",
+      "skill_name": "BD 评估报告",
+      "absorbed_scenarios": [
+        "A-1 海外已上市/中国未上市投前评估",
+        "A-5 中国已上市推广权/代理权接管（共用同一份骨架）",
+        "A-7 多标的横向筛选（共用同一份骨架）"
+      ]
+    }
+  },
+  "planned_profiles": {
+    "A-0": {"status": "planned", "description": "通用投前评估占位", "priority": "low"},
+    "A-2": {"status": "planned", "description": "海外已上市/中国已上市占位", "priority": "medium"},
+    "A-3": {"status": "planned", "description": "中国未上市/中国未上市占位", "priority": "medium"},
+    "A-4": {"status": "planned", "description": "进口/国产替代占位", "priority": "medium"},
+    "A-6": {"status": "planned", "description": "License-out/VAR 占位", "priority": "low"},
+    "A-8": {"status": "planned", "description": "其他特殊场景占位", "priority": "low"},
+    "A-9": {"status": "planned", "description": "复合型评估占位", "priority": "low"},
+    "D-1": {"status": "planned", "description": "尽职调查通用占位", "priority": "medium"},
+    "D-2": {"status": "planned", "description": "商业尽调占位", "priority": "medium"},
+    "D-3": {"status": "planned", "description": "技术尽调占位", "priority": "medium"},
+    "D-4": {"status": "planned", "description": "法务尽调占位", "priority": "medium"},
+    "B-1": {"status": "planned", "description": "商业建模占位", "priority": "low"},
+    "B-2": {"status": "planned", "description": "财务建模占位", "priority": "low"},
+    "B-3": {"status": "planned", "description": "估值建模占位", "priority": "low"},
+    "C-1": {"status": "planned", "description": "交易结构设计占位", "priority": "low"},
+    "C-2": {"status": "planned", "description": "合同起草占位", "priority": "low"},
+    "C-3": {"status": "planned", "description": "谈判支持占位", "priority": "low"},
+    "E-1": {"status": "planned", "description": "投后管理占位", "priority": "low"}
+  },
+  "fail_fast_rules": {
+    "description": "Fail-fast rules for profile validation",
+    "unregistered_profile": "fail_fast_with_candidates",
+    "inactive_profile": "fail_fast",
+    "missing_profile_file": "fail_fast",
+    "invalid_profile_schema": "fail_fast",
+    "missing_required_component": "fail_fast",
+    "missing_critical_component": "fail_fast",
+    "unreplaced_template_token": "fail_fast",
+    "missing_optional_component": "warning",
+    "missing_reference_shell": "warning"
+  },
+  "metadata_only": {
+    "description": "Metadata-only fields for documentation purposes",
+    "default_profile_behavior": "v0.9.3 起仅 A-1 一个 active profile，所有历史 case 100% 走同一份骨架。",
+    "active_profile_definition": "Active profiles have actual files and are validated for production use.",
+    "planned_profile_definition": "Planned profiles are placeholders for future implementation."
+  }
+}
