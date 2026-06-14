@@ -15,7 +15,7 @@ Default loop:
 | `material_received` | User has provided a source document containing one or more BP objects | If one object: `object_locked`. If multiple objects: list them and ask user to select one, then `object_locked`. |
 | `object_locked` | One BP object and level are selected | source reading |
 | `sources_classified` | Sources are read and status-labeled | 7-dimension exhaustive audit |
-| `dimension_audited` | All 7 audit dimensions (level/OKR/acceptance/caliber/evidence/owner/freeze) have been judged ✅/⚠️/❌/📊 with a complete table output (see `core_rules.md` § 10 and SKILL.md Step 4.5). | question block if any ⚠️/❌/📊, else draft |
+| `dimension_audited` | All 7 audit dimensions (level/OKR/acceptance/caliber/evidence/owner/freeze) have been judged ✅/⚠️/❌/📊 with a complete table output (see `core_rules.md` § 10 and SKILL.md Step 5). | question block if any ⚠️/❌/📊, else draft |
 | `diagnosis_ready` | Issues and risks are identified (legacy state, kept for compatibility; new flows should pass through `dimension_audited` first) | question block or draft if no issue |
 | `pending_user_confirmation` | At least one business rule requires user decision | ask one question |
 | `rule_confirmed` | User answer has been converted into a reusable rule | update draft or ask next question |
@@ -64,19 +64,19 @@ Example:
 
 ## 5. Audit Dimensions
 
-For every BP object, audit these dimensions:
+The 7 audit dimensions are defined exclusively in `references/core_rules.md` § 10. This skill does not maintain a separate dimension table. The state machine enforces that every BP object passes through the `dimension_audited` state (see § 2) before any question is asked; the actual checklist is in `core_rules.md` § 10. The mapping is:
 
-| Dimension | Check |
+| § 10 dimension | What it covers in the audit (per `core_rules.md` § 10) |
 |---|---|
-| 层级边界 | Is this content appropriate for group, center, department, or individual level? |
-| OKR语义 | Is目标 a result state, 成果 a key result, 衡量标准 judgeable, 举措 an implementation path? |
-| 成果验收 | Does each成果 have measurable or judgeable final acceptance conditions? |
-| 举措承接 | Does each关键举措 have主责主体 and承接方式? |
-| 单主责 | Are multiple real owners merged into one vague row? |
-| 下级承接 | Does complete BP承接 produce downstream one-to-many decomposition? |
-| 口径 | Are figures, period, unit,含税/不含税, management/report口径 clear? |
-| 证据 | Are source and monthly evidence paths clear? |
-| 冻结 | Are placeholders,待确认, and unsupported claims removed before final? |
+| 层级边界 (Level boundary) | Is this content appropriate for group, center, department, or individual level? |
+| OKR 语义 (OKR semantics) | Is目标 a result state, 成果 a key result, 衡量标准 judgeable, 举措 an implementation path? |
+| 成果验收 (Outcome acceptance) | Does each成果 have measurable or judgeable final acceptance conditions? |
+| 口径对齐 (Definition alignment) | Are figures, period, unit, 含税/不含税, management/report 口径, reference targets (e.g., "75分位", "YTD") clear? |
+| 证据路径 (Evidence path) | Are source and monthly evidence paths clear so AI判灯 can determine red/yellow/green? |
+| 单主责 (Single owner) | Are multiple real owners merged into one vague row? Is there exactly one主责主体 per key KR/initiative? |
+| 冻结规则 (Freeze rules) | Are placeholders, 待确认, "?" metrics, numbers without口径, key items without owner/承接方式/evidence, and unconfirmed facts removed before final? (Full 10-rule list in `core_rules.md` § 9.) |
+
+If any dimension is judged ⚠️, ❌, or 📊, the row enters the question queue. Do not introduce parallel or legacy audit dimension lists.
 
 ## 6. Draft Gate
 

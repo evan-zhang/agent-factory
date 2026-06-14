@@ -1,0 +1,1 @@
+2026-06-14 v0.1.4 评审完成，结论 CONDITIONAL_PASS → 必修 5 项已修（Q1 状态机去 9 维度 / Q2 章节引用统一 / Q3 triggers 砍到 8 / Q4 编号去重 + SKILL.md 加康哲误用提示 / Q5 output_package 去硬编码）。无需重评，修复后放行。存档：reviews/2026-06-14-B-DESIGN-01-CONDITIONAL_PASS.md

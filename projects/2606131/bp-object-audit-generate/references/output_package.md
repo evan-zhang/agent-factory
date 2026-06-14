@@ -1,14 +1,12 @@
 # Output Package
 
 > **Evan 落地配置（2026-06-13）**
-> - `PROJECT_ROOT = /Users/evan/Documents/BP`（与 `source_manifest.md` 第 2 节一致）
-> - 本地默认输出根：`<PROJECT_ROOT>/输出/BP对象审计生成/` = `/Users/evan/Documents/BP/输出/BP对象审计生成/`
+> - `PROJECT_ROOT` 定义在 `references/source_manifest.md` § 2，本文件不重复硬编码
+> - 当前 Evan 端：`<PROJECT_ROOT>/输出/BP对象审计生成/`（路径在 source_manifest 落地注释中维护）
 
 ## 1. Default Output Root
 
-Use `<PROJECT_ROOT>/输出/BP对象审计生成/` as the default output root (PROJECT_ROOT is defined in `references/source_manifest.md`).
-
-If PROJECT_ROOT is not set, ask the user to confirm the output directory before writing any file.
+Use `<PROJECT_ROOT>/输出/BP对象审计生成/` as the default output root. `PROJECT_ROOT` itself is defined in `references/source_manifest.md` § 2; do not redefine the absolute path here. If `PROJECT_ROOT` is not set yet, ask the user to confirm it (and the output directory) before writing any file.
 
 If the platform does not support local file writing, output the Markdown content in the chat and ask the user to save it manually.
 

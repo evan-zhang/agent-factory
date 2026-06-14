@@ -78,7 +78,7 @@ The skill may use these files when accessible and relevant. Always verify the cu
    - prior discussion memory;
    - AI inference marked待确认.
 
-## 4. High-Risk Metric Pairs
+## 5. High-Risk Metric Pairs
 
 Define before using:
 
@@ -90,7 +90,7 @@ Define before using:
 | 集团直传 / 中心放大 | State upstream minimum and downstream amplification |
 | 成果验收物 / 过程证据 | Keep final acceptance separate from monthly evidence |
 
-## 5. Evan 本地可用源（额外补充）
+## 6. Evan 本地可用源（额外补充）
 
 `PROJECT_ROOT = /Users/evan/Documents/BP/` 下当前实际存在的文件：
 

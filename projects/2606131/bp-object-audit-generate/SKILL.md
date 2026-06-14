@@ -2,7 +2,7 @@
 name: bp-object-audit-generate
 description: Audit, question, confirm, generate, revise, and archive BP objects across group, center/business company, department, and key individual levels. Use when the user asks to rebuild, continue, diagnose, review, generate, confirm, write, freeze, or package annual BP content using the target-outcome-measure-initiative-responsibility-cascade logic, especially for 康哲集团 BP work, group-to-center-to-department-to-person承接, or interactive BP generation where the assistant must stop after each BP object, ask confirmation questions with options, and only generate or write after user confirmation.
 ---
-> **Evan 落地 v0.1.4（PROJECT_ROOT = `/Users/evan/Documents/BP`）** — v0.1.4 修复陈舒婷反馈的「7 维度穷举遗漏」问题：core_rules § 10 定义 7 维度+状态机加 dimension_audited+审计表加维度列+SKILL.md 加红线 seven_dimensions_exhaustive 与 closure_self_check。本 skill 归类为「复杂业务流」档，SKILL.md 行数预算 200 行（按 SOP v2026.6.14 浮动）。
+> **Evan 落地 v0.1.5（PROJECT_ROOT 定义见 `references/source_manifest.md` § 2）** — v0.1.4 修复陈舒婷反馈的「7 维度穷举遗漏」问题：core_rules § 10 定义 7 维度+状态机加 dimension_audited+审计表加维度列+SKILL.md 加红线 seven_dimensions_exhaustive 与 closure_self_check。v0.1.5 修复 v0.1.4 评审 6 项必修 + v0.1.5 评审 1 项中等问题（object_templates 闭合检查对齐 § 10）。本 skill 归类为「复杂业务流」档，SKILL.md 行数预算 200 行（按 SOP v2026.6.14 浮动）。
 
 # BP Object Audit Generate
 
@@ -47,6 +47,8 @@ Load only what the current BP object requires:
 | Archiving, package, and status files | `references/output_package.md` |
 
 If the platform does not support file reading, see the **Embedded Minimum Rules** below. If the user asks to update the skill itself, edit `SKILL.md` and the relevant reference files directly.
+
+> **Important**: This skill is semantic-, workflow-, and template-only. It does NOT bundle any specific business BP files. When the user asks to audit a concrete BP object (e.g., 康哲集团 / a specific center / a specific person), the user must confirm or provide the source path first (see `references/source_manifest.md` § 3 and § 6). Do not assume any specific 康哲集团 source files are present.
 
 ## Default Workflow
 

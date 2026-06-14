@@ -1,0 +1,1 @@
+2026-06-14 v0.1.5 修复确认评审，结论 CONDITIONAL_PASS → 必修 1 中 + 2 低 已修（Q1 object_templates 闭合检查对齐 § 10 + Q2 SKILL.md 落地注释改 v0.1.5 + Q3 triggers 加部门/个人 BP 入口）。无需重评，修复后放行 v0.1.6。存档：reviews/2026-06-14-B-DESIGN-02-CONDITIONAL_PASS.md
