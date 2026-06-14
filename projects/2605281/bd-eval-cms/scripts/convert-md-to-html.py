@@ -11,17 +11,13 @@ import markdown
 from pathlib import Path
 
 def find_style_dir():
-    """查找风格12模板目录（优先本地，其次 doc-viewer skill）"""
+    """查找风格12模板目录（v0.7.0 起仅本地 templates/）"""
     script_dir = Path(__file__).parent
-    # 优先：scripts/style-12/（skill 自包含）
-    local = script_dir / "style-12"
+    # 本地：../templates/style-12/（v0.7.0 起彻底解耦 doc-viewer）
+    local = script_dir.parent / "templates" / "style-12"
     if (local / "skeleton.html").exists():
         return local
-    # 其次：doc-viewer/templates/style-12/
-    doc_viewer = Path.home() / ".agents/skills/doc-viewer/templates/style-12"
-    if (doc_viewer / "skeleton.html").exists():
-        return doc_viewer
-    print("❌ 找不到风格12模板目录")
+    print("❌ 找不到风格12模板目录（应为 ../templates/style-12/）")
     sys.exit(1)
 
 STYLE_DIR = find_style_dir()

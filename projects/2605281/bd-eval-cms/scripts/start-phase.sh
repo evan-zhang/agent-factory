@@ -35,6 +35,33 @@ echo "▶️  启动阶段：$GATE (项目：$CASE_CODE, 模式：$MODE)"
 #
 # 当前实现：占位输出，让 orchestrator 知道要执行什么
 
+# ========== Phase 5.5 特殊处理：执行 preflight ==========
+if [ "$GATE" = "phase-5-5-html" ]; then
+  echo "📋 任务：执行 Phase 5.5 HTML 生成 + 知识库同步"
+  echo ""
+
+  # 在进入 Phase 5.5 前执行 readiness preflight
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  PREFLIGHT_SCRIPT="$SCRIPT_DIR/preflight-phase.sh"
+
+  if [ -f "$PREFLIGHT_SCRIPT" ]; then
+    echo "🔍 执行 Phase 5.5 readiness preflight..."
+    if ! bash "$PREFLIGHT_SCRIPT" "$PROJECT_DIR"; then
+      echo "❌ 错误：Preflight 检查失败，无法进入 Phase 5.5"
+      echo "💡 如为测试/历史回放，可设置 BD_EVAL_CMS_SKIP_PREFLIGHT=1 跳过检查"
+
+      # 标记 gate 为 failed
+      TMP=$(mktemp)
+      jq --arg g "$GATE" '.gateStatus[$g] = "failed"' "$STATE_FILE" > "$TMP" && mv "$TMP" "$STATE_FILE"
+      exit 1
+    fi
+    echo "✅ Preflight 检查通过"
+    echo ""
+  else
+    echo "⚠️  警告：未找到 preflight-phase.sh，跳过前置条件检查"
+  fi
+fi
+
 case "$GATE" in
   phase-1)        echo "📋 任务：执行 Phase 1 DISCOVERY（5次联网搜索 + 6篇参考文献）" ;;
   phase-2)        echo "📋 任务：执行 Phase 2 路由 Battle（确认技能编号如 A-1）" ;;
@@ -47,8 +74,7 @@ case "$GATE" in
   gate-5)         echo "📋 任务：执行 Gate 5 成本门（交易结构 + 供应协议）" ;;
   phase-4-battle) echo "📋 任务：执行 Phase 4 Battle 对抗审查" ;;
   phase-5-merge)  echo "📋 任务：执行 Phase 5 报告合并（生成 04-final-report.md）" ;;
-  phase-5-5-html) echo "📋 任务：执行 Phase 5.5 HTML 生成 + 上传 doc.20100706.xyz" ;;
-  *)              echo "❌ 未知 gate：$GATE" >&2; exit 1 ;;
+  *)              echo "📋 任务：执行 $GATE" ;;
 esac
 
 echo ""

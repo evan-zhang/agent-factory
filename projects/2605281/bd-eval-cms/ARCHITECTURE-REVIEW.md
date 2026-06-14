@@ -2,7 +2,7 @@
 
 > 创建时间：2026-05-29
 > 状态：待审核
-> 背景：基于 Agent SDK 全景研究报告（https://doc.20100706.xyz/view/42ccc531222e），将现有 OpenClaw Skill `bd-eval-cms` 封装为独立 API 应用。
+> 背景：基于 Agent SDK 全景研究报告（https://doc.aishuo.co/preview/agent-sdk-overview），将现有 OpenClaw Skill `bd-eval-cms` 封装为独立 API 应用。
 
 ---
 

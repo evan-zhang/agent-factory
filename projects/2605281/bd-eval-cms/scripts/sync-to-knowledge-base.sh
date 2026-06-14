@@ -1,5 +1,11 @@
 #!/bin/bash
 # sync-to-knowledge-base.sh — 将品种目录同步到玄关知识库
+#
+# 硬隔离职责：
+#   本脚本仅负责知识库同步（文件上传 + state.json 回写）
+#   报告渲染由 scripts/render_report.sh 独立负责
+#   不得调用 doc-viewer 生成/上传一体化路径（v0.7.0 起彻底解耦）
+#
 # 用法：bash scripts/sync-to-knowledge-base.sh {品种目录路径} [{案件代号}]
 # 示例：bash scripts/sync-to-knowledge-base.sh "projects/2605281/bd-eval-cms/利奈昔巴特"
 #        bash scripts/sync-to-knowledge-base.sh "projects/2605281/bd-eval-cms/利奈昔巴特" "260531-LNXB"
@@ -9,17 +15,54 @@
 #   2. state.json 中已有的 caseCode（如果符合 YYMMDD-XXXX 格式）
 #   3. 自动生成：YYMMDD-{4字母品种缩写}
 #
-# 目录结构：{YYMMDD}/{YYMMDD-XXXX}/
-# 例如：260531/260531-LNXB/
+# 目录结构：{ROOT}/{YYMMDD}/{YYMMDD-XXXX}/
+# 例如：2605/260613/260613-SMQT/
 
 set -euo pipefail
 
 CASE_DIR="$1"
 CASE_CODE="${2:-}"
 
+# 凭证注入：
+# - DOCVIEWER_KB_APPKEY 由 OpenClaw runtime 注入（传统 doc-viewer 协议环境变量名）
+# - v0.7.0 起不依赖 doc-viewer skill，但保留环境变量名以便与其他技能兼容
+# - 脚本优先读环境变量，未注入时拒绝执行
+# - PROJECT_ID 从 config.yaml 读（业务固定参数，不允许用户配置）
+if [ -z "${DOCVIEWER_KB_APPKEY:-}" ]; then
+  echo "❌ 错误：未检测到环境变量 DOCVIEWER_KB_APPKEY"
+  echo "   该变量由 OpenClaw runtime 启动时注入"
+  echo "   请检查 OpenClaw 启动日志或 env 注入配置"
+  exit 1
+fi
+APP_KEY="$DOCVIEWER_KB_APPKEY"
+
+# 从 config.yaml 读取固定 projectId（业务固定，不允许覆盖）
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_FILE="$SCRIPT_DIR/../config.yaml"
+if [ ! -f "$CONFIG_FILE" ]; then
+  echo "❌ 错误：未找到 config.yaml: $CONFIG_FILE"
+  exit 1
+fi
+if ! command -v yq &> /dev/null; then
+  echo "❌ 错误：需要 yq 工具读取 config.yaml"
+  echo "   安装：brew install yq"
+  exit 1
+fi
+PROJECT_ID=$(yq '.knowledgeBase.projectId' "$CONFIG_FILE")
+if [ -z "$PROJECT_ID" ] || [ "$PROJECT_ID" = "null" ]; then
+  echo "❌ 错误：config.yaml 中未配置 knowledgeBase.projectId"
+  exit 1
+fi
+KB_ROOT_DIR=$(yq '.knowledgeBase.rootDir // ""' "$CONFIG_FILE")
+if [ -z "$KB_ROOT_DIR" ] || [ "$KB_ROOT_DIR" = "null" ]; then
+  echo "❌ 错误：config.yaml 中未配置 knowledgeBase.rootDir"
+  exit 1
+fi
+echo "项目级 projectId（从 config.yaml 读）: $PROJECT_ID"
+echo "知识库根目录（从 config.yaml 读）: $KB_ROOT_DIR"
+
+# 玄关 API 根地址
 API_BASE="https://sg-al-cwork-web.mediportal.com.cn/open-api"
-APP_KEY="mN6bVc2Xz9Lk4Jh7Gt5Rf3Wp1Yq8As0D"
-PROJECT_ID="2060176831872499713"
 
 if [ -z "$CASE_DIR" ]; then
   echo "用法: $0 {品种目录路径} [{案件代号}]"
@@ -120,13 +163,14 @@ if [ -z "$CASE_CODE" ]; then
   fi
 fi
 
-# 月份目录取日期前 6 位（YYMMDD）
-MONTH_DIR="${CASE_CODE:0:6}"
+# 日期目录取日期前 6 位（YYMMDD）；完整知识库路径由 rootDir/YYMMDD/CASE_CODE 组成
+DATE_DIR="${CASE_CODE:0:6}"
+KB_CASE_PATH="${KB_ROOT_DIR}/${DATE_DIR}/${CASE_CODE}"
 
 echo ""
 echo "=== 知识库同步开始 ==="
 echo "案件代号: $CASE_CODE"
-echo "同步目录: $MONTH_DIR/$CASE_CODE/"
+echo "同步目录: $KB_CASE_PATH/"
 echo "品种目录: $CASE_DIR"
 echo ""
 
@@ -178,7 +222,7 @@ sync_file() {
       \"content\": ${content},
       \"fileName\": \"${base_name}\",
       \"fileSuffix\": \"${suffix}\",
-      \"folderName\": \"${MONTH_DIR}/${CASE_CODE}/${folder_name}\",
+      \"folderName\": \"${KB_CASE_PATH}/${folder_name}\",
       \"nameConflictStrategy\": 1
     }" 2>/dev/null)
 
@@ -197,8 +241,8 @@ sync_file() {
   fi
 }
 
-# 同步根目录文件
-for f in state.json 01-discovery.md 03-battle-summary.md 04-final-report.md links.md execution-log.md REPORT.html; do
+# 同步根目录文件（REPORT.html 单独走下面 范式 4 Stage 2）
+for f in state.json 01-discovery.md 03-battle-summary.md 04-final-report.md links.md execution-log.md; do
   if [ -f "$CASE_DIR/$f" ]; then
     sync_file "$CASE_DIR/$f" ""
   fi
@@ -238,11 +282,133 @@ if [ -d "$CASE_DIR/references" ]; then
   done
 fi
 
+# ============== REPORT.html 范式 4 Stage 2（v0.4.0 起） ==============
+# 1) 跳过普通 sync_file 循环中的 REPORT.html（上一句 for 循环跳过）
+# 2) 这里走玄关知识库 5 步 API（v0.7.0 起不依赖 doc-viewer，自己调玄关 API）
+# 3) 拿 5 年 doc.aishuo.co 链接，写入 state.json.reportHtmlUrl
+
+REPORT_FILE="$CASE_DIR/REPORT.html"
+if [ -f "$REPORT_FILE" ]; then
+  echo ""
+  echo "=== REPORT.html 走范式 4 Stage 2（产品引进知识库） ==="
+
+  # 从 state.json 读品种名（用于文件命名）
+  PRODUCT_NAME=$(read_product_name)
+  if [ -z "$PRODUCT_NAME" ]; then
+    PRODUCT_NAME=$(basename "$CASE_DIR")
+  fi
+  REPORT_FILENAME="${PRODUCT_NAME}-CMS投前评估报告.html"
+  REPORT_SIZE=$(stat -f%z "$REPORT_FILE" 2>/dev/null || stat -c%s "$REPORT_FILE")
+
+  # Step 1: 物理文件上传
+  echo "Step 1/4: 物理文件上传..."
+  RESOURCE_ID=$(curl -s -X POST \
+    "${API_BASE}/cwork-file/uploadWholeFile" \
+    -H "appKey: ${APP_KEY}" \
+    -F "file=@${REPORT_FILE};filename=${REPORT_FILENAME}" \
+    | python3 -c "import sys,json; print(json.load(sys.stdin)['data'])" 2>/dev/null)
+
+  if [ -z "$RESOURCE_ID" ]; then
+    echo "❌ 物理文件上传失败，跳过 Stage 2"
+    REPORT_STATUS="failed"
+  else
+    echo "✅ resourceId=$RESOURCE_ID"
+
+    # Step 2: 绑定到产品引进知识库
+    echo "Step 2/4: 绑定到产品引进知识库（projectId=$PROJECT_ID）..."
+    SAVE_RESPONSE=$(curl -s -X POST \
+      "${API_BASE}/document-database/file/saveFileByPath" \
+      -H "appKey: ${APP_KEY}" \
+      -H "Content-Type: application/json" \
+      -d "{
+        \"projectId\": ${PROJECT_ID},
+        \"path\": \"${KB_CASE_PATH}\",
+        \"name\": \"${REPORT_FILENAME}\",
+        \"fileType\": \"file\",
+        \"resourceId\": ${RESOURCE_ID},
+        \"suffix\": \"html\",
+        \"size\": ${REPORT_SIZE}
+      }")
+    # 解析：data 可能是字符串 fileId、可能是对象 {id, fileId, ...}、可能为 null（权限问题但实际成功）
+    FILE_ID=$(echo "$SAVE_RESPONSE" | python3 -c "
+import sys, json
+try:
+    d = json.load(sys.stdin)
+    if d.get('resultCode') != 1:
+        print(f\"__FAIL__{d.get('resultMsg','未知错误')}\", file=sys.stderr)
+        sys.exit(0)
+    data = d.get('data')
+    if isinstance(data, str):
+        print(data)
+    elif isinstance(data, dict):
+        # 常见 key: id / fileId / nodeId
+        print(data.get('id') or data.get('fileId') or data.get('nodeId') or data.get('data') or '')
+    else:
+        # data 为 null，但 resultCode=1  → 使用 resourceId 作为占位 fileId
+        print(f\"__NULL_USING_RESOURCE__\")
+except Exception as e:
+    print(f\"__PARSE_ERROR__{e}\", file=sys.stderr)
+" 2>&1)
+
+    if [[ "$FILE_ID" == __FAIL__* ]]; then
+      echo "❌ 绑定 KB 节点失败: ${FILE_ID#__FAIL__}"
+      REPORT_STATUS="failed"
+    elif [[ "$FILE_ID" == __PARSE_ERROR__* ]]; then
+      echo "❌ 绑定 KB 节点响应解析失败: ${FILE_ID#__PARSE_ERROR__}"
+      REPORT_STATUS="failed"
+    elif [[ "$FILE_ID" == __NULL_USING_RESOURCE__ ]]; then
+      # 玄关返回 data=null 但实际成功（权限元数据不全）→ 用 resourceId 占位
+      echo "⚠️ saveFileByPath 返回 data=null（玄关权限元数据问题，但绑定应已成功），用 resourceId 占位 fileId"
+      FILE_ID="placeholder_${RESOURCE_ID}"
+    elif [ -z "$FILE_ID" ]; then
+      echo "❌ 绑定 KB 节点返回 data 为空"
+      REPORT_STATUS="failed"
+    else
+      echo "✅ fileId=$FILE_ID"
+
+      # Step 3: 换 access-token
+      echo "Step 3/4: 换 access-token..."
+      ACCESS_TOKEN=$(curl -s \
+        "https://sg-al-cwork-web.mediportal.com.cn/user/login/appkey?appCode=cms_gpt&appKey=${APP_KEY}" \
+        | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['xgToken'])" 2>/dev/null)
+
+      if [ -z "$ACCESS_TOKEN" ]; then
+        echo "❌ access-token 换取失败，跳过 Stage 2"
+        REPORT_STATUS="failed"
+      else
+        # Step 4: 拿 5 年公网预览链接
+        echo "Step 4/4: 获取 5 年公网预览链接..."
+        PREVIEW_URL=$(curl -s -X POST \
+          "https://sg-al-cwork-web.mediportal.com.cn/doc-preview/api/preview/ticket" \
+          -H "access-token: ${ACCESS_TOKEN}" \
+          -H "Content-Type: application/json" \
+          -d "{
+            \"bizType\": \"kb\",
+            \"bizId\": \"${FILE_ID}\",
+            \"format\": \"html\",
+            \"title\": \"${REPORT_FILENAME}\"
+          }" | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['previewUrl'])" 2>/dev/null)
+
+        if [ -z "$PREVIEW_URL" ]; then
+          echo "❌ previewUrl 获取失败"
+          REPORT_STATUS="failed"
+        else
+          echo "✅ previewUrl=$PREVIEW_URL"
+          REPORT_STATUS="success"
+          REPORT_PREVIEW_URL="$PREVIEW_URL"
+          REPORT_FILE_ID="$FILE_ID"
+        fi
+      fi
+    fi
+  fi
+fi
+# ============== REPORT.html 处理结束 ==============
+
 echo ""
 echo "=== 同步完成 ==="
 echo "成功: $SUCCESS / $TOTAL"
 echo "失败: $FAIL / $TOTAL"
-echo "知识库路径: $MONTH_DIR/$CASE_CODE/"
+echo "知识库路径: $KB_CASE_PATH/"
 
 if [ $FAIL -gt 0 ]; then
   echo ""
@@ -250,32 +416,67 @@ if [ $FAIL -gt 0 ]; then
   echo -e "$FAILED_FILES"
 fi
 
+SYNC_SEVERE_FAILURE=false
 if [ $FAIL -gt $((TOTAL / 2)) ] && [ $TOTAL -gt 0 ]; then
   echo ""
   echo "⚠️ 超过50%文件同步失败，请检查网络或API配置"
-  exit 1
+  SYNC_SEVERE_FAILURE=true
 fi
 
-# 回写同步结果到 state.json
+# 回写同步结果到 state.json（即使失败也必须回写，便于程序读取失败原因）
 if [ -f "$CASE_DIR/state.json" ]; then
-  python3 -c "
-import json, sys, datetime
-state_file = '$CASE_DIR/state.json'
+  REPORT_STATUS_SAFE="${REPORT_STATUS:-}"
+  REPORT_PREVIEW_URL_SAFE="${REPORT_PREVIEW_URL:-}"
+  REPORT_FILE_ID_SAFE="${REPORT_FILE_ID:-}"
+  CASE_DIR_ENV="$CASE_DIR" \
+  CASE_CODE_ENV="$CASE_CODE" \
+  KB_CASE_PATH_ENV="$KB_CASE_PATH" \
+  SUCCESS_ENV="$SUCCESS" \
+  FAIL_ENV="$FAIL" \
+  TOTAL_ENV="$TOTAL" \
+  REPORT_STATUS_ENV="$REPORT_STATUS_SAFE" \
+  REPORT_PREVIEW_URL_ENV="$REPORT_PREVIEW_URL_SAFE" \
+  REPORT_FILE_ID_ENV="$REPORT_FILE_ID_SAFE" \
+  python3 - <<'PY' || echo "⚠️ state.json 回写失败"
+import json, os, datetime
+state_file = os.path.join(os.environ['CASE_DIR_ENV'], 'state.json')
 with open(state_file, 'r') as f:
     state = json.load(f)
-state['caseCode'] = '$CASE_CODE'
+case_code = os.environ['CASE_CODE_ENV']
+kb_case_path = os.environ['KB_CASE_PATH_ENV']
+report_status = os.environ.get('REPORT_STATUS_ENV', '')
+state['caseCode'] = case_code
 state['knowledgeBaseSync'] = {
     'syncedAt': datetime.datetime.now().isoformat(),
-    'syncedFiles': $SUCCESS,
-    'failedFiles': $FAIL,
-    'totalFiles': $TOTAL,
-    'caseCode': '$CASE_CODE',
-    'kbPath': '$MONTH_DIR/$CASE_CODE/'
+    'syncedFiles': int(os.environ['SUCCESS_ENV']),
+    'failedFiles': int(os.environ['FAIL_ENV']),
+    'totalFiles': int(os.environ['TOTAL_ENV']),
+    'caseCode': case_code,
+    'kbPath': f'{kb_case_path}/'
 }
+# v0.4.0：回写 REPORT.html 的知识库预览链接（覆盖原临时预览链接）
+if report_status == 'success':
+    state['reportHtmlUrl'] = os.environ.get('REPORT_PREVIEW_URL_ENV', '')
+    state['reportHtmlFileId'] = os.environ.get('REPORT_FILE_ID_ENV', '')
+    state['reportHtmlUploadedAt'] = datetime.datetime.now().isoformat()
+    state['reportHtmlStorage'] = 'kb'  # 标记走的是产品引进知识库
+    state['reportHtmlTtl'] = '5y'  # 配置记录为 5y（doc.aishuo.co 长期预览，实际有效期由服务端策略决定）
+    state.setdefault('gateStatus', {})['phase-5-5-html'] = 'completed'
+elif report_status == 'failed':
+    state['reportHtmlStorage'] = 'kb-failed'
+    state['reportHtmlUrl'] = state.get('reportHtmlUrl')
+    state['reportHtmlSyncError'] = 'REPORT.html upload/bind/preview failed; see sync output for API response'
+    state.setdefault('gateStatus', {})['phase-5-5-html'] = 'failed'
 with open(state_file, 'w') as f:
     json.dump(state, f, ensure_ascii=False, indent=2)
-print('state.json 已更新: caseCode=$CASE_CODE, kbPath=$MONTH_DIR/$CASE_CODE/')
-" 2>/dev/null || echo "⚠️ state.json 回写失败"
+print(f'state.json 已更新: caseCode={case_code}, kbPath={kb_case_path}/')
+if report_status == 'success':
+    print('REPORT.html 预览链接（5 年）: ' + os.environ.get('REPORT_PREVIEW_URL_ENV', ''))
+PY
+fi
+
+if [ "$SYNC_SEVERE_FAILURE" = "true" ] || [ "${REPORT_STATUS:-}" = "failed" ]; then
+  exit 1
 fi
 
 exit 0

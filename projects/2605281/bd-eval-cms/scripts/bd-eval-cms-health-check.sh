@@ -13,15 +13,16 @@ FAIL=0
 WARN=0
 
 check() {
-  local label="$1" ok="$2"
-  if $ok; then
+  local label="$1" ok="$2" fix_hint="${3:-}"
+  # ok 是本脚本内部构造的测试表达式；必须用 eval 保留路径引号，避免带空格路径误判失败。
+  if eval "$ok"; then
     echo "✅ $label"
-    ((PASS++))
+    ((++PASS))
   else
     echo "❌ $label"
-    ((FAIL++))
-    if $FIX_MODE; then
-      echo "   💡 修复建议: $3"
+    ((++FAIL))
+    if $FIX_MODE && [ -n "$fix_hint" ]; then
+      echo "   💡 修复建议: $fix_hint"
     fi
   fi
 }
@@ -29,7 +30,7 @@ check() {
 warn() {
   local label="$1"
   echo "⚠️  $label"
-  ((WARN++))
+  ((++WARN))
 }
 
 echo "════════════════════════════════════════"
@@ -75,19 +76,19 @@ MISSING=0
 for f in "${SKILL_FILES[@]}"; do
   if [ ! -f "$SKILL_DIR/references/$f" ]; then
     echo "❌ 缺失: $f"
-    ((MISSING++))
-    ((FAIL++))
+    ((++MISSING))
+    ((++FAIL))
   fi
 done
 if [ $MISSING -eq 0 ]; then
   echo "✅ 全部 $(echo "${SKILL_FILES[@]}" | wc -w | tr -d ' ') 个技能文件完整"
-  ((PASS++))
+  ((++PASS))
 fi
 
-# 3. 依赖 Skill
+# 3. 依赖 Skill（v0.7.0 起不再依赖 doc-viewer）
 echo ""
 echo "── 依赖 Skill ──"
-for dep in doc-viewer multi-search; do
+for dep in multi-search; do
   if [ -f "$HOME/.openclaw/skills/$dep/SKILL.md" ] || [ -f "$HOME/.agents/skills/$dep/SKILL.md" ]; then
     check "$dep" "true"
   else
@@ -102,17 +103,10 @@ check "curl" "[ -x '$(command -v curl 2>/dev/null || echo /dev/null)' ]" "安装
 check "python3" "[ -x '$(command -v python3 2>/dev/null || echo /dev/null)' ]" "安装 python3"
 check "~/.openclaw 目录" "[ -d '$HOME/.openclaw' ]" "确认 OpenClaw 已安装"
 
-# 5. 外部 API
-echo ""
-echo "── 外部服务连通性 ──"
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "https://doc.20100706.xyz" 2>/dev/null || echo "000")
-check "doc.20100706.xyz 上传服务" "[ '$HTTP_CODE' != '000' ]" "检查网络连接，确认 doc.20100706.xyz 可达"
-
-# 6. 脚本
+# 5. 脚本
 echo ""
 echo "── 脚本 ──"
 check "archive-links.sh" "[ -f '$SKILL_DIR/scripts/archive-links.sh' ]" "确认归档脚本存在"
-check "batch-upload.sh" "[ -f '$SKILL_DIR/scripts/batch-upload.sh' ]" "确认上传脚本存在"
 
 # 汇总
 echo ""

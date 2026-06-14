@@ -245,6 +245,45 @@ blockquote {
   .chapter{padding:0}
   body{background:#FFF}
 }
+
+/* ===== v0.5.0 新增样式 ===== */
+/* P4 互斥规则约束框（琉珀色边框） */
+.v5-exclusion-box {
+  background: #fffbeb;
+  border: 2px solid #d97706;
+  padding: 12px 16px;
+  margin: 16px 0;
+  font-size: 0.9em;
+  line-height: 1.7;
+}
+.v5-exclusion-box strong { color: #d97706; }
+
+/* P1 五维度评分表（列宽优化） */
+.v5-score-matrix th { background: #1a3a5c; color: #fff; }
+.v5-score-matrix td:nth-child(2) { font-weight: 700; text-align: center; width: 80px; }
+.v5-score-matrix td:nth-child(3) { text-align: center; font-weight: 700; width: 80px; color: #1a3a5c; }
+.v5-score-matrix td:nth-child(4) { text-align: center; font-weight: 700; }
+.v5-score-matrix tr.total-row td { background: #f0f4f8; font-weight: 700; color: #1a3a5c; }
+
+/* P3 终局五问表（行高加大） */
+.v5-five-questions th { background: #1a3a5c; color: #fff; }
+.v5-five-questions td:first-child { font-weight: 700; width: 30%; background: #f8fafc; }
+.v5-five-questions tr { line-height: 1.8; }
+
+/* P6 置信度徽章 (A/B/C/D) */
+.confidence-tag {
+  display: inline-block;
+  font-size: 8.5pt;
+  font-weight: 600;
+  padding: 1px 6px;
+  margin: 0 2px;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+.confidence-a { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.confidence-b { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+.confidence-c { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+.confidence-d { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
 </style>
 </head>
 <body>
@@ -280,6 +319,47 @@ blockquote {
 
 <!-- ==================== CONTENT CHAPTERS ==================== -->
 {{CHAPTERS}}
+
+<!-- ==================== v0.5.0 新增 BLOCK（使用说明） ====================
+ 以下 4 个 block 是 v0.5.0 新增方法的 HTML 骨架，复制到对应章节位置：
+
+ 【1】P4 互斥规则约束框 (放在"承接主体比较"章节顶部)
+ <div class="v5-exclusion-box">
+   <strong>⚠ 业务主体互斥规则约束</strong><br><br>
+   <strong>规则一：</strong>院内直营（深康/德镁/维盛）与院内代理（天津康哲）互斥<br>
+   <strong>规则二：</strong>院外业务中心为通用协同方，可与任何院内主体叠加<br>
+   <strong>本标的承接主体：</strong>XXX<br>
+   <strong>互斥校验结果：</strong>通过/不通过
+ </div>
+
+ 【2】P1 五维度评分矩阵 (放在 Gate 2 结论内)
+ <table class="v5-score-matrix">
+   <tr><th>维度</th><th>权重</th><th>评分(1-5)</th><th>加权分</th><th>评分依据</th></tr>
+   <tr><td>疗效终点改善幅度</td><td>30%</td><td>X</td><td>X.X</td><td>依据 [B级-来源]</td></tr>
+   <tr><td>安全性可控程度</td><td>25%</td><td>X</td><td>X.X</td><td>依据</td></tr>
+   <tr><td>数据可桥接程度</td><td>20%</td><td>X</td><td>X.X</td><td>依据</td></tr>
+   <tr><td>KOL 学术认可度</td><td>15%</td><td>X</td><td>X.X</td><td>依据</td></tr>
+   <tr><td>真实世界证据</td><td>10%</td><td>X</td><td>X.X</td><td>依据</td></tr>
+   <tr class="total-row"><td>总分</td><td>100%</td><td></td><td>X.XX/5</td><td>通过（≥3.0）/ 不通过</td></tr>
+ </table>
+
+ 【3】P3 终局五问 (放在 One-pager 章节)
+ <table class="v5-five-questions">
+   <tr><th>问题</th><th>回答</th></tr>
+   <tr><td>1. 峰值销售额</td><td>基准 X 亿元（保守 Y / 乐观 Z）</td></tr>
+   <tr><td>2. 承接业务主体</td><td>XXX（归口说明）</td></tr>
+   <tr><td>3. 假设错误一半是否可接受</td><td>可接受/不可接受 + 理由</td></tr>
+   <tr><td>4. 最坏情况止损机制</td><td>触发条件 + 止损手段（≥2 类）</td></tr>
+   <tr><td>5. 先发制人价值</td><td>高/中/低威胁 + 不引进的后果</td></tr>
+ </table>
+
+ 【4】P6 置信度徽章 (跟随数据使用)
+ <span class="confidence-tag confidence-a">A级</span> FDA 批文
+ <span class="confidence-tag confidence-b">B级</span> IQVIA 报告
+ <span class="confidence-tag confidence-c">C级</span> BD 内部判断
+ <span class="confidence-tag confidence-d">D级</span> 自建模型推算
+  格式推荐：峰值销售额 1.0 亿元 <span class="confidence-tag confidence-d">D级</span>
+============================================================ -->
 
 </body>
 </html>

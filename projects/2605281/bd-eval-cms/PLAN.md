@@ -72,7 +72,7 @@ projects/2605152/bd-eval-cms/
 │   └── SOP.md                             ← CMS版完整流程规范（新建）
 ├── scripts/
 │   ├── archive-links.sh                   ← 归档脚本（复用 bd-eval 逻辑）
-│   ├── batch-upload.sh                    ← 批量上传（复用）
+│   ├── sync-to-knowledge-base.sh            ← 产品引进知识库同步
 │   └── bd-eval-cms-health-check.sh        ← CMS版健康检测（新建）
 └── projects/bd-eval-cms/{品种名}/         ← 运行时工作目录
     ├── state.json
@@ -225,14 +225,14 @@ bd-eval (方案A)                    bd-eval-cms (方案B)
 │                                  │   └── 00_增补条款.md（复制）
 ├── scripts/                       ├── scripts/
 │   ├── archive-links.sh           │   ├── archive-links.sh（复用）
-│   ├── batch-upload.sh            │   ├── batch-upload.sh（复用）
+│   ├── sync-to-knowledge-base.sh   │   ├── sync-to-knowledge-base.sh（知识库同步）
 │   └── health-check.sh            │   └── health-check-cms.sh（新建）
 └── projects/bd-eval/{品种}/       └── projects/bd-eval-cms/{品种}/
 ```
 
 **共享规则**：
 - Phase 1 DISCOVERY 的搜索方法论相同（web_search ≥5次，覆盖相同维度）
-- 归档脚本逻辑相同（上传到 doc.20100706.xyz）
+- HTML 报告统一同步到产品引进知识库（doc.aishuo.co 长链接）
 - 品种目录结构对齐（01-discovery / 02-gate-by-chapter / battle / 04-final-report）
 
 **独立规则**：

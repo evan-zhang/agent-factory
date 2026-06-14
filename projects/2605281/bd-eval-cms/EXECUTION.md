@@ -7,6 +7,30 @@
 
 ## 快速开始
 
+**程序调用（v0.9.2+ 推荐）**：
+
+业务程序只需一次调用，传品种名 + 公司名即可启动完整评估：
+
+```bash
+bash scripts/run-opportunity.sh \
+  --product "TRTL-729" \
+  --company "TestCo Pharma" \
+  --mode auto
+```
+
+脚本输出：
+
+```
+CASE_PATH=...
+CASE_CODE=...
+PHASE_STATUS=...
+OPPORTUNITY_ID=...
+```
+
+程序可抓 `CASE_PATH=` / `CASE_CODE=` 走后续流程（如轮询状态、读取 REPORT.html）。
+
+**Agent 接收用户消息**：
+
 **用户说**：`CMS投前评估：CG-0255、RHOFADE`
 
 **Agent 响应**：
@@ -26,6 +50,72 @@ Phase 5.5: HTML 生成（麦肯锡深蓝风格）+ 上传归档
 
 开始执行...（稍后回报结果）
 ```
+
+## 单一入口脚本（v0.9.2）
+
+`scripts/run-opportunity.sh` 提供“业务程序 / cron / 流水线”可调用的单一入口。
+
+**核心承诺**：
+
+- 输入仅需 `product` + `company`，可选 `indication` / `region` / `notes` / `ext` / `scheme` / `mode`
+- 不需要业务侧预先创建 case 目录、预先生成 state.json
+- 不需要业务侧理解 Skill 内部状态机
+- 输出 4 个结构化 prefix，程序可解析
+
+**三种模式**：
+
+| 模式 | 适用 |
+|------|------|
+| `auto` | 全自动跑完 Phase 1→5.5，不询问 |
+| `semi` | 每阶段后等待人工确认 |
+| `--dry-run` | 仅打印动作，零文件副作用 |
+
+**调用示例**：
+
+```bash
+# 最简调用
+bash scripts/run-opportunity.sh --product "TRTL-729" --company "TestCo Pharma"
+
+# 传入外部资料
+bash scripts/run-opportunity.sh --product "X" --company "Y" --ext ./资料.pdf
+
+# JSON 输入（推荐结构化场景）
+bash scripts/run-opportunity.sh --json opportunity.json
+
+# 从 stdin 读 JSON
+echo '{"product":"X","company":"Y"}' | bash scripts/run-opportunity.sh --json -
+
+# 预演不副作用
+bash scripts/run-opportunity.sh --product "X" --company "Y" --dry-run
+```
+
+**架构位置**：
+
+```
+业务程序 / cron / OpenClaw 调度
+    ↓ 调用 run-opportunity.sh
+case dir + state.json 自动创建
+    ↓ 自动调用 orchestrator-resume.sh
+Phase 1 → 5.5 全链路执行
+    ↓
+HTML 报告 + 知识库同步 + state.json.reportHtmlUrl
+```
+
+**幂等性**：
+
+- 同日同 `(product, company)` 重复调用 → 同 caseCode、同 case 目录、同 opportunity_id
+- 视为续跑，不覆盖现有 state.json
+- 业务程序可以放心地反复重试或轮询
+
+**冲突处理**：
+
+- 同日同 product 同 4字母缩写但不同 company → 自动加 `-1` / `-2` 后缀
+- 同 caseCode 冲突超 99 个 → 报错并提示人工处理
+
+**详细设计**：`design/DESIGN-v0.9.2.md`
+**测试用例**：`bash scripts/test-run-opportunity.sh`（17 用例）
+**JSON 示例**：`references/opportunity.example.json`
+
 
 ---
 
@@ -176,7 +266,7 @@ Phase 3: GRV 逐 Gate 深度评估（6-Gate 结构，批次并行）
 Phase 4: Gate Battle 对抗审查（审查层 vs 执行层）
 Phase 5: 报告合并 + 质量终检（8项）
     ↓
-HTML 生成（麦肯锡深蓝 #1a3a5c）+ 上传 doc.20100706.xyz + 归档
+HTML 生成（麦肯锡深蓝 #1a3a5c）+ 上传产品引进知识库（5 年长链接） + 归档
 ```
 
 ---
@@ -646,31 +736,42 @@ python3 scripts/convert-md-to-html.py \
 4. 套用 skeleton.html 骨架 + 配色方案
 5. 输出完整 HTML 文件
 
-### 上传到 doc.20100706.xyz
+### 上传到产品引进知识库（v0.4.0 起）
+
+> v0.7.0 起彻底解耦 doc-viewer skill：报告渲染调本地 `bd-eval-cms/scripts/render_report.sh`，
+> 上传走玄关 4 步 API（与 v0.6.0 一致）拿 5 年链接。
+> 完整 5 步 curl 见 `references/SOP.md` 第 7.4 节。
+>
+> 固定参数来源：`bd-eval-cms/config.yaml`
+> - `knowledgeBase.projectId` = `2060176831872499713`
+> - `knowledgeBase.rootDir` = `2605`
+> - `knowledgeBase.pathTemplate` = `{ROOT}/{YYMMDD}/{YYMMDD-XXXX}`
+>
+> AppKey 来源：`$DOCVIEWER_KB_APPKEY`（OpenClaw 动态注入，禁止硬编码）
 
 ```bash
-curl -s -X POST https://doc.20100706.xyz/upload \
-  -F "file=@{品种目录}/REPORT.html;filename={品种名}-CMS投前评估报告.html"
+# 简化调用：直接走 sync 脚本，由 sync 脚本完成 HTML 上传 + 链接回写
+bash scripts/sync-to-knowledge-base.sh "{品种目录路径}"
+# 脚本会：1) 生成/读取 caseCode  2) 上传 REPORT.html 到产品引进知识库
+#         3) 调 doc-preview 拿 5 年链接  4) 回写 state.json.reportHtmlUrl
 ```
-
-返回 `raw_url`，记录到 `state.json` 的 `reportHtmlUrl`。
 
 ### 归档操作
 
 ```bash
 scripts/archive-links.sh \
   "{品种slug}" \
-  "https://doc.20100706.xyz/raw/{report_id}"
+  "$PREVIEW_URL"  # 从 state.json.reportHtmlUrl 读取
 ```
 
 ### 知识库自动同步（Phase 5.5 必执行）
 
 完成 HTML 上传后，自动将品种目录下所有文件同步到玄关知识库。
 
-**配置**：
-- API 地址：`https://sg-al-cwork-web.mediportal.com.cn/open-api/document-database/file/uploadContent`
-- appKey：`mN6bVc2Xz9Lk4Jh7Gt5Rf3Wp1Yq8As0D`
-- projectId：`2060176831872499713`（产品引进知识库）
+**配置**（v0.6.0 起改为运行时注入 + config.yaml）：
+- API 地址：`https://sg-al-cwork-web.mediportal.com.cn/open-api/...`（详见 SOP.md 7.4）
+- appKey：运行时从环境变量 `$DOCVIEWER_KB_APPKEY` 读取（OpenClaw 动态注入，**禁止硬编码**）
+- projectId：从 `bd-eval-cms/config.yaml` 的 `knowledgeBase.projectId` 读取（业务固定值）
 
 **案件代号命名规范（v2026.5.31）**：
 
@@ -697,8 +798,8 @@ scripts/archive-links.sh \
 
 新品种由子Agent 按规则自动生成（pypinyin 拼音首字母），写入 state.json 的 caseCode 字段。sync-to-knowledge-base.sh 会自动从 state.json 读取或从目录名生成，不需要手动指定。
 
-**同步目录**：`{YYMMDD}/{YYMMDD-XXXX}/`
-例如：`260531/260531-LNXB/`
+**同步目录**：`{ROOT}/{YYMMDD}/{YYMMDD-XXXX}/`
+例如：`2605/260613/260613-SMQT/`
 
 **调用方式**：
 
@@ -720,15 +821,15 @@ bash scripts/sync-to-knowledge-base.sh "{品种目录路径}" "260531-LNXB"
 
 | 本地路径 | 知识库 folderName | fileName | fileSuffix |
 |---------|------------------|----------|-----------|
-| state.json | `{YYMMDD}/{YYMMDD-XXXX}` | state | json |
-| 01-discovery.md | `{YYMMDD}/{YYMMDD-XXXX}` | 01-discovery | md |
-| One-pager.md | `{YYMMDD}/{YYMMDD-XXXX}` | One-pager | md |
-| Gate 1-6 文件 | `{YYMMDD}/{YYMMDD-XXXX}` | Gate-N-{名称} | md |
-| 03-battle-summary.md | `{YYMMDD}/{YYMMDD-XXXX}` | 03-battle-summary | md |
-| 04-final-report.md | `{YYMMDD}/{YYMMDD-XXXX}` | 04-final-report | md |
-| REPORT.html | `{YYMMDD}/{YYMMDD-XXXX}` | REPORT | html |
-| references/*.md | `{YYMMDD}/{YYMMDD-XXXX}/references` | {前缀}-{序号} | md |
-| EXT/*.md | `{YYMMDD}/{YYMMDD-XXXX}/EXT` | EXT-{序号} | md |
+| state.json | `{ROOT}/{YYMMDD}/{YYMMDD-XXXX}` | state | json |
+| 01-discovery.md | `{ROOT}/{YYMMDD}/{YYMMDD-XXXX}` | 01-discovery | md |
+| One-pager.md | `{ROOT}/{YYMMDD}/{YYMMDD-XXXX}` | One-pager | md |
+| Gate 1-6 文件 | `{ROOT}/{YYMMDD}/{YYMMDD-XXXX}` | Gate-N-{名称} | md |
+| 03-battle-summary.md | `{ROOT}/{YYMMDD}/{YYMMDD-XXXX}` | 03-battle-summary | md |
+| 04-final-report.md | `{ROOT}/{YYMMDD}/{YYMMDD-XXXX}` | 04-final-report | md |
+| REPORT.html | `{ROOT}/{YYMMDD}/{YYMMDD-XXXX}` | REPORT | html |
+| references/*.md | `{ROOT}/{YYMMDD}/{YYMMDD-XXXX}/references` | {前缀}-{序号} | md |
+| EXT/*.md | `{ROOT}/{YYMMDD}/{YYMMDD-XXXX}/EXT` | EXT-{序号} | md |
 
 ---
 
@@ -798,7 +899,7 @@ cp 合作方资料/* bd-opportunities/260615-FOO/
 # 2. 调度器（人不定时）抽出商机
 ./scripts/run.sh 260615-FOO
 # → AI 读 state.json → 不存在 → 从 phase-1 全量启动
-# → 全程静默，跑完上传 doc.20100706.xyz
+# → 全程静默，跑完上传产品引进知识库（5 年链接）
 ```
 
 **手动场景**（指定重跑）：

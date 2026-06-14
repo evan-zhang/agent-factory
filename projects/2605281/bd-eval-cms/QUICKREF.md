@@ -92,7 +92,7 @@ projects/bd-eval-cms/{品种名}/
 ```bash
 scripts/archive-links.sh \
   {品种slug} \
-  "https://doc.20100706.xyz/raw/xxx"
+  "https://doc.aishuo.co/preview/xxx"
 ```
 
 ## 与 bd-eval（方案A）的区别

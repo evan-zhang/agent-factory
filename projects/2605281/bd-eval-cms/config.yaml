@@ -12,14 +12,17 @@ knowledgeBase:
   # 来源：业务固定，CMO 评估业务专用空间
   projectId: "2060176831872499713"
   
+  # 知识库根目录（产品引进知识库按项目批次归档）
+  rootDir: "2605"
+
   # 路径模板（sync-to-knowledge-base.sh 与 REPORT.html 上传共用）
-  # 实际生成：{YYMMDD}/{YYMMDD-XXXX}/ （如 260531/260531-LNXB/）
-  pathTemplate: "{YYMMDD}/{YYMMDD-XXXX}"
+  # 实际生成：{ROOT}/{YYMMDD}/{YYMMDD-XXXX}/ （如 2605/260613/260613-SMQT/）
+  pathTemplate: "{ROOT}/{YYMMDD}/{YYMMDD-XXXX}"
   
   # 文件命名后缀（用于 doc-preview/ticket 接口的 format 字段）
   format: "html"
   
-  # preview 链接有效期（doc.aishuo.co 长链接，单位：年）
+  # preview 链接配置（doc.aishuo.co 长期预览，previewTtlYears 为配置记录，实际有效期由服务端策略决定）
   previewTtlYears: 5
 
 # 报告渲染器（v0.7.0 起，不再依赖 doc-viewer skill）

@@ -4,7 +4,7 @@ cms-report-to-html.py — CMS 投前评估报告 Markdown → HTML 生成器
 照搬 style-03 琥珀金风格，适配 CMS 报告结构
 
 用法:
-  python3 scripts/cms-report-to-html.py <品种目录> [--upload] [--doc-id DOC_ID]
+  python3 scripts/cms-report-to-html.py <品种目录>
 
 流程:
   1. 读取 state.json 获取封面元数据
@@ -15,14 +15,14 @@ cms-report-to-html.py — CMS 投前评估报告 Markdown → HTML 生成器
   6. 替换 skeleton-cms.html 所有 token
   7. 验证零残留
   8. 输出 REPORT.html
-  9. 可选上传到 doc.20100706.xyz
+
+说明：本脚本仅生成本地 REPORT.html。知识库同步统一由 scripts/sync-to-knowledge-base.sh 执行。
 """
 
 import sys
 import os
 import json
 import re
-import subprocess
 from pathlib import Path
 from datetime import datetime
 
@@ -33,7 +33,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = SCRIPT_DIR.parent
 TEMPLATES_DIR = PROJECT_DIR / "templates"
 SKELETON_PATH = TEMPLATES_DIR / "skeleton-cms.html"
-AMBER_YML_PATH = Path(os.path.expanduser("~/.agents/skills/doc-viewer/templates/style-03/color-themes/amber.yml"))
+AMBER_YML_PATH = TEMPLATES_DIR / "style-03-color" / "amber.yml"
 
 # ============================================================
 # CSS 变量加载（从 amber.yml）
@@ -351,16 +351,14 @@ def load_cover_metadata(state: dict) -> dict:
 # ============================================================
 def main():
     if len(sys.argv) < 2:
-        print("用法: python3 cms-report-to-html.py <品种目录> [--upload] [--doc-id DOC_ID]")
+        print("用法: python3 cms-report-to-html.py <品种目录>")
+        sys.exit(1)
+
+    if '--upload' in sys.argv or '--doc-id' in sys.argv:
+        print("❌ --upload/--doc-id 已废弃：请先生成 REPORT.html，再运行 scripts/sync-to-knowledge-base.sh")
         sys.exit(1)
 
     case_dir = Path(sys.argv[1]).resolve()
-    do_upload = '--upload' in sys.argv
-    doc_id = None
-    if '--doc-id' in sys.argv:
-        idx = sys.argv.index('--doc-id')
-        if idx + 1 < len(sys.argv):
-            doc_id = sys.argv[idx + 1]
 
     print(f"=== CMS 报告 HTML 生成 ===")
     print(f"品种目录: {case_dir}")
@@ -437,46 +435,8 @@ def main():
     print(f"✅ HTML 已生成: {output_path}")
     print(f"   文件大小: {output_path.stat().st_size / 1024:.1f} KB")
 
-    # 12. 可选上传
-    if do_upload:
-        upload_path = output_path
-        if doc_id:
-            cmd = ['curl', '-s', '-X', 'PUT',
-                   f'https://doc.20100706.xyz/api/{doc_id}',
-                   '-F', f'file=@{upload_path};filename=cms-report-amber.html']
-            print(f"更新文档 (doc_id={doc_id})...")
-        else:
-            cmd = ['curl', '-s', '-X', 'POST',
-                   'https://doc.20100706.xyz/upload',
-                   '-F', f'file=@{upload_path};filename=cms-report-amber.html']
-            print("上传新文档...")
-
-        result = subprocess.run(cmd, capture_output=True, text=True)
-        if result.returncode == 0:
-            try:
-                resp = json.loads(result.stdout)
-                new_doc_id = resp.get('id', resp.get('doc_id', ''))
-                raw_url = resp.get('raw_url', f'https://doc.20100706.xyz/raw/{new_doc_id}')
-                view_url = resp.get('view_url', f'https://doc.20100706.xyz/view/{new_doc_id}')
-                print(f"✅ 上传成功!")
-                print(f"   Raw URL: {raw_url}")
-                print(f"   View URL: {view_url}")
-                print(f"   Doc ID: {new_doc_id}")
-
-                # 更新 state.json
-                if new_doc_id:
-                    state['reportHtmlUrl'] = raw_url
-                    state['reportViewUrl'] = view_url
-                    state['htmlReportId'] = new_doc_id
-                    with open(state_path, 'w') as f:
-                        json.dump(state, f, ensure_ascii=False, indent=2)
-                    print(f"   state.json 已更新")
-            except json.JSONDecodeError:
-                print(f"上传响应: {result.stdout[:200]}")
-        else:
-            print(f"❌ 上传失败: {result.stderr}")
-
     print("\n=== 生成完成 ===")
+    print("如需同步到产品引进知识库，请运行：bash scripts/sync-to-knowledge-base.sh <品种目录>")
 
 
 if __name__ == '__main__':
