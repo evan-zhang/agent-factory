@@ -85,16 +85,13 @@ if [ $MISSING -eq 0 ]; then
   ((++PASS))
 fi
 
-# 3. 依赖 Skill（v0.7.0 起不再依赖 doc-viewer）
+# 3. 依赖 Skill
+# v0.9.4.2：bd-eval-cms 不再把 multi-search 作为硬依赖。
+# Phase 1 搜索使用 OpenClaw 原生 web_search / web_fetch 工具；multi-search 若存在，仅可作为人工增强工具。
 echo ""
 echo "── 依赖 Skill ──"
-for dep in multi-search; do
-  if [ -f "$HOME/.openclaw/skills/$dep/SKILL.md" ] || [ -f "$HOME/.agents/skills/$dep/SKILL.md" ]; then
-    check "$dep" "true"
-  else
-    check "$dep" "false" "安装 $dep Skill: 参考 bd-eval-cms SKILL.md 配置与授权章节"
-  fi
-done
+echo "✅ 无硬依赖 Skill（multi-search 非必需）"
+((++PASS))
 
 # 4. OpenClaw 工具
 echo ""

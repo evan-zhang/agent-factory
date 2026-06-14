@@ -21,7 +21,7 @@ description: |
 
 metadata:
   display_name: 医药BD评估体系（CMS）
-  version: 0.9.4.1
+  version: 0.9.4.2
 compatibility: Claude
 ---
 
