@@ -21,7 +21,7 @@ description: |
 
 metadata:
   display_name: 医药BD评估体系（CMS）
-  version: 0.10.0
+  version: 0.10.1
 compatibility: Claude
 ---
 
@@ -875,7 +875,8 @@ OPPORTUNITY_ID=...
 bd-opportunities/             # = SKILL_ROOT（根目录即商机池）
 ├── 260611-EPIO/              # 已完成项目
 │   ├── state.json            # 含 gateStatus 字段
-│   ├── 01-discovery.md
+│   ├── 01-discovery.md       # phase-1 章节（含 [P1-XXX] 引用）
+│   ├── 02-discovery/         # phase-2 章节目录（含 [P2-XXX] 引用）
 │   ├── 02-gate-by-chapter/
 │   ├── 04-final-report.md
 │   └── REPORT.html

@@ -24,7 +24,7 @@ gate_config() {
     gate-4)   echo "G4 2 02-gate-by-chapter/Gate-4-payment.md" ;;
     gate-5)   echo "G5 2 02-gate-by-chapter/Gate-5-cost.md" ;;
     phase-1)  echo "P1 2 01-discovery.md" ;;
-    phase-2)  echo "P2 2 01-discovery.md" ;;
+    phase-2)  echo "P2 2 02-discovery/01-background.md" ;;
     one-pager) echo "OP 1 02-gate-by-chapter/One-pager.md" ;;
     *)        return 1 ;;
   esac

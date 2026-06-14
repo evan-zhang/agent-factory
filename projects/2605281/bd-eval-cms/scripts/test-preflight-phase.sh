@@ -98,6 +98,132 @@ write_minimal_outputs() {
   echo "# Final Report $(printf '%100s' | tr ' ' 'A')" > "$dir/04-final-report.md"
 }
 
+# v0.10.1 新增：为正向案例造满 v0.10.0 9-gate 搜索证据
+# phase-1/phase-2/one-pager 各需 ≥2 个 ref，gate-1≥2/gate-2≥3/gate-3≥3/gate-4≥2/gate-5≥2
+# 且章节文件需含 [PREFIX-NNN] 引用，ref 文件需含 URL/抓取时间/关键数据点
+write_search_evidence() {
+  local dir="$1"
+  
+  # phase-1: P1 ≥2
+  mkdir -p "$dir/references/P1"
+  for i in 1 2; do
+    cat > "$dir/references/P1/P1-00$i.md" <<EOF
+# [P1-00$i] Test
+- **URL**: https://example.com/p1-$i
+- **抓取时间**: 2026-06-14
+- **来源类型**: 官方
+
+## 关键数据点
+- p
+EOF
+  done
+  echo "看 [P1-001] [P1-002]" > "$dir/01-discovery.md"
+  
+  # phase-2: P2 ≥2（章节路径为 02-gate-by-chapter/02-discovery.md，详见 SKILL.md）
+  mkdir -p "$dir/references/P2"
+  for i in 1 2; do
+    cat > "$dir/references/P2/P2-00$i.md" <<EOF
+# [P2-00$i] Test
+- **URL**: https://example.com/p2-$i
+- **抓取时间**: 2026-06-14
+- **来源类型**: 官方
+
+## 关键数据点
+- p
+EOF
+  done
+  mkdir -p "$dir/02-discovery"
+  echo "看 [P2-001] [P2-002]" > "$dir/02-discovery/01-background.md"
+  
+  # one-pager: OP ≥1
+  mkdir -p "$dir/references/OP"
+  cat > "$dir/references/OP/OP-001.md" <<'EOF'
+# [OP-001] Test
+- **URL**: https://example.com/op
+- **抓取时间**: 2026-06-14
+- **来源类型**: 官方
+
+## 关键数据点
+- p
+EOF
+  echo "看 [OP-001]" > "$dir/02-gate-by-chapter/One-pager.md"
+  
+  # gate-1: G1 ≥2
+  mkdir -p "$dir/references/G1"
+  for i in 1 2; do
+    cat > "$dir/references/G1/G1-00$i.md" <<EOF
+# [G1-00$i] Test
+- **URL**: https://example.com/g1-$i
+- **抓取时间**: 2026-06-14
+- **来源类型**: 官方
+
+## 关键数据点
+- p
+EOF
+  done
+  echo "看 [G1-001] [G1-002]" > "$dir/02-gate-by-chapter/Gate-1-premise.md"
+  
+  # gate-2: G2 ≥3
+  mkdir -p "$dir/references/G2"
+  for i in 1 2 3; do
+    cat > "$dir/references/G2/G2-00$i.md" <<EOF
+# [G2-00$i] Test
+- **URL**: https://example.com/g2-$i
+- **抓取时间**: 2026-06-14
+- **来源类型**: 官方
+
+## 关键数据点
+- p
+EOF
+  done
+  echo "看 [G2-001] [G2-002] [G2-003]" > "$dir/02-gate-by-chapter/Gate-2-positioning.md"
+  
+  # gate-3: G3 ≥3
+  mkdir -p "$dir/references/G3"
+  for i in 1 2 3; do
+    cat > "$dir/references/G3/G3-00$i.md" <<EOF
+# [G3-00$i] Test
+- **URL**: https://example.com/g3-$i
+- **抓取时间**: 2026-06-14
+- **来源类型**: 官方
+
+## 关键数据点
+- p
+EOF
+  done
+  echo "看 [G3-001] [G3-002] [G3-003]" > "$dir/02-gate-by-chapter/Gate-3-evidence.md"
+  
+  # gate-4: G4 ≥2
+  mkdir -p "$dir/references/G4"
+  for i in 1 2; do
+    cat > "$dir/references/G4/G4-00$i.md" <<EOF
+# [G4-00$i] Test
+- **URL**: https://example.com/g4-$i
+- **抓取时间**: 2026-06-14
+- **来源类型**: 官方
+
+## 关键数据点
+- p
+EOF
+  done
+  echo "看 [G4-001] [G4-002]" > "$dir/02-gate-by-chapter/Gate-4-payment.md"
+  
+  # gate-5: G5 ≥2
+  mkdir -p "$dir/references/G5"
+  for i in 1 2; do
+    cat > "$dir/references/G5/G5-00$i.md" <<EOF
+# [G5-00$i] Test
+- **URL**: https://example.com/g5-$i
+- **抓取时间**: 2026-06-14
+- **来源类型**: 官方
+
+## 关键数据点
+- p
+EOF
+  done
+  echo "看 [G5-001] [G5-002]" > "$dir/02-gate-by-chapter/Gate-5-cost.md"
+}
+
 TEST_DIR=$(mktemp -d)
 trap 'rm -rf "$TEST_DIR"' EXIT
 
@@ -109,6 +235,7 @@ POSITIVE_DIR="$TEST_DIR/positive-case"
 mkdir -p "$POSITIVE_DIR"
 write_completed_state "$POSITIVE_DIR/state.json"
 write_minimal_outputs "$POSITIVE_DIR"
+write_search_evidence "$POSITIVE_DIR"
 run_test "正向最小案例（所有关键产物齐全）" "$POSITIVE_DIR" "pass"
 
 # 2. 缺少 01-discovery.md

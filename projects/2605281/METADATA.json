@@ -1,6 +1,6 @@
 {
   "name": "bd-eval-cms",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "displayName": "CMS投前评估流水线",
   "description": "CMS（康哲药业）投前评估体系 — 20个独立技能 + Gate 0~5 + Final门控 + Style A1 通用模板内核 + v0.9.1 质量护栏 + v0.9.2 单一入口 + v0.9.3 profile 收敛",
   "author": "evan",
