@@ -88,10 +88,24 @@ fi
 # 3. 依赖 Skill
 # v0.9.4.2：bd-eval-cms 不再把 multi-search 作为硬依赖。
 # Phase 1 搜索使用 OpenClaw 原生 web_search / web_fetch 工具；multi-search 若存在，仅可作为人工增强工具。
+# v0.10.0：项目内置 scripts/search/ 子系统完全内化搜索能力
 echo ""
 echo "── 依赖 Skill ──"
 echo "✅ 无硬依赖 Skill（multi-search 非必需）"
 ((++PASS))
+
+# v0.10.0 新增：检查内置搜索子系统
+echo ""
+echo "── v0.10.0 内置搜索子系统 ──"
+check "core_search.sh" "[ -x '$SKILL_DIR/scripts/search/core_search.sh' ]" "重新克隆 bd-eval-cms v0.10.0+"
+check "source_ranker.sh" "[ -x '$SKILL_DIR/scripts/search/source_ranker.sh' ]" "重新克隆 bd-eval-cms v0.10.0+"
+check "keyword_mapper.sh" "[ -x '$SKILL_DIR/scripts/search/keyword_mapper.sh' ]" "重新克隆 bd-eval-cms v0.10.0+"
+check "field_extractor.sh" "[ -x '$SKILL_DIR/scripts/search/field_extractor.sh' ]" "重新克隆 bd-eval-cms v0.10.0+"
+check "validate_gate_search.sh" "[ -x '$SKILL_DIR/scripts/search/validate_gate_search.sh' ]" "重新克隆 bd-eval-cms v0.10.0+"
+check "source_priority.json" "[ -f '$SKILL_DIR/scripts/search/lib/source_priority.json' ]" "重新克隆 bd-eval-cms v0.10.0+"
+check "quota.json" "[ -f '$SKILL_DIR/scripts/search/lib/quota.json' ]" "重新克隆 bd-eval-cms v0.10.0+"
+check "extraction_prompts/" "[ -d '$SKILL_DIR/scripts/search/lib/extraction_prompts' ]" "重新克隆 bd-eval-cms v0.10.0+"
+warn "multi-search：v0.10.0 不再使用 multi-search；如需人工增强可保留为辅助工具"
 
 # 4. OpenClaw 工具
 echo ""

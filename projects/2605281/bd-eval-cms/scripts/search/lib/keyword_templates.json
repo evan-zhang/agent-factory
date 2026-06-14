@@ -1,0 +1,81 @@
+{
+  "A-1": [
+    "{品种} FDA status",
+    "{品种} EMA approval",
+    "{品种} ClinicalTrials phase",
+    "{品种} market authorization"
+  ],
+  "A-2": [
+    "{品种} NMPA",
+    "{品种} 国谈",
+    "{品种} 医保目录",
+    "{品种} 集采"
+  ],
+  "A-3": [
+    "{公司} pipeline",
+    "{公司} R&D pipeline",
+    "{公司} IND",
+    "{品种} preclinical"
+  ],
+  "A-4": [
+    "{参照药} biosimilar NMPA",
+    "{参照药} patent expiry",
+    "{参照药} data protection"
+  ],
+  "A-5": [
+    "{品种} 国谈",
+    "{品种} 医保目录",
+    "{品种} 集采批次"
+  ],
+  "A-6": [
+    "{品种} Rx to OTC 转换",
+    "{品种} 非处方药申报"
+  ],
+  "A-7": [
+    "{靶点} 适应症",
+    "{靶点} clinical pipeline"
+  ],
+  "A-8": [
+    "{品种} 仿制药一致性评价",
+    "{品种} 集采中选"
+  ],
+  "B-1": [
+    "{产品} NMPA 三类医疗器械",
+    "{产品} 注射剂批文"
+  ],
+  "B-2": [
+    "{公司} 医美产品组合",
+    "{公司} 营销渠道"
+  ],
+  "B-3": [
+    "{产品} OTC 市场份额",
+    "{产品} 线下药店"
+  ],
+  "C-1": [
+    "{品种} FDA market authorization",
+    "{品种} launch year"
+  ],
+  "C-2": [
+    "{品种} multi-market launch",
+    "{品种} ex-US approval"
+  ],
+  "C-3": [
+    "{公司} global portfolio",
+    "{公司} revenue by region"
+  ],
+  "D-1": [
+    "{target} SEC filing",
+    "{target} patent litigation",
+    "{target} clinical pipeline",
+    "{target} financial 10-K"
+  ],
+  "D-2": [
+    "{适应症} epidemiology",
+    "{品种} market size",
+    "{品种} growth rate"
+  ],
+  "D-3": [
+    "{品种} one-pager",
+    "{公司} BD opportunity"
+  ]
+}

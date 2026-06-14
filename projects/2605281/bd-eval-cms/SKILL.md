@@ -21,7 +21,7 @@ description: |
 
 metadata:
   display_name: 医药BD评估体系（CMS）
-  version: 0.9.4.2
+  version: 0.10.0
 compatibility: Claude
 ---
 
@@ -511,6 +511,43 @@ OPPORTUNITY_ID=...
 - 调节系数②：2-3亿元=0.8；1.5-2亿元=0.7；1-1.5亿元=0.6；0.5-1亿元=0.5；<0.5亿元=0.4。
 - 业务特点调节系数③：常规业务=1.0；全新业务且不确定性高=0.5。
 - 财务评级：90-100=A+强烈推荐；80-90=A推荐；70-80=B一般推荐；60-70=C谨慎推荐；<60=D不推荐。
+
+---
+
+## Step 6.5：v0.10.0 搜索能力内化（必读）
+
+> **起本版本起，本 Skill 不再依赖任何外部搜索 Skill**，完全使用本项目内置 `scripts/search/` 子系统。
+
+### 五个内置脚本
+
+| 脚本 | 职责 | 状态 |
+|------|------|------|
+| `core_search.sh` | 调用 OpenClaw 原生 `web_search` + `web_fetch`，含 60秒/100次 配额 | ✅ |
+| `source_ranker.sh` | 按 T1–T4 优先级排序搜索结果 | ✅ |
+| `keyword_mapper.sh` | 按技能编号查表取检索词（3–5个） | ✅ |
+| `field_extractor.sh` | 返本 Gate 字段抽取提示词（半自动） | ✅ |
+| `validate_gate_search.sh` | Gate 完成后校验搜索证据 | ✅ |
+
+### 三大表
+
+- `lib/source_priority.json`：T1=监管、N2=临床/学术、T3=行业库、T4=企业/媒体
+- `lib/keyword_templates.json`：17 个技能 × 3–4 个检索词
+- `lib/extraction_prompts/`：6 个 Gate 提示词（gate-1~5 + default）
+
+### 走一个 Gate 必跳 6 步（sub-agent 必须遵守）
+
+1. 调 `keyword_mapper.sh --skill {技能}` 拿检索词
+2. 调 `core_search.sh "<词>"` 拿原始结果
+3. 调 `source_ranker.sh '<json>'` 排序
+4. 调 `field_extractor.sh --gate {gate}` 拿抽取提示词
+5. 手写 `references/{前缀}/{前缀}-XXX.md`
+6. 正文加 `[{前缀}-XXX]` 引用
+
+不跳这些步，`validate_gate_search.sh` 会拍住，preflight 在 Phase 5.5 会拦下不生成报告。
+
+### 健康检查
+
+`bash scripts/bd-eval-cms-health-check.sh` 会同时检查 5 个脚本 + 3 个 lib + 6 个 prompt 模板是否完整。
 
 ---
 

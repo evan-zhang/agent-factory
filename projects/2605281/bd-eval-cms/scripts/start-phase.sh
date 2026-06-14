@@ -8,6 +8,11 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# v0.10.0：跨平台 ISO 时间戳（macOS BSD date 老版本不支持 -Iseconds）
+iso_now() {
+  python3 -c "from datetime import datetime, timezone; print(datetime.now(timezone.utc).astimezone().isoformat(timespec='seconds'))"
+}
 SKILL_ROOT="$(dirname "$SCRIPT_DIR")"
 
 CASE_CODE=$1
@@ -17,7 +22,7 @@ PROJECT_DIR="$SKILL_ROOT/$CASE_CODE"
 STATE_FILE="$PROJECT_DIR/state.json"
 
 # 标记 in_progress
-NOW=$(date -Iseconds)
+NOW=$(iso_now)
 TMP=$(mktemp)
 jq --arg g "$GATE" --arg ts "$NOW" \
   '.gateStatus[$g] = "in_progress" | .lastHeartbeat = $ts | .inProgressGate = $g' \

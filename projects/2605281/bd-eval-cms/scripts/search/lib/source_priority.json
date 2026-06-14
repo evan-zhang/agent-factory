@@ -1,0 +1,40 @@
+{
+  "T1": {
+    "label": "政府/监管",
+    "credibility": 0.95,
+    "domains": [
+      "nmpa.gov.cn",
+      "cde.org.cn",
+      "fda.gov",
+      "ema.europa.eu",
+      "nhsa.gov.cn",
+      "nhc.gov.cn"
+    ]
+  },
+  "T2": {
+    "label": "临床/学术",
+    "credibility": 0.85,
+    "domains": [
+      "clinicaltrials.gov",
+      "pubmed.ncbi.nlm.nih.gov",
+      "cochranelibrary.com",
+      "who.int"
+    ]
+  },
+  "T3": {
+    "label": "行业数据库",
+    "credibility": 0.7,
+    "domains": [
+      "iqvia.com",
+      "evaluate.com",
+      "drugs.com",
+      "pharmacodia.com",
+      "menet.com.cn"
+    ]
+  },
+  "T4": {
+    "label": "公司方/媒体",
+    "credibility": 0.5,
+    "domains": []
+  }
+}

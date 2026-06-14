@@ -13,6 +13,11 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILL_ROOT="$(dirname "$SCRIPT_DIR")"
 
+# v0.10.0：跨平台 ISO 时间戳（macOS BSD date 老版本不支持 -Iseconds）
+iso_now() {
+  python3 -c "from datetime import datetime, timezone; print(datetime.now(timezone.utc).astimezone().isoformat(timespec='seconds'))"
+}
+
 # 解析参数
 CASE_CODE=""
 MODE="auto"
@@ -69,7 +74,7 @@ fi
 # 更新 heartbeat（任何时刻访问都更新）
 update_heartbeat() {
   if [ -f "$STATE_FILE" ]; then
-    local NOW=$(date -Iseconds)
+    local NOW=$(iso_now)
     local TMP=$(mktemp)
     jq --arg ts "$NOW" '.lastHeartbeat = $ts' "$STATE_FILE" > "$TMP" && mv "$TMP" "$STATE_FILE"
   fi
@@ -79,15 +84,51 @@ update_heartbeat() {
 mark_gate() {
   local gate=$1
   local status=$2
+  # v0.10.0：状态为 completed 时，强制验证搜索证据
+  if [ "$status" = "completed" ]; then
+    if ! verify_search_evidence "$gate"; then
+      echo "❌ mark_gate $gate=completed 被拒绝：搜索证据校验失败" >&2
+      return 1
+    fi
+  fi
   local TMP=$(mktemp)
   jq --arg g "$gate" --arg s "$status" '.gateStatus[$g] = $s' "$STATE_FILE" > "$TMP" && mv "$TMP" "$STATE_FILE"
+}
+
+# v0.10.0 新增：标记 completed 前先校验搜索证据
+# 返回 0 = 通过 / 1 = 证据不足
+# 用法：verify_search_evidence <gate>
+verify_search_evidence() {
+  local gate=$1
+  # 适用 Gate 列表：gate-1 ~ gate-5 + phase-1/2/one-pager
+  case "$gate" in
+    gate-1|gate-2|gate-3|gate-4|gate-5|phase-1|phase-2|one-pager) ;;
+    *) return 0 ;;  # 其他 Gate 不检查
+  esac
+
+  # case_dir = STATE_FILE 所在目录（作为唯一 case 目录源）
+  local case_dir
+  case_dir=$(dirname "$STATE_FILE")
+
+  if [ ! -d "$case_dir" ]; then
+    echo "❌ 搜索证据校验失败：case 目录不存在 $case_dir" >&2
+    return 1
+  fi
+
+  local validator="$SCRIPT_DIR/search/validate_gate_search.sh"
+  if [ ! -x "$validator" ]; then
+    echo "❌ 搜索证据校验失败：验证脚本不存在或不可执行 $validator" >&2
+    return 1
+  fi
+
+  "$validator" "$case_dir" "$gate"
 }
 
 # 标记 gate in_progress + 更新心跳
 mark_in_progress() {
   local gate=$1
   local TMP=$(mktemp)
-  local NOW=$(date -Iseconds)
+  local NOW=$(iso_now)
   jq --arg g "$gate" --arg ts "$NOW" \
     '.gateStatus[$g] = "in_progress" | .lastHeartbeat = $ts | .inProgressGate = $g' \
     "$STATE_FILE" > "$TMP" && mv "$TMP" "$STATE_FILE"

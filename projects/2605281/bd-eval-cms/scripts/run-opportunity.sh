@@ -33,6 +33,11 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILL_ROOT="$(dirname "$SCRIPT_DIR")"
 
+# v0.10.0：跨平台 ISO 时间戳（macOS BSD date 老版本不支持 -Iseconds）
+iso_now() {
+  python3 -c "from datetime import datetime, timezone; print(datetime.now(timezone.utc).astimezone().isoformat(timespec='seconds'))"
+}
+
 PRODUCT=""
 COMPANY=""
 INDICATION=""
@@ -313,7 +318,7 @@ if [ ! -d "$case_dir" ]; then
 fi
 
 # 时间戳
-NOW="$(date -Iseconds)"
+NOW="$(iso_now)"
 
 # ============ 写 00-opportunity.md（仅新 case 或续跑时刷新原始输入）============
 cat > "$case_dir/00-opportunity.md" <<EOF

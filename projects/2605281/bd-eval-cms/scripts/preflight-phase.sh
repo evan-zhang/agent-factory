@@ -141,6 +141,33 @@ if [ "$JSON_VALID" = true ]; then
       MISSING_ITEMS+=("前置 gate 状态检查：${INCOMPLETE_GATES[*]}")
     else
       echo "✅ 所有前置 gate 状态均为 completed"
+
+      # v0.10.0 新增：逐个 gate 校验搜索证据
+      echo "🔍 v0.10.0 搜索证据校验："
+      SCRIPT_DIR_PREFLIGHT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+      SEARCH_VALIDATOR="$SCRIPT_DIR_PREFLIGHT/search/validate_gate_search.sh"
+
+      if [ -x "$SEARCH_VALIDATOR" ]; then
+        SEARCH_GATES=("phase-1" "phase-2" "one-pager" "gate-1" "gate-2" "gate-3" "gate-4" "gate-5")
+        SEARCH_FAILED=()
+
+        for gate in "${SEARCH_GATES[@]}"; do
+          if "$SEARCH_VALIDATOR" "$(dirname "$STATE_FILE")" "$gate" 2>&1; then
+            :
+          else
+            SEARCH_FAILED+=("$gate")
+          fi
+        done
+
+        if [ ${#SEARCH_FAILED[@]} -gt 0 ]; then
+          echo "❌ v0.10.0 搜索证据校验失败：${SEARCH_FAILED[*]}"
+          MISSING_ITEMS+=("v0.10.0 搜索证据不足：${SEARCH_FAILED[*]} Gate 未达最低 references 文件数 / 引用")
+        else
+          echo "✅ v0.10.0 搜索证据校验通过"
+        fi
+      else
+        echo "⚠️  v0.10.0 搜索证据校验脚本不存在或不可执行：$SEARCH_VALIDATOR（跳过）"
+      fi
     fi
   fi
 fi

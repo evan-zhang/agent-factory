@@ -177,7 +177,21 @@
 
 ## 搜索要求 + 参考文献采集
 
-- 至少进行 3 次定向搜索(覆盖本 Gate 核心评估维度)
+> **v0.10.0 新规**：本节强制使用本项目内置 `scripts/search/` 子系统，不再依赖外部 multi-search。
+> 多轮重跑可能受搜索证据门控拍住（preflight 会验证 references/文件数 + 章节引用），请严格遵守下面的“6 步走”。
+
+### v0.10.0 6 步走（必须严格遵守）
+
+1. **查关键词表**：调 `bash scripts/search/keyword_mapper.sh --skill {技能编号}` 取 3–5 个检索词
+2. **走 core_search**：调 `bash scripts/search/core_search.sh "<关键词>"` 调用 OpenClaw 内置 web_search + 配额管理
+3. **来源排序**：调 `bash scripts/search/source_ranker.sh '<json数组>'` 将结果按 T1→T4 排序
+4. **拿抽取提示词**：调 `bash scripts/search/field_extractor.sh --gate {gate名称}` 取本 Gate 提示词
+5. **手写参考文献文件**：手抽式填入 `references/{前缀}/{前缀}-XXX.md`（证要正不可省）
+6. **正文加引用**：章节中插入 `[{前缀}-XXX]` 引用，搜索证据门控才会放过你
+
+### 传统要求（仍然有效）
+
+- 至少进行 3 次定向搜索（覆盖本 Gate 核心评估维度）
 - **搜索前**:先列出 `{品种目录}/references/{前缀}/` 目录下已有文件,了解已抓取 URL 避免重复,以及引用前面节点的数据时使用对应前缀编号(如 `[P1-001]`、`[G3-005]`)
 - **搜索后**:对每个有价值结果(含具体数据/结论)执行 `web_fetch` 抓取内容
 - 新的参考文献写入 `{品种目录}/references/{前缀}/{前缀}-XXX.md`,编号从 `{前缀}-001` 开始独立递增
