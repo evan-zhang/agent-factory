@@ -1,1 +1,0 @@
-Gate-6-dealability.md
