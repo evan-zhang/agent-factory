@@ -34,6 +34,14 @@ output-test/
 tmp/
 *.tmp
 
+# BD 评估 case 数据（运行时产物，非 skill 组成部分）
+projects/2605281/bd-eval-cms/[0-9]*/
+projects/2605281/bd-eval-cms/Epioxa/
+projects/2605281/bd-eval-cms/JMKX*/
+projects/2605281/bd-eval-cms/.refactor-backup/
+projects/2605281/bd-eval-cms/.serena/
+projects/2605281/bd-eval-cms/references_v*.bak/
+
 # 幽灵目录防护
 ${LIFE_WORKSPACE}/
 ${OPS_WORKSPACE}/
