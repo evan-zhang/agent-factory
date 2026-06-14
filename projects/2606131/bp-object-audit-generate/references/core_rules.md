@@ -142,6 +142,8 @@ Do not freeze formal BP text containing:
 
 Every BP object MUST be audited against the following 7 dimensions. No dimension may be skipped. The audit must be exhaustive and produce a judgment (✅ Pass / ⚠️ Need confirmation / ❌ Fail / 📊 Data missing) for each dimension before any confirmation question is asked (see SKILL.md Step 5 and state `dimension_audited` in `interactive_state_machine.md`).
 
+字段级操作核查动作（必查字段、归类边界）见 `references/dimension_audit_checklist.md`。该文件从属于本节，冲突时以本节为准。
+
 | # | Dimension | What to check | Judgment criterion |
 |---|---|---|---|
 | 1 | 层级边界 (Level boundary) | Does each objective belong to the correct organization level (group/center/department/individual)? Are boundaries between levels clean? | Objectives align with the level's responsibility scope; no cross-level leakage. |

@@ -66,6 +66,8 @@ Example:
 
 The 7 audit dimensions are defined exclusively in `references/core_rules.md` § 10. This skill does not maintain a separate dimension table. The state machine enforces that every BP object passes through the `dimension_audited` state (see § 2) before any question is asked; the actual checklist is in `core_rules.md` § 10. The mapping is:
 
+字段级操作动作（必查字段、归类边界）见 `references/dimension_audit_checklist.md`，从属于 `core_rules.md` § 10。
+
 | § 10 dimension | What it covers in the audit (per `core_rules.md` § 10) |
 |---|---|
 | 层级边界 (Level boundary) | Is this content appropriate for group, center, department, or individual level? |
