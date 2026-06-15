@@ -21,7 +21,7 @@ description: |
 
 metadata:
   display_name: 医药BD评估体系（CMS）
-  version: "0.10.5"
+  version: "0.10.6"
 compatibility: Claude
 ---
 
@@ -877,19 +877,53 @@ OPPORTUNITY_ID=...
 bd-opportunities/             # = SKILL_ROOT（根目录即商机池）
 ├── 260611-EPIO/              # 已完成项目
 │   ├── state.json            # 含 gateStatus 字段
+│   ├── 00-opportunity.md     # v0.9.2 单一入口生成的原始输入留底
 │   ├── 01-discovery.md       # phase-1 章节（含 [P1-XXX] 引用）
+│   ├── 02-one-pager.md       # phase-2 One-pager 终局先立（早版）
 │   ├── 02-discovery/         # phase-2 章节目录（含 [P2-XXX] 引用）
 │   ├── 02-gate-by-chapter/
-│   ├── 04-final-report.md
-│   └── REPORT.html
+│   │   ├── One-pager.md      # phase-3 Gate 章节版 One-pager（详版）
+│   │   ├── Gate-0-*.md       # Gate 0 前提与路由确认
+│   │   ├── Gate-1-*.md       # Gate 1 权属与合作可能性
+│   │   ├── Gate-2-*.md       # Gate 2 临床与注册路径
+│   │   ├── Gate-3-*.md       # Gate 3 市场与竞争格局
+│   │   ├── Gate-4-*.md       # Gate 4 商业化与财务测算
+│   │   ├── Gate-5-*.md       # Gate 5 综合决策与投委会建议
+│   │   └── history/         # 增量版本化备份
+│   ├── 03-battle-summary.md  # Phase 4 Battle 对抗审查总结
+│   ├── battle/
+│   │   ├── ROUTE-SELECTION-AUDITOR.md  # 路由选择审查员
+│   │   ├── BATTLE-R1-AUDITOR.md        # Battle R1 审查员
+│   │   └── BATTLE-R1-EXECUTOR.md       # Battle R1 执行方
+│   ├── references/
+│   │   ├── REFERENCES.md     # 参考文献索引（程序化产物）
+│   │   ├── P1/               # Phase 1 搜索证据
+│   │   ├── OP/               # Phase 2 搜索证据
+│   │   ├── G1/               # Gate 1 搜索证据
+│   │   ├── G2/               # Gate 2 搜索证据
+│   │   ├── G3/               # Gate 3 搜索证据
+│   │   ├── G4/               # Gate 4 搜索证据
+│   │   ├── G5/               # Gate 5 搜索证据
+│   │   └── BT/               # Battle 搜索证据
+│   ├── 04-final-report.md   # Phase 5 报告装配产物（程序拼，非手写）
+│   ├── REPORT.html           # Phase 5.5 HTML 生成产物
+│   ├── execution-log.md      # 执行日志
+│   ├── links.md              # 相关链接
+│   └── state.json            # 含 gateStatus 字段（重复列出强调）
 ├── 260615-FOO/               # 新商机（待启动）
 │   ├── 合作方资料/            # 用户投入的原始资料
 │   └── state.json            # 可选：预填元信息（caseCode、displayName）
 └── scripts/                  # 调度脚本
     ├── run.sh                # 入口
     ├── orchestrator-resume.sh # 续跑器
-    └── start-phase.sh        # 阶段执行器（占位）
+    ├── start-phase.sh        # 阶段执行器（占位）
+    └── verify-manifest.sh    # v0.10.6 零件清单校验器
 ```
+
+**注意**：
+- 零件清单的单一机器真相源是 `lib/deliverable-manifest.json`
+- 所有校验脚本（verify-manifest.sh、preflight-phase.sh、sync-to-knowledge-base.sh）只读 manifest
+- 禁止在脚本中硬编码零件列表
 
 ### 适用与不适用场景
 

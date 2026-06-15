@@ -1,0 +1,142 @@
+{
+  "version": "1.0",
+  "description": "bd-eval-cms skill 输出零件单一权威清单。所有校验脚本只读此文件，禁止在脚本中硬编码零件列表。",
+  "required_files": [
+    {
+      "path": "state.json",
+      "type": "json",
+      "min_bytes": 50,
+      "description": "项目状态文件，包含 gateStatus 等关键元信息"
+    },
+    {
+      "path": "00-opportunity.md",
+      "type": "md",
+      "min_lines": 5,
+      "description": "v0.9.2 单一入口生成的原始输入留底"
+    },
+    {
+      "path": "01-discovery.md",
+      "type": "md",
+      "min_lines": 30,
+      "description": "Phase 1 标的发现输出，含基本信息、业务主体判断、产品类型判断"
+    },
+    {
+      "path": "02-one-pager.md",
+      "type": "md",
+      "min_lines": 10,
+      "description": "Phase 2 One-pager 终局先立（早版）"
+    },
+    {
+      "path": "02-gate-by-chapter/One-pager.md",
+      "type": "md",
+      "min_lines": 15,
+      "recommended_lines": 200,
+      "description": "Phase 3 Gate 章节版 One-pager（详版），允许 ≤ 200 行"
+    },
+    {
+      "path_glob": "02-gate-by-chapter/Gate-0-*.md",
+      "type": "md",
+      "min_lines": 15,
+      "recommended_lines": 200,
+      "description": "Gate 0 前提与路由确认（例外：min_lines 放宽到 15，允许短章节）"
+    },
+    {
+      "path_glob": "02-gate-by-chapter/Gate-1-*.md",
+      "type": "md",
+      "min_lines": 50,
+      "recommended_lines": 200,
+      "description": "Gate 1 权属与合作可能性（或 premise 前提门）"
+    },
+    {
+      "path_glob": "02-gate-by-chapter/Gate-2-*.md",
+      "type": "md",
+      "min_lines": 50,
+      "recommended_lines": 200,
+      "description": "Gate 2 临床与注册路径（或 positioning 定调门）"
+    },
+    {
+      "path_glob": "02-gate-by-chapter/Gate-3-*.md",
+      "type": "md",
+      "min_lines": 50,
+      "recommended_lines": 200,
+      "description": "Gate 3 市场与竞争格局（或 evidence 证据门）"
+    },
+    {
+      "path_glob": "02-gate-by-chapter/Gate-4-*.md",
+      "type": "md",
+      "min_lines": 50,
+      "recommended_lines": 200,
+      "description": "Gate 4 商业化与财务测算（或 payment 支付门）"
+    },
+    {
+      "path_glob": "02-gate-by-chapter/Gate-5-*.md",
+      "type": "md",
+      "min_lines": 50,
+      "recommended_lines": 200,
+      "description": "Gate 5 综合决策与投委会建议（或 cost 成本门）"
+    },
+    {
+      "path": "03-battle-summary.md",
+      "type": "md",
+      "min_lines": 10,
+      "description": "Phase 4 Battle 对抗审查总结"
+    },
+    {
+      "path": "battle/ROUTE-SELECTION-AUDITOR.md",
+      "type": "md",
+      "min_lines": 5,
+      "description": "Battle 路由选择审查员"
+    },
+    {
+      "path": "battle/BATTLE-R1-AUDITOR.md",
+      "type": "md",
+      "min_lines": 5,
+      "description": "Battle R1 审查员"
+    },
+    {
+      "path": "battle/BATTLE-R1-EXECUTOR.md",
+      "type": "md",
+      "min_lines": 5,
+      "description": "Battle R1 执行方"
+    },
+    {
+      "path": "references/REFERENCES.md",
+      "type": "md",
+      "min_lines": 5,
+      "description": "参考文献索引（程序化产物）"
+    },
+    {
+      "path": "04-final-report.md",
+      "type": "md",
+      "min_bytes": 2000,
+      "description": "Phase 5 报告装配产物（程序拼，非手写）"
+    },
+    {
+      "path": "REPORT.html",
+      "type": "html",
+      "min_bytes": 5000,
+      "description": "Phase 5.5 HTML 生成产物"
+    }
+  ],
+  "state_gates_must_be_completed": [
+    "phase-1",
+    "phase-2",
+    "one-pager",
+    "gate-0",
+    "gate-1",
+    "gate-2",
+    "gate-3",
+    "gate-4",
+    "gate-5",
+    "phase-4-battle",
+    "phase-5-merge",
+    "phase-5-5-html"
+  ],
+  "notes": [
+    "Battle 产物为 AND 关系：03-battle-summary.md 和 battle/*.md 都必须存在",
+    "Gate-0 的 min_lines 放宽到 15 行（SOP 例外）",
+    "recommended_lines 低于阈值只 WARN 不 FAIL",
+    "min_lines/min_bytes 低于阈值 → FAIL（exit 1）",
+    "evidence 目录（references/P1, G1-G6）暂不放入 manifest（需先确认 SOP 是否硬性要求 ≥2 篇/Gate）"
+  ]
+}

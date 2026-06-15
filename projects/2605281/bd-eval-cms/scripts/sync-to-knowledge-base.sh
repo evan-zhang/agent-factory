@@ -23,6 +23,31 @@ set -euo pipefail
 CASE_DIR="$1"
 CASE_CODE="${2:-}"
 
+# ========== 前置门：Manifest 校验（最高优先） ==========
+# v0.10.6：未过 verify-manifest 拒绝归档
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VERIFY_MANIFEST="$SCRIPT_DIR/verify-manifest.sh"
+
+if [ ! -f "$VERIFY_MANIFEST" ]; then
+  echo "❌ 错误：verify-manifest.sh 不存在: $VERIFY_MANIFEST"
+  exit 1
+fi
+
+if [ ! -x "$VERIFY_MANIFEST" ]; then
+  echo "❌ 错误：verify-manifest.sh 不可执行: $VERIFY_MANIFEST"
+  exit 1
+fi
+
+echo "=== 前置门：Manifest 校验 ==="
+if "$VERIFY_MANIFEST" "$CASE_DIR"; then
+  echo "✅ Manifest 校验通过，继续同步到知识库"
+else
+  echo "❌ Manifest 校验失败，拒绝归档到知识库"
+  echo "   请补全缺失零件后再运行 sync-to-knowledge-base.sh"
+  exit 1
+fi
+echo ""
+
 # 凭证注入（v0.10.2 修订）：
 # bd-eval-cms 专享系统级 AppKey —— 后台 BP 报告流水线使用，不走个人鉴权
 # 读取顺序：config.yaml 的 knowledgeBase.appKeyFile → 默认 .secrets/kb_appkey

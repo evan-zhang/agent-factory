@@ -53,7 +53,7 @@ add_merge_file() {
     SOURCE_FILES+=("$filepath")
     echo "  ✅ $title ← $(basename "$filepath")"
   else
-    echo "  ⚠️ 文件不存在: $filepath"
+    echo "  ❌ 文件不存在（FAIL）: $filepath"
     MISSING_WARNINGS=$((MISSING_WARNINGS + 1))
   fi
 }
@@ -68,7 +68,7 @@ add_first_existing() {
       return 0
     fi
   done
-  echo "  ⚠️ $title 未找到候选文件: $*"
+  echo "  ❌ $title 未找到候选文件（FAIL）: $*"
   MISSING_WARNINGS=$((MISSING_WARNINGS + 1))
   return 1
 }
@@ -118,7 +118,8 @@ if [ -f "$DIR/01-discovery.md" ]; then
   SOURCE_FILES+=("$DIR/01-discovery.md")
   echo "  ✅ Discovery ← 01-discovery.md"
 else
-  echo "  ⚠️ Discovery 缺失: 01-discovery.md"
+  echo "  ❌ Discovery 缺失（FAIL）: 01-discovery.md"
+  MISSING_WARNINGS=$((MISSING_WARNINGS + 1))
 fi
 
 add_merge_file "$GATE_DIR/One-pager.md" "One-pager 终局先立"
@@ -143,12 +144,15 @@ if [ -f "$DIR/03-battle-summary.md" ]; then
   SOURCE_FILES+=("$DIR/03-battle-summary.md")
   echo "  ✅ Battle Summary ← 03-battle-summary.md"
 else
-  echo "  ⚠️ Battle Summary 缺失: 03-battle-summary.md"
+  echo "  ❌ Battle Summary 缺失（FAIL）: 03-battle-summary.md"
+  MISSING_WARNINGS=$((MISSING_WARNINGS + 1))
 fi
 
 if [ -f "$DIR/references/REFERENCES.md" ]; then
   SOURCE_FILES+=("$DIR/references/REFERENCES.md")
   echo "  ✅ References ← references/REFERENCES.md"
+else
+  echo "  ⚠️ References 缺失（WARN）: references/REFERENCES.md（程序化产物，可能未生成）"
 fi
 
 if [ ${#MERGE_FILES[@]} -eq 0 ]; then
@@ -168,6 +172,13 @@ if [ "$PRECHECK_FAILED" -eq 1 ]; then
   echo ""
   echo "❌ 预检未通过，请修正后重跑"
   exit 2
+fi
+
+if [ "$MISSING_WARNINGS" -gt 0 ]; then
+  echo ""
+  echo "❌ 预检未通过：发现 ${MISSING_WARNINGS} 个缺失项（FAIL）"
+  echo "   v0.10.6：缺正式零件不再只是警告，而是阻断合并"
+  exit 1
 fi
 
 echo "✅ 合并预检通过（缺失候选仅警告数: ${MISSING_WARNINGS}）"
