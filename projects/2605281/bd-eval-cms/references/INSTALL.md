@@ -1,8 +1,13 @@
 # bd-eval-cms 安装与使用说明
 
-> **版本**：v0.10.4（2026-06-15）
+> **版本**：v0.10.5（2026-06-15）
 > **适配**：玄关开放平台 CMS 业务（深康/德镁/维盛/院外业务中心/天津康哲/康联达）
 > **Skill 路径**：`agent-factory/projects/2605281/bd-eval-cms/`
+>
+> **本版本重大变更（v0.10.5）**：
+> - 新增 `scripts/preflight-config.sh`：执行前必检清单，缺配置项立即停
+> - 新增本文档（`references/INSTALL.md`）
+> - `run-opportunity.sh` 入口前自动拦截，--dry-run 跳过
 
 ---
 
@@ -256,6 +261,7 @@ projects/2605281/bd-eval-cms/
 ├── scripts/
 │   ├── run-opportunity.sh                # 【入口】单条商机评估
 │   ├── orchestrator-resume.sh            # 续跑
+│   ├── preflight-config.sh               # 【v0.10.5 新增】执行前必检
 │   ├── preflight-phase.sh                # Phase 5.5 前置检查
 │   ├── render_report.sh                  # 报告渲染
 │   ├── sync-to-knowledge-base.sh         # 知识库归档
@@ -289,6 +295,7 @@ projects/2605281/bd-eval-cms/
 
 | 版本 | 日期 | 主要变更 |
 |------|------|---------|
+| v0.10.5 | 2026-06-15 | 新增 preflight-config 执行前必检 + INSTALL.md 安装使用说明 |
 | v0.10.4 | 2026-06-15 | 术语表列错位修复 + 章节编号 11+ 显示中文修复 |
 | v0.10.3 | 2026-06-14 | AppKey 来源改 skill 专享文件 `.secrets/kb_appkey` |
 | v0.10.2 | 2026-06-14 | P0/P1/P2 同链路修复（健康检查 + 知识库归档 + yq 去除） |
@@ -327,4 +334,4 @@ projects/2605281/bd-eval-cms/
 
 ---
 
-_最后更新：2026-06-15 · bd-eval-cms v0.10.4_
+_最后更新：2026-06-15 · bd-eval-cms v0.10.5_
