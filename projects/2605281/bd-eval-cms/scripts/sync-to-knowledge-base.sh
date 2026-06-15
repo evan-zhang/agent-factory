@@ -28,6 +28,14 @@ if [ -z "$CASE_DIR" ]; then
   exit 2
 fi
 CASE_CODE="${2:-}"
+# Sanitize caseCode（与 run-opportunity.sh 同等校验）
+if [ -n "$CASE_CODE" ]; then
+  if [[ "$CASE_CODE" =~ [[:space:]/\\\"\'] ]]; then
+    echo "❌ 错误：案件代号含非法字符（不能含空格/路径分隔符/引号）：$CASE_CODE"
+    echo "   正确格式示例：260615-133622"
+    exit 2
+  fi
+fi
 
 # ========== 前置门：Manifest 校验（最高优先） ==========
 # v0.10.6：未过 verify-manifest 拒绝归档
@@ -375,9 +383,13 @@ except Exception as e:
       echo "❌ 绑定 KB 节点响应解析失败: ${FILE_ID#__PARSE_ERROR__}"
       REPORT_STATUS="failed"
     elif [[ "$FILE_ID" == __NULL_USING_RESOURCE__ ]]; then
-      # 玄关返回 data=null 但实际成功（权限元数据不全）→ 用 resourceId 占位
-      echo "⚠️ saveFileByPath 返回 data=null（玄关权限元数据问题，但绑定应已成功），用 resourceId 占位 fileId"
-      FILE_ID="placeholder_${RESOURCE_ID}"
+      # 玄关返回 data=null 但 resultCode=1（权限元数据不全）
+      # 绑定可能已成功，但拿不到 fileId → 无法生成 preview 链接
+      echo "⚠️ saveFileByPath 返回 data=null（玄关权限元数据问题）"
+      echo "   文件已上传（resourceId=$RESOURCE_ID），但无法获取 fileId 生成预览链接"
+      echo "   请在知识库中手动查找：路径=${KB_CASE_PATH}，文件名=${REPORT_FILENAME}"
+      REPORT_STATUS="uploaded_no_preview"
+      # 不尝试 preview ticket（bizId 需要真实 fileId）
     elif [ -z "$FILE_ID" ]; then
       echo "❌ 绑定 KB 节点返回 data 为空"
       REPORT_STATUS="failed"

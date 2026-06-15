@@ -1,6 +1,6 @@
 {
   "skillcode": "bd-eval-cms",
-  "version": "0.10.6.1",
+  "version": "0.10.7",
   "description": "CMS（康哲药业）投前评估体系 — 20个独立技能 + Gate 0~5 + Final门控 + Style A1 通用模板内核 + v0.9.1 质量护栏 + v0.9.2 单一入口 + v0.9.3 profile 收敛 + v0.9.4 商机 ID 接入 + 知识库路径重构 + v0.10.0 搜索能力内化 + v0.10.6 deliverable-manifest fail-closed 校验体系",
   "dependencies": [],
   "scheme": "B",

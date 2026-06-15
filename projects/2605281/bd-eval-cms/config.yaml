@@ -63,6 +63,6 @@ reportRenderer:
     description: "完整覆盖 A-1 原始模板结构和 TRTL-729 示例需求"
 
 # 凭证注入规范
-# AppKey（DOCVIEWER_KB_APPKEY）不写进本文件
-# 在 skill 执行时由 OpenClaw runtime 注入到环境变量（doc-viewer v2.10.0 协议）
-# 调用 sync-to-knowledge-base.sh 时直接读 $DOCVIEWER_KB_APPKEY 即可
+# AppKey 不写进本文件
+# 在 skill 执行时从 .secrets/kb_appkey 文件读取（v0.10.3 起）
+# 调用 sync-to-knowledge-base.sh 时直接读 .secrets/kb_appkey
