@@ -20,7 +20,13 @@
 
 set -euo pipefail
 
-CASE_DIR="$1"
+CASE_DIR="${1:-}"
+if [ -z "$CASE_DIR" ]; then
+  echo "❌ 错误：未提供品种目录路径"
+  echo "用法：$(basename "$0") <品种目录> [案件代号]"
+  echo "示例：$(basename "$0") /path/to/case-dir CP202412200012"
+  exit 2
+fi
 CASE_CODE="${2:-}"
 
 # ========== 前置门：Manifest 校验（最高优先） ==========

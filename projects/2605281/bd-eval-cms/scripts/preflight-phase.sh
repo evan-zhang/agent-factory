@@ -54,11 +54,10 @@ echo "=== Phase 5.5 Readiness Preflight（v0.10.6 统一校验） ==="
 echo "检查目录: $CASE_DIR"
 echo ""
 
-# 调用 verify-manifest.sh 进行校验
-if "$VERIFY_MANIFEST" "$CASE_DIR"; then
+# 调用 verify-manifest.sh 进行校验（--mode render：渲染前检查，跳过 phase-5-5-html 自检）
+if "$VERIFY_MANIFEST" "$CASE_DIR" --mode render; then
   echo ""
   echo "✅ Preflight 检查通过：所有关键产物齐全，可以进行 Phase 5.5 HTML 生成"
-  exit 0
 else
   echo ""
   echo "❌ Preflight 检查失败：无法进行 Phase 5.5 HTML 生成"
@@ -69,3 +68,17 @@ else
   echo "  3. 如为测试/历史回放，可设置 BD_EVAL_CMS_SKIP_PREFLIGHT=1 跳过检查"
   exit 1
 fi
+
+# ========== 搜索证据校验（v0.10.6 保留：manifest 暂不覆盖 evidence 目录） ==========
+VALIDATE_GATE_SEARCH="$SCRIPT_DIR/search/validate_gate_search.sh"
+if [ -f "$VALIDATE_GATE_SEARCH" ]; then
+  echo ""
+  echo "=== 搜索证据校验 ==="
+  if bash "$VALIDATE_GATE_SEARCH" "$CASE_DIR" 2>&1 | tail -5; then
+    echo "✅ 搜索证据校验通过"
+  else
+    echo "⚠️ 搜索证据校验有警告（不阻断渲染，仅提示）"
+  fi
+fi
+
+exit 0

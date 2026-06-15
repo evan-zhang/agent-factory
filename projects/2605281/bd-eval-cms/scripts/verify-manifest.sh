@@ -33,6 +33,7 @@ fi
 CASE_DIR=""
 STRICT_MODE=false
 JSON_OUTPUT=false
+CHECK_MODE="archive"  # render | archive | full（默认 archive，与归档一致；preflight 用 render 跳过 phase-5-5-html 自检）
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -43,6 +44,10 @@ while [[ $# -gt 0 ]]; do
     --json)
       JSON_OUTPUT=true
       shift
+      ;;
+    --mode)
+      CHECK_MODE="$2"
+      shift 2
       ;;
     -*)
       echo "❌ 未知参数: $1"
@@ -299,7 +304,7 @@ for item in data['required_files']:
     print(f'{path}|{path_glob}|{item_type}|{min_bytes}|{min_lines}|{recommended_lines}|{description}')
 ")
 
-echo "$MANIFEST_ITEMS" | while IFS='|' read -r path path_glob type min_bytes min_lines recommended_lines description; do
+while IFS='|' read -r path path_glob type min_bytes min_lines recommended_lines description; do
 
   # 如果是 state.json，已经检查过了，跳过
   if [ "$path" = "state.json" ]; then
@@ -309,7 +314,7 @@ echo "$MANIFEST_ITEMS" | while IFS='|' read -r path path_glob type min_bytes min
   # 使用 path 或 path_glob 作为标签
   label="${path:-$path_glob}"
   check_file "$label" "$path" "$path_glob" "$type" "$min_bytes" "$min_lines" "$recommended_lines" "$description"
-done
+done <<< "$(echo "$MANIFEST_ITEMS")"
 
 # 检查 gateStatus
 if [ "$JSON_VALID" = true ] && [ "$GATE_STATUS_CHECK" = true ]; then
@@ -330,7 +335,23 @@ results.append({
 print(json.dumps(results, ensure_ascii=False))
 ")
   else
-    REQUIRED_GATES=$(jq -r '.state_gates_must_be_completed[]' "$MANIFEST_FILE")
+    # 根据 mode 选择 gate 列表（向后兼容 state_gates_must_be_completed）
+    case "$CHECK_MODE" in
+      render)
+        REQUIRED_GATES=$(jq -r '.state_gates_required_for_render[]? // empty' "$MANIFEST_FILE" 2>/dev/null)
+        ;;
+      archive|full)
+        REQUIRED_GATES=$(jq -r '.state_gates_required_for_archive[]? // empty' "$MANIFEST_FILE" 2>/dev/null)
+        ;;
+      *)
+        echo "❌ 未知 --mode: $CHECK_MODE（允许 render | archive | full）" >&2
+        exit 2
+        ;;
+    esac
+    # 向后兼容旧字段名
+    if [ -z "$REQUIRED_GATES" ]; then
+      REQUIRED_GATES=$(jq -r '.state_gates_must_be_completed[]? // empty' "$MANIFEST_FILE" 2>/dev/null)
+    fi
     INCOMPLETE_GATES=()
 
     for gate in $REQUIRED_GATES; do

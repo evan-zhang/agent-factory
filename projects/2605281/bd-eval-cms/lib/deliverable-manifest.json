@@ -118,7 +118,20 @@
       "description": "Phase 5.5 HTML 生成产物"
     }
   ],
-  "state_gates_must_be_completed": [
+  "state_gates_required_for_render": [
+    "phase-1",
+    "phase-2",
+    "one-pager",
+    "gate-0",
+    "gate-1",
+    "gate-2",
+    "gate-3",
+    "gate-4",
+    "gate-5",
+    "phase-4-battle",
+    "phase-5-merge"
+  ],
+  "state_gates_required_for_archive": [
     "phase-1",
     "phase-2",
     "one-pager",
