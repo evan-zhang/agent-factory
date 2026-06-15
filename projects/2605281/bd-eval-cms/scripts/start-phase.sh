@@ -40,56 +40,16 @@ echo "▶️  启动阶段：$GATE (项目：$CASE_CODE, 模式：$MODE)"
 #
 # 当前实现：占位输出，让 orchestrator 知道要执行什么
 
-# ========== Phase 5.5 特殊处理：执行 preflight ==========
+# ========== Phase 5.5 提示（实际执行由 AI 调 render_report.sh + sync） ==========
 if [ "$GATE" = "phase-5-5-html" ]; then
   echo "📋 任务：执行 Phase 5.5 HTML 生成 + 知识库同步"
   echo ""
-
-  # 在进入 Phase 5.5 前执行 readiness preflight
-  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  PREFLIGHT_SCRIPT="$SCRIPT_DIR/preflight-phase.sh"
-
-  if [ -f "$PREFLIGHT_SCRIPT" ]; then
-    echo "🔍 执行 Phase 5.5 readiness preflight..."
-    if ! bash "$PREFLIGHT_SCRIPT" "$PROJECT_DIR"; then
-      echo "❌ 错误：Preflight 检查失败，无法进入 Phase 5.5"
-      echo "💡 如为测试/历史回放，可设置 BD_EVAL_CMS_SKIP_PREFLIGHT=1 跳过检查"
-
-      # 标记 gate 为 failed
-      TMP=$(mktemp)
-      jq --arg g "$GATE" '.gateStatus[$g] = "failed"' "$STATE_FILE" > "$TMP" && mv "$TMP" "$STATE_FILE"
-      exit 1
-    fi
-    echo "✅ Preflight 检查通过"
-    echo ""
-
-    # v0.10.2：Phase 5.5 preflight 通过后自动归档到知识库
-    # 可通过 BD_EVAL_CMS_SKIP_KB_SYNC=1 跳过（测试/回放场景）
-    SYNC_SCRIPT="$SCRIPT_DIR/sync-to-knowledge-base.sh"
-    if [ "${BD_EVAL_CMS_SKIP_KB_SYNC:-}" = "1" ]; then
-      echo "⏭️  已跳过知识库同步（BD_EVAL_CMS_SKIP_KB_SYNC=1）"
-      echo "   ⚠️  报告未归档！请后续手动执行："
-      echo "   bash scripts/sync-to-knowledge-base.sh \"$PROJECT_DIR\""
-    elif [ -f "$SYNC_SCRIPT" ]; then
-      echo "📦 开始知识库同步..."
-      if bash "$SYNC_SCRIPT" "$PROJECT_DIR"; then
-        echo "✅ 知识库同步完成"
-      else
-        echo "⚠️  知识库同步失败（退出码 $?）"
-        echo "   报告已渲染为本地 REPORT.html，但未归档到知识库"
-        echo "   请排查后手动补跑：bash scripts/sync-to-knowledge-base.sh \"$PROJECT_DIR\""
-        # 不将 gate 标记为 failed——本地 HTML 已生成，同步失败不应阻断交付
-        # sync 脚本会回写 state.json.reportHtmlStorage = 'kb-failed'
-      fi
-      echo ""
-    else
-      echo "⚠️  警告：未找到 sync-to-knowledge-base.sh，跳过知识库同步"
-      echo "   ⚠️  报告未归档！请后续手动执行："
-      echo "   bash scripts/sync-to-knowledge-base.sh \"$PROJECT_DIR\""
-    fi
-  else
-    echo "⚠️  警告：未找到 preflight-phase.sh，跳过前置条件检查"
-  fi
+  echo "📌 执行步骤（AI 按顺序调用）："
+  echo "   1. bash scripts/render_report.sh \"$PROJECT_DIR\"   # 生成 REPORT.html（内部调 preflight）"
+  echo "   2. bash scripts/sync-to-knowledge-base.sh \"$PROJECT_DIR\"   # 上传到知识库"
+  echo ""
+  echo "⚠️  本脚本仅为占位提示，不执行实际渲染或上传。"
+  echo "    AI 应按 SKILL.md / SOP Phase 5.5 指令自行调用上述脚本。"
 fi
 
 case "$GATE" in

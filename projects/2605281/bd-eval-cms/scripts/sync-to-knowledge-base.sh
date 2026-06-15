@@ -458,6 +458,7 @@ if [ -f "$CASE_DIR/state.json" ]; then
   REPORT_STATUS_SAFE="${REPORT_STATUS:-}"
   REPORT_PREVIEW_URL_SAFE="${REPORT_PREVIEW_URL:-}"
   REPORT_FILE_ID_SAFE="${REPORT_FILE_ID:-}"
+  REPORT_RESOURCE_ID_SAFE="${RESOURCE_ID:-}"
   CASE_DIR_ENV="$CASE_DIR" \
   CASE_CODE_ENV="$CASE_CODE" \
   KB_CASE_PATH_ENV="$KB_CASE_PATH" \
@@ -467,7 +468,7 @@ if [ -f "$CASE_DIR/state.json" ]; then
   REPORT_STATUS_ENV="$REPORT_STATUS_SAFE" \
   REPORT_PREVIEW_URL_ENV="$REPORT_PREVIEW_URL_SAFE" \
   REPORT_FILE_ID_ENV="$REPORT_FILE_ID_SAFE" \
-  python3 - <<'PY' || echo "⚠️ state.json 回写失败"
+  REPORT_RESOURCE_ID_ENV="$REPORT_RESOURCE_ID_SAFE" \  python3 - <<'PY' || echo "⚠️ state.json 回写失败"
 import json, os, datetime
 state_file = os.path.join(os.environ['CASE_DIR_ENV'], 'state.json')
 with open(state_file, 'r') as f:
@@ -492,6 +493,12 @@ if report_status == 'success':
     state['reportHtmlStorage'] = 'kb'  # 标记走的是产品引进知识库
     state['reportHtmlTtl'] = '5y'  # 配置记录为 5y（doc.aishuo.co 长期预览，实际有效期由服务端策略决定）
     state.setdefault('gateStatus', {})['phase-5-5-html'] = 'completed'
+elif report_status == 'uploaded_no_preview':
+    state['reportHtmlStorage'] = 'kb-uploaded-no-preview'
+    state['reportHtmlResourceId'] = os.environ.get('REPORT_RESOURCE_ID_ENV', '')
+    state['reportHtmlUploadedAt'] = datetime.datetime.now().isoformat()
+    state['reportHtmlSyncNote'] = '文件已上传但服务端未返回 fileId，无法生成预览链接；请在知识库中手动查找'
+    state.setdefault('gateStatus', {})['phase-5-5-html'] = 'completed'  # 文件已入库，视为完成
 elif report_status == 'failed':
     state['reportHtmlStorage'] = 'kb-failed'
     state['reportHtmlUrl'] = state.get('reportHtmlUrl')
