@@ -153,6 +153,19 @@ if [ -n "$JSON_PATH" ]; then
 fi
 
 # ============ 校验 ============
+# v0.10.5：先跑 preflight-config，缺配置项立即停（不静默走默认值）
+# --dry-run 时跳过（dry-run 本身就是为了看会做什么，不应该被配置检查拦下）
+if [ "$DRY_RUN" = false ]; then
+  PREFLIGHT_CONFIG="$SCRIPT_DIR/preflight-config.sh"
+  if [ -f "$PREFLIGHT_CONFIG" ]; then
+    if ! bash "$PREFLIGHT_CONFIG" --strict; then
+      echo "❌ 配置检查未通过，请按上面提示修复后再跑" >&2
+      echo "   或使用 --dry-run 验证参数解析" >&2
+      exit 1
+    fi
+  fi
+fi
+
 if [ -z "$PRODUCT" ]; then
   echo "❌ 缺少必填项：--product（或 JSON 里的 product）" >&2
   exit 1

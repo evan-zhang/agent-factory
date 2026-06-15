@@ -21,7 +21,7 @@ description: |
 
 metadata:
   display_name: 医药BD评估体系（CMS）
-  version: "0.10.4"
+  version: "0.10.5"
 compatibility: Claude
 ---
 
@@ -774,6 +774,8 @@ OPPORTUNITY_ID=...
 ---
 
 ## 参考文件索引
+
+**安装与使用：** `references/INSTALL.md`（v0.10.5 新增）— 必读、含参数缺失检测说明
 
 本技能目录当前为平铺结构，根目录包含全部20个独立技能的完整Markdown定义文件。后续如整理为标准技能包，可将这些文件移入 `references/`，但当前校准版按根目录文件读取。
 
