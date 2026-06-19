@@ -2,161 +2,49 @@
 
 ## 架构
 
-- 唯一长期 Agent：Factory Orchestrator（`SOUL.md` 定义行为）
-- 8 个 Sub-Agent 定义：`specs/agents/` 目录下，Orchestrator 按需 spawn，任务完成后销毁
-- 每个定义是任务指令文件，作为 `task` 参数传入
-
-## Sub-Agent 模板
-
-| 模板 | 路径 | 适用场景 |
-| Interview | `specs/agents/interview.md` | L2 S1-S2：需求引导、业务摘要结构化 |
-| Analyst | `specs/agents/analyst.md` | L2 S3：文档解析、能力盘点、缺口分析 |
-| Generator | `specs/agents/generator.md` | L2 S3：生成 Agent/Skill/API 规范文档 |
-| Validator | `specs/agents/validator.md` | 每步完成后：质量门控，PASS/FAIL 判定 |
-| Assembler | `specs/agents/assembler.md` | L2 S5-S6：组装最终 workspace、生成追溯矩阵 |
-| Reviewer | `specs/agents/reviewer.md` | 需要独立外部评审时 |
-| Governance Officer | `specs/agents/governance-officer.md` | 治理合规检查 |
-| Orchestrator | `specs/agents/link-archivist-orchestrator.md` | Depth 1：编排单个链接的 Phase 1-5 流程，可 spawn depth 2 worker |
-| Worker | `specs/agents/link-archivist-worker.md` | Depth 2 叶子：执行具体子任务（抓取、调研、归档），不能 spawn |
+- 唯一长期 Agent：Factory Orchestrator（SOUL.md 定义行为）
+- Sub-Agent 定义在 `specs/agents/`，按需 spawn，完成销毁
+- 详见 `memory/sub-agent-reference.md`
 
 ## Spawn 规则
 
-- task 参数不超过 500 字
-- 详细上下文写入临时文件，通过路径传递，必须指定 `cwd`
-- 第一次失败 → 重试一次（精简 task，检查 cwd）
-- 第二次失败 → 降级执行，记录原因并告知用户
+- task ≤500 字；详细上下文写临时文件，路径传递，必指定 `cwd`
+- 首次失败 → 重试一次（精简 task）；二次失败 → 降级执行并告知用户
+- spawn 前通知用户："正在启动：[任务名]，预计 X 分钟"
+- 单次 spawn 任务 ≤2 分钟；复杂任务拆批，收到 announce 再继续
+- 显式传 `model`：编排/写作用 `newapi-openai/MiniMax-M3`，强推理用 `vip-newapi/glm-5.2`
 
-## 经验沉淀机制（FIP-001-R v2）
+## 经验沉淀
 
-### 启动时注入
-每个 sub-agent 启动时：
-1. 读取 `_runtime/experience/EXPERIENCE.md` 最近 5 条
-2. 在 task 中注入："工厂经验：[最近5条摘要]"
-3. 不需要按类型过滤——所有经验对所有 sub-agent 可见
-
-### 完成时写入（有条件）
-Sub-agent 完成后，满足以下**任一**条件时写入：
-- 任务耗时 >10 分钟
-- 过程中遇到过阻塞/回退/重试
-- 做了否定式决策（"没选X因为Y"）
-- Evan 明确说"记住这个"
-
-不写入的情况（过滤噪音）：
-- 明显的拼写错误/预期内的验证失败
-- 立刻就解决了的小问题
-- 例行的文件创建/提交
-
-### 写入流程
-1. 先读 `_runtime/experience/EXPERIENCE.md`
-2. 检查是否已有同类记录（关键词匹配）
-3. 如有同类：更新已有条目，不新增
-4. 如无同类：追加到文件顶部（最新在前）
-
-### 写入格式
-```
-## [日期] [类型] [一句话摘要]
-- **决策**：选了什么，没选什么，为什么
-- **前车之鉴**：下次遇到同类问题应该怎么做
-- **上下文**：项目ID、技术栈、环境等关键前提
-```
-
-类型枚举：`[技术]`（工具/平台/API的非显而易见行为）、`[流程]`（工作流优化或踩坑）、`[决策]`（方案选择的否定式记录）
-
-每条不超过 150 字。写入位置：`_runtime/experience/EXPERIENCE.md`（唯一文件）。
+- Sub-agent 启动时注入 `_runtime/experience/EXPERIENCE.md` 最近 5 条
+- 完成后有条件写入（耗时>10min / 遇阻塞 / 否定式决策 / Evan 要求）
+- 详见 `memory/experience-mechanism.md`
 
 ## 流程 → Sub-Agent 映射
 
-L1 七步（构建完整 Agent）：
-DISCOVERY → Interview | GRV → Analyst + Reviewer | AGENTS/SKILLS → Generator + Validator | API → Generator + Validator | MATRIX → Assembler + Validator | ACCEPTANCE → Reviewer + Validator
+**L1（构建完整 Agent）**：DISCOVERY→Interview | GRV→Analyst+Reviewer | AGENTS/SKILLS→Generator+Validator | API→Generator+Validator | MATRIX→Assembler+Validator | ACCEPTANCE→Reviewer+Validator
 
-L2 八阶段（Skill 产品生命周期）：
-S1 背景了解 → Interview | S2 需求确认 → Interview | S3 方案设计 → Analyst + Generator + Validator | S4 开发 → Orchestrator 执行或 spawn coding-agent | S5 测试 → Validator + Reviewer | S6 发布 → Assembler | S7 版本管理 → Orchestrator | S8 持续维护 → 按需 spawn
+**L2（Skill 产品生命周期）**：S1-S2→Interview | S3→Analyst+Generator+Validator | S4→Orchestrator/coding-agent | S5→Validator+Reviewer | S6→Assembler | S7-S8→按需
 
-## 操作红线（Sub-Agent 禁止）
+## 操作红线
 
-禁止 Sub-Agent 执行：
-1. Gateway 管理：`openclaw gateway`、`launchctl`
-2. 进程管理：`kill`、`pkill`、修改 LaunchAgent plist
-3. 环境变量修改：`.env`、shell profile
-4. 网络配置修改：代理、防火墙、DNS
-
-允许 Sub-Agent 执行：
-- 工作区内文件读写
-- 只读命令：`cat`、`ls`、`jq`、`grep`、`find`、`head`、`tail`、`wc`
-- `python3` 数据处理脚本（不涉及系统配置）
-- 只读 git：`git status/diff/log`
-- 只读网络：`web_search`、`web_fetch`、`curl`
+Sub-Agent 禁止：Gateway 管理、进程管理（kill/pkill）、env/shell profile 修改、网络配置修改。
+允许：工作区文件读写、只读命令、python3 数据处理、只读 git、只读网络。
 
 ## Orchestrator 纪律
 
-1. 每步修复后强制 verify：修复→验证→报告，三步缺一不可
-2. 诊断前先做环境健康检查：CPU（`ps aux --sort=-%cpu | head`）、磁盘（`df -h`）、异常进程
-3. life gateway 操作必须用 `launchctl kickstart gui/501/ai.openclaw.gateway.life`，不能用 `openclaw gateway restart`（后者不加载 .env）
-4. **重启后重新校验状态**：收到 “The gateway restart completed successfully.” system prompt 时，**禁止** 使用会话印象中的旧待办。必须：读 `_runtime/state/` 下 state.json → `memory_search` 24h 闭环记录 → 三项式回答（重启状态 + 真实待办来源 + 校验时间戳）。详见 `_runtime/experience/RULES.md` Rule-W26-01。
+1. 修复后强制 verify：修复→验证→报告
+2. life gateway 重启用 `launchctl kickstart gui/501/ai.openclaw.gateway.life`
+3. 重启后校验：读 `_runtime/state/` state.json → memory_search 24h 闭环 → 三项式回答
+4. 编辑某文件时禁止 spawn 会写同一文件的 sub-agent
 
-## 文件编辑锁
+## 上下文纪律
 
-Orchestrator 编辑某文件时，禁止 spawn 会写同一文件的 sub-agent。违反此规则导致文件损坏，由 Orchestrator 负全责。
+- 大型工具输出立即提炼，不留在上下文当摆设
+- 内部操作过程叙述从简，不输出填充语
+- 长会话主动建议 `/compact`
 
-## Sub-Agent 进度管理（v2026.4.2）
+## 外部文档
 
-### Spawn 前必做
-每次 spawn Sub-Agent 前，先发一条消息：
-"正在启动后台任务：[任务名]，预计 X 分钟。
-完成后我会通知你。你也可以随时发 /tasks 查看进度。"
-
-### 任务拆分原则
-将复杂任务拆成多个独立步骤分批 spawn，
-每步完成收到 announce 后再继续下一步。
-单次 spawn 的任务不超过 2 分钟。
-
-### 结果汇报
-收到 Sub-Agent announce 后，用正常对话语气
-向用户说明：做了什么、结果在哪、有无问题。
-不要直接转发内部元数据。
-
-### 遇到阻塞时
-如果主 Agent 仍然无响应，原因是任务太重。
-下次拆得更细，单步不超过 30 秒。
-
-### 后台任务统一管理命令
-- `openclaw tasks list` → 查看所有后台任务
-- `openclaw tasks show <id>` → 查看某任务详情
-- `openclaw tasks cancel <id>` → 取消某任务
-- `/tasks`（Telegram）→ 查看当前 session 任务面板
-
-### Sub-Agent 完成通知
-Sub-Agent 完成后会自动 announce 结果回主对话，
-主 Agent 负责用正常对话语气重写结果再发给用户。
-
-## 可用 Skill
-
-工厂 Agent 可调用以下全局 Skill（`projects/{编号}/{skill-name}/`）：
-
-| Skill | 项目编号 | 用途 |
-| tpr-framework | 2604011 | TPR 三省制工作流框架 |
-| coding-agent | — | 代码任务委托（本地） |
-
-工厂不引用、不依赖第三方 Skill，所有基础能力必须自研可控。
-新增技能时同步更新 `_runtime/governance/factory-task-index.md`。
-
----
-
-## 外部文档引用原则（v2026.4.6）
-
-玄关开放平台文档是唯一权威来源。
-
-当调用 BP / CWork / 或任何内部系统 API 时：
-1. **优先用 curl 直接获取官方 GitHub 文档**（https://github.com/xgjk/dev-guide/）
-2. 本地 skill 文档仅供参考，必须注明「以官方文档为准」
-3. 不允许以本地文档质疑官方文档的正确性
-4. 禁止使用 web_search/web_fetch（可能被阻止或不完整）
-
-**反面案例**：把本地 `api-endpoints.md` 当成官方文档
-
-**反面案例**：使用 web_search/web_fetch 而不是 curl 直接获取官方文档
-
-**正确方式**：用 curl 直接获取官方文档
-```bash
-curl -sL "https://github.com/xgjk/dev-guide/raw/main/02.产品业务AI文档/工作协同/工作协同API说明.md"
-```
+玄关开放平台 API 文档唯一来源：`https://github.com/xgjk/dev-guide/`
+用 curl 直接获取，不用 web_search/web_fetch。本地文档仅供参考。
