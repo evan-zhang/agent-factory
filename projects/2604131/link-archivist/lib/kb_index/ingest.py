@@ -44,18 +44,24 @@ def scan_markdown_files(archive_dir: Path) -> List[Path]:
         return []
 
     # Files at root level that are system-generated, not archives
-    SYSTEM_FILES = {"index.md", "log.md"}
+    SYSTEM_FILES = {"index.md", "log.md", "inbox.md", "AGENTS.md", "WIKI.md"}
+
+    # Directories that are system-generated (memory-wiki vault, kb index)
+    SYSTEM_DIRS = {"sources", "entities", "concepts", "syntheses", "reports", "_attachments", "_views", ".openclaw-wiki"}
 
     md_files = []
     for md in archive_dir.rglob("*.md"):
-        # Skip .kb-workdir, hidden files, and system docs
         rel = md.relative_to(archive_dir)
+        # Skip .kb-workdir, hidden files, and system dirs
         if ".kb-workdir" in str(md):
             continue
         if md.name.startswith("."):
             continue
-        # Skip root-level system files (index.md, log.md)
+        # Skip root-level system files (index.md, log.md, etc.)
         if len(rel.parts) == 1 and md.name in SYSTEM_FILES:
+            continue
+        # Skip system directories (memory-wiki vault subdirs)
+        if len(rel.parts) > 1 and rel.parts[0] in SYSTEM_DIRS:
             continue
         md_files.append(md)
 
