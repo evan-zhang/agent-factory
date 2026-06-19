@@ -15,7 +15,6 @@
 检查所有文件中的平台特定路径：
 - `~/.openclaw/` → 改为环境自适应
 - `/Users/evan/` → 改为 `/path/to/`
-- `~/Library/Mobile Documents/...` → 删除 Obsidian 特定引用
 
 ### 4. 工具映射
 SOP 中的 OpenClaw 特定工具需要映射：

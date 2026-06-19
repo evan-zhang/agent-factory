@@ -461,7 +461,7 @@ python3 scripts/kb_export_okf.py --dir <archive_dir> --out <okf_bundle_dir>
 风险：
 
 - `index.md` / `log.md` 可能被扫描为普通归档
-- 根目录文件会影响用户已有 Obsidian/同步工具
+- 根目录文件会影响用户已有同步工具
 
 前置条件：
 

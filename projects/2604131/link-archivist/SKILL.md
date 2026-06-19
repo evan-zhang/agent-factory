@@ -197,7 +197,6 @@ python3 scripts/kb_lint.py --dir {archive_dir}
 # 默认导出到 .kb-workdir/okf-export/
 python3 scripts/kb_export_okf.py --dir {archive_dir}
 
-# 导出到知识库根目录（index.md/log.md 可被 Obsidian 直接浏览）
 python3 scripts/kb_export_okf.py --dir {archive_dir} --root --force
 ```
 
@@ -270,7 +269,6 @@ python3 scripts/kb_export_okf.py --dir {archive_dir} --root --force
 
 - `archive_dir`：本地归档主目录（**必填**）
 - `video_archive_dir`：视频归档目录（可选，未配置则不保存视频文件。仅 full 模式生效）
-- **Obsidian 同步**：本 Skill 不负责。归档文件写入 `archive_dir` 后，由外部 Observer 机制（如 fsnotify、cron 脚本）同步到 Obsidian
 
 配置 tavily_api_key 可显著提升报告质量（Web Search 交叉验证）。获取：https://tavily.com
 
@@ -369,7 +367,6 @@ python3 scripts/kb_export_okf.py --dir {archive_dir} --root --force
 3. 本地归档 → `{archive_dir}/YYYY/MM/{K|M}-{YYMMDD}-{NNN}-{标题简称}.md`
 4. YAML 元信息头由脚本自动生成（archive、source、source_type、created_at、summary、entities、tags、confidence；manual 类型额外写入 project_id、author）
 
-**注意**：本 Skill 单一职责——只负责归档到 `archive_dir`。Obsidian 同步由外部 Observer 机制处理（不在本 Skill 范围内）。
 
 **进度提示**（完成后）：
 `✅ [5/5] 归档完成：<归档路径>（索引：indexed/failed）`
@@ -496,7 +493,6 @@ python3 scripts/kb_lint.py --dir <archive_dir>
 - OKF-style 知识包导出
 
 **不负责**：
-- Obsidian 同步（外部 Observer 处理）
 - 渠道发送（Agent 自行决定）
 - 文件解析（PDF/Word/PPT/图片）
 - 跨设备同步
@@ -552,7 +548,6 @@ python3 scripts/kb_lint.py --dir <archive_dir>
 - `auto_update`: 归档时自动更新索引
 - `embeddings_enabled`: 启用语义向量（需要 OPENAI_API_KEY）
 
-**Obsidian 同步**：本 Skill 不负责同步到 Obsidian。归档文件后，由外部 Observer 机制（如 fsnotify、cron 脚本）处理。
 
 无需配置即可用的能力：r.jina.ai 网页抓取、YouTube 字幕提取、抖音视频 ASR（Token 内置）、GitHub 项目发现。
 
