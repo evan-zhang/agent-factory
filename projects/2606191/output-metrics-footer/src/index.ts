@@ -11,6 +11,7 @@ type Usage = {
   total?: number;
   ts: number;
   sessionKey?: string;
+  contextTokenBudget?: number;
 };
 
 type Quota = {
@@ -74,6 +75,7 @@ const MODEL_CONTEXT: Record<string, number> = {
   "ollama/qwen3.5:397b-cloud": 250000,
   "qwen3.5:397b-cloud": 250000,
   "evan-openai/glm-5.2": 1000000,
+  "vip-newapi/glm-5.2": 1000000,
   "glm-5.2": 1000000,
   "glm-5.2[1m]": 1000000,
   "evan-openai/glm-5.2[1m]": 1000000,
@@ -149,8 +151,10 @@ function contextWindow(model?: string, provider?: string): number | undefined {
 }
 
 function latestUsage(sessionKey?: string): Usage | undefined {
-  if (sessionKey && recentBySession.has(sessionKey)) return recentBySession.get(sessionKey);
-  return recentOutputs.at(-1);
+  // P0 fix: strict session isolation. Only return usage for the requesting session.
+  // If no sessionKey or no data for this session, return undefined (show nothing, not wrong data).
+  if (!sessionKey) return undefined;
+  return recentBySession.get(sessionKey);
 }
 
 function aggregateSubagents(root?: Usage, cacheMs = 120000): { input: number; output: number } | null {
@@ -258,7 +262,9 @@ function appendFooter(content: string, footer: string): string {
 function buildFooterParts(usage: Usage | undefined, opts: { quota: Quota | null; appendSubagents: boolean; cacheMs: number; reserve: number }): string[] | null {
   if (!usage) return null;
   const label = modelLabel(usage.provider, usage.model);
-  const win = contextWindow(usage.model, usage.provider);
+  // Priority: runtime contextTokenBudget (accurate) > MODEL_CONTEXT table (fallback)
+  const tableWin = contextWindow(usage.model, usage.provider);
+  const win = (usage.contextTokenBudget && usage.contextTokenBudget > 0) ? usage.contextTokenBudget : tableWin;
   const total = (usage.input ?? 0) + (usage.output ?? 0);
   const effectiveTotal = Math.max(0, total + opts.reserve);
   const ctxPct = win ? Math.round((effectiveTotal / win) * 100) : undefined;
@@ -304,7 +310,8 @@ export default definePluginEntry({
         output: n(event.usage?.output),
         total: n(event.usage?.total),
         ts: Date.now(),
-        sessionKey: ctx.sessionKey
+        sessionKey: ctx.sessionKey,
+        contextTokenBudget: n(event.contextTokenBudget)
       };
       recentOutputs.push(usage);
       if (usage.sessionKey) recentBySession.set(usage.sessionKey, usage);
@@ -322,7 +329,7 @@ export default definePluginEntry({
       // Only append footer once per AI turn (first chunk wins), per-session.
       if (isFooterConsumed(ctx.sessionKey)) return;
 
-      const usage = latestUsage();
+      const usage = latestUsage(ctx.sessionKey);
       const quota = await fetchCodexQuota(quotaCacheMs);
       const parts = buildFooterParts(usage, { quota, appendSubagents: cfg.appendSubagents !== false, cacheMs, reserve });
       if (!parts) return;
@@ -338,7 +345,7 @@ export default definePluginEntry({
       // Only append footer once per AI turn (first chunk wins), per-session.
       if (isFooterConsumed(ctx.sessionKey)) return;
 
-      const usage = latestUsage();
+      const usage = latestUsage(ctx.sessionKey);
       if (!usage) return;
       const quota = await fetchCodexQuota(quotaCacheMs);
       const parts = buildFooterParts(usage, { quota, appendSubagents: cfg.appendSubagents !== false, cacheMs, reserve });

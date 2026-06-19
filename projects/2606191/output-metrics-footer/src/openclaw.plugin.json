@@ -1,7 +1,7 @@
 {
   "id": "openclaw-output-metrics-footer",
   "name": "OpenClaw Output Metrics Footer",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "kind": "code-plugin",
   "configSchema": {
     "type": "object",

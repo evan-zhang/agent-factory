@@ -1,6 +1,6 @@
 ---
 name: output-metrics-footer
-version: "0.2.1"
+version: "0.2.2"
 description: "OpenClaw 代码插件：在每条消息底部追加 token 用量、模型名、配额百分比等指标。支持 per-session 缓存和 subagent 追加。"
 homepage: https://github.com/evan-zhang/agent-factory/tree/master/projects/2606191/output-metrics-footer/
 issues: https://github.com/evan-zhang/agent-factory/issues/new?labels=output-metrics-footer
