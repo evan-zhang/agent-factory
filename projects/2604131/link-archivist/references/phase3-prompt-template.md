@@ -122,3 +122,22 @@ python3 scripts/archive_report.py \
   --tags '["AI", "架构", "工具"]' \
   --confidence "high"
 ```
+
+## OKF 字段映射
+
+Link Archivist frontmatter 与 [OKF v0.1](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing) 字段天然兼容。Phase 3 LLM 不需要输出 OKF 字段；orchestrator 在归档时自动映射：
+
+| Link Archivist 字段 | OKF 字段 | 说明 |
+|---|---|---|
+| 正文第一个 `#` 标题 | `title` | 自动提取 |
+| `summary` | `description` | 语义等价 |
+| `source` | `resource` | 语义等价 |
+| `tags` | `tags` | 直接映射 |
+| `created_at` | `timestamp` | 语义等价 |
+| `source_type` | `type`（近似） | v2.1 可选扩展 |
+| `archive` | — | Link Archivist 独有，OKF 未定义 |
+| `entities` | — | Link Archivist 独有 |
+| `relationships` | — | Link Archivist 独有（OKF 偏 Markdown link） |
+| `confidence` | — | Link Archivist 独有 |
+
+详细对齐策略见 `references/okf-alignment.md`。

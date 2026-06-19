@@ -1,6 +1,6 @@
 ---
 name: link-archivist
-version: "2.0.0"
+version: "2.0.1"
 skillcode: link-archivist
 github: https://github.com/evan-zhang/agent-factory
 description: 当用户发送一个链接（YouTube/通用 URL）、文件或粘贴文本，需要抓取内容并生成调研报告时触发。也支持查询本地知识库（"查归档"/"搜笔记"）和索引管理（"重建索引"）。
@@ -404,6 +404,7 @@ python3 scripts/kb_lint.py --dir <archive_dir>
 | `references/kb-query-guide.md` | 知识库查询使用指南 |
 | `references/migration-from-kb-graph.md` | 从 KB Graph 迁移指南 |
 | `references/kb-index-architecture.md` | KB 索引架构设计文档 |
+| `references/okf-alignment.md` | OKF / LLM-Wiki 对齐说明 |
 | `examples/` | 4 个完整示例 |
 
 ## 工具映射（非 OpenClaw 环境）
@@ -430,6 +431,8 @@ python3 scripts/kb_lint.py --dir <archive_dir>
 - 渠道发送（Agent 自行决定）
 - 文件解析（PDF/Word/PPT/图片）
 - 跨设备同步
+
+**OKF 对齐**：本 Skill 的 frontmatter 与 [OKF v0.1](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing) 天然兼容（OKF-style / OKF-aligned，不承诺 full compliance）。详见 `references/okf-alignment.md`。
 
 ## 配置与授权
 
