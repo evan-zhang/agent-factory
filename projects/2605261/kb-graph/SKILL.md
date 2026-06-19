@@ -1,57 +1,89 @@
 ---
 name: kb-graph
-version: "0.3.1"
+version: "0.3.2"
 skillcode: kb-graph
 github: https://github.com/evan-zhang/agent-factory
-description: 查询知识库图谱、搜索本地索引文件、查找归档报告中的相关内容。触发词：查知识库、搜索引、知识图谱、kb查询、找归档报告、知识库搜索
+description: ⚠️ DEPRECATED - 请迁移到 Link Archivist v2.0.0。本 Skill 已于 2026-06-19 标记为废弃，将在 2026-12-19 删除。
 ---
 
-# KB Graph
+# KB Graph ⚠️ DEPRECATED
 
-知识库图谱查询 Skill。在本地 Markdown 归档目录中搜索相关内容，返回匹配文件的标题、摘要、实体和标签。
+> **重要提示**：本 Skill 已于 **2026-06-19** 标记为 **deprecated**（废弃）。
+>
+> 请迁移到 **Link Archivist v2.0.0**，它已内置知识库索引功能：
+> ```bash
+> cd ~/.openclaw/skills/link-archivist
+> git pull
+> python3 scripts/init_config.py
+> ```
+>
+> 本 Skill 将在 **2026-12-19**（6 个月后）从 GitHub 删除。
+>
+> 迁移文档：[Link Archivist references/migration-from-kb-graph.md](../../2604131/link-archivist/references/migration-from-kb-graph.md)
 
-## 何时触发
+## 兼容性说明
 
-当用户的请求涉及以下场景时触发：
-- 查询/搜索知识库或归档内容
-- 查找之前归档的报告或调研
-- 询问某个主题在知识库中的相关信息
-- 需要基于已有知识库内容回答问题
+KB Graph v0.3.2 仅作为 deprecation release，**不删除任何代码**。
 
-## 执行步骤
+- ✅ 现有配置文件仍可用（`~/.openclaw/kb-graph-config.json`）
+- ✅ 索引文件格式不变（`.kb-workdir/`）
+- ✅ 命令接口保持兼容（虽然部分命令未实现）
+- ❌ 不再添加新功能
+- ❌ 不再修复 bug（除非严重安全问题）
 
-1. 读取配置获取归档目录：`cat ~/.openclaw/kb-graph-config.json`，取 `watch_dirs[0]`
-2. 执行查询：
+## 迁移步骤
+
+1. 安装 Link Archivist v2.0.0
+2. 运行 `python3 scripts/init_config.py` 自动合并配置
+3. 验证索引：`python3 scripts/kb_query.py status --dir <archive_dir>`
+4. 卸载 KB Graph Skill（可选）
+
+详细迁移指南见：[Link Archivist Migration Guide](../../2604131/link-archivist/references/migration-from-kb-graph.md)
+
+## 原有功能（仅作参考）
+
+### 触发场景（已废弃）
+
+- ✅ 支持使用：请改用 Link Archivist 的触发场景
+- ❌ 不再推荐：本 Skill 的触发场景
+
+### 命令接口（部分未实现）
+
+```bash
+# 查询（支持）
+python3 scripts/kb_graph.py query "关键词" --dir <归档目录> --mode keyword
+
+# 状态（支持）
+python3 scripts/kb_graph.py stats --dir <归档目录>
+
+# 以下命令未实现，请迁移到 Link Archivist：
+# python3 scripts/kb_graph.py build <归档目录>
+# python3 scripts/kb_graph.py update-single <文件> --dir <归档目录>
+# python3 scripts/kb_graph.py update <归档目录>
+# python3 scripts/kb_graph.py lint <归档目录>
 ```
-python3 ~/.openclaw/skills/kb-graph/scripts/kb_graph.py query "用户查询内容" --dir <归档目录> --mode keyword
-```
-3. 解析 JSON 结果，提取 `results` 数组中的条目
-4. 将结果以可读格式呈现给用户
 
-## 查询模式
+### 边界（原设计）
 
-默认使用 keyword 模式。仅在用户明确要求语义搜索时使用 hybrid 模式（需要 OPENAI_API_KEY）。
+- ✅ 只读操作，不修改原始归档文件
+- ✅ 查询依赖已构建的索引（.kb-workdir/entries.json）
+- ✅ Link Archivist 归档新文件时会自动增量更新索引（v1.12.1+）
 
-## 结果格式
+## 版本历史
 
-将查询结果整理为：
-- 文件标题和路径
-- 相关度分数
-- 摘要（如有）
-- 关键实体和标签
+- **v0.3.2** (2026-06-19): Deprecation release，引导用户迁移
+- **v0.3.1** (2026-06-15): 独立版本，部分命令未实现
+- **v0.3.0** (2026-06-10): 初始版本
 
-只展示前 5 条最相关的结果，避免信息过载。如果用户需要更多，再展示后续结果。
+## 问题反馈
 
-## 全量重建
+迁移过程中遇到问题，请提交 Issue：
 
-仅在用户明确要求"重建索引"或"全量更新"时执行：
-```
-python3 ~/.openclaw/skills/kb-graph/scripts/kb_graph.py build <归档目录>
-```
-此操作耗时较长（351个文件约20分钟），执行前必须告知用户预计时间。
+**地址**：https://github.com/evan-zhang/agent-factory/issues/new
 
-## 边界
+**标题格式**：`[MIGRATION] link-archivist: 简短描述`
 
-- 只读操作，不修改原始归档文件
-- 查询依赖已构建的索引（.kb-workdir/entries.json）
-- Link Archivist 归档新文件时会自动增量更新索引，通常无需手动重建
+**建议包含**：
+1. KB Graph 旧配置（去除敏感信息）
+2. Link Archivist 新配置
+3. 迁移过程中的错误信息

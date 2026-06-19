@@ -40,6 +40,7 @@ def parse_args():
     parser.add_argument('--dir', '-d', dest='dir_arg', help='Archive directory (named)')
     parser.add_argument('--title', '-t', dest='title_arg', help='Report title (named)')
     parser.add_argument('--entities', help='JSON array of entities, e.g. \'["AI","OpenClaw"]\'')
+    parser.add_argument('--tags', help='JSON array of tags, e.g. \'["AI","架构"]\'')
     parser.add_argument('--summary', help='One-line summary of the report')
     parser.add_argument('--confidence', default='medium', choices=['high', 'medium', 'low'], help='Extraction confidence')
     args = parser.parse_args()
@@ -48,7 +49,7 @@ def parse_args():
     archive_dir = args.dir_arg or args.archive_dir
     title = args.title_arg or args.title or 'report'
 
-    # Parse entities JSON
+    # Parse entities/tags JSON
     entities = []
     if args.entities:
         try:
@@ -56,49 +57,45 @@ def parse_args():
         except json.JSONDecodeError:
             entities = [e.strip() for e in args.entities.split(",")]
 
-    return content_file, archive_dir, title, entities, args.summary, args.confidence
+    tags = []
+    if args.tags:
+        try:
+            tags = json.loads(args.tags)
+        except json.JSONDecodeError:
+            tags = [t.strip() for t in args.tags.split(",")]
+
+    return content_file, archive_dir, title, entities, tags, args.summary, args.confidence
 
 
-def _trigger_kb_graph_index(archive_file: Path, archive_dir: Path, result: dict):
-    """Best-effort: trigger kb-graph incremental index on the newly archived file.
+def _trigger_kb_index(archive_file: Path, archive_dir: Path, result: dict):
+    """Best-effort: trigger KB index update on the newly archived file.
 
-    Non-blocking: if kb-graph is not installed or fails, just log a warning.
-    The result dict is updated with kb_graph_status if available.
+    Non-blocking: if indexing fails, just log a warning.
+    The result dict is updated with index_status if available.
     """
-    import subprocess
-    import sys
-
-    # Find kb-graph scripts: check skill locations in order
-    kb_candidates = [
-        Path.home() / ".openclaw" / "skills" / "kb-graph" / "scripts" / "kb_graph.py",
-        # Also check the factory project as fallback during development
-        Path.home() / ".openclaw" / "gateways" / "life" / "domains" / "agent-factory" / "projects" / "2605261" / "kb-graph" / "scripts" / "kb_graph.py",
-    ]
-
-    kb_script = None
-    for candidate in kb_candidates:
-        if candidate.exists():
-            kb_script = candidate
-            break
-
-    if not kb_script:
-        result["kb_graph_status"] = "not_installed"
-        return
-
     try:
-        proc = subprocess.run(
-            [sys.executable, str(kb_script), "update-single", str(archive_file), "--dir", str(archive_dir)],
-            capture_output=True, text=True, timeout=30,
-            env={**__import__('os').environ},  # inherit env for API keys
-        )
-        if proc.returncode == 0:
-            result["kb_graph_status"] = "indexed"
+        # Import internal KB index module
+        import sys
+        lib_path = Path(__file__).parent.parent / "lib"
+        if str(lib_path) not in sys.path:
+            sys.path.insert(0, str(lib_path))
+
+        from kb_index.update_single import update_single, ConcurrentUpdateError
+
+        # Incremental index update
+        index_result = update_single(archive_file, archive_dir)
+
+        if index_result.get("ok"):
+            result["index_status"] = "indexed"
+            result["compile_method"] = index_result.get("compile_method", "frontmatter")
         else:
-            result["kb_graph_status"] = f"error: {proc.stderr[:100]}"
-    except subprocess.TimeoutExpired:
-        result["kb_graph_status"] = "timeout"
+            result["index_status"] = "failed"
+
+    except ConcurrentUpdateError:
+        result["index_status"] = "concurrent_skip"
     except Exception as e:
-        result["kb_graph_status"] = f"error: {str(e)[:100]}"
+        # Non-blocking: don't fail the archive if index fails
+        result["index_status"] = f"error: {str(e)[:100]}"
 
 
 def load_config():
@@ -117,14 +114,14 @@ def load_config():
 
 
 def main() -> int:
-    content_file_str, archive_dir_str, title, entities, summary, confidence = parse_args()
+    content_file_str, archive_dir_str, title, entities, tags, summary, confidence = parse_args()
 
     if not content_file_str:
         print(json.dumps({
             "ok": False,
             "error": "usage: archive_report.py <content_file> <archive_dir> [title]\n"
                      "       or: archive_report.py --file <file> [--dir <dir>] [--title <title>]\n"
-                     "            [--entities '<json>'] [--summary '<text>'] [--confidence high]"
+                     "            [--entities '<json>'] [--tags '<json>'] [--summary '<text>'] [--confidence high]"
         }, ensure_ascii=False))
         return 1
 
@@ -168,9 +165,14 @@ def main() -> int:
             header_parts.append("entities: []")
         if summary:
             header_parts.append(f"summary: {summary}")
+        if tags:
+            header_parts.append("tags:")
+            for tag in tags[:3]:
+                header_parts.append(f"  - {tag}")
+        else:
+            header_parts.append("tags: []")
         if confidence:
             header_parts.append(f"confidence: {confidence}")
-        header_parts.append("tags: []")
         header = "---\n" + "\n".join(header_parts) + "\n---\n"
         content = header + content
 
@@ -185,8 +187,8 @@ def main() -> int:
         "seq": seq,
     }
 
-    # Auto-trigger kb-graph incremental update (non-blocking, best-effort)
-    _trigger_kb_graph_index(archive_file, archive_dir, result)
+    # Auto-trigger KB index incremental update (non-blocking, best-effort)
+    _trigger_kb_index(archive_file, archive_dir, result)
 
     print(json.dumps(result, ensure_ascii=False))
     return 0
