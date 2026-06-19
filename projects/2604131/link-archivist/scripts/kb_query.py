@@ -42,6 +42,11 @@ def main():
         choices=["keyword", "semantic", "hybrid"],
         help="Query mode (default: keyword)"
     )
+    parser.add_argument(
+        "--prefix",
+        choices=["K", "M"],
+        help="Filter by archive prefix: K (external) or M (manual)"
+    )
     args = parser.parse_args()
 
     # Handle special "status" command
@@ -94,6 +99,14 @@ def main():
     # Execute query
     try:
         result = query(args.query, archive_dir, args.mode)
+        # Apply prefix filter if specified
+        if args.prefix and result.get("results"):
+            result["results"] = [
+                r for r in result["results"]
+                if r.get("archive_id", r.get("path", "")).startswith(args.prefix + "-")
+            ]
+            result["total"] = len(result["results"])
+            result["prefix_filter"] = args.prefix
         print(json.dumps(result, indent=2, ensure_ascii=False))
         return 0
     except Exception as e:

@@ -11,15 +11,15 @@ def _date_to_nested_path(base_dir: Path, date_str: str) -> Path:
     return base_dir / parts[0] / parts[1]
 
 
-def get_next_number(archive_dir: Path, date_str: str) -> int:
+def get_next_number(archive_dir: Path, date_str: str, prefix: str = "K") -> int:
     """Scan existing files and return next sequence number."""
     date_dir = _date_to_nested_path(archive_dir, date_str)
     if not date_dir.exists():
         return 1
     max_num = 0
-    for f in date_dir.glob("K-*.md"):
+    for f in date_dir.glob(f"{prefix}-*.md"):
         try:
-            # K-YYMMDD-NNN-*.md
+            # {PREFIX}-YYMMDD-NNN-*.md
             parts = f.stem.split("-")
             if len(parts) >= 3:
                 num = int(parts[2])
@@ -43,6 +43,9 @@ def parse_args():
     parser.add_argument('--tags', help='JSON array of tags, e.g. \'["AI","架构"]\'')
     parser.add_argument('--summary', help='One-line summary of the report')
     parser.add_argument('--confidence', default='medium', choices=['high', 'medium', 'low'], help='Extraction confidence')
+    parser.add_argument('--source-type', dest='source_type', default='url', choices=['url', 'manual'], help='Source type: url (external) or manual (handwritten)')
+    parser.add_argument('--project-id', dest='project_id', help='Project ID for manual documents (required for source-type=manual)')
+    parser.add_argument('--author', help='Author for manual documents')
     args = parser.parse_args()
 
     content_file = args.file_arg or args.content_file
@@ -64,7 +67,7 @@ def parse_args():
         except json.JSONDecodeError:
             tags = [t.strip() for t in args.tags.split(",")]
 
-    return content_file, archive_dir, title, entities, tags, args.summary, args.confidence
+    return content_file, archive_dir, title, entities, tags, args.summary, args.confidence, args.source_type, args.project_id, args.author
 
 
 def _trigger_kb_index(archive_file: Path, archive_dir: Path, result: dict):
@@ -114,7 +117,7 @@ def load_config():
 
 
 def main() -> int:
-    content_file_str, archive_dir_str, title, entities, tags, summary, confidence = parse_args()
+    content_file_str, archive_dir_str, title, entities, tags, summary, confidence, source_type, project_id, author = parse_args()
 
     if not content_file_str:
         print(json.dumps({
@@ -138,13 +141,26 @@ def main() -> int:
         if not archive_dir_str:
             archive_dir = Path(config.get("archive_dir", archive_dir)).expanduser()
 
+    # Determine prefix: K for external (url), M for manual
+    if source_type == "manual":
+        prefix = "M"
+        if not project_id:
+            print(json.dumps({
+                "ok": False,
+                "error": "--project-id is required for --source-type manual",
+                "hint": "Ask the user: 这篇文档来自哪个项目？"
+            }, ensure_ascii=False))
+            return 1
+    else:
+        prefix = "K"
+
     # Resolve date strings
     today_display = datetime.now().strftime("%Y-%m-%d")  # YYYY-MM-DD for paths
     today_code = datetime.now().strftime("%y%m%d")       # YYMMDD for archive ID
 
     # --- Archive to local ---
-    seq = get_next_number(archive_dir, today_display)
-    archive_id = f"K-{today_code}-{seq:03d}"
+    seq = get_next_number(archive_dir, today_display, prefix)
+    archive_id = f"{prefix}-{today_code}-{seq:03d}"
     date_dir = _date_to_nested_path(archive_dir, today_display)
     date_dir.mkdir(parents=True, exist_ok=True)
 
@@ -154,9 +170,15 @@ def main() -> int:
     if not content.startswith("---"):
         header_parts = [
             f"archive: {archive_id}",
-            "source: unknown",
+            f"source: {source_type}",
+            f"source_type: {source_type}",
             f"created_at: {datetime.now().isoformat()}",
         ]
+        if source_type == "manual":
+            if project_id:
+                header_parts.append(f"project_id: {project_id}")
+            if author:
+                header_parts.append(f"author: {author}")
         if entities:
             header_parts.append("entities:")
             for ent in entities[:10]:
