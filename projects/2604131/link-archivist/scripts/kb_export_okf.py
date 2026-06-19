@@ -59,36 +59,30 @@ def calculate_entity_stats(entries: Dict[str, Any]) -> Dict[str, int]:
     return entity_counts
 
 
-def generate_index_md(
+def generate_index_md_v2(
     entries: Dict[str, Any],
-    export_dir: Path,
-    build_stats: Dict[str, Any]
+    index_path: Path,
+    build_stats: Dict[str, Any],
+    root_mode: bool = False,
+    archive_dir: Path = None
 ) -> bool:
-    """Generate index.md with navigation structure.
+    """Generate index.md at specified path.
 
-    Args:
-        entries: All entries from entries.json
-        export_dir: Export directory path
-        build_stats: Build statistics
-
-    Returns:
-        True if successful
+    In root_mode, archive links point to relative paths from archive_dir.
+    In default mode, archive links point to archive/ subdirectory.
     """
     timestamp = datetime.now().isoformat()
     total_concepts = len(entries)
 
-    # Sort entries by created_at (most recent first)
     sorted_entries = sorted(
         entries.items(),
         key=lambda x: x[1].get("created_at", ""),
         reverse=True
     )
 
-    # Calculate tag and entity stats
     tag_stats = calculate_tag_stats(entries)
     entity_stats = calculate_entity_stats(entries)
 
-    # Generate recent updates (top 20)
     recent_updates = []
     for rel_path, entry in sorted_entries[:20]:
         created_at = entry.get("created_at", "")
@@ -96,31 +90,33 @@ def generate_index_md(
         title = entry.get("title", rel_path)
         recent_updates.append(f"- {created_at} — {archive_id} — {title}")
 
-    # Generate tags section
     tags_section = []
     sorted_tags = sorted(tag_stats.items(), key=lambda x: x[1], reverse=True)
     for tag, count in sorted_tags:
         tags_section.append(f"- **{tag}** ({count} concepts)")
 
-    # Generate key entities section (top 20)
     entities_section = []
     sorted_entities = sorted(entity_stats.items(), key=lambda x: x[1], reverse=True)[:20]
     for entity, count in sorted_entities:
         entities_section.append(f"- **{entity}** ({count} concepts)")
 
-    # Generate all concepts section
     all_concepts = []
     for rel_path, entry in sorted_entries:
         title = entry.get("title", rel_path)
-        summary = entry.get("summary", "").strip()
-        # Create relative path from index.md to archive file
-        archive_rel_path = Path("archive") / rel_path
+        summary = entry.get("summary", "")
+        if isinstance(summary, str):
+            summary = summary.strip()
+        else:
+            summary = str(summary).strip()
+        if root_mode:
+            archive_rel_path = rel_path
+        else:
+            archive_rel_path = Path("archive") / rel_path
         all_concepts.append(f"- [{title}]({archive_rel_path}) — {summary}")
 
-    # Build index.md content
     content = f"""# Knowledge Bundle Index
 
-> Generated from Link Archivist v2.1.0 index
+> Generated from Link Archivist v2.2.0 index
 > Last updated: {timestamp}
 > Total concepts: {total_concepts}
 
@@ -142,7 +138,6 @@ def generate_index_md(
 """
 
     try:
-        index_path = export_dir / "index.md"
         index_path.write_text(content, encoding="utf-8")
         return True
     except OSError:
@@ -152,7 +147,7 @@ def generate_index_md(
 def generate_log_md(
     cache: Dict[str, Any],
     build_stats: Dict[str, Any],
-    export_dir: Path
+    log_path: Path
 ) -> bool:
     """Generate log.md with change history.
 
@@ -201,7 +196,6 @@ def generate_log_md(
 """
 
     try:
-        log_path = export_dir / "log.md"
         log_path.write_text(content, encoding="utf-8")
         return True
     except OSError:
@@ -248,7 +242,8 @@ def copy_archives(
 def export_okf(
     archive_dir: Path,
     output_dir: Path = None,
-    force: bool = False
+    force: bool = False,
+    root_mode: bool = False
 ) -> Dict[str, Any]:
     """Export knowledge base to OKF-style bundle.
 
@@ -256,6 +251,7 @@ def export_okf(
         archive_dir: Archive root directory
         output_dir: Custom output directory (must be inside .kb-workdir)
         force: Force rebuild (delete existing export first)
+        root_mode: If True, write index.md/log.md to archive root (ingest auto-skips them)
 
     Returns:
         Result dict with stats
@@ -267,21 +263,33 @@ def export_okf(
             "error": f"Archive directory not found: {archive_dir}"
         }
 
-    # Set output directory
-    if output_dir:
-        export_dir = output_dir
-    else:
-        export_dir = archive_dir / ".kb-workdir" / "okf-export"
-
-    # Verify export is inside .kb-workdir
     workdir = archive_dir / ".kb-workdir"
-    try:
-        export_dir.relative_to(workdir)
-    except ValueError:
-        return {
-            "ok": False,
-            "error": f"Output directory must be inside .kb-workdir: {export_dir}"
-        }
+
+    # Determine output locations
+    if root_mode:
+        # index.md and log.md go to archive root; archive/ copies go to .kb-workdir/okf-export/archive/
+        index_path = archive_dir / "index.md"
+        log_path = archive_dir / "log.md"
+        export_subdir = workdir / "okf-export"
+        archive_export_dir = export_subdir / "archive"
+    elif output_dir:
+        export_subdir = output_dir
+        index_path = export_subdir / "index.md"
+        log_path = export_subdir / "log.md"
+        archive_export_dir = export_subdir / "archive"
+        # Verify export is inside .kb-workdir
+        try:
+            export_subdir.relative_to(workdir)
+        except ValueError:
+            return {
+                "ok": False,
+                "error": f"Output directory must be inside .kb-workdir: {export_subdir}"
+            }
+    else:
+        export_subdir = workdir / "okf-export"
+        index_path = export_subdir / "index.md"
+        log_path = export_subdir / "log.md"
+        archive_export_dir = export_subdir / "archive"
 
     # Check for entries.json
     entries_path = workdir / "entries.json"
@@ -299,53 +307,60 @@ def export_okf(
 
     if not entries:
         # Generate graceful empty index
-        export_dir.mkdir(parents=True, exist_ok=True)
+        export_subdir.mkdir(parents=True, exist_ok=True)
         empty_content = f"""# Knowledge Bundle Index
 
-> Generated from Link Archivist v2.1.0 index
+> Generated from Link Archivist v2.2.0 index
 > Last updated: {datetime.now().isoformat()}
 > Total concepts: 0
 
 No concepts indexed yet. Run kb_rebuild.py to create index.
 """
-        (export_dir / "index.md").write_text(empty_content, encoding="utf-8")
+        index_path.write_text(empty_content, encoding="utf-8")
         return {
             "ok": True,
-            "export_dir": str(export_dir),
+            "export_dir": str(export_subdir),
             "concepts_exported": 0,
             "index_generated": True,
             "note": "No concepts to export"
         }
 
-    # Force rebuild: delete existing export
-    if force and export_dir.exists():
+    # Force rebuild: delete existing export subdir (not root files in root_mode)
+    if force and export_subdir.exists():
         try:
-            shutil.rmtree(export_dir)
+            shutil.rmtree(export_subdir)
         except OSError as e:
             return {
                 "ok": False,
                 "error": f"Failed to delete existing export: {e}"
             }
 
-    # Create export directory
-    export_dir.mkdir(parents=True, exist_ok=True)
+    # Create export directories
+    export_subdir.mkdir(parents=True, exist_ok=True)
+    if root_mode:
+        # In root mode, archive copies still go to .kb-workdir/okf-export/archive/
+        archive_export_dir.mkdir(parents=True, exist_ok=True)
+    else:
+        archive_export_dir.mkdir(parents=True, exist_ok=True)
 
     # Copy archives
-    archive_export_dir = export_dir / "archive"
     copied_count = copy_archives(entries, archive_dir, archive_export_dir)
 
     # Generate index.md
-    index_ok = generate_index_md(entries, export_dir, build_stats)
+    index_ok = generate_index_md_v2(entries, index_path, build_stats, root_mode, archive_dir)
 
     # Generate log.md
-    log_ok = generate_log_md(cache, build_stats, export_dir)
+    log_ok = generate_log_md(cache, build_stats, log_path)
 
     return {
         "ok": True,
-        "export_dir": str(export_dir),
+        "export_dir": str(export_subdir),
+        "index_path": str(index_path),
+        "log_path": str(log_path),
         "concepts_exported": copied_count,
         "index_generated": index_ok,
         "log_generated": log_ok,
+        "root_mode": root_mode,
         "timestamp": datetime.now().isoformat()
     }
 
@@ -355,12 +370,17 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="KB Export OKF - Link Archivist v2.1.0"
+        description="KB Export OKF - Link Archivist v2.2.0"
     )
     parser.add_argument("--dir", required=True, help="Archive directory")
     parser.add_argument(
         "--out",
         help="Custom output directory (must be inside .kb-workdir)"
+    )
+    parser.add_argument(
+        "--root",
+        action="store_true",
+        help="Export index.md/log.md to archive root (ingest auto-skips them)"
     )
     parser.add_argument(
         "--force",
@@ -373,7 +393,8 @@ def main():
         result = export_okf(
             Path(args.dir),
             Path(args.out) if args.out else None,
-            args.force
+            args.force,
+            root_mode=args.root
         )
         print(json.dumps(result, indent=2, ensure_ascii=False))
         return 0 if result.get("ok") else 1

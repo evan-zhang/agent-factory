@@ -43,11 +43,21 @@ def scan_markdown_files(archive_dir: Path) -> List[Path]:
     if not archive_dir.exists():
         return []
 
+    # Files at root level that are system-generated, not archives
+    SYSTEM_FILES = {"index.md", "log.md"}
+
     md_files = []
     for md in archive_dir.rglob("*.md"):
-        # Skip .kb-workdir and hidden files
-        if ".kb-workdir" not in str(md) and not md.name.startswith("."):
-            md_files.append(md)
+        # Skip .kb-workdir, hidden files, and system docs
+        rel = md.relative_to(archive_dir)
+        if ".kb-workdir" in str(md):
+            continue
+        if md.name.startswith("."):
+            continue
+        # Skip root-level system files (index.md, log.md)
+        if len(rel.parts) == 1 and md.name in SYSTEM_FILES:
+            continue
+        md_files.append(md)
 
     return md_files
 

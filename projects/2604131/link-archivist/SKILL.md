@@ -1,6 +1,6 @@
 ---
 name: link-archivist
-version: "2.1.0"
+version: "2.2.0"
 skillcode: link-archivist
 github: https://github.com/evan-zhang/agent-factory
 description: 当用户发送一个链接（YouTube/通用 URL）、文件或粘贴文本，需要抓取内容并生成调研报告时触发。也支持查询本地知识库（"查归档"/"搜笔记"）和索引管理（"重建索引"）。
