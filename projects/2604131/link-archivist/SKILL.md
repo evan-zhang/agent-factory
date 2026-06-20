@@ -1,6 +1,6 @@
 ---
 name: link-archivist
-version: "2.3.1"
+version: "2.4.0"
 skillcode: link-archivist
 github: https://github.com/evan-zhang/agent-factory
 description: 本地知识库管理 Skill。两类输入：外部链接抓取生成报告（K 编号）和手工录入项目文档（M 编号）。支持归档、索引、查询、导出。当用户发送链接/文件/文本、说"存文档"/"查知识库"/"导出知识包"时触发。

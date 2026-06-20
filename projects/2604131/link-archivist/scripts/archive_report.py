@@ -101,6 +101,50 @@ def _trigger_kb_index(archive_file: Path, archive_dir: Path, result: dict):
         result["index_status"] = f"error: {str(e)[:100]}"
 
 
+def _trigger_xgkb_sync(archive_file: Path, archive_dir: Path, result: dict):
+    """Best-effort: sync to XGKB (玄关知识库) if configured.
+
+    Non-blocking: if sync fails or xgkb-sync-helper is not installed, just log.
+    The result dict is updated with xgkb_status if available.
+    """
+    try:
+        # Check if .xgkb.json exists in archive_dir (opt-in)
+        xgkb_config = archive_dir / ".xgkb.json"
+        if not xgkb_config.exists():
+            return  # Not configured, skip silently
+
+        # Find xgkb_push.py in standard skills directory
+        import shutil
+        candidates = [
+            Path.home() / ".openclaw" / "skills" / "xgkb-sync-helper" / "scripts" / "xgkb_push.py",
+            Path.home() / ".openclaw" / "skills" / "xgkb-sync-helper" / "scripts" / "xgkb_push.py",
+        ]
+        xgkb_push = next((p for p in candidates if p.exists()), None)
+
+        if not xgkb_push:
+            result["xgkb_status"] = "not_installed"  # xgkb-sync-helper not found
+            return
+
+        # Call xgkb_push.py, non-blocking
+        import subprocess
+        proc = subprocess.run(
+            ["python3", str(xgkb_push), str(archive_file)],
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+
+        if proc.returncode == 0:
+            result["xgkb_status"] = "synced"
+        else:
+            result["xgkb_status"] = "failed"
+            result["xgkb_error"] = proc.stderr[:200] if proc.stderr else "unknown"
+
+    except Exception as e:
+        # Non-blocking: don't fail the archive if sync fails
+        result["xgkb_status"] = f"error: {str(e)[:100]}"
+
+
 def load_config():
     """Load config from standard paths."""
     for config_file in [
@@ -211,6 +255,9 @@ def main() -> int:
 
     # Auto-trigger KB index incremental update (non-blocking, best-effort)
     _trigger_kb_index(archive_file, archive_dir, result)
+
+    # Auto-sync to XGKB (玄关知识库) if configured, non-blocking
+    _trigger_xgkb_sync(archive_file, archive_dir, result)
 
     print(json.dumps(result, ensure_ascii=False))
     return 0
