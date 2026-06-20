@@ -1,6 +1,6 @@
 ---
 name: link-archivist
-version: "2.5.0"
+version: "2.5.1"
 skillcode: link-archivist
 github: https://github.com/evan-zhang/agent-factory
 description: 本地知识库管理 Skill。两类输入：外部链接抓取生成报告（K 编号）和手工录入项目文档（M 编号）。支持归档、索引、查询、导出。当用户发送链接/文件/文本、说"存文档"/"查知识库"/"导出知识包"时触发。
@@ -499,6 +499,18 @@ python3 scripts/kb_lint.py --dir <archive_dir>
 - 文件解析（PDF/Word/PPT/图片）
 - 跨设备同步
 - wiki 主题页合成（由 OpenClaw memory-wiki 插件负责，可选）
+
+**玄关同步纪律**：
+
+向 archive_dir 写文件的任何操作（含 write/edit/脚本/手工拆分），完成后必须调用 xgkb-push 同步。只有 `archive_report.py` 归档的文件会自动触发同步，其他写入路径需要手动补推：
+
+```bash
+# 单文件补推
+python3 ~/.openclaw/skills/xgkb-sync-helper/scripts/xgkb_push.py <文件路径>
+
+# 整个目录批量补推
+python3 ~/.openclaw/skills/xgkb-sync-helper/scripts/xgkb_sync_dir.py <目录路径>
+```
 
 **OKF 对齐**：本 Skill 的 frontmatter 与 [OKF v0.1](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing) 天然兼容（OKF-style / OKF-aligned，不承诺 full compliance）。详见 `references/okf-alignment.md`。
 
