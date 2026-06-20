@@ -42,14 +42,28 @@ def extract_article_info(render_data: dict) -> dict:
 
     seo_tdk = render_data.get('seoTDK', {})
 
+    # 头条 API 结构变更：content 从 articleInfo.content 迁移到 articleInfo.thread.threadBase
+    thread_base = article_info.get('thread', {}).get('threadBase', {})
+    content_html = (
+        thread_base.get('richContent', '') or
+        thread_base.get('content', '') or
+        article_info.get('content', '')
+    )
+
+    title = (
+        thread_base.get('title', '') or
+        article_info.get('title', '') or
+        seo_tdk.get('title', '')
+    )
+
     return {
-        'title': article_info.get('title', ''),
-        'content': article_info.get('content', ''),
+        'title': title,
+        'content': content_html,
         'publish_time': seo_tdk.get('publishTime', ''),
         'modified_time': seo_tdk.get('modifiedTime', ''),
         'abstract': seo_tdk.get('abstract', ''),
         'keywords': seo_tdk.get('keywords', ''),
-        'detail_source': article_info.get('detailSource', ''),  # 作者/媒体名
+        'detail_source': article_info.get('detailSource', ''),
         'media_user': article_info.get('mediaUser', {}),
         'url': article_info.get('url', ''),
         'is_original': article_info.get('isOriginal', False),
