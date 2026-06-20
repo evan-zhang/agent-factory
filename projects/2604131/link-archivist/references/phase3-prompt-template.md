@@ -67,6 +67,7 @@ python3 scripts/archive_report.py \
   --file <报告文件> \
   --dir <archive_dir> \
   --title "<标题>" \
+  --source-url "<原始链接>" \
   --summary "<summary>" \
   --entities '<["实体1", "实体2"]>' \
   --tags '<["AI", "架构"]>' \

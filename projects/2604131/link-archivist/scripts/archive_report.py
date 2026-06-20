@@ -44,6 +44,7 @@ def parse_args():
     parser.add_argument('--summary', help='One-line summary of the report')
     parser.add_argument('--confidence', default='medium', choices=['high', 'medium', 'low'], help='Extraction confidence')
     parser.add_argument('--source-type', dest='source_type', default='url', choices=['url', 'manual'], help='Source type: url (external) or manual (handwritten)')
+    parser.add_argument('--source-url', dest='source_url', help='Original source URL (for external links)')
     parser.add_argument('--project-id', dest='project_id', help='Project ID for manual documents (required for source-type=manual)')
     parser.add_argument('--author', help='Author for manual documents')
     args = parser.parse_args()
@@ -67,7 +68,7 @@ def parse_args():
         except json.JSONDecodeError:
             tags = [t.strip() for t in args.tags.split(",")]
 
-    return content_file, archive_dir, title, entities, tags, args.summary, args.confidence, args.source_type, args.project_id, args.author
+    return content_file, archive_dir, title, entities, tags, args.summary, args.confidence, args.source_type, args.source_url, args.project_id, args.author
 
 
 def _trigger_kb_index(archive_file: Path, archive_dir: Path, result: dict):
@@ -161,14 +162,15 @@ def load_config():
 
 
 def main() -> int:
-    content_file_str, archive_dir_str, title, entities, tags, summary, confidence, source_type, project_id, author = parse_args()
+    content_file_str, archive_dir_str, title, entities, tags, summary, confidence, source_type, source_url, project_id, author = parse_args()
 
     if not content_file_str:
         print(json.dumps({
             "ok": False,
             "error": "usage: archive_report.py <content_file> <archive_dir> [title]\n"
                      "       or: archive_report.py --file <file> [--dir <dir>] [--title <title>]\n"
-                     "            [--entities '<json>'] [--tags '<json>'] [--summary '<text>'] [--confidence high]"
+                     "            [--entities '<json>'] [--tags '<json>'] [--summary '<text>'] [--confidence high]\n"
+                     "            [--source-type url|manual] [--source-url <url>] [--project-id <id>] [--author <name>]"
         }, ensure_ascii=False))
         return 1
 
@@ -214,7 +216,7 @@ def main() -> int:
     if not content.startswith("---"):
         header_parts = [
             f"archive: {archive_id}",
-            f"source: {source_type}",
+            f"source: {source_url or source_type}",
             f"source_type: {source_type}",
             f"created_at: {datetime.now().isoformat()}",
         ]
