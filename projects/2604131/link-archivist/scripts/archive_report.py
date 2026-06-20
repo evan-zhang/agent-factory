@@ -146,6 +146,69 @@ def _trigger_xgkb_sync(archive_file: Path, archive_dir: Path, result: dict):
         result["xgkb_status"] = f"error: {str(e)[:100]}"
 
 
+def _strip_existing_frontmatter(content: str) -> tuple:
+    """If content starts with YAML frontmatter, parse and strip it.
+
+    Returns (parsed_dict, body). If no frontmatter, returns ({}, content).
+    This enforces standard frontmatter: any Agent-supplied frontmatter is
+    parsed for field values, then discarded so the standard writer rebuilds it.
+    """
+    import re
+    if not content.startswith("---"):
+        return {}, content
+    m = re.match(r"^---\s*\n(.*?)\n---\s*\n?(.*)$", content, re.DOTALL)
+    if not m:
+        return {}, content
+    yaml_text, body = m.group(1), m.group(2)
+    try:
+        import yaml
+        parsed = yaml.safe_load(yaml_text) or {}
+        if not isinstance(parsed, dict):
+            parsed = {}
+    except Exception:
+        parsed = {}
+    return parsed, body
+
+
+def _build_standard_frontmatter(archive_id, source, source_type, summary,
+                                entities, tags, confidence,
+                                project_id=None, author=None) -> str:
+    """Build frontmatter in canonical field order. Single source of truth.
+
+    Canonical order: archive, source, source_type, created_at,
+    [project_id, author], entities, summary, tags, confidence
+    """
+    parts = [
+        f"archive: {archive_id}",
+        f"source: {source}",
+        f"source_type: {source_type}",
+        f"created_at: {datetime.now().isoformat()}",
+    ]
+    if source_type == "manual":
+        if project_id:
+            parts.append(f"project_id: {project_id}")
+        if author:
+            parts.append(f"author: {author}")
+    if entities:
+        parts.append("entities:")
+        for ent in entities[:10]:
+            parts.append(f"  - {ent}")
+    else:
+        parts.append("entities: []")
+    if summary:
+        # Escape colons/newlines in summary for safe YAML
+        safe_summary = str(summary).replace("\n", " ").strip()
+        parts.append(f"summary: {safe_summary}")
+    if tags:
+        parts.append("tags:")
+        for tag in tags[:3]:
+            parts.append(f"  - {tag}")
+    else:
+        parts.append("tags: []")
+    parts.append(f"confidence: {confidence or 'medium'}")
+    return "---\n" + "\n".join(parts) + "\n---\n"
+
+
 def load_config():
     """Load config from standard paths."""
     for config_file in [
@@ -212,37 +275,34 @@ def main() -> int:
 
     content = content_file.read_text(encoding="utf-8")
 
-    # Add YAML header if not present
-    if not content.startswith("---"):
-        header_parts = [
-            f"archive: {archive_id}",
-            f"source: {source_url or source_type}",
-            f"source_type: {source_type}",
-            f"created_at: {datetime.now().isoformat()}",
-        ]
-        if source_type == "manual":
-            if project_id:
-                header_parts.append(f"project_id: {project_id}")
-            if author:
-                header_parts.append(f"author: {author}")
-        if entities:
-            header_parts.append("entities:")
-            for ent in entities[:10]:
-                header_parts.append(f"  - {ent}")
-        else:
-            header_parts.append("entities: []")
-        if summary:
-            header_parts.append(f"summary: {summary}")
-        if tags:
-            header_parts.append("tags:")
-            for tag in tags[:3]:
-                header_parts.append(f"  - {tag}")
-        else:
-            header_parts.append("tags: []")
-        if confidence:
-            header_parts.append(f"confidence: {confidence}")
-        header = "---\n" + "\n".join(header_parts) + "\n---\n"
-        content = header + content
+    # Enforce canonical frontmatter: strip any existing frontmatter,
+    # then rebuild with standard format and field order.
+    # This guarantees consistency even if Agent wrote its own frontmatter.
+    existing_fields, body = _strip_existing_frontmatter(content)
+
+    # Merge: CLI args take priority, then existing frontmatter values, then defaults
+    effective_source_url = source_url or existing_fields.get("source", "") or source_type
+    effective_summary = summary or existing_fields.get("summary", "")
+    effective_entities = entities or existing_fields.get("entities", []) or []
+    effective_tags = tags or existing_fields.get("tags", []) or []
+    effective_confidence = confidence or existing_fields.get("confidence", "medium")
+    if isinstance(effective_entities, str):
+        effective_entities = [effective_entities]
+    if isinstance(effective_tags, str):
+        effective_tags = [effective_tags]
+
+    frontmatter = _build_standard_frontmatter(
+        archive_id=archive_id,
+        source=effective_source_url,
+        source_type=source_type,
+        summary=effective_summary,
+        entities=effective_entities,
+        tags=effective_tags,
+        confidence=effective_confidence,
+        project_id=project_id,
+        author=author,
+    )
+    content = frontmatter + body
 
     safe_title = title.replace(" ", "-").replace("/", "-")[:50]
     archive_file = date_dir / f"{archive_id}-{safe_title}.md"

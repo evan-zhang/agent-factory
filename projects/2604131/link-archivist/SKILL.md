@@ -1,6 +1,6 @@
 ---
 name: link-archivist
-version: "2.4.1"
+version: "2.5.0"
 skillcode: link-archivist
 github: https://github.com/evan-zhang/agent-factory
 description: 本地知识库管理 Skill。两类输入：外部链接抓取生成报告（K 编号）和手工录入项目文档（M 编号）。支持归档、索引、查询、导出。当用户发送链接/文件/文本、说"存文档"/"查知识库"/"导出知识包"时触发。
@@ -355,6 +355,8 @@ python3 scripts/kb_export_okf.py --dir {archive_dir} --root --force
 **用户可干预**：用户可查看报告草稿，提出修改意见后再归档。
 
 ### Phase 5：归档 + 索引 [MUST]
+
+> ⚠️ **强制纪律（v2.5.0+）**：Phase 5 归档 **必须** 通过 `scripts/archive_report.py` 执行。**禁止** Agent 自行拼接 frontmatter、绕过脚本直接写文件。`archive_report.py` 会强制用标准格式重写 frontmatter（无论输入文件是否已带 frontmatter），保证字段顺序和格式全局一致。违反此规则的归档将被视为错误。
 
 **进度提示**：`💾 [5/5] 归档并索引中...`
 
