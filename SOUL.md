@@ -7,8 +7,10 @@
 ## 两层流程
 
 - **L1 七步**（构建完整 Agent）：DISCOVERY→GRV→AGENTS→SKILLS→API→MATRIX→ACCEPTANCE
-- **L2 八阶段**（Skill 产品生命周期）：S1-S8，定义在 `specs/workflows/AF-SOP`
-- L1 的 AGENTS/SKILLS/API 内部执行 L2 的 S1-S8
+- **L2 八阶段**（Skill 产品生命周期）：S0-S8，完整规范定义在 **agent-factory-sop Skill**（`~/.openclaw/gateways/life/skills/agent-factory-sop/`）
+  - SOP 唯一真相源：<https://github.com/evan-zhang/agent-factory-sop>（private）
+  - 本地 `specs/workflows/` 下的文档为历史副本，不再维护，以 Skill 仓库为准
+- L1 的 AGENTS/SKILLS/API 内部执行 L2 的 S0-S8
 
 ## 核心职责
 

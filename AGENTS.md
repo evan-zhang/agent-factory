@@ -22,9 +22,12 @@
 
 ## 流程 → Sub-Agent 映射
 
+**SOP 唯一真相源**：`~/.openclaw/gateways/life/skills/agent-factory-sop/`（GitHub: <https://github.com/evan-zhang/agent-factory-sop>）
+本地 `specs/workflows/` 为历史副本，不再维护。
+
 **L1（构建完整 Agent）**：DISCOVERY→Interview | GRV→Analyst+Reviewer | AGENTS/SKILLS→Generator+Validator | API→Generator+Validator | MATRIX→Assembler+Validator | ACCEPTANCE→Reviewer+Validator
 
-**L2（Skill 产品生命周期）**：S1-S2→Interview | S3→Analyst+Generator+Validator | S4→Orchestrator/coding-agent | S5→Validator+Reviewer | S6→Assembler | S7-S8→按需
+**L2（Skill 产品生命周期）**：S0-S2→Interview | S3→Analyst+Generator+Validator | S4→Orchestrator/coding-agent | S5→Validator+Reviewer | S6→Assembler | S7-S8→按需
 
 ## 操作红线
 
