@@ -65,24 +65,40 @@ function resetFooterForSession(sessionKey?: string) {
   else footerConsumedPerSession.clear();
 }
 
+// MODEL_CONTEXT is a fallback table used only when runtime doesn't pass contextTokenBudget.
+// Values aligned with the recommended 256k sweet-spot config (see docs/compaction-config.md).
+// Runtime-provided contextTokenBudget always takes priority and is more accurate.
 const MODEL_CONTEXT: Record<string, number> = {
-  "openai-codex/gpt-5.5": 391000,
-  "gpt-5.5": 391000,
-  "openai-codex/gpt-5.4-mini": 266000,
-  "gpt-5.4-mini": 266000,
+  "openai-codex/gpt-5.5": 256000,
+  "gpt-5.5": 256000,
+  "openai-codex/gpt-5.4-mini": 256000,
+  "gpt-5.4-mini": 256000,
   "ollama/kimi-k2.6:cloud": 250000,
   "kimi-k2.6:cloud": 250000,
   "ollama/qwen3.5:397b-cloud": 250000,
   "qwen3.5:397b-cloud": 250000,
-  "evan-openai/glm-5.2": 1000000,
-  "vip-newapi/glm-5.2": 1000000,
-  "glm-5.2": 1000000,
-  "glm-5.2[1m]": 1000000,
-  "evan-openai/glm-5.2[1m]": 1000000,
+  "evan-openai/glm-5.2": 256000,
+  "vip-newapi/glm-5.2": 256000,
+  "glm-5.2": 256000,
+  "glm-5.2[1m]": 256000,
+  "evan-openai/glm-5.2[1m]": 256000,
   "evan-openai/glm-4.7": 128000,
   "glm-4.7": 128000,
-  "newapi-openai/MiniMax-M3": 1000000,
-  "MiniMax-M3": 1000000,
+  "newapi-openai/MiniMax-M3": 256000,
+  "MiniMax-M3": 256000,
+  "vip-newapi/glm-latest-cloud": 256000,
+  "newapi-openai/glm-latest-cloud": 256000,
+  "glm-latest-cloud": 256000,
+  "newapi-openai/deepseek-v4-flash": 256000,
+  "deepseek-v4-flash": 256000,
+  "newapi-openai/gemini-3.5-flash": 256000,
+  "gemini-3.5-flash": 256000,
+  "newapi-anthropic/claude-sonnet-4-6": 200000,
+  "claude-sonnet-4-6": 200000,
+  "newapi-anthropic/claude-opus-4-8": 200000,
+  "claude-opus-4-8": 200000,
+  "newapi-anthropic/claude-haiku-4-5": 200000,
+  "claude-haiku-4-5": 200000,
 };
 
 // Cache for primary model config (per agent)
@@ -120,7 +136,7 @@ function fmt(v?: number): string {
 
 function colorForUsage(percent?: number): string {
   if (!Number.isFinite(percent)) return "⚪";
-  if (Number(percent) >= 80) return "🔴";
+  if (Number(percent) >= 70) return "🔴"; // aligned with preflight trigger (~73%)
   if (Number(percent) >= 50) return "🟡";
   return "🟢";
 }
@@ -303,15 +319,28 @@ export default definePluginEntry({
     const reserve = cfg.contextReserveTokens ?? 40000;
 
     api.on("llm_output", async (event: any, ctx: any) => {
+      // lastAssistant.usage is the single last API call's usage (not accumulated).
+      // event.usage (getUsageTotals) accumulates input across all model calls in a turn,
+      // which inflates the context percentage when there are multiple tool calls.
+      // We prefer lastCallUsage for accurate context-occupancy calculation.
+      const lastCallUsage = event.lastAssistant?.usage;
+      const singleInput = lastCallUsage
+        ? n(lastCallUsage.input ?? lastCallUsage.input_tokens ?? lastCallUsage.prompt_tokens ?? lastCallUsage.promptTokens)
+        : undefined;
+      const singleOutput = lastCallUsage
+        ? n(lastCallUsage.output ?? lastCallUsage.output_tokens ?? lastCallUsage.completion_tokens ?? lastCallUsage.completionTokens)
+        : undefined;
+
       const usage: Usage = {
         provider: event.provider ?? ctx.modelProviderId,
         model: event.model ?? ctx.modelId,
-        input: n(event.usage?.input),
-        output: n(event.usage?.output),
+        // Prefer single-call input for accurate %ctx; fall back to accumulated only if no lastAssistant
+        input: singleInput ?? n(event.usage?.input),
+        output: singleOutput ?? n(event.usage?.output),
         total: n(event.usage?.total),
         ts: Date.now(),
         sessionKey: ctx.sessionKey,
-        contextTokenBudget: n(event.contextTokenBudget)
+        contextTokenBudget: n(event.contextTokenBudget ?? ctx.contextTokenBudget)
       };
       recentOutputs.push(usage);
       if (usage.sessionKey) recentBySession.set(usage.sessionKey, usage);
