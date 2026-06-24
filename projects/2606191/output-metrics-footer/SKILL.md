@@ -33,7 +33,7 @@ OpenClaw 代码插件，在每条消息底部自动追加 compact 的 token/模�
 一行命令：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/evan-zhang/agent-factory/main/projects/2606191/output-metrics-footer/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/evan-zhang/agent-factory/master/projects/2606191/output-metrics-footer/install.sh | bash
 ```
 
 安装后重启 gateway：

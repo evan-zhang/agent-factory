@@ -1,7 +1,7 @@
 #!/bin/bash
 # output-metrics-footer 一键安装脚本
 # 用法：
-#   curl -fsSL https://raw.githubusercontent.com/evan-zhang/agent-factory/main/projects/2606191/output-metrics-footer/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/evan-zhang/agent-factory/master/projects/2606191/output-metrics-footer/install.sh | bash
 #
 # 选项（可叠加）：
 #   --apply-recommended    非交互模式：自动应用推荐的压缩配置
@@ -263,7 +263,7 @@ else
         else
             echo -e "${YELLOW}⚠ 非交互模式（通过管道执行），默认保留当前配置${NC}"
             echo "  如需应用推荐配置，请直接运行："
-            echo "    bash <(curl -fsSL https://raw.githubusercontent.com/evan-zhang/agent-factory/main/projects/2606191/output-metrics-footer/install.sh) --apply-recommended"
+            echo "    bash <(curl -fsSL https://raw.githubusercontent.com/evan-zhang/agent-factory/master/projects/2606191/output-metrics-footer/install.sh) --apply-recommended"
             APPLY_MODE="keep"
         fi
     fi
