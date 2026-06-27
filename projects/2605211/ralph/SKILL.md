@@ -252,13 +252,19 @@ bash "${RALPH_SKILL_DIR}/scripts/ralph-loop.sh" \
   --max-iterations 15
 ```
 
-### 方式三：Goal Mode（单 session 轻量任务）
+### 不适用：OpenClaw Goal Mode
 
-适用于上下文 < 100K tokens 的中等任务：
+OpenClaw 内置的 Goal Mode（`/goal`）是独立功能，**不在本项目范围内**。两者边界：
 
-```
-/goal <完成条件，含范围+证据+测试>
-```
+| 场景 | 用 Ralph Loop | 用 OpenClaw Goal Mode |
+|------|-------------|---------------------|
+| 多阶段、需要机械验证和自动回滚 | ✅ | ❌ |
+| 预计上下文 > 100K tokens | ✅ | ❌ |
+| 需要跨重启持久化（state.json） | ✅ | ❌ |
+| 单 session 可完成的中等任务 | ❌ | ✅ |
+| 不想装 Claude Code / Codex CLI | ❌ | ✅ |
+
+详见 `references/goal-vs-ralph.md`。
 
 ### 模式选择决策树
 
@@ -267,7 +273,7 @@ bash "${RALPH_SKILL_DIR}/scripts/ralph-loop.sh" \
   ├─ 有明确的阶段划分（多 Phase）？ → Ralph Loop
   ├─ 预计上下文 > 100K tokens？     → Ralph Loop
   ├─ 需要跨重启持久化？              → Ralph Loop
-  ├─ 单 session 可完成？             → Goal Mode
+  ├─ 单 session 可完成？             → OpenClaw Goal Mode（独立功能）
   └─ 默认                           → Ralph Loop（更安全）
 ```
 
