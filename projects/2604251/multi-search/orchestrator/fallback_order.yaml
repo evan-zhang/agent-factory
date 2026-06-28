@@ -1,0 +1,8 @@
+# orchestrator/fallback_order.yaml
+# Fallback 链优先级配置
+# 当编排器全部失败（all_failed/error/no_match）时，串行尝试下列 provider
+
+fallback_order:
+  - open_websearch
+  - web_fetch
+  - minimax

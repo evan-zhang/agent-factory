@@ -1,0 +1,152 @@
+{
+  "schema": "ReviewReport.v1",
+  "review_id": "S6-release-review-2026-06-25",
+  "review_time": "2026-06-25T16:55:00+08:00",
+  "reviewer": "factory-reviewer",
+  "model": "gsykj-anthropic/claude-sonnet-4-6",
+  "domain": "release_acceptance",
+  "mode": "quick",
+  "risk_level": "high",
+  "object": {
+    "project": "stock-picking",
+    "path": "/Users/evan/.openclaw/gateways/life/state/workspace-life/domains/agent-factory/projects/stock-picking/",
+    "scope": "S5a-S5g release review before S6"
+  },
+  "verdict": "warn",
+  "confidence": 0.78,
+  "summary": "S5 release is broadly safe to proceed as dry-run pilot: the orchestrator always builds atomic_request.dry_run=true, discovery routes through append-only dry-run events, execution_guard still blocks real broker-affecting paths without full approval/pretrade checks, the universe sizes match the requested CN 7 / HK 6 / US 7, and PYTHONPATH=src/scripts pytest passes 67/67. Release should carry WARN rather than PASS because the reviewed repository still has a cron contract typo that would make the documented validate command fail, the research validate gate does not enforce the positive_search_min_results requirement it advertises, and I could not verify the actual external Gateway cron prompts/config from the repository artifact itself; only PLAN.md/gateway-cron.md describe them.",
+  "checks": [
+    {
+      "name": "test suite",
+      "status": "pass",
+      "evidence": "PYTHONPATH=src/scripts pytest -q => 67 passed, 4 warnings in 6.39s. Running pytest without PYTHONPATH failed during collection with ModuleNotFoundError/import cache conflicts, so the documented invocation should include PYTHONPATH."
+    },
+    {
+      "name": "dry-run safety",
+      "status": "pass",
+      "evidence": "src/scripts/dry_run_orchestrator.py lines 59-82 builds atomic_request.v1 with dry_run=true; lines 398-423 only add quote/research evidence and draft_candidates for discovery; discovery_report.py lines 65-66 ends channel output with 'dry_run only; no trade action triggered.'"
+    },
+    {
+      "name": "execution guard",
+      "status": "pass",
+      "evidence": "src/scripts/execution_guard.py lines 83-123 blocks unknown actions, returns dry_run for dry-run requests or non-real actions, blocks market mismatch, blocks sell, and requires Evan approval plus pretrade_check before allow."
+    },
+    {
+      "name": "universe configuration",
+      "status": "pass",
+      "evidence": "src/config/universe.yaml contains CN default 7 symbols including 600900.SH, HK default 6 symbols, and US default 7 symbols."
+    },
+    {
+      "name": "market-specific query templates",
+      "status": "pass_with_watch",
+      "evidence": "src/scripts/research_protocol.py lines 33-45 defines CN Chinese positive/negative templates, HK mixed Chinese/English templates, and US English templates. Chinese templates are likely better for A-share/HK recall, but broader terms such as 利好/利空/质疑 can increase noise; pilot_analyzer and WATCH outcomes remain necessary controls."
+    },
+    {
+      "name": "cron contract",
+      "status": "warn",
+      "evidence": "src/references/gateway-cron.md lines 39-41 documents the three expected schedules; PLAN.md lines 101-103 records job IDs. However gateway-cron.md lines 59-64 includes --candidate-limit 3 on research_protocol.py validate, while research_protocol.py validate parser lines 135-140 does not accept --candidate-limit."
+    },
+    {
+      "name": "backward compatibility",
+      "status": "pass",
+      "evidence": "dry_run_orchestrator.py lines 340-359 uses production_calendar and returns calendar_skip on closed/unknown without writes; lines 360-370 preserve manual_pilot_override reason requirement; tests/test_m4e_market_calendar.py includes manual_pilot_override and three-market production-calendar coverage and passed under PYTHONPATH=src/scripts."
+    }
+  ],
+  "dimension_scores": [
+    {
+      "dimension": "功能符合需求",
+      "score": 4,
+      "comment": "S5a-S5g main code paths exist and tests pass; actual external cron prompt/config not fully present in repo for independent verification."
+    },
+    {
+      "dimension": "安全性",
+      "score": 5,
+      "comment": "Discovery is dry-run by construction; execution guard remains a strong independent barrier for broker-affecting actions."
+    },
+    {
+      "dimension": "数据质量",
+      "score": 3,
+      "comment": "Market-specific search templates improve recall, but positive evidence minimum is declared but not enforced by validate; CN/HK broad Chinese terms require ongoing WATCH/PASS monitoring."
+    },
+    {
+      "dimension": "可靠性",
+      "score": 3,
+      "comment": "67 tests pass with PYTHONPATH, but documented cron validate command contains an unsupported flag and the actual isolated-agent prompt could not be inspected from repository files."
+    },
+    {
+      "dimension": "向后兼容",
+      "score": 4,
+      "comment": "M4e production_calendar and manual_pilot_override paths are covered by passing tests; no S5 code path appears to bypass them."
+    },
+    {
+      "dimension": "文档完整性",
+      "score": 3,
+      "comment": "gateway-cron.md is comprehensive but has one command-contract mismatch and only US example commands, not full CN/HK/US prompt text."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "severity": "major",
+      "category": "cron_contract",
+      "location": "src/references/gateway-cron.md:59-64; src/scripts/research_protocol.py:135-140",
+      "description": "The documented Gateway cron validate command passes --candidate-limit 3 to research_protocol.py validate, but the validate subcommand does not define that argument. A cron agent following this contract exactly would fail before discovery_job.py runs.",
+      "evidence": "gateway-cron.md lines 59-64 show 'research_protocol.py validate ... --candidate-limit 3'. research_protocol.py lines 135-140 defines only file, --symbols, --market, --universe-file, and --universe-ref for validate. argparse will reject the extra flag.",
+      "impact": "Release documentation can produce false cron failures or diverge from the actual deployed payload, reducing reproducibility of S5/S6 operations.",
+      "recommendation": "Remove --candidate-limit from the validate command in gateway-cron.md, or add the flag to research_protocol.py validate if it is intentionally accepted. Prefer documenting per-market examples or a single templated variable block."
+    },
+    {
+      "id": "F002",
+      "severity": "major",
+      "category": "data_quality_gate",
+      "location": "src/scripts/research_protocol.py:52-57,96-115; src/scripts/research_data.py:61-64",
+      "description": "research_protocol advertises positive_search_min_results=1 but validate_research_file does not reject a symbol with zero positive evidence. negative search is enforced, but positive search presence is only indirectly caught later by pilot_analyzer for selected candidates.",
+      "evidence": "research_protocol.py lines 52-57 declares positive_search_min_results=1; lines 96-115 check missing symbols, negative_search_performed, negative_search_query, and evidence fields only for entries that exist. research_data.py lines 61-64 accepts positive=[] and negative=[]. A local probe with positive=[] and negative_search_performed=true returned ok=true, positive_count=0.",
+      "impact": "An isolated cron agent could satisfy the validate gate while skipping or failing positive research for some/all symbols, producing quote-led drafts and deferring the problem to pilot_analyzer WATCH rather than failing early.",
+      "recommendation": "Enforce at least one positive evidence entry for every expected symbol in validate_research_file, unless a deliberate per-symbol 'positive_search_performed_but_empty' state is added and treated as WATCH/skip."
+    },
+    {
+      "id": "F003",
+      "severity": "minor",
+      "category": "release_reproducibility",
+      "location": "repository test invocation",
+      "description": "The full test suite passes only when PYTHONPATH=src/scripts is set. A plain pytest -q fails during collection because test_m4a_validators loads dry_run_orchestrator before normal imports can resolve sibling modules.",
+      "evidence": "Plain 'pytest -q' failed with ModuleNotFoundError: No module named 'market_calendar' and subsequent import-name conflicts; 'PYTHONPATH=src/scripts pytest -q' passed 67/67.",
+      "impact": "Release verification is reproducible if the environment variable is known, but fragile for new reviewers/operators.",
+      "recommendation": "Add pytest.ini/pythonpath configuration, a Makefile target, or document the exact test command in PLAN/release notes."
+    },
+    {
+      "id": "F004",
+      "severity": "minor",
+      "category": "cron_prompt_auditability",
+      "location": "PLAN.md:101-103; src/references/gateway-cron.md:48-90",
+      "description": "The repo records schedule times and job IDs, and gateway-cron.md states the isolated agent must run web_search for every positive and negative query, but the actual external Gateway cron prompt/config with the Chinese output hard constraint is not present in the reviewed files.",
+      "evidence": "PLAN.md lines 101-103 lists cn-discovery/hk-discovery/us-discovery job IDs. gateway-cron.md lines 48-90 gives an equivalent US trigger contract. No checked-in artifact in the project contains the exact CN/HK/US deployed prompt text or the requested Chinese-output hard constraint.",
+      "impact": "I cannot independently confirm from the repository that all three deployed cron prompts enforce output language and structured report formatting, although the provided task states they do.",
+      "recommendation": "Archive sanitized cron prompt/config snapshots in design/reviews or src/references before S6, or add a generated cron manifest containing schedule, command, market variables, and language/output constraints."
+    },
+    {
+      "id": "F005",
+      "severity": "info",
+      "category": "data_quality_watch",
+      "location": "src/scripts/research_protocol.py:33-45",
+      "description": "CN/HK Chinese query templates are reasonable for local-market recall but intentionally broad. Terms like 利好/利空/质疑 may retrieve forum/news noise and stale commentary.",
+      "evidence": "CN negative template: '{symbol} {year} 风险 利空 下调 减持 处罚 质疑'; HK negative template mixes 风险/利空/下调 with risk/bear case/downgrade.",
+      "impact": "Can increase false positives in negative evidence, especially for high-profile large caps. Current pilot_analyzer WATCH/PASS loop is an appropriate mitigation but should remain active.",
+      "recommendation": "Keep S6 release but monitor CN/HK first-week analyzer outputs; consider adding publisher authority/source_quality thresholds or company-name aliases if noise remains high."
+    }
+  ],
+  "release_decision": {
+    "status": "conditional_go",
+    "required_before_release": [
+      "Fix or explicitly waive F001, because it is a command-contract mismatch in the release runbook.",
+      "Add release note documenting exact test invocation: PYTHONPATH=src/scripts pytest -q."
+    ],
+    "can_follow_after_release": [
+      "F002 positive evidence enforcement, if S6 is kept as dry-run WATCH/PASS pilot and not used for promotion without human review.",
+      "F004 cron prompt manifest archival.",
+      "F005 query-noise tuning after more pilot runs."
+    ]
+  },
+  "most_important_recommendation": "Before tagging S6, fix the gateway-cron validate command mismatch and preserve the actual three-market cron prompt/config as a reviewable manifest; the code safety posture is acceptable for dry-run release, but the deployment contract must be reproducible."
+}

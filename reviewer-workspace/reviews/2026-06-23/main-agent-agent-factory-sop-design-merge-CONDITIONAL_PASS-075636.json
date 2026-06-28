@@ -1,0 +1,110 @@
+{
+  "verdict": "CONDITIONAL_PASS",
+  "confidence": 0.86,
+  "review_object": {
+    "type": "A 类业务评审",
+    "name": "DESIGN-01.md 与 design/DESIGN.md 合并方案",
+    "reference": "/Users/evan/.openclaw/gateways/life/skills/agent-factory-sop/SKILL.md"
+  },
+  "review_time": "2026-06-23 07:56 CST",
+  "model": "gsykj-anthropic/claude-sonnet-4-6",
+  "dimension_scores": [
+    {
+      "dimension": "合理性",
+      "score": 4,
+      "comment": "合并方向合理，可消除命名混淆并让设计档案前置；但必须区分评审基线和后续变更记录。"
+    },
+    {
+      "dimension": "B 类评审影响",
+      "score": 3,
+      "comment": "B 类仍可审 design/DESIGN.md，但评审对象应限定为 S3 baseline 版本/章节。"
+    },
+    {
+      "dimension": "执行影响",
+      "score": 3,
+      "comment": "S3-S8 反复修改会带来版本混乱风险，需要状态字段、变更日志和冻结/解冻规则。"
+    },
+    {
+      "dimension": "一致性",
+      "score": 2,
+      "comment": "当前 SOP 仍多处硬编码 DESIGN-01.md/DESIGN-01，合并后若不同步改写会直接矛盾。"
+    },
+    {
+      "dimension": "遗漏识别",
+      "score": 3,
+      "comment": "方案未明确目录创建时机、必备章节模板、历史决策与当前设计的边界、评审结论如何绑定到具体版本。"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "severity": "major",
+      "category": "一致性",
+      "location": "SOP S3/S4/S8",
+      "description": "合并方案与现有 SOP 硬编码引用冲突。S3 仍要求输出 DESIGN-01.md，B 类评审仍写 DESIGN-01 完成后，S4 仍要求按 DESIGN-01 创建目录和文件。",
+      "evidence": [
+        "SKILL.md:93-102 要求输出/评审 DESIGN-01.md",
+        "SKILL.md:110 要求按 DESIGN-01 创建目录和文件",
+        "SKILL.md:248-260 要求 S8 更新 DESIGN.md"
+      ],
+      "recommendation": "全量替换 SOP 引用：S3 输出改为 design/DESIGN.md；B 类评审改为审查 S3 baseline；S4 改为按已通过 B 类评审的 baseline 实现；S8 改为复核并补齐同一文件。"
+    },
+    {
+      "id": "F002",
+      "severity": "major",
+      "category": "版本/基线漂移",
+      "location": "合并方案 S3-S8",
+      "description": "同一个文件既是 B 类评审对象，又是持续维护档案，若后续修改但评审结论仍指向旧内容，会出现评审对象漂移。",
+      "evidence": [
+        "待评审方案说明 S3 创建、B 类评审、S4-S7 关键决策变更更新、S8 确保最新",
+        "SKILL.md:281-282 显示 B 关卡发生在 S3 后",
+        "SKILL.md:248-260 显示 DESIGN.md 是持续维护档案的一部分"
+      ],
+      "recommendation": "在 design/DESIGN.md 增加 status、baseline_review、baseline_time、last_design_change；重大变更触发局部 B 类复审或在 S7/D 类验收中显式复核。"
+    },
+    {
+      "id": "F003",
+      "severity": "major",
+      "category": "评审口径",
+      "location": "B 类评审影响",
+      "description": "B 类原来审一次性方案文档，合并后审持续档案；若不限定评审范围，reviewer 可能把历史记录/归档内容纳入 S3 方案可行性审查。",
+      "evidence": [
+        "SKILL.md:100-106 现有 B 类评审只在 DESIGN-01 完成后触发",
+        "SKILL.md:256-260 定义 DESIGN.md 内容范围包括产品目标、边界、核心流程、关键决策"
+      ],
+      "recommendation": "B 类任务说明限定为审查 design/DESIGN.md 中 S3 Baseline 章节；Decision Log 仅作为上下文，除非与 baseline 矛盾。"
+    },
+    {
+      "id": "F004",
+      "severity": "minor",
+      "category": "信息完整性",
+      "location": "合并方案内容",
+      "description": "合并不会天然导致信息丢失，但当前方案没有给出模板映射，容易遗漏 DESIGN-01 的工程性内容。",
+      "evidence": [
+        "SKILL.md:93-98 明确列出 DESIGN-01 必含项",
+        "SKILL.md:258-260 对 DESIGN.md 的描述较概括"
+      ],
+      "recommendation": "规定 design/DESIGN.md 必备章节：产品目标、非目标/边界、S3 Baseline、数据流、接口/API 规范与官方来源、文件结构、UX/错误兜底、粒度决策、风险与验收、Decision Log、Post-review Changes、S8 归档补充。"
+    },
+    {
+      "id": "F005",
+      "severity": "minor",
+      "category": "流程清晰度",
+      "location": "目录创建与归档",
+      "description": "合并后 S3 就要创建 design/ 目录，但现有设计档案规范仍像 S8 才建立档案集，可能导致创建时机混乱。",
+      "evidence": [
+        "待评审方案要求 S3 创建 design/DESIGN.md",
+        "SKILL.md:246-260 只在 S8 提到更新设计档案并列出 design/ 档案集"
+      ],
+      "recommendation": "在 S3b 增加：先创建 design/ 并初始化 design/DESIGN.md；DISCUSSION-LOG.md/LEARNING-LOOP.md 可在 S8 补齐或有讨论时提前创建。"
+    }
+  ],
+  "top_recommendation": "可以合并，但必须在 design/DESIGN.md 内建立 S3 baseline + 后续变更日志 + 评审记录绑定机制，并同步清除 SOP 中所有 DESIGN-01 引用。",
+  "required_conditions_for_pass": [
+    "同步修改 SOP 中所有 DESIGN-01.md/DESIGN-01 引用",
+    "补充 design/DESIGN.md 必备章节模板，保留原 DESIGN-01 的工程性内容",
+    "建立 status/baseline_review/baseline_time/last_design_change 等元数据",
+    "明确 B 类评审只审 S3 Baseline 章节，Decision Log 作为上下文",
+    "规定 S4-S7 重大设计变更的记录和复审触发规则"
+  ]
+}

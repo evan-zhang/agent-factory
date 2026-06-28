@@ -1,0 +1,42 @@
+# MiniMax Search Provider Configuration
+name: minimax
+display_name: "MiniMax Web Search"
+type: mcp
+enabled: true
+
+# MCP 配置
+mcp_server: minimax
+mcp_tool_name: web_search
+
+# 参数映射（将统一参数名映射到 MiniMax 特定参数名）
+call:
+  parameters:
+    # 查询参数
+    query:
+      source: query
+      type: string
+    # 结果数量
+    num_results:
+      source: num_results
+      type: integer
+
+  # 结果字段映射（将 MiniMax 响应字段映射到统一字段名）
+  # MiniMax 返回: {organic: [{title, link, snippet, date}]}
+  result_mapping:
+    title: "title"
+    url: "link"               # MiniMax 用 link
+    snippet: "snippet"
+    published_date: "date"    # MiniMax 用 date
+    score: ~                  # MiniMax 不提供排序分
+
+# 配额管理
+quota_limit: 100
+quota_window: 60
+
+# 超时设置
+timeout: 30
+
+# 元数据
+metadata:
+  description: "MiniMax Web Search API"
+  website: "https://api.minimax.chat/"

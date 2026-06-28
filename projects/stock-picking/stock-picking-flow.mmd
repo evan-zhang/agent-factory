@@ -1,0 +1,36 @@
+flowchart TD
+    A[外部触发入口<br/>用户手动 / Gateway cron / 其他 SOP] --> B[交易日与运行上下文检查]
+    B -->|休市 / 不满足条件| B0[HEARTBEAT_OK<br/>记录跳过原因]
+    B -->|可运行| C[策略选择器<br/>strategy_id + market + run_mode]
+
+    C --> D1[TAROC Strategy<br/>主题发现-分析-研究-赔率-信心]
+    C --> D2[Chokepoint Strategy<br/>异常扫描-BOM拆解-三高验证]
+    C --> D3[其他策略插件<br/>未来扩展]
+
+    D1 --> E[统一 Draft 候选]
+    D2 --> E
+    D3 --> E
+
+    E --> F[候选复选模块<br/>3天窗口 / 多次确认]
+    F -->|未通过| F0[Rejected / Archived<br/>保留原因]
+    F -->|通过| G[Candidates 候选池]
+
+    G --> H[四周追踪与周复盘]
+    H -->|继续观察| G
+    H -->|建议进入目标池| I[Target Pool 建仓候选]
+    H -->|建议移除| H0[人工确认后清理]
+
+    I --> J[人工买入确认]
+    J -->|不买 / 暂缓| I0[保留 / 过期 / 移除]
+    J -->|确认买入| K[Positions 持仓记录]
+
+    K --> L[持仓监控模块]
+    L --> M[移动止损 / 组合回撤 / 冷却期]
+    M -->|无触发| L
+    M -->|触发风险事件| N[风控动作建议或执行网关]
+    N --> O[Trade Log + Review Notes]
+
+    E --> P[Research Evidence Store<br/>证据链 / 负面搜索 / 来源 URL]
+    F --> P
+    H --> P
+    L --> P

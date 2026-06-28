@@ -1,0 +1,33 @@
+{
+  "verdict": "warn",
+  "confidence": 0.9,
+  "review_object": "OpenClaw 系统优化方案 — bd-eval-reviewer 120s idle timeout / fallback 成本修复方案（二轮 GPT-5.5 交叉复核）",
+  "review_time": "2026-06-26 15:44 CST",
+  "model": "openai/gpt-5.5 + gsykj-anthropic/claude-sonnet-4-6 汇总",
+  "dimension_scores": [
+    {"dimension": "根因准确性", "score": 5, "comment": "34 个 trajectory 中 8 个 fallback session 均含 LLM idle timeout (120s)，与源码默认 idle watchdog 一致。"},
+    {"dimension": "修复入口正确性", "score": 4, "comment": "provider timeoutSeconds 可转换为 model.requestTimeoutMs，并在 idle resolver 中绕过 120s implicit clamp；但受 timeoutBounds 上限约束。"},
+    {"dimension": "schema 可行性", "score": 5, "comment": "schema 明确支持 provider timeoutSeconds，且描述说明会提高 LLM idle/stream watchdog ceiling。"},
+    {"dimension": "副作用控制", "score": 3, "comment": "复制 provider 可缩小影响面；若 Claude 和 GLM fallback 都指向同一专用 provider，GLM 也会被延长等待。"},
+    {"dimension": "替代方案合理性", "score": 4, "comment": "改源码/cron/分段 streaming 都不是首选；provider timeout 是当前最小可维护修复。"},
+    {"dimension": "600s 参数合理性", "score": 3, "comment": "600s 可作为灰度起点，但历史长耗时提示仍可能不足，需要监控。"}
+  ],
+  "findings": [
+    {"id": "F001", "severity": "major", "category": "生效范围", "location": "Claude 修正版 provider 复制方案", "description": "修正版方向正确，但当前 openclaw.json 尚未实际配置 reviewer 专用 provider，bd-eval-reviewer 仍使用未设置 timeoutSeconds 的 newapi-anthropic-vip。", "evidence": "bd-eval-reviewer.primary=newapi-anthropic-vip/claude-sonnet-4-6；newapi-anthropic-vip.timeoutSeconds=null；newapi-anthropic-vip-reviewer 不存在。", "recommendation": "新增/复制 provider 并把 reviewer agent 的 primary/fallbacks 指过去。"},
+    {"id": "F002", "severity": "major", "category": "参数上限", "location": "resolveLlmIdleTimeoutMs", "description": "model.requestTimeoutMs 绕过 120s implicit clamp，但不是无条件 600s，会与 timeoutBounds 取最小值。", "evidence": "selection-BP0T9R9I.js:11145-11147；当前 subagents.runTimeoutSeconds=1800 通常不会截断 600s。", "recommendation": "确认 reviewer runTimeout/agent default timeout ≥ 600s。"},
+    {"id": "F003", "severity": "major", "category": "fallback 范围", "location": "专用 provider 同时承载 Claude 与 GLM", "description": "若 Claude 和 GLM 同用 provider 级 600s，GLM fallback 也会等待 600s，拉长真实失败尾部延迟。", "evidence": "8 个 fallback session 中 1 个 chain_exhausted，第二步 glm-latest-cloud 也发生 120s idle timeout。", "recommendation": "优先只延长 Claude slow provider；是否延长 GLM 取决于可接受的 tail latency。"},
+    {"id": "F004", "severity": "minor", "category": "预期管理", "location": "消除 fallback 浪费表述", "description": "提高 timeout 只能减少本 case 的 120s idle timeout 类 fallback，不能消除 rate limit/context overflow/stream protocol/auth 等其他 fallback。", "evidence": "本次 8/8 fallback 直接证据均为 LLM idle timeout (120s)，但运行时仍存在其他失败路径。", "recommendation": "上线后按错误原因分桶监控。"},
+    {"id": "F005", "severity": "minor", "category": "运维风险", "location": "600s 长静默请求", "description": "600s 会让真实卡死请求更晚失败，占用并发和上游配额更久。", "evidence": "schema 描述 timeoutSeconds 作用于 provider HTTP fetch/connect/headers/body/total request abort，并提高 idle watchdog；subagents.maxConcurrent=8。", "recommendation": "先对 reviewer 专用 provider 灰度，监控 wall time、并发、fallback 和费用。"},
+    {"id": "F006", "severity": "info", "category": "替代方案", "location": "改源码 / cron / streaming", "description": "改源码是全局 monkey patch；cron 改变任务架构；分段 streaming 不能保证模型思考期产 token。", "evidence": "selection-BP0T9R9I.js:11150 cron 用 runTimeoutMs；默认/非 cron implicit clamp。", "recommendation": "不作为首选；provider timeout 是最小可维护路径。"}
+  ],
+  "key_evidence": [
+    "selection-BP0T9R9I.js:11083 DEFAULT_LLM_IDLE_TIMEOUT_MS=120*1e3",
+    "selection-BP0T9R9I.js:11140-11151 无 explicit model request timeout 时非 cron 会 clamp 到 120s",
+    "selection-BP0T9R9I.js:11147 explicit modelRequestTimeoutMs 与 timeoutBounds 取最小值，不经过 120s implicit clamp",
+    "model-Cp9whgWq.js:560-561/653/774/700/809 provider timeoutSeconds -> requestTimeoutMs",
+    "config.schema.lookup models.providers 确认 timeoutSeconds 合法并会 raise idle/stream watchdog ceiling",
+    "34 个 trajectory 中 8 个 fallback session；8/8 均含 LLM idle timeout (120s)；1 个 chain_exhausted"
+  ],
+  "final_conclusion": "部分可行但需要增量修正。Claude 修正版核心方向成立：使用 models.providers.<id>.timeoutSeconds=600 是 schema 和源码均支持的正确入口；比 agent.model.requestTimeoutMs 可行。但应收窄作用面，新建 reviewer 专用 slow Claude provider，先不要全局提高 newapi-anthropic-vip 或所有 fallback 模型 timeout。",
+  "most_important_recommendation": "新建 reviewer 专用 slow Claude provider 设置 timeoutSeconds: 600，先只让 bd-eval-reviewer primary 指过去；上线后监控 LLM idle timeout (600s)、fallback session 数、wall time 和费用。"
+}

@@ -1,0 +1,330 @@
+{
+  "review_report": {
+    "verdict": "conditional_pass",
+    "confidence": 0.81,
+    "object_type": "B",
+    "object_summary": "stock-picking Node 2 boundary/contract proposal (策略选择器)",
+    "subject_file": "projects/stock-picking/node-2-strategy-selector-review-context.md",
+    "reviewed_at": "2026-06-23T22:58:00+08:00",
+    "model": "newapi-openai/MiniMax-M3",
+    "pack": "general",
+    "reference_files": [
+      "projects/stock-picking/REQ-01.md",
+      "projects/stock-picking/PLAN.md",
+      "projects/stock-picking/DISCUSSION-LOG.md",
+      "projects/stock-picking/node-0-trigger-entry-review-context.md",
+      "projects/stock-picking/node-1-market-context-review-context.md",
+      "projects/stock-picking/intelligence-brief.md"
+    ],
+    "dimension_scores": {
+      "boundary_clarity": 5,
+      "contract_completeness": 3,
+      "consistency_with_node0_node1": 3,
+      "registry_design": 4,
+      "failure_reject_semantics": 4,
+      "implementability": 3,
+      "risk_identification": 4,
+      "acceptance_criteria_testability": 3
+    },
+    "findings": [
+      {
+        "id": "B001",
+        "severity": "blocker",
+        "category": "missing_field",
+        "location": "Recommended output schema",
+        "description": "Output missing `request_id` and `correlation_id`. Cannot link 'which strategy version was dispatched' with upstream trigger when SOP orchestration does fan-out.",
+        "evidence": "Compared with Node 0 and Node 1 reviews, both require request_id + correlation_id. Node 2 output schema does not list either.",
+        "recommendation": "Add `request_id: uuid` and `correlation_id: uuid` to output contract. Pass through upstream values, do not regenerate."
+      },
+      {
+        "id": "B002",
+        "severity": "blocker",
+        "category": "missing_validation_semantics",
+        "location": "Recommended input + strategy_version behavior",
+        "description": "(a) run_context.decision from Node 1 is not in Node 2 input, so Node 2 could dispatch when Node 1 said skip. (b) 'If omitted, Node 2 may resolve to registry default' has no resolution timing and no idempotency guarantee.",
+        "evidence": "Recommended behavior #4 says 'may resolve'; contract does not mention run_context.decision.",
+        "recommendation": "Add: (a) Node 2 input must include run_context.decision; if decision != proceed then dispatch_decision=reject with reject_reason=upstream_not_ready. (b) strategy_version resolution must be atomic — once resolved, registry changes do not affect the in-flight dispatch."
+      },
+      {
+        "id": "M001",
+        "severity": "major",
+        "category": "consistency_gap",
+        "location": "custom strategy definition",
+        "description": "Node 0 review defined `custom` as 'resolvable strategy reference'. Node 2 contract only has `strategy_id: ... | custom` without `custom_strategy_ref` field. No parsing rule, no whitelist check.",
+        "evidence": "Node 0 review F001/F005; Node 2 input section.",
+        "recommendation": "(a) Add `custom_strategy_ref: string` as required input when strategy_id=custom. (b) Define ref format: `{layer2_module_path}@{version}` or `{git_url}@{sha256_prefix}`. (c) Parse failure -> reject_reason=custom_ref_invalid. (d) Ref must be in registry or local whitelist, no arbitrary paths."
+      },
+      {
+        "id": "M002",
+        "severity": "major",
+        "category": "shared_dependency_undefined",
+        "location": "Key question 4 + Recommended registry fields",
+        "description": "Key question 4 asks whether registry.yaml should exist, but v1 cannot ship without it. No ownership, no version strategy, no location decided.",
+        "evidence": "Key question 4: 'Should a strategy registry live in src/strategies/registry.yaml, or in the SOP text first?'",
+        "recommendation": "v1 dual-track: registry lives at `src/strategies/registry.yaml` (alongside `holidays/`). S3 design considers extracting `strategy-registry` as Layer 3 module (symmetric to `market-calendar`)."
+      },
+      {
+        "id": "M003",
+        "severity": "major",
+        "category": "incomplete_failure_semantics",
+        "location": "Recommended behavior, deprecated strategy",
+        "description": "'deprecated strategies may run for manual caller with warning' but does not say: (a) how to upgrade to disabled, (b) what happens when cron/sop caller hits deprecated, (c) whether warning auto-escalates.",
+        "evidence": "Recommended behavior #5.",
+        "recommendation": "Define: (a) state machine `active -> experimental -> deprecated -> disabled` is one-way; disabled is irreversible. (b) deprecated rejects for caller=cron and caller=sop. (c) `last_reviewed_at` > 180 days auto-demotes active to experimental with warning."
+      },
+      {
+        "id": "M004",
+        "severity": "major",
+        "category": "consistency_with_node0",
+        "location": "Recommended input + supported_run_modes",
+        "description": "Node 0 v1 limits run_mode to {discovery, validation, tracking} and rejects full/monitor. Node 2 input repeats the enum, but per-strategy `supported_run_modes` is a list — what does TAROC support vs Chokepoint? Is Chokepoint in v1 registry?",
+        "evidence": "Node 0 review + Node 2 registry fields.",
+        "recommendation": "Document: (a) v1 registry pre-seeds only `taroc`. (b) `chokepoint` v1 is `status=experimental` and not in dispatch path. (c) `custom` v1 does not accept free registration; requires human approval in `local-overrides.yaml`."
+      },
+      {
+        "id": "M005",
+        "severity": "major",
+        "category": "version_drift_risk",
+        "location": "Recommended behavior + output_schema_version",
+        "description": "registry has `output_schema_version: semver` (schema version) and `strategy_version: semver` (strategy version) — two independent axes. No rule for: when one upgrades but not the other, does Node 2 check compatibility?",
+        "evidence": "Registry fields #7, #9.",
+        "recommendation": "(a) Node 2 outputs both `strategy_version` and `output_schema_version` (as name + version). (b) Compatibility: major of `output_schema_version` must match strategy's draft schema major, else reject_reason=schema_mismatch. (c) Downstream validation/tracking modules assert via `expected_output_schema` field."
+      },
+      {
+        "id": "m001",
+        "severity": "minor",
+        "category": "naming_inconsistency",
+        "location": "output expected_output_schema",
+        "description": "Combines schema name and version in one field; registry also has `output_schema_version` separately.",
+        "evidence": "Registry fields + output schema.",
+        "recommendation": "Split: `output_schema_name: draft_candidates` and `output_schema_version: semver`."
+      },
+      {
+        "id": "m002",
+        "severity": "minor",
+        "category": "naming_alignment",
+        "location": "output dispatch_decision enum",
+        "description": "`needs_review` is a parallel concept to Node 1's `needs_override` but named differently.",
+        "evidence": "Recommended output enum.",
+        "recommendation": "Keep `needs_review` but document its meaning: only used when caller=manual and strategy_status=experimental, requires human ack."
+      },
+      {
+        "id": "m003",
+        "severity": "minor",
+        "category": "responsibility_clarity",
+        "location": "input universe field",
+        "description": "Node 1 review B001 removed universe from Node 1 input. Node 2 lists universe as input but does not state whether Node 2 consumes it.",
+        "evidence": "Node 1 review B001 + Node 2 input list.",
+        "recommendation": "Document: Node 2 passes universe through to strategy entrypoint, does not consume or filter it."
+      },
+      {
+        "id": "m004",
+        "severity": "minor",
+        "category": "freeform_field_risk",
+        "location": "output selector_warnings",
+        "description": "selector_warnings is `string[]` freeform; downstream may conflate warnings with errors.",
+        "evidence": "Recommended output.",
+        "recommendation": "Define minimum enum: `version_implicit_default`, `deprecated_strategy_in_use`, `schema_version_drift`. Other entries are free text."
+      },
+      {
+        "id": "m005",
+        "severity": "minor",
+        "category": "unresolved_structure",
+        "location": "registry entrypoint field",
+        "description": "`entrypoint: path_or_skill_ref` does not specify how Node 2 finds it, who loads dependencies, or which reject_reason for load failure.",
+        "evidence": "Registry fields entrypoint.",
+        "recommendation": "Define entrypoint substructure: `{kind: skill_ref | path | url, value: string, checksum?: string}`. Add `strategy_unavailable` to reject_reason enum for load failures."
+      },
+      {
+        "id": "m006",
+        "severity": "minor",
+        "category": "scope_creep",
+        "location": "Key question 2",
+        "description": "Q2 asks whether validation/tracking are strategy-internal or generic modules. This belongs to Node 6/Node 8, not Node 2.",
+        "evidence": "Key question 2.",
+        "recommendation": "Node 2 does not answer Q2; passes run_mode through transparently. Document: 'run_mode interpretation belongs to strategy modules, not Node 2.'"
+      },
+      {
+        "id": "m007",
+        "severity": "minor",
+        "category": "security_risk",
+        "location": "custom strategy load rules",
+        "description": "'ref must be in registry or local config' — if local config is user-writable, whitelist is bypassed.",
+        "evidence": "Recommended behavior #3.",
+        "recommendation": "(a) custom_strategy_ref must be in version-controlled registry or whitelist. (b) Checksum verification before load. (c) Path constraints: no `..`, no absolute paths, must be within repo workdir."
+      },
+      {
+        "id": "I001",
+        "severity": "info",
+        "category": "unanswered_questions",
+        "location": "Key questions 1-4",
+        "description": "All 4 key questions are open without recommendations. Node 1 review D5 already flagged this pattern.",
+        "evidence": "End-of-doc Questions section.",
+        "recommendation": "Main proposal must give recommended answers: (Q1) strict semver; (Q2) run_mode pass-through; (Q3) Chokepoint v1 = experimental, not dispatched; (Q4) registry at src/strategies/registry.yaml."
+      },
+      {
+        "id": "I002",
+        "severity": "info",
+        "category": "missing_fanout_semantics",
+        "location": "Recommended boundary",
+        "description": "'Multi-strategy orchestration remains outside Node 2' is correct but no spec for how SOP orchestration layer fans out and aggregates drafts.",
+        "evidence": "Recommended boundary #4.",
+        "recommendation": "S3 SOP orchestration design: fan-out creates N Node 2 calls sharing correlation_id, each returns independent draft, downstream validation module aggregates."
+      },
+      {
+        "id": "I003",
+        "severity": "info",
+        "category": "audit_observability_gap",
+        "location": "Recommended output",
+        "description": "No `selector_audit` event structure. Registry metadata is exposed to observability, but the dispatch event itself is not specified.",
+        "evidence": "Recommended behavior #8.",
+        "recommendation": "Add selector_audit event: `{request_id, correlation_id, strategy_id, strategy_version, dispatch_decision, dispatched_at, dispatch_latency_ms, registry_version}`. Aligns with Node 0/Node 1 audit chain."
+      },
+      {
+        "id": "I004",
+        "severity": "info",
+        "category": "req01_alignment",
+        "location": "REQ-01 section 'Node 2'",
+        "description": "REQ-01 §Node 2 '改进建议' lists draft output / score breakdown / negative search as improvements — these are strategy module responsibilities, not Node 2.",
+        "evidence": "REQ-01 §节点 2 paragraphs 1, 2.",
+        "recommendation": "Revise REQ-01 §Node 2: draft output belongs to strategy module; Node 2 only does dispatch."
+      },
+      {
+        "id": "I005",
+        "severity": "info",
+        "category": "version_syntax_gap",
+        "location": "Key question 1",
+        "description": "Q1 only asks about `latest`; missing `^` / `~` / range syntax discussion and reproducibility constraints.",
+        "evidence": "Key question 1.",
+        "recommendation": "Document: v1 strict semver; no `latest`/`^`/`~`/ranges; the `default` field in registry is the only allowed implicit version."
+      }
+    ],
+    "boundary_recommendation": {
+      "owns": [
+        "strategy registry maintenance",
+        "strategy_id + strategy_version resolution",
+        "market/run_mode compatibility validation",
+        "version freeze before entrypoint load",
+        "atomic dispatch decision transaction",
+        "registry metadata exposure for observability"
+      ],
+      "does_not_own": [
+        "strategy implementation",
+        "draft candidate generation",
+        "evidence interpretation",
+        "score ranking",
+        "cross-strategy fusion",
+        "fallback substitution",
+        "universe interpretation",
+        "cron scheduling",
+        "market calendar",
+        "trade execution"
+      ],
+      "adjustments": [
+        "Pass through request_id/correlation_id/decision=proceed; do not regenerate",
+        "Resolution must be atomic; freeze registry_version at dispatch time",
+        "State machine one-way: active -> experimental -> deprecated -> disabled, disabled is irreversible"
+      ]
+    },
+    "contract_recommendation": {
+      "input_add": [
+        "request_id (required, pass-through)",
+        "correlation_id (required, pass-through)",
+        "run_context.decision (required, must be proceed)",
+        "custom_strategy_ref (required when strategy_id=custom)"
+      ],
+      "input_clarify": [
+        "Node 2 does not consume or filter universe; pass through to strategy"
+      ],
+      "output_add": [
+        "request_id",
+        "correlation_id",
+        "selector_audit.dispatched_at",
+        "selector_audit.dispatch_latency_ms",
+        "selector_audit.registry_version"
+      ],
+      "output_split": [
+        "expected_output_schema: {name, version}"
+      ],
+      "output_clarify": [
+        "strategy_entrypoint: {kind, value, checksum}",
+        "selector_warnings: minimum enum + free text"
+      ],
+      "reject_reason_add": [
+        "upstream_not_ready",
+        "strategy_deprecated",
+        "strategy_unavailable"
+      ],
+      "semantic_constraints": [
+        "dispatch_decision=dispatch iff strategy_status=active and all checks pass",
+        "dispatch_decision=needs_review only for caller=manual + strategy_status=experimental",
+        "reject_reason=upstream_not_ready when run_context.decision != proceed",
+        "selector_warnings do not affect dispatch; reject_reason does not affect warnings",
+        "selector_audit.registry_version freezes the registry snapshot used for this dispatch"
+      ]
+    },
+    "failure_table": [
+      {"trigger": "Node 1 decision != proceed", "dispatch_decision": "reject", "reject_reason": "upstream_not_ready"},
+      {"trigger": "strategy_id not in registry", "dispatch_decision": "reject", "reject_reason": "strategy_not_found"},
+      {"trigger": "strategy_id=custom but no custom_strategy_ref", "dispatch_decision": "reject", "reject_reason": "custom_ref_invalid"},
+      {"trigger": "custom_strategy_ref not in whitelist", "dispatch_decision": "reject", "reject_reason": "custom_ref_invalid"},
+      {"trigger": "custom_strategy_ref has .. or absolute path or checksum mismatch", "dispatch_decision": "reject", "reject_reason": "custom_ref_invalid"},
+      {"trigger": "market not in supported_markets", "dispatch_decision": "reject", "reject_reason": "unsupported_market"},
+      {"trigger": "run_mode not in supported_run_modes", "dispatch_decision": "reject", "reject_reason": "unsupported_run_mode"},
+      {"trigger": "strategy_version not in registry", "dispatch_decision": "reject", "reject_reason": "version_not_found"},
+      {"trigger": "output_schema_version major mismatch", "dispatch_decision": "reject", "reject_reason": "schema_mismatch"},
+      {"trigger": "strategy_status=disabled (any caller)", "dispatch_decision": "reject", "reject_reason": "strategy_disabled"},
+      {"trigger": "strategy_status=deprecated + caller in {cron, sop}", "dispatch_decision": "reject", "reject_reason": "strategy_deprecated"},
+      {"trigger": "strategy_status=experimental + caller=manual", "dispatch_decision": "needs_review", "reject_reason": "none"},
+      {"trigger": "strategy_status=experimental + caller in {cron, sop}", "dispatch_decision": "reject", "reject_reason": "strategy_deprecated"},
+      {"trigger": "last_reviewed_at > 180 days", "dispatch_decision": "dispatch", "reject_reason": "none", "warning": "experimental_auto_demotion"},
+      {"trigger": "entrypoint load failure (runtime)", "dispatch_decision": "reject", "reject_reason": "strategy_unavailable"},
+      {"trigger": "strategy_version omitted", "dispatch_decision": "dispatch", "reject_reason": "none", "warning": "version_implicit_default"}
+    ],
+    "risks": [
+      {"risk": "strategy explosion", "mitigation": "disabled one-way + last_reviewed_at forces review + registry owner field for accountability"},
+      {"risk": "version drift between strategy and output_schema", "mitigation": "freeze both versions at dispatch; downstream asserts via expected_output_schema"},
+      {"risk": "custom strategy injection", "mitigation": "versioned whitelist + checksum + path constraints (no .., no absolute)"},
+      {"risk": "registry single point of failure", "mitigation": "v1 internal default registry + checksum on load; S3 launch strategy-registry Layer 3 module"},
+      {"risk": "silent fallback to TAROC", "mitigation": "main proposal already forbids; add strategy_unavailable reject_reason to make it visible"},
+      {"risk": "scheduling/contract separation in fan-out", "mitigation": "Node 2 passes correlation_id; SOP orchestration layer duplicates on fan-out"},
+      {"risk": "audit chain break across nodes", "mitigation": "unified selector_audit event with request_id/correlation_id/registry_version"},
+      {"risk": "registry upgrade invalidates in-flight dispatch", "mitigation": "freeze registry_version at dispatch; immutable until strategy completes"},
+      {"risk": "caller=manual abuse of needs_review", "mitigation": "needs_review requires approved_by + approved_at aligned with Node 0 trigger log"},
+      {"risk": "TAROC v1 and v2 mix-up", "mitigation": "strict semver on strategy_version; same strategy_id cannot have two active majors simultaneously"}
+    ],
+    "acceptance_criteria": [
+      "Node 2 docs explicitly state 'does not implement strategy, fuse, rank, fallback, or interpret universe'",
+      "Input contract includes request_id, correlation_id, run_context.decision=proceed as required validations",
+      "Output contract includes request_id, correlation_id, selector_audit.registry_version, strategy_entrypoint.kind",
+      "dispatch_decision + reject_reason joint constraints documented (see failure table)",
+      "v1 registry pre-seeds only taroc (active); chokepoint is experimental and not dispatched; custom not freely registerable",
+      "strategy_status=disabled rejects unconditionally, no caller exception",
+      "strategy_status=deprecated allows dispatch only for caller=manual",
+      "custom_strategy_ref validated by whitelist + checksum + path constraints",
+      "strategy_version strict semver; no latest/^/~/range",
+      "dispatch freezes strategy_version + output_schema_version + registry_version into selector_audit",
+      "Node 2 unit tests cover: Node 1 fail reject, registry missing-field reject, version mismatch reject, experimental strategy in cron reject, custom ref with .. reject, idempotency_key repeat returns first result",
+      "Aligns with Node 0 v1 'reject mixed/full/monitor/dry_run=false' and Node 1 v1 'decision=proceed gate'",
+      "All 4 key questions get recommended answers",
+      "Document explicitly that Node 2 does not answer Q2 (validation/tracking belong to Node 6/8)",
+      "Registry v1 location: src/strategies/registry.yaml; S3 considers Layer 3 strategy-registry module"
+    ],
+    "disagreements_with_main_proposal": [
+      {"id": "D1", "topic": "request_id/correlation_id pass-through", "main": "not in output", "mine": "required pass-through", "reason": "audit chain must span Node 0 -> Node 1 -> Node 2 -> strategy"},
+      {"id": "D2", "topic": "Node 1 decision=proceed as pre-condition", "main": "not in contract", "mine": "required validation", "reason": "prevents Node 2 from dispatching when Node 1 said skip"},
+      {"id": "D3", "topic": "strategy_version default resolution", "main": "may resolve to default", "mine": "atomic transaction + freeze", "reason": "registry upgrade must not invalidate in-flight dispatch"},
+      {"id": "D4", "topic": "custom ref acceptance", "main": "registry or local config", "mine": "version-controlled whitelist only", "reason": "user-writable config bypasses whitelist"},
+      {"id": "D5", "topic": "deprecated strategy callers", "main": "manual may run with warning", "mine": "cron/sop reject unconditionally", "reason": "aligns with Node 0/Node 1 'no silent continue' principle"},
+      {"id": "D6", "topic": "Chokepoint v1 in registry", "main": "open question", "mine": "experimental and not in dispatch path", "reason": "matches current 'not formally plugged in' state"},
+      {"id": "D7", "topic": "expected_output_schema structure", "main": "single field with name+version", "mine": "split name + version", "reason": "aligns with registry's output_schema_version field"},
+      {"id": "D8", "topic": "schema version major mismatch", "main": "not specified", "mine": "reject with schema_mismatch", "reason": "schema incompatibility is more severe than version mismatch"},
+      {"id": "D9", "topic": "registry location", "main": "open question", "mine": "v1 at src/strategies/registry.yaml", "reason": "v1 must have a runnable file"},
+      {"id": "D10", "topic": "universe at Node 2", "main": "in input but role unclear", "mine": "explicitly pass-through only", "reason": "aligns with Node 1 review B001"},
+      {"id": "D11", "topic": "entrypoint structure", "main": "path_or_skill_ref string", "mine": "{kind, value, checksum} struct", "reason": "distinguishes load modes and prevents injection"},
+      {"id": "D12", "topic": "4 key questions", "main": "left as questions", "mine": "must give recommended answers", "reason": "consistent with Node 1 review D5"}
+    ],
+    "most_important_recommendation": "Force pass-through of request_id/correlation_id/run_context.decision=proceed AND make dispatch resolution an atomic transaction. Node 2 is the fork point — one upstream request fans out to one specific strategy. If the audit chain breaks here, or the registry mutates during dispatch, the entire S2 baseline loses control at this step. Pass-through is the floor for audit; atomic transaction is the floor for replay.",
+    "rating_rationale": "Not PASS because B001 (missing request_id/correlation_id) and B002 (Node 1 decision=proceed pre-condition) must be fixed. Not WARN because 4 major risks (custom injection, registry ownership, state machine, version drift) each independently leave v1 uncontrollable if unfixed. CONDITIONAL PASS because main direction is correct, boundary is clear, silent fallback is already prohibited, registry fields are sufficient, fix cost is low. After 12 findings (2 blocker + 4 major) are addressed, can enter S3 design with no re-review on boundary."
+  }
+}

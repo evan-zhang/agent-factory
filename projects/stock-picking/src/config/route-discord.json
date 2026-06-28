@@ -1,0 +1,17 @@
+{
+  "schema": "operator_notification_route.v1",
+  "route_id": "stock-picking-discord",
+  "channel": "discord",
+  "target": "1518968470233022464",
+  "severity_min": "info",
+  "dry_run_only": false,
+  "include_fields": [
+    "request_id",
+    "correlation_id",
+    "reject_code",
+    "event_root",
+    "run_mode",
+    "market",
+    "strategy_id"
+  ]
+}

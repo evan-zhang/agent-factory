@@ -2,7 +2,7 @@
 
 ## 工厂入口
 
-本文件是 Agent Factory 的启动入口配置文件，供 OpenClaw 加载工厂主 Orchestrator。
+本文件记录 Agent Factory domain 的入口约定。当前不再加载独立工厂外部 Agent，Factory 任务由 Life Gateway 的 `chat-main-agent` 承接。
 
 ### 配置
 
@@ -17,7 +17,7 @@
 ```
 agent-factory/
 ├── specs/              ← 规范层（只读）
-│   ├── workflows/      SOP 工作流
+│   ├── workflows/      SOP 指针；真实 SOP 在 ~/.openclaw/skills/agent-factory-sop
 │   ├── templates/      项目模板
 │   ├── agents/         Sub-Agent 定义
 │   ├── governance/     治理规范
@@ -50,6 +50,7 @@ agent-factory/
 ### 隔离规则
 
 - **specs/** 是只读规范层，项目执行时不可修改
+- **specs/workflows/** 不存放 SOP 副本，只指向 `agent-factory-sop` Skill
 - **projects/{id}/** 是每个项目的独立空间，只修改自己的目录
 - **_runtime/** 是运行时数据，由 Orchestrator 维护，不入 git
 

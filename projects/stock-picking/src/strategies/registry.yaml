@@ -1,0 +1,34 @@
+registry_version: 1
+defaults:
+  taroc: 1.0.0
+
+strategies:
+  - id: taroc
+    version: 1.0.0
+    name: TAROC
+    entrypoint: strategies.taroc:run
+    output_schema: draft_candidates.v1
+    supported_markets: [US, HK, CN]
+    supported_run_modes: [discovery, validation]
+    status: active
+    allowed_callers: [manual, cron, sop]
+    owner: stock-picking
+    last_reviewed_at: "2026-06-23"
+
+  - id: chokepoint
+    version: 0.1.0
+    name: Chokepoint
+    entrypoint: strategies.chokepoint:run
+    output_schema: theme_research.v1
+    supported_markets: [US]
+    supported_run_modes: [discovery]
+    status: experimental
+    allowed_callers: [manual]
+    owner: stock-picking
+    last_reviewed_at: "2026-06-23"
+    maturity_gate:
+      exit_logic: AND
+      min_calendar_months: 6
+      min_manual_runs: 10
+      max_major_thesis_breaks: 0
+      requires_factory_review: true

@@ -1,0 +1,86 @@
+{
+  "verdict": "CONDITIONAL_PASS",
+  "confidence": 0.82,
+  "review_object": {
+    "type": "A_business_review",
+    "name": "agent-factory-sop S5/S6 发布流程简化方案",
+    "reference": "/Users/evan/.openclaw/gateways/life/skills/agent-factory-sop/SKILL.md"
+  },
+  "review_time": "2026-06-23T00:42:00+08:00",
+  "model": "gsykj-anthropic/claude-sonnet-4-6",
+  "dimension_scores": [
+    {"dimension": "必要性", "score": 4, "comment": "删除 builds/releases zip 与当前实际 GitHub 分发链路一致，能降低流程摩擦；但 zip 原本承担离线快照/不可变包能力，需用 git tag 或 release 替代。"},
+    {"dimension": "充分性", "score": 4, "comment": "GitHub-only 对当前个人/实例级 Skill 分发足够，README 已采用 git clone 安装；但私有仓库、网络不可达、企业内部市场等场景需明确例外路径。"},
+    {"dimension": "风险", "score": 3, "comment": "最大风险是“发布=push HEAD”导致版本、回滚、验收边界不清；必须补 tag、commit hash、回滚命令和安装说明锁定策略。"},
+    {"dimension": "一致性", "score": 3, "comment": "主 SKILL.md 当前 S5 没有 builds 步骤、S6 仍有 releases zip；参考规范仍写 S5 builds/S6 releases，且 S8 归档需要记录发布证据。"},
+    {"dimension": "遗漏", "score": 3, "comment": "遗漏 GitHub 仓库权限/可见性、tag/release 策略、安装前已存在目录处理、更新/回滚命令、S7 验收证据。"}
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "severity": "major",
+      "category": "版本与回滚",
+      "location": "改动方案 S6",
+      "description": "“git push 到 GitHub”作为唯一发布动作不足以形成可回滚、可引用的发布点；如果用户直接 clone 默认分支，回滚只能依赖人工找历史 commit。",
+      "evidence": ["SKILL.md:12", "SKILL.md:158-159", "SKILL.md:191-199", "AF-SOP v5.4:317-327"],
+      "recommendation": "删除 zip 可以接受，但 S6 必须新增：发布前确认 VERSION semver；创建并 push vX.Y.Z tag；安装说明同时给默认 clone 和锁定版本命令；回滚说明给 git fetch --tags && git checkout v旧版本。"
+    },
+    {
+      "id": "F002",
+      "severity": "major",
+      "category": "分发充分性",
+      "location": "改动方案 GitHub-only",
+      "description": "GitHub-only 符合当前三个案例，但不能无条件替代所有发布渠道，尤其是私有仓库权限、网络受限、内部市场/企业发布等场景。",
+      "evidence": ["README:24-30", "SRS-XGJK:26-33", "SRS-XGJK:151-183"],
+      "recommendation": "在 SOP 中定义适用范围：默认个人/当前 Gateway Skill 使用 GitHub-only；若目标用户无法访问 GitHub、需要企业市场/ClawHub、或需要离线交付，则走例外发布路径/另行方案。"
+    },
+    {
+      "id": "F003",
+      "severity": "major",
+      "category": "SOP 一致性",
+      "location": "SKILL.md 与 references",
+      "description": "主 SKILL.md 的 S5 已没有 builds 打包，但完整规范 references 仍要求 S5 构建测试包、S6 releases 打包；如果只改主文档，引用的完整规范会继续误导执行方。",
+      "evidence": ["SKILL.md:153-189", "AF-SOP v5.4:236-248", "AF-SOP v5.4:317-327", "SKILL.md:265"],
+      "recommendation": "同步更新或标注废弃 references 中的 S5/S6 打包段；至少在主 SKILL.md 加“若与 references 冲突，以本 SKILL.md S5/S6 为准”，并在 S8 归档记录本次决策。"
+    },
+    {
+      "id": "F004",
+      "severity": "major",
+      "category": "验收边界",
+      "location": "S7/S8",
+      "description": "不区分测试分发和正式发布可以简化，但必须保留“已验证版本”的边界；否则 S7 用户验收对象可能是不断变化的 main 分支。",
+      "evidence": ["SKILL.md:35", "SKILL.md:179-189", "SKILL.md:201-213"],
+      "recommendation": "在 S5 测试时记录被测 commit；S6 发布时 tag 同一 commit；S7 验收报告引用 repo URL、commit hash/tag、安装路径和测试结果，避免验收对象漂移。"
+    },
+    {
+      "id": "F005",
+      "severity": "minor",
+      "category": "安装说明完整性",
+      "location": "安装说明标准格式",
+      "description": "给出的标准格式只有首次 clone，不覆盖已存在目录、更新到新版、切换指定版本、私有仓库鉴权失败等常见情况。",
+      "evidence": ["README:24-30"],
+      "recommendation": "标准安装说明增加四块：首次安装、更新、锁定版本/回滚、验证命令/测试方向；私有 repo 增加权限提示。"
+    },
+    {
+      "id": "F006",
+      "severity": "minor",
+      "category": "归档与证据",
+      "location": "S8",
+      "description": "删除 zip 后，发布证据从“文件产物”变为“远端仓库状态”，S8 的归档内容需随之调整。",
+      "evidence": ["SKILL.md:215-220"],
+      "recommendation": "S8 增加发布记录字段：repo URL、tag、commit hash、VERSION、安装说明快照、S5/S7 测试摘要。"
+    }
+  ],
+  "summary": {
+    "necessity": "方向成立，删除 zip 能减少执行摩擦，但需保留不可变快照能力。",
+    "sufficiency": "对当前个人/Gateway 分发足够，对企业市场、离线、受限网络需例外路径。",
+    "risk": "需用 VERSION + tag + commit hash + rollback 指令控制版本和验收漂移。",
+    "consistency": "需同步 references 和 S8 归档证据链。",
+    "omissions": ["tag 策略", "回滚策略", "权限提示", "已安装目录处理", "S8 发布证据", "内部市场/ClawHub 边界"]
+  },
+  "most_important_recommendation": "可以删除 builds/releases zip，但必须把 zip 产物的版本快照能力替换为 VERSION + git tag + commit hash + 回滚说明 + S8 归档证据。",
+  "archive_files": {
+    "markdown": "reviews/2026-06-23/main-agent-agent-factory-sop-s5s6-CONDITIONAL_PASS-0042.md",
+    "json": "reviews/2026-06-23/main-agent-agent-factory-sop-s5s6-CONDITIONAL_PASS-0042.json"
+  }
+}

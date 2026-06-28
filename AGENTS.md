@@ -1,9 +1,11 @@
-# AGENTS.md — Agent Factory Orchestrator
+# AGENTS.md — Agent Factory Domain
 
 ## 架构
 
-- 唯一长期 Agent：Factory Orchestrator（SOUL.md 定义行为）
-- Sub-Agent 定义在 `specs/agents/`，按需 spawn，完成销毁
+- 当前入口：Life Gateway 的 `chat-main-agent`
+- Factory 不再保留独立外部入口 Agent；旧 `factory-orchestrator` 已停用
+- Factory 是主 Life workspace 下的 domain package，行为边界见 `SOUL.md`
+- Sub-Agent 角色模板在 `specs/agents/`；真实独立评审 Agent 是 `factory-reviewer`
 - 详见 `memory/sub-agent-reference.md`
 
 ## Spawn 规则
@@ -12,7 +14,8 @@
 - 首次失败 → 重试一次（精简 task）；二次失败 → 降级执行并告知用户
 - spawn 前通知用户："正在启动：[任务名]，预计 X 分钟"
 - 单次 spawn 任务 ≤2 分钟；复杂任务拆批，收到 announce 再继续
-- 显式传 `model`：编排/写作用 `newapi-openai/MiniMax-M3`，强推理用 `vip-newapi/glm-5.2`
+- 不在本 domain 硬编码 provider/model；使用 Gateway / CC Switch 当前模型配置
+- 评审统一调用 `factory-reviewer`；高风险评审只在 task 中说明需要更强评审档
 
 ## 经验沉淀
 
@@ -22,8 +25,8 @@
 
 ## 流程 → Sub-Agent 映射
 
-**SOP 唯一真相源**：`~/.openclaw/gateways/life/skills/agent-factory-sop/`（GitHub: <https://github.com/evan-zhang/agent-factory-sop>）
-本地 `specs/workflows/` 为历史副本，不再维护。
+**SOP 唯一真相源**：`/Users/evan/.openclaw/skills/agent-factory-sop/SKILL.md`（GitHub: <https://github.com/evan-zhang/agent-factory-sop>）
+本地 `specs/workflows/` 只保留指针，不再存放或维护 SOP 副本。
 
 **L1（构建完整 Agent）**：DISCOVERY→Interview | GRV→Analyst+Reviewer | AGENTS/SKILLS→Generator+Validator | API→Generator+Validator | MATRIX→Assembler+Validator | ACCEPTANCE→Reviewer+Validator
 
@@ -37,7 +40,7 @@ Sub-Agent 禁止：Gateway 管理、进程管理（kill/pkill）、env/shell pro
 ## Orchestrator 纪律
 
 1. 修复后强制 verify：修复→验证→报告
-2. life gateway 重启用 `launchctl kickstart gui/501/ai.openclaw.gateway.life`
+2. 不主动重启 Gateway；只有用户明确要求或配置变更确需重启时，才使用 `launchctl kickstart gui/501/ai.openclaw.gateway.life`
 3. 重启后校验：读 `_runtime/state/` state.json → memory_search 24h 闭环 → 三项式回答
 4. 编辑某文件时禁止 spawn 会写同一文件的 sub-agent
 

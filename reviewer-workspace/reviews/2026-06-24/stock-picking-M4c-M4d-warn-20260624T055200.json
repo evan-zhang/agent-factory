@@ -1,0 +1,133 @@
+{
+  "review_id": "stock-picking-m4c-m4d-gate-2026-06-24",
+  "caller": "agent:chat-main-agent:discord:channel:1518968470233022464",
+  "domain": "stock-picking",
+  "sub_gate": "M4c cron_readiness + M4d operator_notification/calendar",
+  "mode": "battle",
+  "reviewer": "factory-reviewer",
+  "model": "newapi-openai/MiniMax-M3",
+  "reviewed_at": "2026-06-24",
+  "verdict": "warn",
+  "confidence": 0.88,
+  "findings": [
+    {
+      "id": "M001",
+      "severity": "major",
+      "category": "gate_gap",
+      "location": "src/scripts/dry_run_orchestrator.py:build_run_context+build_parser:323 + src/scripts/cron_readiness.py",
+      "fix": "Either reject --calendar-source production_calendar when no real source is wired, or at minimum add not_production_calendar warning + production_calendar_label_requires_real_source warning; add cron_readiness check that blocks production_calendar for cron caller"
+    },
+    {
+      "id": "M002",
+      "severity": "major",
+      "category": "cron_safety",
+      "location": "src/references/gateway-cron.md:Trigger Contract",
+      "fix": "Add explicit parameter-source constraint: Gateway must derive --strategy-id / --strategy-version / --custom-ref / --universe-ref from cron schedule config, never from user message / notification payload / thread history"
+    },
+    {
+      "id": "M003",
+      "severity": "major",
+      "category": "consistency",
+      "location": "src/scripts/operator_notification.py:build_failure_payload + src/references/gateway-cron.md:104-118",
+      "fix": "Implement severity_min filtering: build_failure_payload must drop payloads below route.severity_min (or demote severity_min to documented expectation and remove invalid_severity validator check)"
+    },
+    {
+      "id": "m001",
+      "severity": "minor",
+      "category": "test_coverage",
+      "location": "tests/test_m4a_validators.py:CronReadinessTests + OperatorNotificationTests",
+      "fix": "Add: test_readiness_blocks_production_calendar_for_cron, test_route_severity_min_filters_payload, test_dry_run_smoke_rejects_manual_pilot_without_reason"
+    },
+    {
+      "id": "m002",
+      "severity": "minor",
+      "category": "boundary",
+      "location": "src/scripts/cron_readiness.py:check_dry_run_smoke (smoke_root under event_root)",
+      "fix": "Use independent tempfile.mkdtemp() not embedded in event_root; or document residual cleanup behavior with .cron-readiness-smoke-* prefix"
+    },
+    {
+      "id": "m003",
+      "severity": "minor",
+      "category": "consistency",
+      "location": "src/references/gateway-cron.md:Failure Handling + src/scripts/operator_notification.py:build_failure_payload",
+      "fix": "Add optional event_paths: [str] field to operator_notification_payload.v1 sourced from run_result.written[].event_path"
+    },
+    {
+      "id": "m004",
+      "severity": "minor",
+      "category": "doc_accuracy",
+      "location": "design/reviews/M4c-cron-readiness-selfcheck-2026-06-24.md:29",
+      "fix": "Update test count from 'Ran 20 tests' to 'Ran 25 tests' (matches M4d selfcheck and actual unittest discover output)"
+    },
+    {
+      "id": "m005",
+      "severity": "minor",
+      "category": "test_coverage",
+      "location": "src/scripts/cron_readiness.py:check_cli_allowlist",
+      "fix": "Add negative coverage for additional unknown flag patterns: --buy, --send-discord, --action sell; or grep sub.add_parser to prove no broker subcommand exists"
+    },
+    {
+      "id": "m006",
+      "severity": "minor",
+      "category": "consistency",
+      "location": "src/scripts/dry_run_orchestrator.py:build_validation_events:190",
+      "fix": "Use draft.signal_date or args --signal-date for validation_event.v1.signal_date; only fallback to _today() with context_warnings signal"
+    },
+    {
+      "id": "I001",
+      "severity": "info",
+      "category": "doc",
+      "location": "src/references/gateway-cron.md:104 (example target path /tmp/...)",
+      "fix": "Replace hardcoded /tmp/... in example with ${STOCK_PICKING_OPERATOR_LOG} placeholder"
+    },
+    {
+      "id": "I002",
+      "severity": "info",
+      "category": "ux",
+      "location": "src/references/gateway-cron.md:Idempotency + dry_run_orchestrator.run_discovery",
+      "fix": "Idempotent replay should return previous_event_path or last_written_paths so Gateway can log operator-visible retry audit"
+    },
+    {
+      "id": "I003",
+      "severity": "info",
+      "category": "decision_log",
+      "location": "design/DESIGN.md:5 Decision Log",
+      "fix": "Add Decision Log entry: 'M4d reserves --calendar-source production_calendar as future marker; orchestrator does not yet block; M4e real source + cron_readiness check required'"
+    }
+  ],
+  "tests_run": {
+    "total": 25,
+    "passed": 25,
+    "failed": 0,
+    "note": "M4c selfcheck under-reports (claims 20); M4d selfcheck and actual unittest discover both 25"
+  },
+  "local_verification": {
+    "unittest_discover": "Ran 25 tests in 0.037s OK",
+    "py_compile": "OK",
+    "cron_readiness_smoke": "5/5 checks pass, exit 0 (event_root / registry_policy / cli_allowlist / validation_gate / dry_run_smoke)",
+    "operator_notification_route_validation": "accepts valid local_log route; rejects dry_run_only=false and missing include_fields",
+    "production_calendar_probe": "DISCOVERY OK with --calendar-source production_calendar + --caller cron + no warning added (M001 evidence)"
+  },
+  "absorbed_from_prior_gates": {
+    "M3.5_M001_schema_evidence_id_ulid_prefix": "closed in validate_schema._check_evidence_ref via EVIDENCE_ID_RE",
+    "M3.5_M002_schema_source_type_enum": "closed in validate_schema.SCHEMAS via EVIDENCE_SOURCE_TYPES (11 values)",
+    "M3.5_M003_schema_claim_kind_polarity": "closed in validate_schema._check_claim (preserves claim_kind + polarity + valid_until)",
+    "M4b_B001_promote_verdict_mismatch": "closed in validate_schema._check_validation_event + test_validation_event_rejects_promote_verdict_mismatch + cron_readiness.check_validation_gate"
+  },
+  "gate_decision": {
+    "M4c_cron_readiness_local_dry_run": "PASS",
+    "M4d_operator_notification_dry_run_contract": "PASS",
+    "M4d_explicit_manual_pilot_override": "PASS",
+    "production_cron_deployment": "BLOCKED until M001 fixed AND M4e real calendar source wired AND cron_readiness extended"
+  },
+  "ready_for_next_gate": true,
+  "ready_for_next_gate_conditions": [
+    "M001 fixed (production_calendar rejection/warning + cron_readiness check)",
+    "M002 fixed (Gateway parameter source constraint in gateway-cron.md)",
+    "M003 fixed (severity_min filtering implemented or demoted to documented expectation)"
+  ],
+  "prohibitions_even_after_above_conditions": [
+    "Production cron must not be enabled until production_calendar is backed by a real market-calendar source",
+    "Until M002 lands, Gateway must not pass user-supplied strategy_id / custom_ref / universe_ref through to orchestrator (manual-only path is OK)"
+  ]
+}

@@ -1,0 +1,208 @@
+{
+  "review_report": {
+    "verdict": "warn",
+    "confidence": 0.78,
+    "object_type": "B",
+    "object_summary": "stock-picking Node 1 boundary/contract proposal (交易日与运行上下文检查)",
+    "subject_file": "projects/stock-picking/node-1-market-context-review-context.md",
+    "reviewed_at": "2026-06-23T22:45:00+08:00",
+    "model": "newapi-openai/MiniMax-M3",
+    "pack": "general",
+    "reference_files": [
+      "projects/stock-picking/REQ-01.md",
+      "projects/stock-picking/PLAN.md",
+      "projects/stock-picking/DISCUSSION-LOG.md",
+      "projects/stock-picking/node-0-trigger-entry-review-context.md"
+    ],
+    "dimension_scores": {
+      "boundary_clarity": 4,
+      "contract_completeness": 2,
+      "risk_and_failure_handling": 3,
+      "consistency": 4,
+      "implementability": 3
+    },
+    "findings": [
+      {
+        "id": "B001",
+        "severity": "blocker",
+        "category": "contract_redundancy",
+        "location": "Recommended input section, 9th field",
+        "description": "`universe` is listed as Node 1 input but Node 1 does not consume universe for any decision. This shifts Node 0 / SOP orchestration responsibilities into Node 1.",
+        "evidence": "Input list row 9 `universe: market | sector:{name} | watchlist:{name} | candidates:{market}`; Node 0 entry contract already includes universe.",
+        "recommendation": "Remove `universe` from Node 1 inputs. Node 1 only needs request_id/correlation_id/market/run_date/signal_date/timezone/caller/run_mode."
+      },
+      {
+        "id": "B002",
+        "severity": "blocker",
+        "category": "missing_field",
+        "location": "Recommended output schema",
+        "description": "Missing `session_open_at`. Half-day scenarios cannot express 'how long until open' or 'which phase of the session we are in' without this field.",
+        "evidence": "Output schema has 11 fields. REQ-01 §1 requires market_session to include premarket/regular/postmarket. Only `session_close_at` and `next_open_at` are defined.",
+        "recommendation": "Add `session_open_at: ISO8601 | null` to distinguish current session start from next session start."
+      },
+      {
+        "id": "B003",
+        "severity": "blocker",
+        "category": "missing_semantics",
+        "location": "Recommended output field `market_session`",
+        "description": "No joint constraint between `market_session` and `calendar_status`. E.g. can `calendar_status=closed` co-exist with `market_session=regular`? Can `half_day` show `market_session=postmarket`?",
+        "evidence": "Field definitions list both enum values but no cross-field rules.",
+        "recommendation": "Document constraint: `market_session` takes concrete values only when `calendar_status ∈ {open, half_day}`; `closed` forces `market_session=closed`; `unknown` forces `market_session=unknown`."
+      },
+      {
+        "id": "M001",
+        "severity": "major",
+        "category": "missing_dependency_definition",
+        "location": "Recommended boundary section",
+        "description": "Proposal requires `market-calendar` as shared infrastructure but does not say whether it exists in v1, which layer it belongs to, who maintains it, or version strategy.",
+        "evidence": "Single sentence: 'Calendar data should be a shared infrastructure dependency, preferably `market-calendar`.'",
+        "recommendation": "In v1, allow Node 1 to ship with a thin wrapper + internal fallback table. Put `market-calendar` as Layer 3 module in S3 design. Document a 'dual-track: internal + external' transition path."
+      },
+      {
+        "id": "M002",
+        "severity": "major",
+        "category": "override_abuse_risk",
+        "location": "Recommended behavior, `unknown` branch",
+        "description": "Manual caller can continue with explicit override on `unknown`, but no expiration, audit, or revocation policy is defined.",
+        "evidence": "Behavior rule: 'manual caller: allow only with explicit override' — no override_id validation details.",
+        "recommendation": "Require (a) override_id + override_reason + override_expires_at; (b) override event must enter `override_audit`; (c) v1 enable/disable decision must be answered in the 3 open questions."
+      },
+      {
+        "id": "M003",
+        "severity": "major",
+        "category": "inconsistent_behavior",
+        "location": "Recommended behavior, `half_day` branch",
+        "description": "half_day mode allows discovery/validation/tracking with warnings but has no skip path. Closed mode returns HEARTBEAT_OK. The two paths are structurally inconsistent.",
+        "evidence": "Behavior text directly compares the two branches.",
+        "recommendation": "Add contract: in half_day, run_mode must be `discovery|validation|tracking`; `run_mode=monitor` (already rejected at Node 0 v1) remains rejected."
+      },
+      {
+        "id": "M004",
+        "severity": "major",
+        "category": "cross_timezone_uncovered",
+        "location": "Recommended behavior, `signal_date` paragraph",
+        "description": "`signal_date` may differ from `run_date` for cross-timezone US runs, but Node 1 has no rule for: what if signal_date market is closed/unknown while run_date market is open?",
+        "evidence": "Single sentence 'may differ from `run_date` for cross-timezone US runs' with no rule.",
+        "recommendation": "Add rule: when signal_date market calendar is unknown/closed, Node 1 must mark signal_data as `stale` and emit `context_warnings: [stale_signal_data]`. Downstream strategy modules decide whether to downgrade."
+      },
+      {
+        "id": "m001",
+        "severity": "minor",
+        "category": "naming_collision",
+        "location": "output field `skip_reason`",
+        "description": "`skip_reason` at Node 1 means 'why market is closed'; downstream modules may misinterpret as 'why this run was skipped'.",
+        "evidence": "Field name `skip_reason` is single-meaning.",
+        "recommendation": "Rename to `calendar_skip_reason` or document that this field describes calendar-level skip, distinct from run-level skip."
+      },
+      {
+        "id": "m002",
+        "severity": "minor",
+        "category": "missing_version_field",
+        "location": "input schema",
+        "description": "Output has `calendar_source_version` but input does not. Without input expectation, idempotency/replay cannot be validated.",
+        "evidence": "Output field 11 includes calendar_source_version; input has no equivalent.",
+        "recommendation": "Add `expected_calendar_source_version` (optional) to input schema."
+      },
+      {
+        "id": "m003",
+        "severity": "minor",
+        "category": "category_conflict",
+        "location": "behavior section, 'SOP caller'",
+        "description": "'SOP caller' is mentioned in behavior section but Node 0 v1 only defines `caller: manual | cron | sop`. SOP is already a caller type, no need for separate category.",
+        "evidence": "Cross-reference with node-0-trigger-entry-review-context.md.",
+        "recommendation": "Use Node 0's caller triple directly. Do not invent 'SOP caller' category."
+      },
+      {
+        "id": "m004",
+        "severity": "minor",
+        "category": "validation_detail_missing",
+        "location": "behavior, `timezone` rule",
+        "description": "'If `timezone` does not match `market`, fail' has no matching definition.",
+        "evidence": "Single sentence rule with no mapping table.",
+        "recommendation": "Provide mapping: US→America/New_York, HK→Asia/Hong_Kong, CN→Asia/Shanghai. Any other timezone or missing timezone must fail."
+      },
+      {
+        "id": "I001",
+        "severity": "info",
+        "category": "unanswered_questions",
+        "location": "Questions 1/2/3 at end of proposal",
+        "description": "The 3 questions (manual override v1, validation/tracking on closed, market_session granularity) are open questions, not recommendations.",
+        "evidence": "End-of-doc Questions section.",
+        "recommendation": "Main proposal should give a recommended answer + rationale for each question, so the review meeting focuses on 'agree with recommendation' rather than 'what are the options'."
+      }
+    ],
+    "boundary_recommendation": {
+      "owns": [
+        "market-local date / session judgment",
+        "timezone validation",
+        "override validation and audit",
+        "context normalization (market + date + session triple)"
+      ],
+      "does_not_own": [
+        "trading calendar data maintenance",
+        "cron scheduling",
+        "strategy decisions",
+        "universe interpretation"
+      ],
+      "adjustments": [
+        "Remove universe from input (responsibility misalignment)",
+        "Document v1 fallback path for market-calendar (built-in thin wrapper + internal table)",
+        "Override must have audit and expiration",
+        "half_day and closed paths must be symmetric (either both skip or both tag-and-continue)"
+      ]
+    },
+    "contract_recommendation": {
+      "input_remove": ["universe"],
+      "input_add": [],
+      "output_add": ["session_open_at", "override_expires_at"],
+      "semantic_constraints": [
+        "market_session takes concrete values only when calendar_status in {open, half_day}",
+        "calendar_status=closed forces market_session=closed",
+        "calendar_status=unknown forces market_session=unknown",
+        "is_runnable=false equivalent to calendar_status in {closed, unknown, overridden-failed}",
+        "is_runnable=true requires market_session in {premarket, regular, postmarket}",
+        "skip_reason=none valid only when is_runnable=true"
+      ]
+    },
+    "failure_table": [
+      {"calendar_status": "open", "manual": "run", "cron": "run", "sop": "run"},
+      {"calendar_status": "closed", "manual": "HEARTBEAT_OK + skip_reason", "cron": "HEARTBEAT_OK + skip_reason", "sop": "HEARTBEAT_OK + skip_reason"},
+      {"calendar_status": "half_day", "manual": "run + warnings", "cron": "run + warnings", "sop": "run + warnings"},
+      {"calendar_status": "unknown", "manual": "NEEDS_OVERRIDE", "cron": "FAIL_CLOSED", "sop": "NEEDS_OVERRIDE"},
+      {"calendar_status": "overridden (valid)", "manual": "run", "cron": "run + audit", "sop": "run + audit"},
+      {"calendar_status": "overridden (expired/invalid)", "manual": "fallback to unknown branch", "cron": "fallback to unknown branch", "sop": "fallback to unknown branch"}
+    ],
+    "risks": [
+      {"risk": "calendar source single point of failure", "mitigation": "v1 internal thin wrapper + internal table; market-calendar as Layer 3 module in S3"},
+      {"risk": "cross-timezone stale signal", "mitigation": "context_warnings: [stale_signal_data]; downstream strategy decides downgrade"},
+      {"risk": "override abuse", "mitigation": "expires_at <= 24h + mandatory audit log + retroactive traceability"},
+      {"risk": "make-up day / half-day drift", "mitigation": "Node 1 single-point judgment + explicit is_runnable; downstream does not re-judge"},
+      {"risk": "Node 0 / Node 1 responsibility overlap", "mitigation": "Node 0 validates shape/enum; Node 1 validates business consistency (timezone↔market, run_date↔signal_date)"},
+      {"risk": "HK typhoon / black rain half-day", "mitigation": "override entry + temporary holiday_overrides.yaml in Layer 3"},
+      {"risk": "US DST switch day", "mitigation": "market-calendar handles internally; Node 1 only consumes result"}
+    ],
+    "acceptance_criteria": [
+      "Node 1 docs explicitly state 'does not own calendar data maintenance' and 'does not interpret universe'",
+      "Input contract excludes universe; output contract includes session_open_at and override_expires_at",
+      "market_session / calendar_status joint constraint documented",
+      "unknown + cron caller must fail closed; no silent continue",
+      "Override requires override_id + override_reason + override_expires_at; enters override_audit",
+      "Timezone↔market mapping table defined (US→NY, HK→HK, CN→SH)",
+      "market-calendar project-listed in S3 as Layer 3; v1 has built-in fallback",
+      "3 open questions get recommended answers",
+      "Node 1 unit tests cover: regular trading day, weekend, public holiday, make-up day, half-day, unknown downgrade, override valid/expired, timezone mismatch, cross-timezone signal_date",
+      "Node 1 docs explicitly state downstream modules must not re-judge trading day"
+    ],
+    "disagreements_with_main_proposal": [
+      {"id": "D1", "topic": "universe in input", "main": "list universe as Node 1 input", "mine": "remove from Node 1 input", "reason": "Node 1 does not consume universe; listing it implies pre-screening responsibility"},
+      {"id": "D2", "topic": "market-calendar dependency", "main": "preferred shared infrastructure", "mine": "force v1 dual-track: built-in + external", "reason": "v1 must have runnable calendar source or it will block in S3"},
+      {"id": "D3", "topic": "override in unknown state", "main": "manual can override then continue", "mine": "must include audit and expiration", "reason": "without audit/expiration, override becomes a no-op bypass"},
+      {"id": "D4", "topic": "half_day behavior", "main": "tag warning and continue", "mine": "explicit run_mode restriction (monitor rejected)", "reason": "align with Node 0 v1 monitor rejection"},
+      {"id": "D5", "topic": "3 open questions", "main": "left as questions", "mine": "main proposal must give recommended answers", "reason": "review meeting should decide 'agree with X' not 'what are the options'"},
+      {"id": "D6", "topic": "session_open_at field", "main": "only session_close_at and next_open_at", "mine": "add session_open_at", "reason": "half_day scenarios need to know current session start, not next session"},
+      {"id": "D7", "topic": "caller taxonomy", "main": "manual/cron/SOP caller", "mine": "use Node 0's manual/cron/sop triple", "reason": "avoid conflicting classification"}
+    ],
+    "most_important_recommendation": "Document v1 landing path before S3: Node 1 depends on `market-calendar` shared infrastructure that does not exist yet. v1 must have a built-in thin wrapper + internal table fallback, otherwise S3 design will stall on an unlisted dependency.",
+    "rating_rationale": "Not PASS because 3 blockers (universe redundancy, missing session_open_at, missing market_session semantics) must be fixed. Not FAIL because direction, boundary, and Node 0 alignment are sound, and fixes are low-cost. WARN means: fix blockers, then enter S3 design, no re-review needed on boundary."
+  }
+}

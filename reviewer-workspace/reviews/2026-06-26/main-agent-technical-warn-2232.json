@@ -1,0 +1,75 @@
+{
+  "verdict": "warn",
+  "confidence": 0.83,
+  "review_object": {
+    "type": "technical_plan",
+    "path": "/Users/evan/.openclaw/gateways/life/state/workspace-life/projects/投前0620/ZAI/docs/需求讨论/CP202601120013_执行失败复盘_v0.1.md",
+    "version": "v0.1"
+  },
+  "review_time": "2026-06-26",
+  "model": "gsykj-anthropic/claude-sonnet-4-6",
+  "scores": [
+    {"dimension": "架构选择", "score": 4, "comment": "B2方向合理，但30分钟预算需余量"},
+    {"dimension": "并发控制", "score": 4, "comment": "batch=3合理，写作阶段需串行/分批"},
+    {"dimension": "依赖处理", "score": 4, "comment": "B3否决理由成立"},
+    {"dimension": "OpenClaw机制符合性", "score": 3, "comment": "sessions_yield理解正确，runTimeout累计风险被低估"},
+    {"dimension": "风险与可恢复性", "score": 3, "comment": "需补充检查点、超时降级和失败重启边界"}
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "severity": "major",
+      "category": "超时估算",
+      "location": "目标文档 L403-L409, L451-L455",
+      "description": "B2声称1800s runTimeout够用，但两个orchestrator都接近30分钟，且yield后runtime累计不清零。",
+      "evidence": ["subagents.md L144", "源码 replaceSubagentRunAfterSteer/getSubagentSessionRuntimeMs/resolveSubagentRunDurationMs", "目标文档 L333"],
+      "recommendation": "拆成更多阶段或提高runTimeout到3600s；否则每个orchestrator控制在20-24分钟。"
+    },
+    {
+      "id": "F002",
+      "severity": "major",
+      "category": "方案表述不一致",
+      "location": "任务描述 vs 目标文档 L345-L368",
+      "description": "一次spawn 5个写作worker不可取；文档计划实际应是每批1个串行yield。",
+      "evidence": ["目标文档 L263-L265", "目标文档 L345-L368", "配置 maxConcurrent=8; 源码默认 maxChildrenPerAgent=5"],
+      "recommendation": "明确写作batch串行或最多2个无依赖搜索章并发。"
+    },
+    {
+      "id": "F003",
+      "severity": "major",
+      "category": "并发上限事实",
+      "location": "目标文档 L224-L225",
+      "description": "maxChildrenPerAgent=5来自源码默认，当前配置未显式设置。",
+      "evidence": ["openclaw.json subagents未包含maxChildrenPerAgent", "源码 cfg...maxChildrenPerAgent ?? 5"],
+      "recommendation": "方案中标注默认来源；生产执行前显式配置或检查。"
+    },
+    {
+      "id": "F004",
+      "severity": "minor",
+      "category": "B3 ROI判断",
+      "location": "目标文档 L421-L456",
+      "description": "否决B3合理，但应补充state并发写和依赖栅栏成本。",
+      "evidence": ["目标文档 L423-L428", "目标文档 L444-L445"],
+      "recommendation": "除非搜索阶段成为瓶颈且有原子state更新/依赖栅栏，否则不采用B3。"
+    },
+    {
+      "id": "F005",
+      "severity": "minor",
+      "category": "reviewer batch",
+      "location": "目标文档 L313-L320, L370-L376",
+      "description": "batch=3合适，但1-2分钟完成未实测。",
+      "evidence": ["usage log L64/L108-L111", "目标文档 L319"],
+      "recommendation": "首个case记录p50/p95；GLM高峰降到2；p95>6-8分钟则复核编排者1800s不够。"
+    },
+    {
+      "id": "F006",
+      "severity": "info",
+      "category": "sessions_yield机制",
+      "location": "目标文档 L187-L205",
+      "description": "sessions_yield理解基本符合文档和源码。",
+      "evidence": ["subagents.md L65-L74", "subagents.md L80-L84", "subagents.md L252-L266", "源码 markSubagentRunPausedAfterYield/reactivateCompletedSubagentSession"],
+      "recommendation": "prompt硬性要求spawn后sessions_yield，恢复后核对所有expected child再继续。"
+    }
+  ],
+  "key_recommendation": "B2可落地，但需增加runTimeout余量或拆更小阶段，并明确写作batch串行、reviewer batch可降级。"
+}

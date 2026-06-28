@@ -1,0 +1,50 @@
+# 美股休市日规则
+
+## 固定休市日（NYSE & NASDAQ）
+- 元旦：January 1（New Year's Day）
+- 马丁·路德·金日：January, 3rd Monday（MLK Day）
+- 总统日：February, 3rd Monday（Presidents' Day）
+- 耶稣受难日：Good Friday（复活节前的周五）
+- 阵亡将士日：May, last Monday（Memorial Day）
+- 独立日：July 4（Independence Day）
+- 劳动节：September, 1st Monday（Labor Day）
+- 感恩节：November, 4th Thursday（Thanksgiving Day）
+- 圣诞节：December 25（Christmas Day）
+
+## 提早收盘日（1:00 PM ET）
+- 感恩节次日（Black Friday）：11月第4个周五
+- 圣诞前夕：12月24日（如遇周末则无）
+- 独立日前一天：7月3日（如7月4日非周六日）
+
+## 特殊规则
+- 如果休市日落在周六 → 前一个周五（Friday）休市
+- 如果休市日落在周日 → 后一个周一（Monday）休市
+- 偶尔有国家哀悼日等临时休市（无法预判）
+
+## 夏令时 / 冬令时
+- **夏令时（EDT）**：3月第2个周日 → 11月第1个周日
+  - 交易时间：美东 9:30-16:00 = **北京 21:30-04:00**
+  - 选股 cron 20:30（开盘前1h）✓
+- **冬令时（EST）**：11月第1个周日 → 3月第2个周日
+  - 交易时间：美东 9:30-16:00 = **北京 22:30-05:00**
+  - 选股 cron 20:30（开盘前2h，略早但可用）
+  - 如需精确：冬令时改为 cron 21:30
+
+## 2026年预计休市
+- 元旦：Jan 1 (Thu)
+- MLK Day：Jan 19 (Mon)
+- Presidents' Day：Feb 16 (Mon)
+- Good Friday：Apr 3 (Fri) — 待确认复活节日期
+- Memorial Day：May 25 (Mon)
+- Independence Day：Jul 3 (Fri, observed) / Jul 4 (Sat)
+- Labor Day：Sep 7 (Mon)
+- Thanksgiving：Nov 26 (Thu)
+- Christmas：Dec 25 (Fri)
+
+## 判断逻辑
+```
+1. 如果是周六/周日 → 休市（cron 不触发）
+2. 如果在上述日期 → 休市
+3. 如果是 Black Friday / Christmas Eve → 提早收盘（仍然交易）
+4. 否则 → 交易日
+```

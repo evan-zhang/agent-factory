@@ -1,0 +1,32 @@
+{
+  "review_id": "stock-picking-m4b-gate-2026-06-24",
+  "caller": "agent:chat-main-agent:discord:channel:1518968470233022464",
+  "domain": "stock-picking",
+  "mode": "battle",
+  "reviewer": "factory-reviewer",
+  "model": "newapi-openai/MiniMax-M3",
+  "reviewed_at": "2026-06-24",
+  "verdict": "warn",
+  "confidence": 0.85,
+  "findings": [
+    {"id": "B001", "severity": "blocker", "category": "consistency", "location": "src/scripts/validate_schema.py:_check_validation_event", "fix": "add cross-field rule: verdict==confirm iff promote_candidate==True"},
+    {"id": "M001", "severity": "major", "category": "test_coverage", "location": "tests/test_m4a_validators.py:SchemaValidatorTests", "fix": "add negative test for verdict/promote mismatch"},
+    {"id": "M002", "severity": "major", "category": "test_coverage", "location": "tests/test_m4a_validators.py + dry_run_orchestrator.py", "fix": "implement idempotency dedup and add regression test"},
+    {"id": "M003", "severity": "major", "category": "cron_safety", "location": "src/references/gateway-cron.md", "fix": "explicit Gateway parameter whitelist"},
+    {"id": "M004", "severity": "major", "category": "boundary", "location": "src/scripts/dry_run_orchestrator.py:_load_draft_records", "fix": "validate draft via validate_record before build_validation_events"},
+    {"id": "m001", "severity": "minor", "category": "doc_consistency", "location": "src/references/gateway-cron.md:56", "fix": "clarify that registry stays package-internal"},
+    {"id": "m002", "severity": "minor", "category": "test_maintainability", "location": "tests/test_m4a_validators.py:RegistryTests.test_required_rejects", "fix": "split into per-code tests"},
+    {"id": "m003", "severity": "minor", "category": "performance", "location": "src/scripts/dry_run_orchestrator.py:run_validation", "fix": "add per-schema index cache in S5"},
+    {"id": "m004", "severity": "minor", "category": "consistency", "location": "src/SKILL.md:5", "fix": "document verdict source as caller input in v1"},
+    {"id": "m005", "severity": "minor", "category": "cli_design", "location": "src/scripts/dry_run_orchestrator.py:build_parser", "fix": "add --caller to validation subcommand"},
+    {"id": "m006", "severity": "minor", "category": "doc", "location": "src/references/gateway-cron.md:Failure Handling", "fix": "split trigger delivery vs business failure"},
+    {"id": "I001", "severity": "info", "category": "doc", "location": "design/reviews/M4b-selfcheck-2026-06-24.md", "fix": "update test count to 13"},
+    {"id": "I002", "severity": "info", "category": "design", "location": "src/SKILL.md:frontmatter", "fix": "log v2 alias retention/deprecation"}
+  ],
+  "tests_run": {"total": 13, "passed": 13, "failed": 0},
+  "out_of_scope_flags": [
+    "src/scripts/position-monitor.py uses shell=True with .env interpolation — pre-M4b legacy, log for S5 risk-monitor flow rewrite"
+  ],
+  "ready_for_next_gate": false,
+  "gate_decision": "WARN — close B001 and M002 before cron pilot; M001/M003/M004 also recommended"
+}

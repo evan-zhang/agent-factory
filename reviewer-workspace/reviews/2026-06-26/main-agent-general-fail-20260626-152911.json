@@ -1,0 +1,102 @@
+{
+  "verdict": "fail",
+  "confidence": 0.86,
+  "review_object": {
+    "type": "OpenClaw optimization plan",
+    "name": "bd-eval-reviewer idle timeout/fallback cost fix",
+    "mode": "quick",
+    "domain": "general"
+  },
+  "review_time": "2026-06-26T15:29:11+08:00",
+  "model": "gsykj-anthropic/claude-sonnet-4-6",
+  "scores": [
+    { "dimension": "root_cause_accuracy", "score": 4, "comment": "120s idle watchdog and fallback chain are largely confirmed." },
+    { "dimension": "fix_entry_correctness", "score": 2, "comment": "runtime field is right, proposed agent.model config path is not supported by schema." },
+    { "dimension": "side_effect_assessment", "score": 3, "comment": "Does not fully distinguish provider/model/agent timeout scope." },
+    { "dimension": "completeness", "score": 3, "comment": "Misses schema validation and upstream proxy/stream timeout verification." },
+    { "dimension": "executability", "score": 2, "comment": "Directly adding agent.model.requestTimeoutMs is likely invalid or ineffective." }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "severity": "major",
+      "category": "config_path",
+      "location": "Plan A",
+      "description": "Proposed agent.model.requestTimeoutMs is not accepted by current AgentModelSchema, which is a strict object with only primary and fallbacks.",
+      "evidence": [
+        "~/.npm-global/lib/node_modules/openclaw/dist/zod-schema.agent-runtime-BTWfpsXE.js:14-17: AgentModelSchema allows only primary and fallbacks and is strict.",
+        "/Users/evan/.openclaw/gateways/life/openclaw.json:775-781: bd-eval-reviewer currently uses only primary/fallbacks."
+      ],
+      "recommendation": "Do not put requestTimeoutMs under agent.model. Use models.providers.<id>.timeoutSeconds: 600 or a dedicated reviewer provider."
+    },
+    {
+      "id": "F002",
+      "severity": "major",
+      "category": "fix_entry",
+      "location": "Plan A/C",
+      "description": "requestTimeoutMs is the runtime input to idle watchdog, but provider timeoutSeconds is the supported config path that becomes model.requestTimeoutMs.",
+      "evidence": [
+        "selection-BP0T9R9I.js:13155-13160 passes params.model.requestTimeoutMs into resolveLlmIdleTimeoutMs.",
+        "model-Cp9whgWq.js:560-561 and 774-809 convert providerConfig.timeoutSeconds to requestTimeoutMs.",
+        "runtime-schema-BjT8eJxD.js:593 documents models.providers.*.timeoutSeconds raises LLM idle/stream watchdog ceiling."
+      ],
+      "recommendation": "Use provider timeoutSeconds or a copied dedicated provider for bd-eval-reviewer."
+    },
+    {
+      "id": "F003",
+      "severity": "major",
+      "category": "fallback_scope",
+      "location": "Expected effect",
+      "description": "Increasing idle timeout should reduce the observed 120s idle fallback but cannot eliminate all fallback/restart paths.",
+      "evidence": [
+        "embedded-agent-L9tQiaO-.js:710-720 treats idle/timedOut as assistant timeout failures.",
+        "embedded-agent-L9tQiaO-.js:942-955 throws fallback_model FailoverError.",
+        "embedded-agent-L9tQiaO-.js:3870-3880 shows same-model idle retry is not allowed when fallbackConfigured is true."
+      ],
+      "recommendation": "State expected effect narrowly: eliminate/reduce this class of 120s idle timeout fallbacks; monitor other failover reasons separately."
+    },
+    {
+      "id": "F004",
+      "severity": "minor",
+      "category": "timeout_bounds",
+      "location": "Plan A",
+      "description": "requestTimeoutMs is capped by explicit run timeout or agent default timeout when those are lower.",
+      "evidence": [
+        "selection-BP0T9R9I.js:11141-11148 takes Math.min(modelRequestTimeoutMs, ...timeoutBounds)."
+      ],
+      "recommendation": "Ensure agents.defaults.timeoutSeconds and run-specific timeouts are above 600s."
+    },
+    {
+      "id": "F005",
+      "severity": "minor",
+      "category": "timeout_duration",
+      "location": "600000 ms",
+      "description": "600s is reasonable for large Claude/tool-payload cases but increases hang duration for genuinely stalled requests.",
+      "evidence": [
+        "selection-BP0T9R9I.js:11160-11162: idle watchdog covers stream creation and iterator progress; successful next() resets timer."
+      ],
+      "recommendation": "Start with 600s for 1-3 cases; only increase to ~900s if 600s idle timeouts persist and upstream permits it."
+    },
+    {
+      "id": "F006",
+      "severity": "minor",
+      "category": "upstream_timeout",
+      "location": "Question 5",
+      "description": "newapi provider/proxy/SDK transport may still impose their own request or stream timeouts.",
+      "evidence": [
+        "openclaw.json:316-318 uses remote baseUrl https://new-api.mediportal.com.cn with anthropic-messages.",
+        "anthropic-CMNCM8N0.js:281-285 passes options.timeoutMs to SDK request timeout."
+      ],
+      "recommendation": "Collect model transport debug/provider gateway logs to identify whether future timeouts originate from OpenClaw, SDK, proxy, or upstream model."
+    }
+  ],
+  "direct_answers": {
+    "q1": "Runtime entry yes; proposed agent.model config path no. Use provider timeoutSeconds or dedicated provider.",
+    "q2": "It should solve/reduce observed 120s idle fallback if model starts output within 600s; other fallback paths remain.",
+    "q3": "No valid conflict with agent.model.requestTimeoutMs because that field is not accepted; provider timeoutSeconds becomes model.requestTimeoutMs.",
+    "q4": "600s is reasonable for grey rollout; ensure total run timeout is higher and monitor concurrency/wall time.",
+    "q5": "Yes: newapi gateway, upstream provider, SDK, HTTP proxy/LB, and streaming idle behavior may still timeout independently."
+  },
+  "recommended_fix": "Create a dedicated reviewer provider copied from newapi-anthropic-vip with timeoutSeconds: 600 and point bd-eval-reviewer primary/fallbacks to it; alternatively set timeoutSeconds: 600 on newapi-anthropic-vip globally if the broader side effect is acceptable.",
+  "most_important_recommendation": "Do not add requestTimeoutMs under bd-eval-reviewer.agent.model; set models.providers.<id>.timeoutSeconds: 600 (preferably on a reviewer-only provider)."
+}

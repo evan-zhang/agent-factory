@@ -1,0 +1,52 @@
+{
+  "schema": "cron_manifest.v1",
+  "captured_at": "2026-06-25T17:08:00+08:00",
+  "captured_by": "S6 release pre-flight",
+  "source": "OpenClaw gateway cron action=get (sanitized: event_root path absolute kept as is, sensitive fields not present)",
+  "notes": [
+    "This file is the auditable snapshot of the three production Gateway cron jobs for stock-picking discovery.",
+    "Always regenerate via `cron(action=get)` for each job_id when prompts change; do not hand-edit historical entries.",
+    "All cron jobs are isolated sessionTarget, dry-run only, route to Discord channel 1518968470233022464 (#stock-picking)."
+  ],
+  "jobs": [
+    {
+      "name": "stock-picking-cn-discovery",
+      "job_id": "8ea1b3ea-ec5f-4f36-8690-619ab4561179",
+      "schedule": {"kind": "cron", "expr": "0 9 * * 1-5", "tz": "Asia/Shanghai"},
+      "session_target": "isolated",
+      "wake_mode": "now",
+      "model": "newapi-anthropic-vip/MiniMax-latest-cloud",
+      "timeout_seconds": 900,
+      "delivery": {"mode": "announce", "channel": "discord", "to": "1518968470233022464"},
+      "language_constraint": "强制简体中文",
+      "trade_constraint": "dry-run only, 禁止交易",
+      "prompt_payload": "stock-picking CN discovery cron 触发。按 S5f pilot 协议执行，禁止交易。\n\n【输出语言硬约束】发送到 #stock-picking 频道的报告与摘要必须全部使用简体中文，不准使用英文或中英混杂。只有代码标识符、schema 名、股票代码、URL、变量名可以保留原文。\n\n工作目录：\ncd /Users/evan/.openclaw/gateways/life/state/workspace-life/domains/agent-factory/projects/stock-picking && source .venv/bin/activate\n\n步骤：\n1. 生成研究计划：PYTHONPATH=src/scripts python3 src/scripts/research_protocol.py plan --market CN --universe-file src/config/universe.yaml --universe-ref default --run-date \"$(date +%Y-%m-%d)\"\n2. 对计划里的每个 symbol，使用 web_search 执行 positive_query 和 negative_query。negative_query 必须执行，即使没有负面结果。\n3. 写 research JSON 到 /tmp/stock-picking-research-CN-$(date +%Y-%m-%d).json，格式必须符合 research_protocol.py plan 的 output_template。每个 symbol 必须有 negative_search_performed=true 和 negative_search_query。\n4. 校验：PYTHONPATH=src/scripts python3 src/scripts/research_protocol.py validate /tmp/stock-picking-research-CN-$(date +%Y-%m-%d).json --market CN --universe-file src/config/universe.yaml --universe-ref default\n5. 校验通过后执行：PYTHONPATH=src/scripts python3 src/scripts/discovery_job.py --event-root /Users/evan/.openclaw/gateways/life/state/workspace-life/data/stock-picking/events --registry src/strategies/registry.yaml --custom-refs src/strategies/custom_refs.yaml discovery --caller cron --market CN --strategy-id taroc --strategy-version 1.0.0 --run-mode discovery --timezone Asia/Shanghai --universe-ref default --universe-file src/config/universe.yaml --calendar-source production_calendar --market-data-source longbridge_quote --candidate-limit 3 --research-file /tmp/stock-picking-research-CN-$(date +%Y-%m-%d).json --idempotency-key \"stock-picking:CN:discovery:taroc:1.0.0:$(date +%Y-%m-%d)\"\n6. 如果第 5 步输出不是 HEARTBEAT_OK，继续执行：PYTHONPATH=src/scripts python3 src/scripts/pilot_analyzer.py --event-root /Users/evan/.openclaw/gateways/life/state/workspace-life/data/stock-picking/events --market CN --universe-file src/config/universe.yaml --universe-ref default --candidate-limit 3\n\n把 discovery_job.py 输出和 pilot_analyzer.py 输出一起整理为中文报告后发到 #stock-picking；如果第 5 步输出 HEARTBEAT_OK，只发 HEARTBEAT_OK。不要触发交易。"
+    },
+    {
+      "name": "stock-picking-hk-discovery",
+      "job_id": "bdc05e89-2b70-4783-8dd7-92a88ff7d773",
+      "schedule": {"kind": "cron", "expr": "8 9 * * 1-5", "tz": "Asia/Shanghai"},
+      "session_target": "isolated",
+      "wake_mode": "now",
+      "model": "newapi-anthropic-vip/MiniMax-latest-cloud",
+      "timeout_seconds": 900,
+      "delivery": {"mode": "announce", "channel": "discord", "to": "1518968470233022464"},
+      "language_constraint": "强制简体中文",
+      "trade_constraint": "dry-run only, 禁止交易",
+      "prompt_payload": "stock-picking HK discovery cron 触发。按 S5f pilot 协议执行，禁止交易。\n\n【输出语言硬约束】发送到 #stock-picking 频道的报告与摘要必须全部使用简体中文，不准使用英文或中英混杂。只有代码标识符、schema 名、股票代码、URL、变量名可以保留原文。\n\n工作目录：\ncd /Users/evan/.openclaw/gateways/life/state/workspace-life/domains/agent-factory/projects/stock-picking && source .venv/bin/activate\n\n步骤：\n1. 生成研究计划：PYTHONPATH=src/scripts python3 src/scripts/research_protocol.py plan --market HK --universe-file src/config/universe.yaml --universe-ref default --run-date \"$(date +%Y-%m-%d)\"\n2. 对计划里的每个 symbol，使用 web_search 执行 positive_query 和 negative_query。negative_query 必须执行，即使没有负面结果。\n3. 写 research JSON 到 /tmp/stock-picking-research-HK-$(date +%Y-%m-%d).json，格式必须符合 research_protocol.py plan 的 output_template。每个 symbol 必须有 negative_search_performed=true 和 negative_search_query。\n4. 校验：PYTHONPATH=src/scripts python3 src/scripts/research_protocol.py validate /tmp/stock-picking-research-HK-$(date +%Y-%m-%d).json --market HK --universe-file src/config/universe.yaml --universe-ref default\n5. 校验通过后执行：PYTHONPATH=src/scripts python3 src/scripts/discovery_job.py --event-root /Users/evan/.openclaw/gateways/life/state/workspace-life/data/stock-picking/events --registry src/strategies/registry.yaml --custom-refs src/strategies/custom_refs.yaml discovery --caller cron --market HK --strategy-id taroc --strategy-version 1.0.0 --run-mode discovery --timezone Asia/Hong_Kong --universe-ref default --universe-file src/config/universe.yaml --calendar-source production_calendar --market-data-source longbridge_quote --candidate-limit 3 --research-file /tmp/stock-picking-research-HK-$(date +%Y-%m-%d).json --idempotency-key \"stock-picking:HK:discovery:taroc:1.0.0:$(date +%Y-%m-%d)\"\n6. 如果第 5 步输出不是 HEARTBEAT_OK，继续执行：PYTHONPATH=src/scripts python3 src/scripts/pilot_analyzer.py --event-root /Users/evan/.openclaw/gateways/life/state/workspace-life/data/stock-picking/events --market HK --universe-file src/config/universe.yaml --universe-ref default --candidate-limit 3\n\n把 discovery_job.py 输出和 pilot_analyzer.py 输出一起整理为中文报告后发到 #stock-picking；如果第 5 步输出 HEARTBEAT_OK，只发 HEARTBEAT_OK。不要触发交易。"
+    },
+    {
+      "name": "stock-picking-us-discovery",
+      "job_id": "c115530a-d14d-40b5-b8fb-597193e41397",
+      "schedule": {"kind": "cron", "expr": "30 21 * * 1-5", "tz": "Asia/Shanghai"},
+      "session_target": "isolated",
+      "wake_mode": "now",
+      "model": "newapi-anthropic-vip/MiniMax-latest-cloud",
+      "timeout_seconds": 900,
+      "delivery": {"mode": "announce", "channel": "discord", "to": "1518968470233022464"},
+      "language_constraint": "强制简体中文",
+      "trade_constraint": "dry-run only, 禁止交易",
+      "prompt_payload": "stock-picking US discovery cron 触发。按 S5f pilot 协议执行，禁止交易。\n\n【输出语言硬约束】发送到 #stock-picking 频道的报告与摘要必须全部使用简体中文，不准使用英文或中英混杂。只有代码标识符、schema 名、股票代码、URL、变量名可以保留原文。\n\n工作目录：\ncd /Users/evan/.openclaw/gateways/life/state/workspace-life/domains/agent-factory/projects/stock-picking && source .venv/bin/activate\n\n步骤：\n1. 生成研究计划：PYTHONPATH=src/scripts python3 src/scripts/research_protocol.py plan --market US --universe-file src/config/universe.yaml --universe-ref default --run-date \"$(date +%Y-%m-%d)\"\n2. 对计划里的每个 symbol，使用 web_search 执行 positive_query 和 negative_query。negative_query 必须执行，即使没有负面结果。\n3. 写 research JSON 到 /tmp/stock-picking-research-US-$(date +%Y-%m-%d).json，格式必须符合 research_protocol.py plan 的 output_template。每个 symbol 必须有 negative_search_performed=true 和 negative_search_query。\n4. 校验：PYTHONPATH=src/scripts python3 src/scripts/research_protocol.py validate /tmp/stock-picking-research-US-$(date +%Y-%m-%d).json --market US --universe-file src/config/universe.yaml --universe-ref default\n5. 校验通过后执行：PYTHONPATH=src/scripts python3 src/scripts/discovery_job.py --event-root /Users/evan/.openclaw/gateways/life/state/workspace-life/data/stock-picking/events --registry src/strategies/registry.yaml --custom-refs src/strategies/custom_refs.yaml discovery --caller cron --market US --strategy-id taroc --strategy-version 1.0.0 --run-mode discovery --timezone America/New_York --universe-ref default --universe-file src/config/universe.yaml --calendar-source production_calendar --market-data-source longbridge_quote --candidate-limit 3 --research-file /tmp/stock-picking-research-US-$(date +%Y-%m-%d).json --idempotency-key \"stock-picking:US:discovery:taroc:1.0.0:$(date +%Y-%m-%d)\"\n6. 如果第 5 步输出不是 HEARTBEAT_OK，继续执行：PYTHONPATH=src/scripts python3 src/scripts/pilot_analyzer.py --event-root /Users/evan/.openclaw/gateways/life/state/workspace-life/data/stock-picking/events --market US --universe-file src/config/universe.yaml --universe-ref default --candidate-limit 3\n\n把 discovery_job.py 输出和 pilot_analyzer.py 输出一起整理为中文报告后发到 #stock-picking；如果第 5 步输出 HEARTBEAT_OK，只发 HEARTBEAT_OK。不要触发交易。"
+    }
+  ]
+}

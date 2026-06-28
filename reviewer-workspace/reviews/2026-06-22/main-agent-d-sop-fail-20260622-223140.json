@@ -1,0 +1,59 @@
+{
+  "verdict": "FAIL",
+  "confidence": 0.86,
+  "review_type": "D",
+  "domain": "sop_compliance",
+  "object": {
+    "project_id": "2605211",
+    "name": "Ralph Loop 持续编程协议",
+    "path": "/Users/evan/.openclaw/gateways/life/state/workspace-life/domains/agent-factory/projects/2605211"
+  },
+  "review_time": "2026-06-22",
+  "model": "gsykj-anthropic/claude-sonnet-4-6",
+  "scores": [
+    {"dimension": "设计档案完整性（S8）", "score": 1, "summary": "未发现 design/ 目录及四个强制档案文件。"},
+    {"dimension": "版本管理一致性", "score": 2, "summary": "VERSION=3.0.0，version.json/SKILL metadata=3.1.0，项目 state=1.0.0。"},
+    {"dimension": "SKILL.md 规范合规", "score": 2, "summary": "449 行超预算；frontmatter 含 metadata；References 过多。"},
+    {"dimension": "项目状态（state.json）合规", "score": 2, "summary": "acceptance completed 缺 D 类评审与用户验收证据。"},
+    {"dimension": "发布归档（S6）", "score": 1, "summary": "未发现 releases/、zip 发布包、specs/。"},
+    {"dimension": "Scripts 质量", "score": 3, "summary": "语法通过，但 ralph-loop.sh 复杂且有 git 副作用风险。"},
+    {"dimension": "PROTOCOL.md", "score": 4, "summary": "内容质量较高，适合作为核心 reference。"}
+  ],
+  "findings": [
+    {"id": "F001", "severity": "critical", "category": "S8 归档缺失", "location": "项目根与 ralph/", "description": "未发现 SOP 要求的 design/ 档案集。", "evidence": "find -name design 无输出；SOP 要求 DESIGN.md、DISCUSSION-LOG.md、LEARNING-LOOP.md、SHARE-LOG.jsonl。", "recommendation": "新建 ralph/design/ 并补齐四个文件。"},
+    {"id": "F002", "severity": "critical", "category": "S6 发布缺失", "location": "项目目录", "description": "未发现 releases/ 目录或 zip 发布包。", "evidence": "find -name releases -o -name '*.zip' 无输出。", "recommendation": "生成 releases/v3.1.0-<timestamp>.zip 并归档发布说明。"},
+    {"id": "F003", "severity": "critical", "category": "S7 验收证据缺失", "location": "state.json / 项目文件", "description": "acceptance 标为 completed，但未发现 D 类最终验收、Validator PASS 或用户验收记录。", "evidence": "state.json steps.acceptance=completed；项目内未发现 reviews/、validator、acceptance 证据。", "recommendation": "补齐 Validator PASS + D 类评审 + 用户确认，或回退 acceptance 状态。"},
+    {"id": "F004", "severity": "critical", "category": "版本不一致", "location": "VERSION / version.json / SKILL.md / state.json", "description": "四处版本号不一致且缺少合理说明。", "evidence": "VERSION=3.0.0；version.json=3.1.0；SKILL metadata.version=3.1.0；state.json version=1.0.0。", "recommendation": "统一发布版本并澄清 state.json 版本语义。"},
+    {"id": "F005", "severity": "major", "category": "SKILL frontmatter 不合规", "location": "SKILL.md:1-13", "description": "frontmatter 含 metadata.version/author/reference。", "evidence": "SKILL.md 第 9-12 行含 metadata 块；SOP 要求 frontmatter 只放平台支持字段。", "recommendation": "移除 metadata，版本写入 VERSION 或正文。"},
+    {"id": "F006", "severity": "major", "category": "SKILL.md 过长", "location": "SKILL.md", "description": "SKILL.md 共 449 行，超过 SOP 80-200 行建议。", "evidence": "wc -l SKILL.md = 449。", "recommendation": "压缩正文，将细节下沉到 references。"},
+    {"id": "F007", "severity": "major", "category": "References 过多", "location": "ralph/references", "description": "references 下存在 11 个文件，超过核心 references ≤ 3 的建议。", "evidence": "find 显示 references 包含 11 个文件。", "recommendation": "核心 reference 限缩到 3 个以内，历史方案迁至 specs/docs/archive。"},
+    {"id": "F008", "severity": "major", "category": "发布/规格存档缺失", "location": "项目目录", "description": "未发现 specs/ 目录，历史方案仍在 references。", "evidence": "find -name specs 无输出；references/v3-proposal*.md 是历史方案资料。", "recommendation": "创建 specs/ 或 docs/archive/ 并迁移历史资料。"},
+    {"id": "F009", "severity": "major", "category": "脚本副作用风险", "location": "scripts/ralph-loop.sh", "description": "720 行脚本包含自动 stash、reset --hard、clean -fd、commit 和 sleep wait。", "evidence": "wc -l ralph-loop.sh = 720；脚本存在 git reset --hard HEAD 与 git clean -fd。", "recommendation": "补充风险说明、dry-run/工作树隔离和 destructive 操作保护。"},
+    {"id": "F010", "severity": "major", "category": "验证模板占位", "location": "references/verify-template.sh", "description": "默认 README.md/package.json 示例可能被误用。", "evidence": "verify-template.sh 含 placeholder checks passed。", "recommendation": "明确模板必须替换占位检查后才能用于验收。"},
+    {"id": "F011", "severity": "minor", "category": "description 质量", "location": "SKILL.md:3-8", "description": "description 非动词开头，触发词与排除项未显式结构化。", "evidence": "description 以 Ralph Loop 开头，未显式列出排除项。", "recommendation": "改为动词开头并列出触发词与排除项。"},
+    {"id": "F012", "severity": "observation", "category": "PROTOCOL.md", "location": "PROTOCOL.md", "description": "PROTOCOL.md 内容质量较高，适合作为核心协议 reference。", "evidence": "覆盖文件权限、入口、取任务、执行、验证、比较、results、state、反模式、停止条件。", "recommendation": "将其纳入 References 索引，并继续从 SKILL.md 抽离循环细节。"}
+  ],
+  "critical": [
+    "补齐 S8 design 档案四件套。",
+    "补齐 S6 releases/ zip 发布包与 specs/archive。",
+    "统一 VERSION、version.json、SKILL/frontmatter、state.json 版本语义。",
+    "补齐 S7 Validator PASS、D 类综合评审、用户验收记录。",
+    "移除 SKILL.md frontmatter metadata。"
+  ],
+  "recommended": [
+    "将 SKILL.md 压缩到 150-200 行内。",
+    "核心 references 控制在 3 个以内。",
+    "为 ralph-loop.sh 增加 destructive git 操作风险说明与保护。",
+    "强化 verify-template.sh 占位警告。",
+    "description 改为动词开头，显式触发词与排除项。"
+  ],
+  "observations": [
+    "PROTOCOL.md 质量较高，建议作为正式核心 reference。",
+    "v3 proposal 与 reviewed proposal 可用于补写设计档案。",
+    "脚本语法检查通过，未发现明显凭证泄露。"
+  ],
+  "archive": {
+    "markdown": "reviews/2026-06-22/main-agent-d-sop-fail-20260622-223140.md",
+    "json": "reviews/2026-06-22/main-agent-d-sop-fail-20260622-223140.json"
+  }
+}

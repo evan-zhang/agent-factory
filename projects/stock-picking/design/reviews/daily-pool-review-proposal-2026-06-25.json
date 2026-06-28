@@ -1,0 +1,188 @@
+{
+  "schema": "ReviewReport.v1",
+  "review_id": "daily-pool-review-proposal-2026-06-25",
+  "review_time": "2026-06-25T17:52:00+08:00",
+  "reviewer": "factory-reviewer",
+  "model": "gsykj-anthropic/claude-sonnet-4-6",
+  "domain": "design_audit",
+  "mode": "full_review",
+  "risk_level": "medium",
+  "object": {
+    "project": "stock-picking",
+    "scope": "Design proposal for converting 4-week observation from standalone weekly-review to daily cron integrated pool review step",
+    "files_reviewed": [
+      "design/proposal-daily-pool-review.md",
+      "src/flows/weekly-review.md",
+      "src/scripts/discovery_job.py",
+      "src/scripts/pilot_analyzer.py",
+      "src/references/gateway-cron.md",
+      "src/references/data-schema.md",
+      "src/flows/target-pool.md",
+      "PLAN.md"
+    ]
+  },
+  "verdict": "warn",
+  "confidence": 0.82,
+  "summary": "The proposal is directionally sound and does not introduce an auto-trade or auto-removal path: daily rolling review is a better operational fit than an isolated weekly process, and keeping pool_reviewer.py as a separate module is the right boundary if it remains append-only and suggestion-only. However, the design is not implementation-ready. It must close schema lineage/evidence mapping, duplicate-event idempotency, cron allowlist/readiness integration, bounded runtime/search budgets, and human-decision event semantics before coding.",
+  "dimension_scores": [
+    {
+      "dimension": "Schema compatibility",
+      "score": 3,
+      "assessment": "Mostly compatible at enum level, but missing required field lineage and evidence_ref generation for tracking_event.v1. Reading target pool from CSV projection conflicts with the event-store source-of-truth direction unless explicitly treated as compatibility fallback."
+    },
+    {
+      "dimension": "Architecture soundness",
+      "score": 4,
+      "assessment": "Daily integration is appropriate; separate pool_reviewer.py is preferable to embedding review logic in discovery_job.py. The orchestration boundary with Gateway cron and pilot_analyzer needs to be made explicit."
+    },
+    {
+      "dimension": "Threshold rationale",
+      "score": 3,
+      "assessment": "W3 review / W6 escalation is reasonable for a dry-run rolling pool, but calendar-day vs trading-session semantics and strategy horizon exceptions are not specified."
+    },
+    {
+      "dimension": "Operational risk",
+      "score": 2,
+      "assessment": "Timeout, rate limit, retries, and event-store bloat are recognized but not controlled by concrete caps, idempotency keys, or degradation behavior."
+    },
+    {
+      "dimension": "Safety",
+      "score": 4,
+      "assessment": "The proposal states tracking_event only writes suggestions and target-pool writes remain through existing flow; no broker-affecting path is added. Wording around removal should be tightened to 'suggest removal only'."
+    },
+    {
+      "dimension": "Completeness",
+      "score": 3,
+      "assessment": "Missing CLI contract, output schema, review report rendering, tests, cron readiness update, max-item policy, idempotency, and human-decision request canonicalization."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "severity": "major",
+      "category": "schema_compatibility",
+      "location": "design/proposal-daily-pool-review.md:21-26; src/references/data-schema.md:310-328; src/references/data-schema.md:332-356",
+      "description": "The proposed pool review reads active target_pool items and emits tracking_event.v1, but it does not specify how required tracking_event fields are populated from target_pool_item.v1 or candidate_record.v1, nor how new web/quote evidence becomes valid evidence_ref.v1 records. tracking_event.v1 requires candidate_id, origin_draft_id, request_id, correlation_id, week_id, event_type, actor, suggested_reason, supporting_evidence, state_transition, and created_at. target_pool_item.v1 carries candidate_id/origin_draft_id/request/correlation and stock metadata, but does not carry the aggregate thesis or prior claim set needed to evaluate thesis break. The proposal also says web_search will be performed, but does not state that evidence_ref.v1 and claim.v1 records will be written before their ids are referenced in supporting_evidence.",
+      "evidence": [
+        "Proposal step: read target pool active items, fetch quote/web_search, generate tracking_event.v1 (design/proposal-daily-pool-review.md:21-26).",
+        "tracking_event.v1 required fields and supporting_evidence contract are defined in data-schema (src/references/data-schema.md:310-328).",
+        "target_pool_item.v1 has identifiers and pricing fields but no thesis/claim fields (src/references/data-schema.md:332-356)."
+      ],
+      "recommendation": "Define an explicit lineage join: target_pool_item -> candidate_record -> origin draft/evidence/claims. pool_reviewer should write or reuse evidence_ref.v1 for quote and web evidence, optionally write claim.v1 for thesis update/break assertions, then write tracking_event.v1 referencing those evidence ids. Add validator fixtures for a pool-review tracking_event and a negative case with missing supporting_evidence."
+    },
+    {
+      "id": "F002",
+      "severity": "major",
+      "category": "idempotency_event_bloat",
+      "location": "design/proposal-daily-pool-review.md:23-26,66-79; src/scripts/event_store.py:20-33; src/references/gateway-cron.md:186-194",
+      "description": "Daily pool review can append duplicate tracking_event.v1 records on Gateway retries or intentional re-runs because the event store currently provides idempotency only for atomic_request.v1 and validation_event.v1, not tracking_event.v1. The proposal asks whether daily tracking_event generation will bloat the event store, but does not define a deterministic review key, duplicate suppression rule, or cadence cap. This is especially risky because cron retry policy is external and existing discovery idempotency does not cover a separate pool_reviewer.py command.",
+      "evidence": [
+        "Proposal says every W3+ item generates tracking_event.v1 during daily review (design/proposal-daily-pool-review.md:23-26).",
+        "Proposal lists event bloat as an open question without mitigation (design/proposal-daily-pool-review.md:73-79).",
+        "JsonlEventStore idempotency only handles atomic_request.v1 and validation_event.v1 (src/scripts/event_store.py:20-33).",
+        "Gateway discovery idempotency is scoped to discovery atomic_request keys (src/references/gateway-cron.md:186-194)."
+      ],
+      "recommendation": "Add pool-review idempotency before implementation. Options: add an extensions.review_key such as stock-picking:<market>:pool_review:<candidate_id>:<review_date_or_week>:<threshold_bucket> and teach EventStore to dedupe tracking_event.v1, or make pool_reviewer skip when an equivalent weekly_review/remove_suggested event already exists for candidate_id + week_id + event_type. Prefer weekly cadence per item after the first W3 review, with daily checks only for items already in W4+ decision-required or quote/risk exception states."
+    },
+    {
+      "id": "F003",
+      "severity": "major",
+      "category": "cron_contract",
+      "location": "design/proposal-daily-pool-review.md:45-57; src/references/gateway-cron.md:46-98; src/scripts/discovery_job.py:1-22",
+      "description": "The proposed cron payload adds a new pool_reviewer.py command, but the current Gateway cron contract has an explicit command/argument allowlist and readiness model centered on research_protocol, discovery_job, and pilot_analyzer. The proposal does not update the allowlist, parameter source constraints, cron_readiness checks, heartbeat behavior, nonzero failure handling, or whether pool review runs on calendar_skip days. It also says discovery_job.py will add the step after pilot analysis, but discovery_job.py does not run pilot_analyzer; pilot analysis is a separate Gateway step today.",
+      "evidence": [
+        "Proposal adds a standalone pool_reviewer.py command with new flags (design/proposal-daily-pool-review.md:45-57).",
+        "Current trigger contract only includes research_protocol, discovery_job.py, then pilot_analyzer.py (src/references/gateway-cron.md:46-90).",
+        "Current cron callers must use an explicit argument allowlist that does not include pool_reviewer.py or its flags (src/references/gateway-cron.md:92-98).",
+        "discovery_job.py only runs run_discovery, prints result, and renders a report; it does not invoke pilot_analyzer (src/scripts/discovery_job.py:1-22)."
+      ],
+      "recommendation": "Keep pool_reviewer.py as a separate script, but define it as a first-class Gateway step after pilot_analyzer in gateway-cron.md. Add an explicit allowlist for --event-root, --market, --universe-file, --universe-ref, --review-threshold-weeks, --remove-threshold-weeks, --max-items, --market-data-timeout, --search-timeout, and --dry-run/--write-events if needed. Specify skip behavior: do not run pool review when discovery_job returns HEARTBEAT_OK for market closure unless an operator explicitly requests a tracking-only run. Update cron_readiness.py and tests to cover the new command and forbidden broker/action flags."
+    },
+    {
+      "id": "F004",
+      "severity": "major",
+      "category": "operational_risk",
+      "location": "design/proposal-daily-pool-review.md:23-31,66-79; src/references/gateway-cron.md:39-41",
+      "description": "The design acknowledges timeout and web_search rate-limit risk but does not set hard runtime budgets or item/search caps. With CN/HK/US schedules close together and discovery already performing positive and negative research, adding per-item positive+negative searches for every W3+ item can exceed cron windows and rate limits. The absence of --max-items or degradation behavior makes this unsafe to add to production cron as written.",
+      "evidence": [
+        "For each W3+ item, the proposal performs latest quote plus positive and negative web_search (design/proposal-daily-pool-review.md:23-26).",
+        "Risks list cron timeout and web_search rate limit but only as acknowledged risks, not controls (design/proposal-daily-pool-review.md:66-79).",
+        "Existing schedules for CN/HK/US are relatively close and already staggered to reduce Longbridge rate-limit collisions (src/references/gateway-cron.md:39-41)."
+      ],
+      "recommendation": "Require operational caps in the design: default --max-items 3 to 5 per run, per-item timeout, global timeout, max web_search calls, and deterministic prioritization (oldest W4+ decision-required first, then W3 first-review). Use cached or recent evidence where possible. On budget exhaustion, write a summary/warning event or report section rather than failing the whole discovery cron."
+    },
+    {
+      "id": "F005",
+      "severity": "minor",
+      "category": "threshold_rationale",
+      "location": "design/proposal-daily-pool-review.md:21-31; src/flows/weekly-review.md:23-27; src/references/data-schema.md:185-187",
+      "description": "W3 review and W6 removal escalation are plausible, but the proposal does not define whether age is calendar days, trading sessions, or ISO weeks in market timezone. It also applies W6 not-upgraded removal uniformly, despite draft_candidates.v1 supporting different tracking_horizon kinds and default_window_sessions. This can over-penalize quarterly or structural theses, especially across CN/HK/US holiday calendars.",
+      "evidence": [
+        "Proposal computes age from created_date and treats W3 as >=21 days (design/proposal-daily-pool-review.md:21-23).",
+        "Existing weekly review groups W2-W3 as continued tracking and W4+ as requiring recommendation/reason (src/flows/weekly-review.md:23-27).",
+        "draft_candidates.v1 contains tracking_horizon.kind and default_window_sessions (src/references/data-schema.md:185-187)."
+      ],
+      "recommendation": "Define age using market-local calendar days for reporting and trading sessions for threshold logic, or explicitly justify calendar days. Carry tracking_horizon/default_window_sessions from candidate/origin draft into review policy: short_event may use W3/W6, quarterly and structural theses should require stronger thesis-break evidence before W6 remove_suggested."
+    },
+    {
+      "id": "F006",
+      "severity": "minor",
+      "category": "human_decision_and_notification",
+      "location": "design/proposal-daily-pool-review.md:27-31,59-64; src/flows/weekly-review.md:37-39; src/references/data-schema.md:402-420",
+      "description": "The proposal says W4+ suggested removals are pushed as human decision requests, but it does not define the canonical schema record behind that request. weekly-review.md requires notifications to be derived from generated event summaries and not bypass schema. tracking_event.v1 can express remove_suggested, and risk_event.v1 can express request_human_decision with execution_allowed=false, but the proposal does not choose one or define rendering rules.",
+      "evidence": [
+        "Proposal says W4+ suggested removals push human decision request to channel (design/proposal-daily-pool-review.md:27-31).",
+        "Proposal states tracking_event writes suggestions only and does not auto-remove (design/proposal-daily-pool-review.md:59-64).",
+        "weekly-review.md requires notification content to come from generated event summaries and not bypass schema (src/flows/weekly-review.md:37-39).",
+        "risk_event.v1 supports recommended_action=request_human_decision and execution_allowed=false (src/references/data-schema.md:402-420)."
+      ],
+      "recommendation": "Specify that channel requests are rendered only from persisted tracking_event.v1 remove_suggested records, and optionally a risk_event.v1 with source=strategy_tracking, event_type=thesis_broken, recommended_action=request_human_decision, execution_allowed=false for critical thesis breaks. Do not introduce an ad-hoc notification-only decision object."
+    },
+    {
+      "id": "F007",
+      "severity": "nit",
+      "category": "wording_safety",
+      "location": "design/proposal-daily-pool-review.md:7,27-31,59-64",
+      "description": "The background says the system will decide to keep or remove, while the invariant section later correctly says tracking_event only writes suggestions and does not auto-remove. The earlier wording can be misread as authorization for automatic removal.",
+      "evidence": [
+        "Background wording: decide keep or remove (design/proposal-daily-pool-review.md:7).",
+        "Later invariant: tracking_event only writes suggestions and does not auto-remove (design/proposal-daily-pool-review.md:59-64)."
+      ],
+      "recommendation": "Change all decision wording to 'generate keep/watch/remove_suggested recommendations' and explicitly state that status changes to removed/rejected/expired require an existing human-authorized flow."
+    }
+  ],
+  "safety_assessment": {
+    "auto_trade_path_introduced": false,
+    "auto_removal_path_introduced": false,
+    "notes": "No broker-affecting path is proposed. The proposal explicitly keeps execution guard blocking real trading and says tracking_event only writes suggestions. Implementation must preserve candidate_record removed actor=human and target pool status mutation must not be performed by pool_reviewer."
+  },
+  "architecture_assessment": {
+    "daily_cron_integration": "recommended_with_controls",
+    "separate_pool_reviewer_script": "recommended",
+    "rationale": "Pool review is operationally tied to daily discovery context but has different responsibilities from discovery and pilot quality analysis. A separate script preserves boundaries and testability while allowing Gateway to orchestrate it after discovery/pilot analysis."
+  },
+  "threshold_assessment": {
+    "w3_review": "reasonable_as_first_review_threshold",
+    "w6_remove_escalation": "reasonable_only_as_human_escalation_not_auto_remove",
+    "required_adjustments": [
+      "Specify calendar-day vs trading-session semantics per market.",
+      "Use tracking_horizon/default_window_sessions to avoid over-aggressive removal suggestions for quarterly or structural theses.",
+      "Do not emit daily duplicate weekly_review events for unchanged W3+ items."
+    ]
+  },
+  "required_before_implementation": [
+    "Define pool_reviewer.py CLI contract, output JSON/report format, and exact Gateway cron position.",
+    "Add tracking_event idempotency or duplicate-skip logic.",
+    "Add --max-items, timeout, and web_search budget controls.",
+    "Define evidence_ref/claim creation or reuse for quote and web_search outputs.",
+    "Define human-decision request rendering from persisted tracking_event/risk_event records.",
+    "Update gateway-cron.md allowlist, cron_readiness.py, and tests.",
+    "Clarify threshold semantics across CN/HK/US market calendars and strategy horizons."
+  ],
+  "positive_notes": [
+    "Integrating review into the daily rolling cron better matches the user's dynamic observation requirement than a standalone weekly-only process.",
+    "Keeping pilot_analyzer unchanged is a clean separation: it remains a discovery-output quality gate, not a lifecycle tracker.",
+    "The proposal preserves dry-run/suggestion-only posture and does not propose broker calls or automatic target-pool mutation."
+  ],
+  "final_recommendation": "Proceed to revise the proposal, not to code. After addressing F001-F004, the design should be safe to implement behind tests and dry-run cron gating."
+}

@@ -1,0 +1,115 @@
+{
+  "review_id": "GRV-battle-round2-stock-picking-2026-06-24",
+  "reviewer": "factory-reviewer",
+  "model": "newapi-openai/MiniMax-M3",
+  "review_mode": "battle",
+  "round": 2,
+  "reviewed_at": "2026-06-24",
+  "domain": "stock-picking",
+  "type": "B",
+  "subjects": [
+    {
+      "path": "/Users/evan/.openclaw/gateways/life/state/workspace-life/domains/agent-factory/projects/stock-picking/REQ-01.md",
+      "kind": "requirements",
+      "version": "讨论基线 2026-06-23"
+    },
+    {
+      "path": "/Users/evan/.openclaw/gateways/life/state/workspace-life/domains/agent-factory/projects/stock-picking/design/GRV.md",
+      "kind": "grv",
+      "version": "Draft for Battle v2"
+    }
+  ],
+  "verdict": "warn",
+  "confidence": 0.88,
+  "previous_round_verdict": "warn",
+  "prior_findings_absorption": {
+    "B001": "absorbed",
+    "M001": "absorbed",
+    "M002": "absorbed",
+    "M003": "absorbed",
+    "M004": "absorbed",
+    "M005": "absorbed"
+  },
+  "dimensions": [
+    { "name": "B001 absorption", "score": 5, "comment": "24 finding 全部 absorbed，open=0" },
+    { "name": "M001 absorption", "score": 5, "comment": "R1-R6 全 P0/P1；M4a/M4b 拆分清晰" },
+    { "name": "M002 absorption", "score": 5, "comment": "8 项 guard 骨架 + 5 条拒绝用例齐全" },
+    { "name": "M003 absorption", "score": 5, "comment": "custom_ref 白名单 / 双冻结 / Chokepoint exit criteria 全部命中" },
+    { "name": "M004 absorption", "score": 5, "comment": "6 条风险全部以真正缓解重写" },
+    { "name": "M005 absorption", "score": 5, "comment": "M3.5 闸门在 V/M/R 5 处冗余提及" },
+    { "name": "cross_doc_consistency", "score": 4, "comment": "REQ-01 与 GRV 关键约束一致" },
+    { "name": "S3_readiness", "score": 4, "comment": "GRV 收敛；M3.5 闸门机制到位" }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "severity": "minor",
+      "category": "边界模糊",
+      "location": "design/GRV.md L98 + R3 验收",
+      "description": "Chokepoint exit criteria 的逻辑连接（AND/OR）与'重大 thesis break'判定口径未明确",
+      "evidence": "GRV L98 与 REQ-01 Node 4 段",
+      "recommendation": "S3 在 DESIGN.md 中明确为 AND，并定义 thesis_broken 的判定口径"
+    },
+    {
+      "id": "F002",
+      "severity": "minor",
+      "category": "隐式漂移风险",
+      "location": "design/GRV.md L95 + REQ-01 Node 2 验收",
+      "description": "custom_ref 白名单的存放位置、加载时机、变更审计路径未定",
+      "evidence": "GRV L95 custom_ref 描述",
+      "recommendation": "S3 registry 设计中明确白名单存放与变更审计"
+    },
+    {
+      "id": "I001",
+      "severity": "info",
+      "category": "强化建议",
+      "location": "design/GRV.md R5 验收",
+      "description": "futu_tool.py buy 修复属于 S4，但验收缺少可观测信号",
+      "evidence": "R5 L142-143",
+      "recommendation": "S5 验收加一条：dry_run=false 真实 buy 路径下 broker API 必须经 guard 中转、可被 audit 反查"
+    },
+    {
+      "id": "I002",
+      "severity": "info",
+      "category": "强化建议",
+      "location": "design/GRV.md R4a 验收",
+      "description": "validation 幂等键 (draft_id, validation_run_id, signal_date) 中 signal_date 可能在 Node 1 重跑时变化",
+      "evidence": "R4a + REQ-01 Node 6",
+      "recommendation": "S3 data-schema 补充：幂等键应包含 calendar_checked_at 或 run_id"
+    }
+  ],
+  "blockers": [],
+  "majors": [],
+  "minors": ["F001", "F002"],
+  "info": ["I001", "I002"],
+  "cross_doc_consistency_check": {
+    "atomic_entry": "consistent",
+    "trading_day": "consistent",
+    "strategy_boundary": "consistent",
+    "chokepoint_limits": "consistent",
+    "approval_gate": "consistent",
+    "dry_run_default": "consistent",
+    "evidence_two_layer": "consistent",
+    "csv_migration": "consistent",
+    "confidence_aggregation": "consistent"
+  },
+  "ralph_loop_readiness": {
+    "ready_for_s3": true,
+    "ready_for_ralph_loop": false,
+    "blockers_for_ralph_loop": [
+      "design/DESIGN.md 缺失",
+      "data-schema.md 缺失",
+      "registry.yaml 与 validator 设计缺失",
+      "execution-guard skeleton plan 缺失",
+      "M3.5 reviewer 闸门未通过"
+    ]
+  },
+  "top_recommendation": "进入 S3 时把 registry_snapshot 的'先读后选'原子性保证从抽象约束落到具体实现方式（事务/copy-on-write/逻辑约束）",
+  "next_actions": [
+    "编排者：启动 S3 设计任务，把 F001/F002 写进 DESIGN.md 与 data-schema.md 的 Acceptance",
+    "S3 阶段：完成 design/DESIGN.md、src/references/data-schema.md、src/strategies/registry.yaml、execution-guard 最小骨架 plan",
+    "M3.5 闸门：S3 完成后调用 factory-reviewer 做闸门审查",
+    "M4a：Ralph Loop 第一轮先做安全/验证底座（schema validator / registry validator / execution-guard skeleton / approval-gate skeleton / migration scaffold）"
+  ],
+  "archive_path": "/Users/evan/.openclaw/gateways/life/state/workspace-life/domains/agent-factory/projects/stock-picking/design/reviews/GRV-battle-round2-review-2026-06-24.md"
+}

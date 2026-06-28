@@ -1,0 +1,42 @@
+# Open Web Search Provider Configuration
+# Uses open-websearch MCP server (no API key required)
+# Backed by DuckDuckGo, Bing, Brave - no API key required
+name: open_websearch
+display_name: "Open Web Search"
+type: mcp
+enabled: true
+
+# MCP 配置
+mcp_server: open-websearch
+mcp_tool_name: search
+
+# 参数映射（将统一参数名映射到 open-websearch 特定参数名）
+call:
+  parameters:
+    query:
+      source: query
+      type: string
+    count:
+      source: num_results
+      type: integer
+
+  # 结果字段映射（将 open-websearch 响应字段映射到统一字段名）
+  # open-websearch 返回: {results: [{title, url, content, publishedDate}]}
+  result_mapping:
+    title: "title"
+    url: "url"
+    snippet: "content"              # open-websearch 用 content
+    published_date: "publishedDate" # open-websearch 用 publishedDate
+    score: ~                        # open-websearch 不提供排序分
+
+# 配额管理
+quota_limit: 60
+quota_window: 60
+
+# 超时设置
+timeout: 30
+
+# 元数据
+metadata:
+  description: "Open Web Search (DuckDuckGo/Bing/Brave, no API key required)"
+  website: "https://github.com/nicholasgriffintn/open-websearch"

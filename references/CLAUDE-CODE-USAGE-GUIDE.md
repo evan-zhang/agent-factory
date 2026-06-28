@@ -210,7 +210,7 @@ exec pty:true background:true command:"codex exec --dangerously-bypass-approvals
 
 ### 示例 4：Codex 写文件到目标目录
 ```bash
-exec pty:true background:true command:"codex exec -C /Users/evan/.openclaw/gateways/life/domains/agent-factory --dangerously-bypass-approvals-and-sandbox '读取 /tmp/task.md 并按要求在 projects/2604231/ 下创建文件'" timeout:600
+exec pty:true background:true command:"codex exec -C /Users/evan/.openclaw/gateways/life/state/workspace-life/domains/agent-factory --dangerously-bypass-approvals-and-sandbox '读取 /tmp/task.md 并按要求在 projects/2604231/ 下创建文件'" timeout:600
 ```
 
 ---

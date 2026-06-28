@@ -1,0 +1,297 @@
+{
+  "schema": "ReviewReport.v1",
+  "metadata": {
+    "review_id": "factory-reviewer-stock-picking-grv-warn-20260623T2324",
+    "reviewer": "factory-reviewer",
+    "model": "newapi-openai/MiniMax-M3",
+    "review_time": "2026-06-23T23:24:00+08:00",
+    "mode": "battle",
+    "domain": "general",
+    "object_type": "B",
+    "object_classification": "B 类（方案/GRV）"
+  },
+  "subject": {
+    "project": "stock-picking",
+    "files": [
+      "projects/stock-picking/REQ-01.md",
+      "projects/stock-picking/design/GRV.md"
+    ],
+    "auxiliary": [
+      "projects/stock-picking/PLAN.md",
+      "projects/stock-picking/DISCUSSION-LOG.md",
+      "projects/stock-picking/intelligence-brief.md",
+      "reviews/2026-06-23/main-agent-stock-picking-node0-trigger-entry-CONDITIONAL_PASS-223625.md",
+      "reviews/2026-06-23/stock-picking-node1-market-context-warn-20260623T224500.md",
+      "reviews/2026-06-23/stock-picking-node2-strategy-selector-conditional-pass-20260623T225800.md",
+      "reviews/2026-06-23/stock-picking-node4-chokepoint-warn-20260623T2309.md",
+      "packs/general.md"
+    ],
+    "scope": "GRV 全量 + REQ-01 全量（1330 行 S2 讨论基线 + 115 行 GRV Draft for Battle）"
+  },
+  "verdict": {
+    "rating": "WARN",
+    "confidence": 0.82,
+    "ready_for_ralph_loop": false,
+    "ready_for_s3_design": true,
+    "rationale": "GRV 骨架完整、与 REQ-01 节点 0-13 评审结论一致，但缺 1 个 blocker（评审吸收矩阵）和 5 个 major（R 优先级/最小骨架/策略边界/风险应对/里程碑闸门），补完 B001 + AC-1~AC-6 后可升 PASS；Battle 二轮前不应进入 Ralph Loop 实施。"
+  },
+  "dimension_scores": [
+    { "dimension": "目标清晰度（G）", "score": 5, "note": "一句话把'单体 skill → 模块化 SOP 编排层'说清楚，与 REQ-01 一句话定位完全一致" },
+    { "dimension": "成果可验收性（R）", "score": 3, "note": "R1-R6 都有交付物+验收标准，但 R3 验收被简化、R5 只到修复清单层级、R6 migration plan 在 V 阶段没显式动作" },
+    { "dimension": "举措可执行性（V）", "score": 3, "note": "V1-V9 顺序合理，但 V5/V6 之间无明确里程碑闸门" },
+    { "dimension": "约束完整性", "score": 4, "note": "5 条约束全清晰；与 REQ-01 保持一致" },
+    { "dimension": "风险与缓解", "score": 3, "note": "5 条风险都列了应对，但第 1/4 条应对是已定设计选择，不是真正缓解措施" },
+    { "dimension": "里程碑闭环性", "score": 3, "note": "M1-M5 顺序合理，但 M3/M4 没有 review 闸门" },
+    { "dimension": "与 REQ-01 一致性", "score": 4, "note": "与三层架构、节点 0-13 评审结论对齐；与已审 4 份评审报告无显式承接声明" },
+    { "dimension": "边界明确性", "score": 4, "note": "约束+风控红线+风险 4 都把自动卖出、execution guard 排除" },
+    { "dimension": "战斗准备度（Battle）", "score": 3, "note": "自标 draft for Battle，但没回答 multi-round 评审机制" },
+    { "dimension": "安全/审计默认", "score": 4, "note": "dry_run 默认 true；execution guard 默认关闭；approval artifact 强约束" }
+  ],
+  "findings": [
+    {
+      "id": "B001",
+      "severity": "blocker",
+      "category": "审计/可追溯",
+      "location": "GRV 全文",
+      "description": "已审节点评审（node 0/1/2/4 共 24 条 finding）**在 GRV 全文中没有任何'评审吸收声明'**。Ralph Loop 实施时无法判断'哪条 finding 已在 V/R 里消化、哪条没消化、哪条要回炉'",
+      "evidence": "4 份评审报告共 24 条 finding；GRV 全文搜不到 AC-/B00/M00/finding 等关键词",
+      "remediation": "在 GRV 顶部加一节'评审吸收矩阵'（表格），列出已审 finding ID、对应 REQ-01 章节、对应 GRV 条款、消化状态"
+    },
+    {
+      "id": "M001",
+      "severity": "major",
+      "category": "成果可落地性",
+      "location": "GRV R1-R6 + V1-V9",
+      "description": "R1-R6 全部目标都打包进 v1.0.0 一次性交付，但 V1-V9 没把这些 R 拆成 milestone 内的'硬里程碑'。M3 完成后同时进 R1-R6 设计、M4 完成后同时进 R1-R6 实施 — 这是 6 条平行 R 撞车，Ralph Loop 在 M4 阶段会**多线并行**",
+      "evidence": "GRV 全文未对 R 排优先级；V1-V9 9 个举措里 6 个对应 6 个 R",
+      "remediation": "(a) R 按价值/风险/依赖排序：R5 > R2 > R3 > R6 > R4 > R1；(b) 每个 R 在 M4 拆成独立 sub-Ralph Loop 子任务；(c) GRV 里程碑表加'该 milestone 涵盖的 R 子集'列"
+    },
+    {
+      "id": "M002",
+      "severity": "major",
+      "category": "安全/最小骨架",
+      "location": "GRV R5",
+      "description": "R5 验收标准只到'修复清单'层级，execution guard **没有最小骨架定义**。缺：(a) approval state machine 转移表；(b) execution guard 拦截位点；(c) dry-run 对照与 audit 字段",
+      "evidence": "REQ-01 §节点 10/§节点 12 已定义 approval + risk event schema；GRV R5 没继承",
+      "remediation": "R5 拆 R5a（buy-approval-gate，含 state machine + CLI wrapper 把 futu_tool.py buy 包起来，无 approval 时 hard error）+ R5b（execution-guard 占位，默认 closed）"
+    },
+    {
+      "id": "M003",
+      "severity": "major",
+      "category": "策略边界完整性",
+      "location": "GRV R3 验收",
+      "description": "R3 验收写'cron/sop 必须精确 semver；不支持 latest'，但**未写已审 node 2 评审的 M001/M003/M005 三条 major**（custom ref 白名单 + checksum + 路径约束；状态机单向；schema_version 双冻结）。REQ-01 §节点 4 已加 experimental_exit_criteria 要求（已审 node 4 评审 M002），但 GRV R3 没继承",
+      "evidence": "REQ-01 §节点 4 末尾 + 已审 node 2/4 评审",
+      "remediation": "(a) R3 验收补三条：custom ref 白名单+checksum+路径约束；状态机 active→experimental→deprecated→disabled 单向；schema_version 与 strategy_version 双冻结；(b) Chokepoint v0.1.0 registry 条目必须包含 experimental_exit_criteria"
+    },
+    {
+      "id": "M004",
+      "severity": "major",
+      "category": "风险缓解闭合",
+      "location": "GRV 风险段第 1/4 条",
+      "description": "风险 1 应对写'先做只读兼容投影，再迁移写路径' — 是 V8 目标而不是'如何降低风险'的具体措施；风险 4 应对写'v1 JSON/JSONL + 索引，不做图数据库/RAG' — 是已定设计选择，不是缓解措施",
+      "evidence": "GRV 风险段 5 条逐条核对",
+      "remediation": "风险 1 应对改为 'v1 migration 必须配套 rollback plan + 兼容窗口 + 旧 CSV 写路径冻结日期'；风险 4 应对改为 'evidence store v1 schema validator 必须在第一个 R6 sub-task 落地后 1 周内完成；schema 不通过时 R6 整体 block'"
+    },
+    {
+      "id": "M005",
+      "severity": "major",
+      "category": "里程碑闸门",
+      "location": "GRV 里程碑 M3/M4",
+      "description": "M3=S3 设计，M4=S4 实施。**M3 和 M4 之间没有 review 闸门**。一旦 S3 设计有缺漏（按已审 node 1/2 经验，复杂契约评审通常会发现 blocker），就会带着 bug 跑 Ralph Loop 几周",
+      "evidence": "PLAN.md 下一步列表：M2 → M3 → M4 连续无 review",
+      "remediation": "(a) M3 之后加 M3.5：S3 方案 Battle 审查；(b) M4 拆 M4a（M4a 数据契约+策略边界 R2/R3）+ M4b（候选生命周期+交易安全 R4/R5/R6），M4a 后加 M4.5 审查；(c) 每个 R 完成后做 R-Level self-review"
+    },
+    {
+      "id": "m001",
+      "severity": "minor",
+      "category": "命名一致性",
+      "location": "GRV 文档编号 P-GRV-01",
+      "description": "GRV 自标'文档编号：P-GRV-01'，但 REQ-01 自标'编号 REQ-01'，其他文档均无统一编号规则",
+      "evidence": "GRV 顶部 + REQ-01 顶部对比",
+      "remediation": "在 GRV 顶部加一节'编号规则'：P-GRV-NN / P-REQ-NN / P-DSG-NN / P-RVW-NN"
+    },
+    {
+      "id": "m002",
+      "severity": "minor",
+      "category": "命名一致性",
+      "location": "GRV R1-R6 vs REQ-01 节点 0-13",
+      "description": "GRV 的 R 是按'模块/能力'切，REQ-01 的节点是按'流程'切。两个切法不能一一对应，没有映射表",
+      "evidence": "GRV R 列表 vs REQ-01 节点 0-13",
+      "remediation": "在 GRV 加一节'R 与节点映射表'：R1↔{0,1,2}、R2↔{5-8 + 13 数据契约段}、R3↔{2,3,4}、R4↔{5-8}、R5↔{9-12}、R6↔{13}"
+    },
+    {
+      "id": "m003",
+      "severity": "minor",
+      "category": "完整性",
+      "location": "GRV R4",
+      "description": "R4 验收写'AI 只能写 promote_suggested/remove_suggested，最终 removed 必须 human'，但没写**'removed 必须 human'如何在 schema validator 层强制**",
+      "evidence": "REQ-01 §节点 7 + 已审节点 0/1/2 评审的同样模式",
+      "remediation": "R4 验收补一条：'candidate_record.v1 schema validator 在 S3 阶段实现，强制拒绝 actor != human 的 state=removed 写入'"
+    },
+    {
+      "id": "m004",
+      "severity": "minor",
+      "category": "完整性",
+      "location": "GRV R6 + V8",
+      "description": "R6 验收有'source dedup、snapshot、source quality、status lifecycle'，V8 写'design evidence store 与旧 CSV/Markdown 的 migration 方案'，但 R6 验收没写**'v1 dedup 键是什么'**",
+      "evidence": "REQ-01 §节点 13 + GRV R6 + V8",
+      "remediation": "R6 验收补一条：'v1 dedup 键为 (source_url, content_hash)'。V8 的 migration 文档必须包含'旧 CSV reason 字段如何映射到 claim.v1 的 claim_text + evidence_id[]'"
+    },
+    {
+      "id": "m005",
+      "severity": "minor",
+      "category": "风险识别",
+      "location": "GRV 风险表",
+      "description": "风险表没列'多模块拆分后调用链变复杂'的应对细节。已审 node 2/4 评审把'审计链/evidence_ref 闭环/correlation_id 透传'列为核心风险",
+      "evidence": "GRV 风险第 5 条 + 已审 node 0/1/2 评审 B 类 24 条",
+      "remediation": "风险 5 应对补：'dispatch/strategy_run/validation/tracking/risk 事件统一写 audit/<component>_audit_YYYY-MM.jsonl；S3 阶段由独立 audit-format-check 工具断言 request_id + correlation_id 不为空'"
+    },
+    {
+      "id": "m006",
+      "severity": "minor",
+      "category": "可测试性",
+      "location": "GRV 验收标准 R1-R6",
+      "description": "6 条 R 的验收没有一条是'可机器验证的'。比如 R3 验收'TAROC 只输出 draft，不写 CSV'是设计选择不是验收；'cron/sop 必须精确 semver'需要 test case 描述",
+      "evidence": "GRV 验收段",
+      "remediation": "每个 R 验收补 ≥2 条'可执行验收'：命令/脚本能跑 + 期望 stdout/exit code/输出文件路径 + 与 baseline 对比"
+    },
+    {
+      "id": "m007",
+      "severity": "minor",
+      "category": "与已审 finding 的关系",
+      "location": "GRV V9",
+      "description": "V9 '用 factory-reviewer 做 Battle 审查' — 措辞过于轻。'Battle 审查'应该是 multi-round（3 轮对抗 / 用户裁决）而不是单次评审",
+      "evidence": "V9 单条 + 已审评审模式",
+      "remediation": "V9 改写：'V9a 一次评审 → V9b 主 agent 修订 → V9c 二次评审 → V9d Evan 裁决'"
+    },
+    {
+      "id": "I001",
+      "severity": "info",
+      "category": "文档结构",
+      "location": "GRV 标题/章节",
+      "description": "GRV 没有'不做什么'专门章节（REQ-01 有），但 GRV 有'约束条件'段。建议显式加'不做什么'段，避免和'约束'混淆",
+      "evidence": "GRV 全文",
+      "remediation": "加一节'不做什么'：不实现具体选股策略/不内置 cron/不自动买卖/不自动卖出/不重写 quant 全部路径/不替代 serenity-skill 方法论知识/不消费任何业绩数据作为信号"
+    },
+    {
+      "id": "I002",
+      "severity": "info",
+      "category": "一致性",
+      "location": "GRV 约束条件 vs REQ-01 约束条件",
+      "description": "GRV 约束 5 条，REQ-01 约束 9 条（含数据源/Gateway/交易日/Discord 输出格式等）。GRV 没吸收 REQ-01 的'数据源优先 longbridge'、'Discord 输出不用 Markdown 表格，摘要简短'",
+      "evidence": "GRV 约束段 vs REQ-01 约束段",
+      "remediation": "补两条：(a) 数据源优先复用 longbridge 系列 skill/CLI；(b) Discord 输出不用 Markdown 表格，摘要简短（≤200 字）"
+    },
+    {
+      "id": "I003",
+      "severity": "info",
+      "category": "风险",
+      "location": "GRV 风险段",
+      "description": "风险表 5 条都聚焦'实施风险'，没列'人员/认知风险'：(a) 主 agent 一个人跑全部 S3/S4，认知负载风险；(b) Ralph Loop 单 agent 跑多模块易丢上下文",
+      "evidence": "隐含",
+      "remediation": "加一条：'主 agent 单人长跑 S3+S4 易失焦，应每完成一个 R 做一次 self-review + 状态总结写回 DISCUSSION-LOG.md'"
+    },
+    {
+      "id": "I004",
+      "severity": "info",
+      "category": "触发词",
+      "location": "GRV 全文",
+      "description": "GRV 没有'触发词'段（REQ-01 有'选股 / stock-picking / sp / TAROC 选股 / 卡脖子选股'）",
+      "evidence": "REQ-01 触发词段 vs GRV 全文",
+      "remediation": "补一段'触发词'，与 REQ-01 对齐"
+    },
+    {
+      "id": "I005",
+      "severity": "info",
+      "category": "已知问题",
+      "location": "GRV 全文",
+      "description": "GRV 没有'已知问题与修复方向'段（REQ-01 有 9 条）。其中至少 4 条（futu_tool.py buy 裸调、position-monitor 硬编码、target_pool 空字段、pending dry-run 过期）应作为 R5 的子项显式列出",
+      "evidence": "REQ-01 已知问题与修复方向段 vs GRV R5",
+      "remediation": "R5 验收补'已知问题承接'段，把 4 条高优先级 known issue 显式列为 sub-R"
+    },
+    {
+      "id": "I006",
+      "severity": "info",
+      "category": "版本规划",
+      "location": "GRV 全文",
+      "description": "GRV 没有'版本规划'段。REQ-01 末尾写'首个 Factory 管理版本 v1.0.0'",
+      "evidence": "REQ-01 版本规划 vs GRV",
+      "remediation": "补一段：v0.9.0（设计+schema frozen）→ v1.0.0（第一版可 dry-run）→ v1.1.0（buy approval + dry-run round-trip）→ v1.2.0（人工买入确认端到端）"
+    },
+    {
+      "id": "I007",
+      "severity": "info",
+      "category": "路由定位",
+      "location": "GRV 全文",
+      "description": "GRV 没有'路由定位/前后置 skill'段（REQ-01 有）",
+      "evidence": "REQ-01 路由定位段 vs GRV",
+      "remediation": "补一段：前置 skill（longbridge-*/internet-search/taroc-strategy/chokepoint-strategy）、后置 skill、重叠 skill 列表"
+    }
+  ],
+  "blockers": [
+    {
+      "id": "B001",
+      "summary": "缺评审吸收矩阵",
+      "impact": "Ralph Loop 实施时无法判断 24 条已审 finding 的消化状态",
+      "must_fix_before": "PASS / 进入 Ralph Loop"
+    }
+  ],
+  "major_issues": [
+    {
+      "id": "M001",
+      "summary": "6 条 R 并行无优先级 + M4 未拆",
+      "impact": "Ralph Loop context 切换爆炸；v1.0.0 一次性交付不可控",
+      "must_fix_before": "进入 S4 实施"
+    },
+    {
+      "id": "M002",
+      "summary": "execution guard 缺最小骨架",
+      "impact": "futu_tool.py buy 裸调无法验证修复；R5 验收落不到代码层",
+      "must_fix_before": "进入 S4 实施"
+    },
+    {
+      "id": "M003",
+      "summary": "R3 验收未吸收已审 node 2/4 的 custom ref/状态机/双冻结/exit criteria",
+      "impact": "策略边界在 S4 实施时与已审评审结论错位",
+      "must_fix_before": "进入 S3 设计"
+    },
+    {
+      "id": "M004",
+      "summary": "风险 1/4 应对措施不可执行",
+      "impact": "CSV migration 与 evidence store 设计风险无法降低",
+      "must_fix_before": "进入 S4 实施"
+    },
+    {
+      "id": "M005",
+      "summary": "M3/M4 之间无 review 闸门",
+      "impact": "S3 设计 bug 会带着跑 Ralph Loop 几周",
+      "must_fix_before": "进入 S4 实施"
+    }
+  ],
+  "required_edits": [
+    "AC-1: 顶部加'评审吸收矩阵'表格（B001）",
+    "AC-2: R 优先级 + 里程碑映射（M001）",
+    "AC-3: R5 拆 R5a+R5b 最小骨架（M002）",
+    "AC-4: R3 验收补 custom ref/状态机/双冻结/exit criteria（M003）",
+    "AC-5: 风险 1/4 应对改写为可执行步骤（M004）",
+    "AC-6: M3 后加 M3.5；M4 拆 M4a/M4b（M005）",
+    "AC-7: R 与节点映射表（m002）",
+    "AC-8: R4 补 schema validator 强制（m003）",
+    "AC-9: R6 补 dedup 键（m004）",
+    "AC-10: 风险 5 应对补 audit 闭环（m005）",
+    "AC-11: V9 改 multi-round 评审机制（m007）",
+    "AC-12: 补'不做什么'段（I001）",
+    "AC-13: 补 2 条约束（数据源+Discord）（I002）",
+    "AC-14: 补触发词段（I004）",
+    "AC-15: 补已知问题承接段（I005）",
+    "AC-16: 补版本规划段（I006）",
+    "AC-17: 补路由定位段（I007）",
+    "AC-18: 补'认知负载'风险（I003）",
+    "AC-19: 验收可执行化（m006）",
+    "AC-20: 文档编号规则（m001）"
+  ],
+  "ready_for_ralph_loop": false,
+  "ready_for_s3_design": true,
+  "next_action": "主 agent 修订 GRV（消化 B001 + 5 major），进入 Battle 二轮（V9c）；通过后再启动 S3 方案设计 + M3.5 闸门审查"
+}

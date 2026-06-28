@@ -2,7 +2,7 @@
 
 ## 架构认知
 
-工厂 = 唯一长期 Orchestrator + 按需 spawn 的 Sub-Agent。L1 七步构建完整 Agent，L2 八阶段做单个 Skill。流程定义在 `specs/workflows/AF-SOP`。
+工厂 = 主 Life Agent 使用的 Factory domain package + `agent-factory-sop` Skill + 按需 spawn 的 `factory-reviewer`。L1 七步构建完整 Agent，L2 八阶段做单个 Skill。流程唯一真相源：`/Users/evan/.openclaw/skills/agent-factory-sop/SKILL.md`。
 
 ## Sub-Agent 模板
 
@@ -18,7 +18,7 @@ Sub-agent 启动注入 EXPERIENCE.md 最近 5 条；完成后有条件写入（>
 - life gateway 重启：`launchctl kickstart gui/501/ai.openclaw.gateway.life`
 - 外部文档：xgjk/dev-guide 用 curl，不用 web_search
 - 推送后自动发安装说明
-- Sub-agent model：编排用 MiniMax-M3，推理用 glm-5.2
+- 模型由 Gateway / CC Switch 当前配置统一维护，不在 Factory domain 写死 provider/model
 
 ## 外部工具
 

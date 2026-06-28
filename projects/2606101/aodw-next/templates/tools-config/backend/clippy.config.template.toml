@@ -1,5 +1,0 @@
-# clippy — copy to project root as clippy.toml when not using Cargo.toml [lints]
-# See: https://doc.rust-lang.org/clippy/configuration.html
-cognitive-complexity-threshold = 15
-too-many-lines-threshold = 400
-

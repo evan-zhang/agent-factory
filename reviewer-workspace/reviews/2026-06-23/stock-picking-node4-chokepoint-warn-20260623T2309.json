@@ -1,0 +1,222 @@
+{
+  "schema": "ReviewReport.v1",
+  "verdict": "warn",
+  "confidence": 0.78,
+  "review_object": {
+    "type": "B",
+    "category": "scheme/GRV",
+    "name": "stock-picking Node 4 Chokepoint Strategy",
+    "files_reviewed": [
+      "/Users/evan/.openclaw/gateways/life/state/workspace-life/domains/agent-factory/projects/stock-picking/REQ-01.md",
+      "/Users/evan/.openclaw/gateways/life/domains/quant/skills/serenity-skill/SKILL.md",
+      "/Users/evan/.openclaw/gateways/life/domains/quant/skills/serenity-skill/lead-scanner.md",
+      "/Users/evan/.openclaw/gateways/life/domains/quant/skills/serenity-skill/reverse-engine.md",
+      "/Users/evan/.openclaw/gateways/life/domains/quant/skills/serenity-skill/references/thesis-risks.md"
+    ],
+    "scope": "Node 2 (策略选择器) + Node 4 (Chokepoint Strategy) 章节 + serenity 框架集成一致性",
+    "version": "REQ-01 S2 讨论版 2026-06-23"
+  },
+  "review_meta": {
+    "reviewer": "factory-reviewer (V2)",
+    "model": "newapi-openai/MiniMax-M3",
+    "mode": "quick",
+    "domain": "general",
+    "pack": "general.md",
+    "reviewed_at": "2026-06-23T23:09:00+08:00",
+    "timezone": "Asia/Shanghai"
+  },
+  "dimension_scores": {
+    "factual_accuracy": 4,
+    "completeness": 3,
+    "feasibility": 3,
+    "risk_identification": 4,
+    "boundary_clarity": 4,
+    "consistency": 3,
+    "hallucination_or_methodology_mixing": 4,
+    "safety_risk_control_defaults": 4
+  },
+  "findings": [
+    {
+      "id": "B001",
+      "severity": "blocker",
+      "category": "naming_numbering_inconsistency",
+      "location": "REQ-01 §\"2. 策略选择器\" 与 §\"4. Chokepoint Strategy\" + 流程图 C→D2",
+      "description": "task 写'Node 4 Chokepoint Strategy'，但 REQ-01 内部策略选择器叫 Node 2，Chokepoint 列为 Node 4；mermaid 图里 C→D2 是 Chokepoint 而非 Node 4。两种编号在实现层会冲突",
+      "evidence": "REQ-01: 流程图 C→D2, §2 标题'策略选择器', §4 标题'Chokepoint Strategy'",
+      "recommendation": "在 REQ-01 顶部加节点编号口径说明：Node N = 流程节点（Node 2 = 策略选择器），Node 4 流程图里 D2 框 = Chokepoint 策略模块（一个被选中的具体策略），不是 §2 那个选择器"
+    },
+    {
+      "id": "M001",
+      "severity": "major",
+      "category": "contract_gap",
+      "location": "REQ-01 §2 策略选择器 v1 输出契约 vs §4 Chokepoint Strategy vs §5 统一 Draft 候选",
+      "description": "策略选择器输出 output_schema=draft_candidates.v1；但 Chokepoint §4 写'输出优先进入 research/_themes，只有满足证据门槛才转 draft'，draft_candidates.v1 没覆盖 research→draft 的入口字段",
+      "evidence": "REQ-01 §4 末段 + §5 改进建议",
+      "recommendation": "在 §5 顶部增加 theme_research.v1 中间产物 schema，Chokepoint v0.1.0 output_schema 改为 theme_research.v1，由独立 draft-promoter 通用模块按门槛转换到 draft_candidates.v1"
+    },
+    {
+      "id": "M002",
+      "severity": "major",
+      "category": "upgrade_criteria_missing",
+      "location": "REQ-01 §2 registry 设计 Chokepoint v0.1.0 条目",
+      "description": "Chokepoint 标 status=experimental + allowed_callers=[manual]，但没有任何条款定义'什么条件升到 active、允许 cron/sop 调用'",
+      "evidence": "REQ-01 registry 设计节",
+      "recommendation": "增加 experimental_exit_criteria 字段：≥N 次 manual run、0 critical thesis_break、evidence_ref 覆盖率≥X%、团队评审通过日期；配合 v0.1.0→v0.2.0 升版 semver 规则"
+    },
+    {
+      "id": "M003",
+      "severity": "major",
+      "category": "consistency_with_existing_skill",
+      "location": "REQ-01 §4 Chokepoint Strategy + serenity SKILL.md 输出规范",
+      "description": "SKILL.md 强制输出规范：theme→data/research/_themes/[name].md、个股→data/research/[market]/[code]/industry-chain.md、日期后缀、_index 同步、≤20 行摘要、T/A/R/O/C 淘汰规则；REQ-01 §4 没有完整继承这些纪律",
+      "evidence": "SKILL.md 输出规范 §1-4 + REQ-01 §4 改进建议",
+      "recommendation": "在 §4 顶部加'输出契约（与 serenity SKILL.md 保持一致）'，逐条引用日期后缀、_index 同步、≤20 行摘要、T/A/R/O/C 淘汰规则、写入失败告警"
+    },
+    {
+      "id": "M004",
+      "severity": "major",
+      "category": "downgrade_rule_not_in_contract",
+      "location": "REQ-01 §4 Chokepoint Strategy + lead-scanner.md 阶段三",
+      "description": "lead-scanner 阶段三'黄金/噪音/共识/无效'四象限中'共识'信号被明确降级，但 REQ-01 §4 Chokepoint 没有把这条降级规则写进 draft 过滤契约",
+      "evidence": "lead-scanner.md 阶段三表格 + REQ-01 §4 改进建议",
+      "recommendation": "在 §4 写明 Chokepoint v0.1.0 必须消费 lead-scanner 输出的 signal_class 字段，consensus/noise 信号自动出 research 而不进 draft"
+    },
+    {
+      "id": "M005",
+      "severity": "major",
+      "category": "loopback_to_sop_missing",
+      "location": "REQ-01 §4 Chokepoint Strategy + reverse-engine.md + §6-§9 SOP 链",
+      "description": "reverse-engine.md 明确说'一只平庸股票最大的用处是当路标'，但 stock-picking SOP 链里没有'逆向→邻居→正向'回流口；candidate 入池后本体评分为'伪节点/路标'时应自动触发邻居扫描，目前 §6-§9 围绕'本体'做复选/追踪/建仓",
+      "evidence": "reverse-engine.md 流程图 + REQ-01 §6-§9",
+      "recommendation": "在 §6 候选复选模块加分支：本体评分=伪节点/路标时自动产生 neighbor_scan_request，走 reverse-engine.md 流程并把邻居作为新 draft 回灌"
+    },
+    {
+      "id": "m001",
+      "severity": "minor",
+      "category": "terminology",
+      "location": "REQ-01 §0 v1 入口契约 universe 字段",
+      "description": "universe 字段 sector:{name} 没有明确是 GICS、自定义标签还是 universe provider 标准",
+      "evidence": "REQ-01 §0 v1 入口契约",
+      "recommendation": "v1 仅接受 market / watchlist:{name}，sector 与 candidates 推迟到 S2；S3 再决定 sector 标签体系"
+    },
+    {
+      "id": "m002",
+      "severity": "minor",
+      "category": "consistency",
+      "location": "REQ-01 §0 验收标准 vs §2 拒绝码表",
+      "description": "§0 验收写'非原子请求必须在入口层失败'，但 §2 拒绝码表里没有 non_atomic_request 码",
+      "evidence": "REQ-01 §0 验收 + §2 拒绝码",
+      "recommendation": "在 §2 拒绝码表顶部加 non_atomic_request，并备注'应在 Node 0 入口层就拒；出现在 Node 2 说明 Node 0 契约被绕过'"
+    },
+    {
+      "id": "m003",
+      "severity": "minor",
+      "category": "naming",
+      "location": "REQ-01 §0/§2/§4 strategy 字段名",
+      "description": "strategy_id（§0/§4）与 strategy.id（§2 嵌套 YAML 风格）混用",
+      "evidence": "REQ-01 §0/§2/§4",
+      "recommendation": "统一为 strategy_id（更便于在日志、audit、API 路径里作为单一 key）"
+    },
+    {
+      "id": "m004",
+      "severity": "minor",
+      "category": "data_contract",
+      "location": "REQ-01 §5 改进建议 candidate_id",
+      "description": "candidate_id 的生成规则、是否带 strategy_id 前缀、去重键都没说",
+      "evidence": "REQ-01 §5 改进建议",
+      "recommendation": "加 candidate_id 命名规则段：建议 <strategy_prefix>_<market>_<code>_<yyyymmdd>；去重键 = (market, code, strategy_id, thesis_hash)"
+    },
+    {
+      "id": "m005",
+      "severity": "minor",
+      "category": "audit_chain",
+      "location": "REQ-01 §2 strategy_dispatch 与 §13 Evidence Store",
+      "description": "策略选择器 dispatch 时是否记录 evidence store 的引用没说明；audit 链无法从 strategy_dispatch 追到 evidence",
+      "evidence": "REQ-01 §2 + §13",
+      "recommendation": "在 §2 strategy_dispatch 加 evidence_ref: string|null（v1 强制非 null）；audit 链能从 dispatch 追到 evidence store"
+    },
+    {
+      "id": "m006",
+      "severity": "minor",
+      "category": "resource_guard",
+      "location": "REQ-01 §4 Chokepoint 缺点段 + §2 registry",
+      "description": "Chokepoint 标 allowed_callers=[manual]，但 manual 跑没有资源护栏：搜索次数、运行时长、evidence_ref 上限",
+      "evidence": "REQ-01 §4 缺点 + §2 registry",
+      "recommendation": "在 Chokepoint v0.1.0 registry 条目里加 resource_budget: { max_searches, max_runtime_minutes, max_evidence_refs }，超出 fail closed"
+    },
+    {
+      "id": "I001",
+      "severity": "info",
+      "category": "consistency",
+      "location": "REQ-01 §2 拒绝码表",
+      "description": "dry_run_required 和 registry_invalid 语义有重叠",
+      "evidence": "REQ-01 §2 拒绝码",
+      "recommendation": "v1 接受，S2 拆分 registry_schema_invalid 与 registry_record_missing"
+    },
+    {
+      "id": "I002",
+      "severity": "info",
+      "category": "documentation",
+      "location": "REQ-01 流程图 B0 HEARTBEAT_OK",
+      "description": "mermaid 图里有 HEARTBEAT_OK 节点，但 §0-§13 文字没定义 heartbeat event schema",
+      "evidence": "REQ-01 mermaid",
+      "recommendation": "增加 §1.5 heartbeat event schema：{ ts, request_id, correlation_id, decision, reason }，由 Node 1 写、由 Gateway cron 与 audit 消费"
+    },
+    {
+      "id": "I003",
+      "severity": "info",
+      "category": "cross_reference",
+      "location": "REQ-01 §4 Chokepoint 改进建议",
+      "description": "没有引用 serenity case-study.md 的盲扫→Ayar 真实范例",
+      "evidence": "REQ-01 §4 改进建议 + case-study.md",
+      "recommendation": "在 §4 加'参考实现案例：serenity-skill/case-study.md'，并标注该案例对应到 REQ-01 的 Node 1→Node 2→Chokepoint→draft 流程哪一段"
+    },
+    {
+      "id": "I004",
+      "severity": "info",
+      "category": "framework_risks",
+      "location": "REQ-01 §4 Chokepoint 缺点段 + thesis-risks.md",
+      "description": "thesis-risks.md 列出 5 类结构性风险（单路径依赖/微盘流动性/不可验证背景/存活者偏差/集中度与保证金），REQ-01 §4 缺点段只点出 3 条",
+      "evidence": "REQ-01 §4 + thesis-risks.md",
+      "recommendation": "在 §4 加'框架固有风险'小节，引述 thesis-risks.md 5 条并写明 stock-picking SOP 在哪些节点对冲"
+    },
+    {
+      "id": "I005",
+      "severity": "info",
+      "category": "performance_data_handling",
+      "location": "REQ-01 §4 Chokepoint 改进建议",
+      "description": "没有显式说明 PhotonCap +122% 1Y 等第三方校准数据是否进 SOP",
+      "evidence": "REQ-01 §4 + thesis-risks.md",
+      "recommendation": "v1 明确'零业绩数据进入运行逻辑'作为防幻觉护栏：Serenity 自报、PhotonCap 第三方、关注度信号都只作人读参考"
+    }
+  ],
+  "risk_summary": {
+    "blockers": 1,
+    "majors": 5,
+    "minors": 6,
+    "info": 5,
+    "hallucinations_detected": 0,
+    "fact_errors_detected": 0
+  },
+  "acceptance_criteria": [
+    {"id": "AC-1", "fixes": ["B001"], "criterion": "节点编号口径闭环：Node 2=策略选择器；流程图 D2 框=Chokepoint 策略模块"},
+    {"id": "AC-2", "fixes": ["M001"], "criterion": "双 schema 显式分离：theme_research.v1 与 draft_candidates.v1；Chokepoint v0.1.0 output_schema=theme_research.v1"},
+    {"id": "AC-3", "fixes": ["M002"], "criterion": "experimental_exit_criteria 字段在 Chokepoint v0.1.0 registry 条目里至少 3 条可验证条件"},
+    {"id": "AC-4", "fixes": ["M003"], "criterion": "§4 顶部加'输出契约（与 serenity SKILL.md 一致）'，逐条引用日期后缀/_index 同步/≤20 行摘要/T-A-R-O-C 淘汰规则/写入失败告警"},
+    {"id": "AC-5", "fixes": ["M004"], "criterion": "Chokepoint 必须消费 lead-scanner 输出的 signal_class 字段，consensus/noise 信号默认出 research 而不进 draft"},
+    {"id": "AC-6", "fixes": ["M005"], "criterion": "§6 候选复选模块加分支：本体评分=伪节点/路标时自动产生 neighbor_scan_request 并把邻居作为新 draft 回灌"},
+    {"id": "AC-7", "fixes": ["m006"], "criterion": "Chokepoint v0.1.0 registry 条目加 resource_budget（max_searches / max_runtime_minutes / max_evidence_refs），超出 fail closed"},
+    {"id": "AC-8", "fixes": ["m005"], "criterion": "§2 strategy_dispatch 加 evidence_ref: string|null（v1 强制非 null）；audit 链能从 dispatch 追到 evidence store"},
+    {"id": "AC-9", "fixes": ["m002", "m003", "m004"], "criterion": "术语统一：strategy_id 全文统一；candidate_id 命名规则与去重键在 §5 显式定义；non_atomic_request 加入 §2 拒绝码"},
+    {"id": "AC-10", "fixes": ["I004"], "criterion": "§4 加'框架固有风险'小节，引述 thesis-risks.md 5 类结构性风险并写明对冲节点"},
+    {"id": "AC-11", "fixes": ["I005"], "criterion": "v1 明确'零业绩数据进入运行逻辑'作为防幻觉护栏"},
+    {"id": "AC-12", "fixes": ["I002"], "criterion": "增加 §1.5 heartbeat event schema：{ ts, request_id, correlation_id, decision, reason }，由 Node 1 写、由 Gateway cron 与 audit 消费"}
+  ],
+  "top_recommendation": "把 Chokepoint 策略输出契约在 §5 顶部从'统一 draft'拆成'中间产物 + 统一候选'两层（theme_research.v1 → draft_candidates.v1），并在 §2 registry 把 Chokepoint 的 output_schema 显式标为 theme_research.v1，由一个独立的 draft-promoter 模块按门槛转换 — 这是唯一一处不修就让 v1 落地时 lead-scanner / reverse-engine / 主框架三方契约互相打架的根因。",
+  "verdict_rationale": "无事实错误/幻觉（评分 4）→ 不上 BLOCK/FAIL；缺输出契约双 schema 分离（M001 major）；Node 编号歧义在 SOP 实现层会立刻踩坑（B001 blocker）；其他 majors 是契约/护栏级增量，可在 S2-S3 滚动修复，不阻塞评审通过。综合 WARN（修正 B001 + AC-1~AC-3 后可升级 PASS）。",
+  "archive": {
+    "markdown_path": "reviews/2026-06-23/stock-picking-node4-chokepoint-warn-20260623T2309.md",
+    "json_path": "reviews/2026-06-23/stock-picking-node4-chokepoint-warn-20260623T2309.json",
+    "verdict_stamp": "stock-picking-node4-chokepoint-warn-20260623T2309"
+  }
+}

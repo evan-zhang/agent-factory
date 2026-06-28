@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>舒马曲坦藻酸盐薄膜片（Sumatriptan Alginate Film） CMS投前评估报告</title>
+<style>
+@page { size:A4; margin:0; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC","SimSun",Arial,sans-serif;
+  font-size:10.5pt; line-height:1.7; color:#1F1A1A;
+  background:#FAF8F7; -webkit-font-smoothing:antialiased;
+}
+a { color:#7B2D3B; text-decoration:none; }
+
+/* ===== COVER ===== */
+.cover {
+  min-height:96vh; display:flex; flex-direction:column; justify-content:center;
+  padding:44mm 30mm;
+  background:linear-gradient(160deg, #F5EFEF 0%, #E8D8D8 50%, #D4BCBC 100%);
+  border-bottom:6px solid #7B2D3B; position:relative;
+}
+.cover-topbar { position:absolute; top:0; left:0; right:0; height:5px; background:linear-gradient(90deg, #7B2D3B, #9B4655, #B85C6A, #9B4655, #7B2D3B); }
+.cover-badge {
+  display:inline-block; font-size:9pt; font-weight:700; letter-spacing:0.12em;
+  color:#7B2D3B; border:1.5px solid #7B2D3B; padding:3px 12px; margin-bottom:20px;
+  text-transform:uppercase;
+}
+.cover-title {
+  font-size:30pt; font-weight:800; color:#1F1A1A; letter-spacing:0.06em;
+  line-height:1.2; margin-bottom:16px;
+}
+.cover-subtitle { font-size:18pt; font-weight:600; color:#7B2D3B; margin-bottom:10px; }
+.cover-company { font-size:13pt; color:#3D3030; margin-bottom:36px; }
+.cover-meta { font-size:11pt; line-height:2.1; color:#1F1A1A; }
+.cover-meta .lbl { color:#5C4A4A; }
+.cover-confidential {
+  margin-top:40px; font-size:9pt; font-weight:700; color:#C53030;
+  letter-spacing:0.06em; border-top:2px solid #D4BCBC; padding-top:12px;
+}
+.cover-rating-box {
+  position:absolute; bottom:40px; right:30mm;
+  background:#7B2D3B; color:#FFFFFF; text-align:center;
+  padding:12px 20px; min-width:120px;
+}
+.cover-rating-box .rating-label { font-size:9pt; letter-spacing:0.08em; opacity:0.85; }
+.cover-rating-box .rating-val { font-size:22pt; font-weight:800; line-height:1.2; }
+
+/* ===== INDEX ===== */
+.toc-section { padding:28px 28mm 28px; background:#FAF8F7; border-bottom:3px solid #D4BCBC; }
+.toc-header { font-size:14pt; font-weight:700; color:#1F1A1A; margin-bottom:14px; border-left:5px solid #7B2D3B; padding-left:10px; }
+.toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px 28px; }
+.toc-item { display:flex; align-items:baseline; gap:6px; padding:3px 0; border-bottom:1px solid #E2D4D4; font-size:9.5pt; }
+.toc-num { color:#7B2D3B; font-weight:700; min-width:30px; }
+.toc-title { color:#1F1A1A; flex:1; }
+.toc-ch { color:#5C4A4A; font-size:8.5pt; }
+
+/* ===== CHAPTER HEADINGS ===== */
+.chapter { padding:0 28mm; }
+h1 {
+  font-size:17pt; font-weight:700; color:#1F1A1A;
+  background:linear-gradient(to right, #F5EFEF, #FAF8F7);
+  border-bottom:3px solid #7B2D3B; padding:10px 14px 8px; margin:24px 0 14px;
+}
+h2 {
+  font-size:12.5pt; font-weight:700; color:#7B2D3B;
+  border-left:5px solid #7B2D3B; padding:6px 10px; margin:20px 0 10px;
+  background:#FAF8F7;
+}
+h3 { font-size:11pt; font-weight:700; color:#1F1A1A; margin:14px 0 7px; }
+h4 { font-size:10.5pt; font-weight:700; color:#7B2D3B; margin:12px 0 6px; }
+
+/* ===== BODY ===== */
+p { margin:0 0 8px; }
+ul,ol { margin:6px 0 10px; padding-left:20px; }
+li { margin-bottom:5px; }
+
+/* ===== TABLES ===== */
+table { width:100%; border-collapse:collapse; margin:12px 0 18px; font-size:9.5pt; }
+th {
+  background:#7B2D3B; color:#FFFFFF; font-weight:700; text-align:left;
+  padding:8px 10px; border:1px solid #9B4655;
+}
+td { padding:7px 10px; border:1px solid #D4BCBC; vertical-align:top; line-height:1.5; }
+tr:nth-child(even) td { background:#F5EFEF; }
+
+/* Status colors */
+.pass { color:#15803D; font-weight:700; }
+.cond { color:#92400E; font-weight:700; }
+.fail { color:#DC2626; font-weight:700; }
+.pending-tag { color:#92400E; font-style:italic; font-weight:600; }
+.b { font-weight:700; }
+
+/* ===== GATE CONCLUSION CARD ===== */
+.gate-card {
+  border-left:5px solid #7B2D3B; background:#F5EFEF;
+  padding:14px 16px; margin:16px 0; line-height:1.65;
+  border-radius:0;
+}
+.gate-card .gate-title {
+  font-size:12pt; font-weight:700; margin-bottom:8px;
+  padding-bottom:6px; border-bottom:2px solid rgba(0,0,0,0.08);
+}
+.gate-card .gate-label {
+  font-size:9pt; font-weight:600; display:inline-block;
+  padding:2px 8px; margin-right:6px; border-radius:3px;
+}
+.gate-card .gate-body { margin-top:8px; }
+
+/* Gate pass */
+.gate-pass { border-left-color:#15803D; background:#F0FDF4; }
+.gate-pass .gate-title { color:#15803D; }
+.gate-pass .gate-label { background:#F0FDF4; color:#15803D; border:1px solid #15803D; }
+
+/* Gate conditional */
+.gate-conditional { border-left-color:#B45309; background:#FFFBEB; }
+.gate-conditional .gate-title { color:#92400E; }
+.gate-conditional .gate-label { background:#FFFBEB; color:#92400E; border:1px solid #B45309; }
+
+/* Gate stop */
+.gate-stop { border-left-color:#DC2626; background:#FEF2F2; }
+.gate-stop .gate-title { color:#DC2626; }
+.gate-stop .gate-label { background:#FEF2F2; color:#DC2626; border:1px solid #DC2626; }
+
+/* ===== CONFIDENCE BADGE ===== */
+.confidence-badge {
+  display:inline-block; font-size:9pt; font-weight:700;
+  padding:2px 8px; border-radius:3px; line-height:1.3;
+  vertical-align:middle; margin-left:4px;
+}
+.conf-a { background:#DCFCE7; color:#15803D; }
+.conf-b { background:#DBEAFE; color:#1D4ED8; }
+.conf-c { background:#FEF3C7; color:#92400E; }
+.conf-d { background:#FEE2E2; color:#DC2626; }
+
+/* ===== BATTLE REVIEW ===== */
+.battle-auditor {
+  border-left:4px solid #6B7280; background:#F3F4F6;
+  padding:12px 14px; margin:12px 0; line-height:1.65;
+}
+.battle-executor {
+  border-left:4px solid #7B2D3B; background:#F5EFEF;
+  padding:12px 14px; margin:8px 0 12px 20px; line-height:1.65;
+}
+.battle-dispute {
+  border-left:4px solid #F59E0B; background:#FFFBEB;
+  padding:10px 14px; margin:10px 0; line-height:1.65;
+}
+.battle-label {
+  font-size:8.5pt; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+  display:block; margin-bottom:4px; opacity:0.7;
+}
+
+/* ===== CONFLICT BOX ===== */
+.conflict-box {
+  border-left:4px solid #F59E0B; background:#FFFBEB;
+  padding:10px 14px; margin:10px 0; line-height:1.65;
+}
+
+/* ===== VETO BOX ===== */
+.veto-box {
+  border-left:5px solid #DC2626; background:#FEF2F2;
+  padding:12px 14px; margin:12px 0; line-height:1.65;
+}
+
+/* ===== STAGE TAG ===== */
+.stage-tag {
+  display:inline-block; font-size:8.5pt; font-weight:700;
+  padding:2px 8px; border-radius:3px; line-height:1.3;
+  vertical-align:middle;
+}
+.stage-a { background:#FCE7F3; color:#7B2D3B; }
+.stage-b { background:#E0E7FF; color:#3730A3; }
+
+/* ===== DRL PRIORITY ===== */
+.drl-priority {
+  display:inline-block; font-size:8.5pt; font-weight:700;
+  padding:2px 8px; border-radius:3px; line-height:1.3;
+  vertical-align:middle;
+}
+.drl-p0 { background:#FEE2E2; color:#DC2626; }
+.drl-p1 { background:#FEF3C7; color:#92400E; }
+.drl-p2 { background:#DBEAFE; color:#1D4ED8; }
+
+/* ===== NEUTRAL REVIEW ===== */
+.neutral-review {
+  border-left:4px solid #9CA3AF; background:#F9FAFB;
+  padding:10px 14px; margin:10px 0; line-height:1.65;
+}
+
+/* ===== RISK LEVEL ===== */
+.risk-high { border-left:4px solid #DC2626; background:#FEF2F2; padding:10px 14px; margin:10px 0; }
+.risk-medium { border-left:4px solid #F59E0B; background:#FFFBEB; padding:10px 14px; margin:10px 0; }
+.risk-low { border-left:4px solid #15803D; background:#F0FDF4; padding:10px 14px; margin:10px 0; }
+
+/* Highlight boxes */
+.highlight-box {
+  border-left:5px solid #7B2D3B; background:#F5EFEF;
+  padding:10px 14px; margin:12px 0; line-height:1.65;
+}
+.veto-pass { border-left:5px solid #15803D; background:#F0FDF4; padding:10px 14px; margin:10px 0; }
+.veto-cond { border-left:5px solid #92400E; background:#FFFBEB; padding:10px 14px; margin:10px 0; }
+.veto-fail { border-left:5px solid #DC2626; background:#FEF2F2; padding:10px 14px; margin:10px 0; }
+
+/* Rating badge */
+.rating-badge {
+  display:inline-block; font-size:12pt; font-weight:800;
+  color:#1F1A1A; border:2px solid #7B2D3B; padding:3px 14px; margin-top:6px;
+}
+.summary-tag { font-weight:700; color:#7B2D3B; }
+
+/* Code blocks */
+pre {
+  font-family:"Courier New",Courier,monospace; font-size:9pt;
+  background:#F5EFEF; border:1px solid #D4BCBC; border-left:4px solid #7B2D3B;
+  padding:10px 14px; margin:10px 0 14px; line-height:1.7; color:#1F1A1A; white-space:pre-wrap;
+}
+blockquote {
+  border-left:5px solid #7B2D3B; background:#F5EFEF;
+  padding:10px 14px; margin:12px 0; color:#1F1A1A;
+}
+
+/* Alternating row tints */
+.amber-row td { background:#F5EFEF !important; }
+.warm-row td { background:#F7EFE7 !important; }
+.green-row td { background:#EDF5E8 !important; }
+.red-row td { background:#FDEEEE !important; }
+
+/* Table header variants */
+.th-green th { background:#15803D !important; border-color:#15803D !important; }
+.th-red th { background:#DC2626 !important; border-color:#DC2626 !important; }
+.th-warm th { background:#92400E !important; border-color:#92400E !important; }
+
+/* ===== PAGE BREAK ===== */
+.page-break { page-break-after:always; }
+
+/* ===== FOOTER ===== */
+.report-footer {
+  font-size:8.5pt; color:#5C4A4A; border-top:1px solid #D4BCBC;
+  padding-top:6px; margin-top:24px;
+}
+
+/* Sub-label in table first col */
+.td-label td:first-child { background:#F5EFEF !important; font-weight:600; white-space:nowrap; width:160px; }
+
+/* Section divider */
+.section-rule { border-top:2px solid #D4BCBC; margin:20px 0; }
+
+/* Score highlight */
+.score-a { color:#15803D; font-weight:700; }
+.score-b { color:#92400E; font-weight:700; }
+.score-c { color:#DC2626; font-weight:700; }
+
+/* Gate summary table */
+.gate-summary th { background:#7B2D3B; color:#FFFFFF; }
+.gate-summary td:nth-child(2) { font-weight:700; }
+
+/* ===== RESPONSIVE ===== */
+@media screen and (max-width:768px){
+  body{font-size:9.5pt;line-height:1.65}
+  .cover{padding:20mm 12mm}
+  .cover-title{font-size:22pt}
+  .cover-subtitle{font-size:14pt}
+  .cover-meta{font-size:10pt}
+  .cover-rating-box{bottom:20px;right:12mm;padding:8px 14px;min-width:100px}
+  .cover-rating-box .rating-val{font-size:16pt}
+  .cover-topbar,.cover-topline{height:3px}
+  .toc-section{padding:16px 10mm}
+  .toc-grid{grid-template-columns:1fr;gap:3px}
+  .chapter{padding:0 10mm}
+  h1{font-size:14pt;padding:8px 10px}
+  h2{font-size:11.5pt}
+  table{font-size:8.5pt;margin:10px 0 14px}
+  th,td{padding:5px 7px}
+  pre{font-size:8pt;padding:8px 10px}
+  .highlight-box,.veto-pass,.veto-cond,.veto-fail{padding:8px 10px;margin:8px 0}
+  .gate-card{padding:10px 12px;margin:12px 0}
+  .battle-auditor,.battle-executor,.battle-dispute{padding:8px 10px;margin:8px 0}
+  .battle-executor{margin-left:10px}
+  .confidence-badge,.stage-tag,.drl-priority{font-size:8pt;padding:1px 6px}
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:12px 0 18px}
+}
+@media screen and (max-width:480px){
+  body{font-size:9pt}
+  .cover{padding:16mm 10mm}
+  .cover-title{font-size:18pt}
+  table{font-size:8pt}
+}
+@media print{
+  .chapter{padding:0}
+  body{background:#FFF}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER PAGE ==================== -->
+<div class="cover page-break">
+  <div class="cover-topbar"></div>
+  <div class="cover-badge">内部机密 · 限参与评估团队</div>
+  <div class="cover-title">C&nbsp;M&nbsp;S&nbsp;投&nbsp;前&nbsp;评&nbsp;估&nbsp;报&nbsp;告</div>
+  <div class="cover-subtitle">舒马曲坦藻酸盐薄膜片（Sumatriptan Alginate Film）</div>
+  <div class="cover-company">Mage Biologics Inc.</div>
+  <div class="cover-meta">
+    <div><span class="lbl">案件代号：</span>2605-3001</div>
+    <div><span class="lbl">评估技能：</span>A-1</div>
+    <div><span class="lbl">业务主体：</span>深康</div>
+    <div><span class="lbl">评估日期：</span>2026-06-13</div>
+    <div><span class="lbl">综合评级：</span><span class="b">条件通过（CONDITIONAL）</span></div>
+  </div>
+  <div class="cover-confidential">⚠ 内部机密 — 仅限参与评估团队成员阅览</div>
+  <div class="cover-rating-box">
+    <div class="rating-label">推荐结论</div>
+    <div class="rating-val">COND</div>
+  </div>
+</div>
+
+<!-- ==================== TABLE OF CONTENTS ==================== -->
+<div class="toc-section page-break">
+  <div class="toc-header">目 录</div>
+  <div class="toc-grid">
+    <div class="toc-item"><span class="toc-num">第1章</span><span class="toc-title">执行摘要</span></div>
+<div class="toc-item"><span class="toc-num">第2章</span><span class="toc-title">One-pager</span></div>
+<div class="toc-item"><span class="toc-num">第3章</span><span class="toc-title">市场规模与竞争格局（Gate 3）</span></div>
+<div class="toc-item"><span class="toc-num">第4章</span><span class="toc-title">业务主体互斥规则约束</span></div>
+<div class="toc-item"><span class="toc-num">第5章</span><span class="toc-title">Gate 0 与 Gate 1 结论卡</span></div>
+<div class="toc-item"><span class="toc-num">第6章</span><span class="toc-title">Gate 2 结论卡</span></div>
+<div class="toc-item"><span class="toc-num">第7章</span><span class="toc-title">Battle 对抗审查</span></div>
+<div class="toc-item"><span class="toc-num">第8章</span><span class="toc-title">风险评估</span></div>
+<div class="toc-item"><span class="toc-num">第9章</span><span class="toc-title">问题与风险汇总</span></div>
+  </div>
+</div>
+
+<!-- ==================== CONTENT CHAPTERS ==================== -->
+<div class="chapter"><h1>第1章 执行摘要</h1>
+<p>本报告针对 Klaria Pharma Holding AB 的 Sumatriptan Alginate Film（舒马曲坦藻酸盐薄膜片）进行 CMS BD 投前评估。项目属于成熟 API + 创新薄膜剂型：舒马曲坦作为 5-HT1B/1D 激动剂已有长期临床使用基础，Klaria 的差异化在于藻酸盐薄膜递送平台、便携给药和对偏头痛发作伴恶心/呕吐患者的场景适配。</p>
+<p>综合判断，本项目<strong>可进入下一轮商务接触与注册路径核验，但不建议直接高额买断或高首付款授权</strong>。建议以低首付选择权/独家谈判权方式推进，并将 CDE 预沟通、中国权益完整性、欧洲上市后销售数据作为付款前置条件。</p>
+<span class="stage-tag stage-a">阶段A</span> 商机入池与 Phase 1 Discovery 已完成。
+<span class="stage-tag stage-b">阶段B</span> A-1 路由、Gate 0~5 与 Battle 审查已完成。
+<p>[阶段C] 进入条件式商务接触，不进入无条件立项。</p>
+</div>
+<div class="chapter"><h1>第2章 One-pager</h1>
+<h2>One-pager 终局先立</h2>
+<strong>1. 峰值销售额（PeakSales）</strong>
+<ul>
+<li>保守：0.6–0.8 亿元人民币 <span class="confidence-badge conf-c">C-基于场景推算</span></li>
+<li>基准：1.0–1.5 亿元人民币 <span class="confidence-badge conf-c">C-基于剂型差异化与院外复购假设</span></li>
+<li>乐观：2.0 亿元以上 <span class="confidence-badge conf-d">D-需欧洲上市真实数据验证</span></li>
+</ul>
+<strong>2. 承接业务主体</strong>
+<ul>
+<li>主承接：深康（神经/CNS处方药、头痛门诊、医生教育）</li>
+<li>协同主体：院外业务中心（便携剂型、复购与药房/线上渠道）</li>
+</ul>
+<strong>3. 假设错误一半是否可接受</strong>
+<ul>
+<li>可接受，但仅在低首付 / 分阶段付款结构下可接受。</li>
+<li>若首付款超过 1,000 万元人民币或总现金对价接近 3 亿元，则不可接受。</li>
+</ul>
+<strong>4. 最坏情况止损机制</strong>
+<ul>
+<li>CDE 预沟通显示需大规模临床 → 停止或重谈；</li>
+<li>中国权益不清晰 → 停止；</li>
+<li>欧洲上市 12 个月销售低于商业化假设 → 下调估值或退出；</li>
+<li>中国曲坦类峰值可及市场 < 8,000 万元 → 限定为低成本机会型项目。</li>
+</ul>
+<strong>5. 先发制人价值</strong>
+<ul>
+<li>中等。剂型便利性具备差异化，但 API 成熟、竞品充分，必须验证中国患者支付与医生推荐意愿。</li>
+</ul>
+</div>
+<div class="chapter"><h1>第3章 市场规模与竞争格局（Gate 3）</h1>
+<strong>结论先行：条件通过。</strong> 中国偏头痛患者基数大，但规范诊疗率、曲坦类处方渗透率、院外复购和患者支付意愿仍是本项目商业化成败的关键约束。舒马曲坦藻酸盐薄膜片不能按“新机制重磅药”估值，应按“成熟 API + 差异化给药剂型”的谨慎引进逻辑评估。
+<h2>3.1 市场判断</h2>
+<p>中国偏头痛急性治疗存在明确未满足需求：发作场景突发、患者对快速给药和便携性有需求，恶心、呕吐或吞咽不便患者对非水吞服剂型存在潜在偏好。但曲坦类药物已是成熟品类，普通片剂、鼻喷、注射剂和新机制药物共同构成竞争压力。因此，本项目的商业机会不来自简单替代全部舒马曲坦片剂，而来自特定场景下的剂型升级与院外复购。</p>
+<h2>3.2 竞争格局</h2>
+<ul>
+<li><strong>传统曲坦类</strong>：舒马曲坦、佐米曲普坦、利扎曲普坦等已形成成熟竞争格局，价格和可及性对薄膜剂型形成锚定。</li>
+<li><strong>新机制药物</strong>：CGRP 通路药物与其他新型治疗方案会抬高医生和患者对疗效、价格、支付路径的比较标准。</li>
+<li><strong>剂型竞争</strong>：鼻喷、口崩/片剂、注射剂在不同发作场景中各有优势，薄膜剂型必须证明“便携 + 快速 + 恶心呕吐适配”的真实增量。</li>
+</ul>
+<h2>3.3 商业机会</h2>
+<ol>
+<li>头痛门诊和神经内科医生教育，可作为急性发作便利给药选择；</li>
+<li>院外药房与线上复购场景，适合围绕便携性和场景化需求做患者教育；</li>
+<li>对吞咽不便、恶心呕吐患者提供差异化卖点；</li>
+<li>若价格控制合理，可作为曲坦类升级剂型，而非高价创新药路径。</li>
+</ol>
+<h2>3.4 关键商业风险</h2>
+<ul>
+<li>若医保/集采压力下价格不能体现剂型溢价，峰值销售受限；</li>
+<li>若患者对薄膜剂型认知不足，推广成本上升；</li>
+<li>若中国上市窗口过晚，竞品和替代治疗进一步拥挤；</li>
+<li>若院外复购转化不足，深康主承接与院外业务中心协同价值会被削弱。</li>
+</ul>
+<h2>3.5 Gate 3 结论</h2>
+<p>Gate 3 维持“条件通过”。后续进入正式商务谈判前，必须补齐中国曲坦类终端规模、竞品价格带、院外复购数据和渠道可达性验证；在未完成这些数据前，不应按乐观峰值销售额支付高额不可退首付款。</p>
+</div>
+<div class="chapter"><h1>第4章 业务主体互斥规则约束</h1>
+<h2>业务主体互斥规则约束</h2>
+<strong>规则一</strong>：院内直营（深康/德镁/维盛）与院内代理（天津康哲）互斥。
+<strong>规则二</strong>：院外业务中心为通用协同方，可与院内主体叠加。
+<strong>规则三</strong>：康联达仅在国际市场路径为主时作为主承接或叠加层。
+<strong>本标的承接主体</strong>：深康。
+<strong>协同主体</strong>：院外业务中心。
+<strong>互斥校验结果</strong>：通过。
+<p>理由：本项目目标市场为中国大陆，核心科室为神经内科/头痛门诊，属于处方药引进评估；院外业务中心只作为复购与便利剂型协同，不与深康主承接冲突。</p>
+</div>
+<div class="chapter"><h1>第5章 Gate 0 与 Gate 1 结论卡</h1>
+<div class="gate-card gate-pass">
+<div class="gate-title">Gate 0 结论卡</div>
+<div class="gate-label">结论：通过</div>
+<div class="gate-body"><p><strong>结论：通过。</strong></p>
+<p>项目满足进入 A-1 正式尽调的基本前提：海外关键市场已获批/上市准备，中国未上市，产品属性为成熟 API + 创新剂型，商务问题明确指向中国区引进与注册商业化承接。</p></div>
+</div>
+<div class="gate-card gate-conditional">
+<div class="gate-title">Gate 1 结论卡</div>
+<div class="gate-label">结论：条件通过</div>
+<div class="gate-body"><p><strong>结论：条件通过。</strong></p>
+<p><strong>关键支撑证据</strong>：</p>
+<p>1. Klaria 为 Sumatriptan Alginate Film 核心开发主体；</p>
+<p>2. 欧洲商业化已授权 CNX Therapeutics，说明产品具备外部授权交易基础；</p>
+<p>3. 公开资料显示欧洲权益已切出，但中国/亚洲权益需进一步确认。</p>
+<p><strong>需补充证据</strong>：</p>
+<ul>
+<li>Klaria 中国权益声明；</li>
+<li>CNX 协议是否包含中国或优先谈判权；</li>
+<li>专利清单、期限、国家覆盖与 FTO 初评。</li>
+</ul></div>
+</div>
+</div>
+<div class="chapter"><h1>第6章 Gate 2 结论卡</h1>
+<div class="gate-card gate-conditional">
+<div class="gate-title">Gate 2 结论卡</div>
+<div class="gate-label">结论：条件通过</div>
+<div class="gate-body"><p><strong>结论：条件通过。</strong></p>
+<p><strong>关键支撑证据</strong>：</p>
+<p>1. 舒马曲坦疗效和安全性已有成熟临床基础；</p>
+<p>2. 项目差异化在藻酸盐薄膜剂型，具备口腔便携给药场景；</p>
+<p>3. 欧洲已获批/上市准备为注册可行性提供外部参考。</p>
+<p><strong>需补充证据</strong>：</p>
+<ul>
+<li>CDE 对进口薄膜剂型的注册路径意见；</li>
+<li>是否需要中国人群 PK/BE 或桥接研究；</li>
+<li>质量标准、稳定性、口腔薄膜局部耐受性数据。</li>
+</ul></div>
+</div>
+</div>
+<div class="chapter"><h1>第7章 Battle 对抗审查</h1>
+<div class="battle-auditor"><h3>审查层异议清单</h3><p>审查层提出三项反对意见：</p>
+<p>1. 欧洲获批不能等同于中国注册低风险；</p>
+<p>2. 中国偏头痛药物市场大但规范用药率和复购行为不足，峰值销售可能被高估；</p>
+<p>3. 薄膜剂型便利性明确，但商业溢价是否可持续尚未证明。</p></div>
+<div class="battle-executor"><h3>执行层逐条回应</h3><p>执行层回应：</p>
+<p>1. 将 CDE 预沟通列为付款前置条件；</p>
+<p>2. 将峰值销售额基准下调至 1.0–1.5 亿元，并设置低首付交易结构；</p>
+<p>3. 要求欧洲上市 6–12 个月真实销售数据作为估值校准。</p>
+<p>### Battle 最终结论</p>
+<p>A-1 路由成立，但结论应为“条件通过 / 谨慎推进”，不得无条件立项。</p></div>
+</div>
+<div class="chapter"><h1>第8章 风险评估</h1>
+<h2>风险</h2>
+<strong>主要风险</strong>：
+<ul>
+<li>中国注册路径不确定；</li>
+<li>中国权益完整性不确定；</li>
+<li>曲坦类成熟市场价格压力；</li>
+<li>薄膜剂型医生教育和患者支付意愿不确定；</li>
+<li>欧洲上市数据尚未充分验证商业化表现。</li>
+</ul>
+<strong>风险缓释</strong>：
+<ul>
+<li>交易结构采用低首付 + 里程碑 + royalty；</li>
+<li>CDE 预沟通前不支付高额不可退费用；</li>
+<li>先做中国曲坦类终端数据采样；</li>
+<li>把欧洲真实销售作为二次估值节点。</li>
+</ul>
+<h2>结论</h2>
+<p>综合推荐：<strong>条件通过（CONDITIONAL）</strong>。</p>
+<p>建议 CMS 进入商务接触与注册核验阶段，但交易纪律必须严格：低首付、分阶段、权益清晰、注册可控、数据补强后再做正式立项。</p>
+</div>
+<div class="chapter"><h1>第9章 问题与风险汇总</h1>
+<h2>信息冲突</h2>
+<p>当前未发现一票否决级信息冲突，但存在三类待核实数据：</p>
+<ul>
+<li>Klaria / CNX 协议是否影响中国权益；</li>
+<li>中国注册路径是否需要大规模临床；</li>
+<li>中国曲坦类院内/院外终端规模与价格带。</li>
+</ul>
+<h2>一票否决项</h2>
+<p>暂未发现一票否决项。若后续出现以下任一情况，应停止推进：</p>
+<ol>
+<li>中国权益已被排他性授权第三方；</li>
+<li>CDE 要求大规模临床且周期超过 5 年；</li>
+<li>总现金对价超过财务纪律上限；</li>
+<li>峰值销售额无法证明超过 8,000 万元。</li>
+</ol>
+<h2>附录A：术语与缩写表</h2>
+<h2>术语与缩写表</h2>
+<div class="table-wrap"><table>
+<tr><th>术语</th><th>解释</th></tr>
+<tr><td>A-1</td><td>海外已上市/已获批，中国未上市产品引进评估路径</td></tr>
+<tr><td>API</td><td>Active Pharmaceutical Ingredient，活性药物成分</td></tr>
+<tr><td>CDE</td><td>国家药监局药品审评中心</td></tr>
+<tr><td>CNX</td><td>CNX Therapeutics，Klaria 欧洲商业化合作方</td></tr>
+<tr><td>BE</td><td>Bioequivalence，生物等效性</td></tr>
+<tr><td>IRR</td><td>Internal Rate of Return，内部收益率</td></tr>
+<tr><td>PeakSales</td><td>峰值销售额</td></tr>
+<tr><td>Royalty</td><td>销售提成/许可使用费</td></tr>
+</table></div>
+<strong>综合评估结论</strong>：条件通过（CONDITIONAL）
+<strong>置信度</strong>：<span class="confidence-badge conf-c">C-基于公开资料 + 业务推算，需 CDE/权益/销售数据进一步验证</span>
+</div>
+
+</body>
+</html>

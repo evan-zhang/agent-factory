@@ -1,0 +1,95 @@
+{
+  "verdict": "CONDITIONAL_PASS",
+  "confidence": 0.84,
+  "review_object": "stock-picking Node 0 外部触发入口基线方案 (S2 节点评审稿)",
+  "domain": "B 类 方案评审",
+  "review_time": "2026-06-23 22:36 CST",
+  "model": "newapi-openai/MiniMax-M3",
+  "subject_path": "projects/stock-picking/node-0-trigger-entry-review-context.md",
+  "supporting_paths": [
+    "projects/stock-picking/src/SKILL.md",
+    "projects/stock-picking/REQ-01.md",
+    "projects/stock-picking/PLAN.md"
+  ],
+  "dimension_scores": [
+    {"dimension": "边界正确性", "score": 4, "comment": "调度属 Gateway / 契约属 skill 方向正确，需补「推荐 cadence 是建议不是执行」"},
+    {"dimension": "输入契约完整性", "score": 3, "comment": "6 字段可用，缺 strategy_version / timezone / correlation_id / universe / priority"},
+    {"dimension": "多市场/多策略语义", "score": 3, "comment": "外层多、内层拆方向对；需从契约层禁掉歧义"},
+    {"dimension": "dry_run 策略", "score": 3, "comment": "默认 true 对；false 在 Node 0 语义未定义，与未来 execution 概念耦合"},
+    {"dimension": "可行性", "score": 4, "comment": "纯契约层修改，无 runtime 阻碍"},
+    {"dimension": "与 REQ-01 一致性", "score": 4, "comment": "节点 0 段落、PLAN.md、新流程图支持该方案"},
+    {"dimension": "验收标准可测试性", "score": 3, "comment": "缺拒绝/负向/幂等/日志四项硬验收"},
+    {"dimension": "风险识别", "score": 4, "comment": "编排者识别了 mixed 黑盒与卖出零干预两个主要风险"}
+  ],
+  "findings": [
+    {"id": "F001", "severity": "major", "category": "完整性", "location": "输入契约", "description": "缺 strategy_version；与 strategy_id 是两个不同维度，缺版本会让 draft 难以复现与审计", "evidence": ["node-0-trigger-entry-review-context.md:14-21"], "recommendation": "增加 strategy_version: semver，必填，与策略模块 VERSION 对齐"},
+    {"id": "F002", "severity": "major", "category": "一致性", "location": "输入契约", "description": "缺 timezone / market_session；三市场不同时区，复盘时「同一交易日」易误判", "evidence": ["node-0-trigger-entry-review-context.md:14-21"], "recommendation": "从 market 推导 timezone；增加 market_session: pre|regular|after_hours|closed"},
+    {"id": "F003", "severity": "major", "category": "一致性", "location": "输入契约", "description": "缺 correlation_id；编排层 fan-out 时需要把多次 run 串成同一次 SOP 触发", "evidence": ["node-0-trigger-entry-review-context.md:25-27"], "recommendation": "必填 uuid，fan-out 时共享"},
+    {"id": "F004", "severity": "major", "category": "完整性", "location": "多市场语义", "description": "market 字段允许多值的歧义没写进契约；调度层好习惯不可靠", "evidence": ["node-0-trigger-entry-review-context.md:25-27"], "recommendation": "强制单值；多市场由外层 fan-out"},
+    {"id": "F005", "severity": "major", "category": "完整性", "location": "多策略语义", "description": "strategy_id: mixed 让策略选择器变成隐式黑盒，与编排者「不应是黑盒」立场矛盾", "evidence": ["node-0-trigger-entry-review-context.md:26"], "recommendation": "v1 直接从枚举中删除 mixed；多策略由调用方多次调用 + 共享 correlation_id"},
+    {"id": "F006", "severity": "major", "category": "完整性", "location": "dry_run 语义", "description": "dry_run=false 在 Node 0 无业务效果但未声明；易被误解为可以下单", "evidence": ["node-0-trigger-entry-review-context.md:27-29"], "recommendation": "v1 dry_run 仅控制 trade_log / risk_event 执行态字段，与下单无关；下单是后续独立节点"},
+    {"id": "F007", "severity": "minor", "category": "完整性", "location": "输入契约", "description": "缺 universe 提示；同一策略对全市场/行业/自选股/candidates 成本差异巨大", "evidence": ["node-0-trigger-entry-review-context.md:14-21"], "recommendation": "增加 universe: market|sector:{n}|watchlist:{n}|candidates:{market}"},
+    {"id": "F008", "severity": "minor", "category": "完整性", "location": "输入契约", "description": "缺 priority / deadline；调度层在重试和高优请求场景需要取舍", "evidence": ["node-0-trigger-entry-review-context.md:14-21"], "recommendation": "增加 priority: low|normal|high，可选，默认 normal"},
+    {"id": "F009", "severity": "minor", "category": "完整性", "location": "dry_run 语义", "description": "trigger_source 与「是否走真链路」对应关系没说", "evidence": ["node-0-trigger-entry-review-context.md:27-29"], "recommendation": "v1 trigger_source 仅用于审计与 SLA，不影响 dry_run"},
+    {"id": "F010", "severity": "minor", "category": "完整性", "location": "dry_run 语义", "description": "缺审计元数据 request_id / caller / requested_at；trigger_source 退化为 caller 语义分类", "evidence": ["node-0-trigger-entry-review-context.md:14-21"], "recommendation": "必填：request_id (uuid)、requested_at (ISO8601)、caller"},
+    {"id": "F011", "severity": "minor", "category": "风险识别", "location": "dry_run 策略", "description": "未来 risk-execution gateway 混进 Node 0 讨论；Node 0 是研究入口，execution 是独立节点", "evidence": ["node-0-trigger-entry-review-context.md:29"], "recommendation": "Node 0 文档不讨论 execution；execution 留到 S3/S4 单独评审"},
+    {"id": "F012", "severity": "minor", "category": "一致性", "location": "验收标准", "description": "缺拒绝多市场 / mixed / 缺字段三类负向验收", "evidence": ["review context 问 3-4"], "recommendation": "验收清单必含：单 market 强制；mixed 拒绝；缺必填返回结构化错误"},
+    {"id": "F013", "severity": "minor", "category": "一致性", "location": "验收标准", "description": "缺幂等/重放语义；同 key 二次触发是「重跑」「续跑」还是「拒绝」没说", "evidence": ["隐含"], "recommendation": "v1 同 idempotency_key 二次触发返回上次 run_id，不重复执行"},
+    {"id": "F014", "severity": "info", "category": "边界", "location": "边界", "description": "建议 cadence 与调度计划边界不清；skill 文档不应写「每周一 8:30 跑」", "evidence": ["src/SKILL.md:16-22, 43-50"], "recommendation": "用「推荐频率」段替代时间表，例 discovery: trading_day, market_open-30m"},
+    {"id": "F015", "severity": "info", "category": "一致性", "location": "命名", "description": "run_mode: full 是 SOP 编排层概念，节点 0 不应触发 full 链路", "evidence": ["node-0-trigger-entry-review-context.md:14-21"], "recommendation": "run_mode 限定 discovery|validation|tracking；full 由 SOP 编排层调用"},
+    {"id": "F016", "severity": "info", "category": "一致性", "location": "验收标准", "description": "缺结构化审计日志字段约定", "evidence": ["review context audit metadata"], "recommendation": "验收补一条：必输出 request_id/correlation_id/caller/market/strategy_id+version/run_mode/dry_run/入参hash/回参摘要"},
+    {"id": "F017", "severity": "info", "category": "一致性", "location": "命名", "description": "run_date 含义不清：调度日期 vs 数据 as-of 日期", "evidence": ["node-0-trigger-entry-review-context.md:14-21"], "recommendation": "拆为 signal_date (as-of) + run_date (触发)，v1 假定相同"},
+    {"id": "F018", "severity": "info", "category": "一致性", "location": "REQ-01 对齐", "description": "Node 0 dry_run 与 REQ-01 红线未对齐声明", "evidence": ["REQ-01.md 9-12 段"], "recommendation": "Node 0 加一句：本节点 dry_run 与人工确认红线解耦；Node 0 不发起交易"}
+  ],
+  "disagreements_with_orchestrator": [
+    {"topic": "多市场", "orchestrator": "外层允许，内层拆", "reviewer": "同意；建议契约层禁掉 market 多值", "reason": "契约层硬约束比调度层好习惯更可靠"},
+    {"topic": "mixed 策略", "orchestrator": "SOP 层编排，不是黑盒", "reviewer": "同意；v1 直接从枚举删", "reason": "字段允许 = 调用方会传，契约存在即污染"},
+    {"topic": "dry_run=false", "orchestrator": "未来 risk-execution gateway 提及", "reviewer": "Node 0 文档完全不讨论 execution", "reason": "避免 S2 基线被未决定的领域带跑"},
+    {"topic": "run_mode: full", "orchestrator": "枚举中保留", "reviewer": "v1 拒绝", "reason": "full 是 SOP 编排层概念，不应在 Node 0 入口触发"}
+  ],
+  "recommended_contract": {
+    "request_id": "uuid, required, audit key",
+    "correlation_id": "uuid, required, shared across fan-out",
+    "caller": "manual|cron|sop, required",
+    "requested_at": "ISO8601, required",
+    "market": "US|HK|CN, required, single value",
+    "strategy_id": "taroc|chokepoint|<custom>, required, no mixed in v1",
+    "strategy_version": "semver, required, aligned with strategy module VERSION",
+    "run_mode": "discovery|validation|tracking, required, no full|monitor in v1",
+    "universe": "market|sector:{n}|watchlist:{n}|candidates:{market}, optional",
+    "signal_date": "YYYY-MM-DD, optional, default = run_date",
+    "run_date": "YYYY-MM-DD, required",
+    "timezone": "Asia/Shanghai|Asia/Hong_Kong|America/New_York, optional, derived from market",
+    "dry_run": "boolean, required, default true, no trade action in v1",
+    "priority": "low|normal|high, optional, default normal",
+    "idempotency_key": "string, optional, derived from request_id+run_date+strategy if missing"
+  },
+  "rejection_rules": [
+    "market 多值 → 400",
+    "strategy_id: mixed → 400",
+    "run_mode: full|monitor → 400",
+    "缺 request_id/correlation_id/strategy_version → 400",
+    "同 idempotency_key 二次触发 → 返回首次 run_id + 状态",
+    "缺必填字段 → 结构化错误 (error_code + field + message)，不静默回退"
+  ],
+  "acceptance_criteria": [
+    "Node 0 文档不出现具体 cron 时间表，只出现「推荐频率（建议非执行）」",
+    "调度配置以 Gateway 运维文档形式独立存在，不在 skill 内",
+    "market 强制单值；多市场由外层 fan-out",
+    "strategy_id v1 不含 mixed；run_mode v1 不含 full/monitor",
+    "dry_run: true 是默认；false 在 Node 0 不触发任何交易动作",
+    "缺必填字段返回结构化错误，不静默回退",
+    "幂等：同 idempotency_key 二次触发返回上次 run_id，不重复执行",
+    "每次触发输出结构化审计日志",
+    "Node 0 文档明确不讨论 execution / 下单 / 自动卖出",
+    "与 REQ-01.md 红线声明对齐"
+  ],
+  "implementation_order": [
+    "修订 REQ-01.md 节点 0 段落，吸收 F001-F006 + F011",
+    "在 src/SKILL.md v1.0.0 重写版首节定义 TriggerRequest schema",
+    "在 flows/ 下加 trigger.md，写明拒绝规则与错误码",
+    "旧 stock-picking-v2/SKILL.md cron 表与持仓监控频率段迁出至 Gateway 运维文档",
+    "把验收标准 1-10 写成 Node 0 准入 checklist，复用于后续节点评审"
+  ],
+  "most_important_recommendation": "把 mixed 策略 / 多市场 / full 模式从 v1 契约中直接删除——契约字段存在就会被使用，靠文档「应该不会传」防不住。"
+}

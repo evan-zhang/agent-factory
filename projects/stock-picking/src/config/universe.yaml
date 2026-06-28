@@ -1,0 +1,75 @@
+schema: stock_picking_universe.v1
+updated_at: "2026-06-25"
+notes:
+  - "S5e seed universe: liquid large caps used for automated dry-run discovery."
+  - "Expand by editing this file, not cron payloads."
+
+universes:
+  CN:
+    default:
+      - symbol: 600519.SH
+        name: Kweichow Moutai
+        rationale: high-liquidity consumer leader
+      - symbol: 300750.SZ
+        name: CATL
+        rationale: battery supply-chain bellwether
+      - symbol: 601318.SH
+        name: Ping An Insurance
+        rationale: financial sector leader
+      - symbol: 600036.SH
+        name: China Merchants Bank
+        rationale: bank quality benchmark
+      - symbol: 000858.SZ
+        name: Wuliangye
+        rationale: consumer staples peer
+      - symbol: 002594.SZ
+        name: BYD
+        rationale: EV and battery leader
+      - symbol: 600900.SH
+        name: Yangtze Power
+        rationale: stable dividend utility, user requested addition
+
+  HK:
+    default:
+      - symbol: 9988.HK
+        name: Alibaba
+        rationale: China internet bellwether
+      - symbol: 700.HK
+        name: Tencent
+        rationale: platform and gaming leader
+      - symbol: 3690.HK
+        name: Meituan
+        rationale: local-services leader
+      - symbol: 1810.HK
+        name: Xiaomi
+        rationale: hardware and EV catalyst exposure
+      - symbol: 9868.HK
+        name: Xpeng
+        rationale: EV beta
+      - symbol: 1299.HK
+        name: AIA
+        rationale: insurance and rate-sensitive leader
+
+  US:
+    default:
+      - symbol: AAPL.US
+        name: Apple
+        rationale: mega-cap hardware/platform leader
+      - symbol: MSFT.US
+        name: Microsoft
+        rationale: cloud and AI platform leader
+      - symbol: NVDA.US
+        name: NVIDIA
+        rationale: AI compute leader
+      - symbol: AMZN.US
+        name: Amazon
+        rationale: cloud and consumer platform leader
+      - symbol: GOOGL.US
+        name: Alphabet
+        rationale: search, ads, and AI leader
+      - symbol: META.US
+        name: Meta Platforms
+        rationale: ads and AI infrastructure leader
+      - symbol: TSLA.US
+        name: Tesla
+        rationale: EV and autonomy catalyst exposure

@@ -1,0 +1,5 @@
+# Empty: v1 rejects all custom_refs.
+# Any future entry must be approved through design/DESIGN.md Decision Log
+# and reference a registry-approved strategy record or signed internal reference.
+custom_refs_version: 1
+refs: []

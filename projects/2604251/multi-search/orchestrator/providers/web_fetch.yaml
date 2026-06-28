@@ -1,0 +1,42 @@
+# Web Fetch Provider Configuration (Fallback)
+name: web_fetch
+display_name: "Web Fetch (Fallback)"
+type: mcp
+enabled: true
+
+# MCP 配置
+mcp_server: exa
+mcp_tool_name: web_search_exa
+
+# 参数映射（将统一参数名映射到 Exa 特定参数名）
+call:
+  parameters:
+    # 查询参数
+    query:
+      source: query
+      type: string
+    # 结果数量
+    numResults:
+      source: num_results
+      type: integer
+
+  # 结果字段映射（将 Exa 响应字段映射到统一字段名）
+  # Exa 返回: {results: [{title, url, snippet, published_date}]}
+  result_mapping:
+    title: "title"
+    url: "url"
+    snippet: "snippet"               # Exa 用 snippet
+    published_date: "published_date" # Exa 用 published_date
+    score: ~                         # Exa 不提供排序分
+
+# 配额管理
+quota_limit: 50
+quota_window: 60
+
+# 超时设置
+timeout: 30
+
+# 元数据
+metadata:
+  description: "Web Fetch Fallback (via Exa)"
+  website: "https://exa.ai/"

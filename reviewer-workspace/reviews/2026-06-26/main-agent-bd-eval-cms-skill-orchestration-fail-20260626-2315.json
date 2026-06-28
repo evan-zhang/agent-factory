@@ -1,0 +1,72 @@
+{
+  "verdict": "FAIL",
+  "confidence": 0.86,
+  "review_object": "bd-eval-cms Skill 改造方案 — N2 orchestrator directive 三项架构决策",
+  "review_time": "2026-06-26 23:15 GMT+8",
+  "model": "gsykj-anthropic/claude-sonnet-4-6",
+  "dimension_scores": [
+    {"dimension": "决策1：独立编排指令位置", "score": 4, "comment": "新建轻量执行指令文件优于塞入 1400+ 行设计文档，但 SKILL.md 必须设为运行 N2 的必读入口。"},
+    {"dimension": "决策2：checklist+pseudocode 格式", "score": 4, "comment": "适合 LLM agent 稳定执行；还应补状态机、DoD、失败处理表、恢复点。"},
+    {"dimension": "决策3：流水线/分阶段调度", "score": 2, "comment": "收口章并发违反 manifest 依赖；16 次 yield + 3600s timeout 估算风险高。"},
+    {"dimension": "可迁移性/复用性", "score": 3, "comment": "方向正确，但需显式参数化路径、agent 名、模型、并发、timeout、恢复检查。"},
+    {"dimension": "证据一致性", "score": 3, "comment": "与 sessions_yield 文档总体一致，但与 chapter-manifest 的收口章依赖不一致。"}
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "severity": "major",
+      "category": "调度依赖错误",
+      "location": "决策3：收口章 4 章一起 spawn 写作",
+      "description": "Ch17 依赖 Ch1 和 Ch2-Ch16；Ch0 又依赖 Ch17；Ch18 依赖 Ch17。因此 Ch0/Ch1/Ch17/Ch18 不能一起写。",
+      "evidence": "chapter-manifest.json: Ch17 depends_on = Ch1+Ch2..Ch16；Ch0 depends_on = Ch1,Ch3,Ch10,Ch17；Ch18 depends_on = Ch1..Ch17。",
+      "recommendation": "改为 Ch1 → Ch17 → (Ch0, Ch18 并行)；终审在 Ch0/Ch18 完成后再跑。"
+    },
+    {
+      "id": "F002",
+      "severity": "major",
+      "category": "timeout 估算不足",
+      "location": "决策3：总 16 次 yield，~60 分钟，runTimeout=3600s",
+      "description": "估算主要计入 yield 恢复/处理，没有充分计入搜索、写作、复核 child 的 wall-clock 时间；3600s 几乎无余量。",
+      "evidence": "复盘文档：写作 sub-agent 曾 592s-3056s；OpenClaw docs: sessions_yield 等待 child completion，sessions_spawn 不接受 per-call timeout。",
+      "recommendation": "不建议单个 depth-1 orchestrator 在 3600s 内包完整 19 章；拆成阶段化 orchestrator 或主 agent 编排。"
+    },
+    {
+      "id": "F003",
+      "severity": "major",
+      "category": "章节依赖/批处理边界",
+      "location": "决策3：搜索章 11 章逐章流水线 vs 批量",
+      "description": "逐章搜索→写作→复核能早发现问题，但 11 次 yield 开销偏高；搜索章内部有依赖链，不能简单改成 3-4 章全写完再复核。",
+      "evidence": "chapter-manifest.json: Ch3 depends Ch2；Ch4 depends Ch2/Ch3；Ch5/6/7 depends Ch3；Ch11 depends Ch2；Ch12 depends Ch11；Ch14 depends Ch10。",
+      "recommendation": "按 topo-order 依赖层级小批化；每批写完立即预聚合+复核。"
+    },
+    {
+      "id": "F004",
+      "severity": "minor",
+      "category": "并发写 state 风险",
+      "location": "决策3：继承章 4 章一起 spawn 写作",
+      "description": "继承章内容层面可并发，但多个 worker 同时 jq 改 state.json 存在覆盖/竞态。",
+      "evidence": "协议标准流程要求每章写后更新 state.json；Ch9/13/15/16 无互相依赖。",
+      "recommendation": "worker 只写章节文件和局部产物；父 orchestrator 在 yield 后统一更新 state.json，或使用带锁脚本。"
+    },
+    {
+      "id": "F005",
+      "severity": "minor",
+      "category": "Skill 入口弱引用",
+      "location": "决策1：SKILL.md 加一行指向",
+      "description": "弱引用可能不足以让 agent 主动读取 directive。",
+      "evidence": "当前 SKILL.md 长篇路由/规则；复盘明确当前 Skill 缺编排指令。",
+      "recommendation": "SKILL.md 增加强制触发规则：执行完整 N2 / 两书 / 全链路评估时必须先读 directive。"
+    },
+    {
+      "id": "F006",
+      "severity": "minor",
+      "category": "指令可迁移性不足",
+      "location": "决策1/2 整体",
+      "description": "若 directive 写死 absolute path、固定 agentId/model/provider、固定 runTimeout，迁移到其他 agent 仍依赖隐性经验。",
+      "evidence": "OpenClaw docs: sub-agent model/timeout来自配置；sessions_spawn 支持 agentId/model/context/cwd，但 run timeout不支持 per-call。",
+      "recommendation": "directive 顶部放环境变量/可配置项：skill root、case dir、writer/reviewer agent、max concurrent、timeout budget、fallback model、resume command。"
+    }
+  ],
+  "key_recommendation": "保留独立编排指令 + checklist/pseudocode 的产品化方向，但必须重写调度图：尤其把收口章改成 Ch1 → Ch17 → Ch0/Ch18，并把单个 orchestrator 的 3600s 全流程拆成有超时余量的阶段化执行。",
+  "archive_md": "reviews/2026-06-26/main-agent-bd-eval-cms-skill-orchestration-fail-20260626-2315.md"
+}

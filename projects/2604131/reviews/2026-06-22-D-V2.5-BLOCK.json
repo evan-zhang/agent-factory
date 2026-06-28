@@ -1,0 +1,71 @@
+{
+  "verdict": "BLOCK",
+  "confidence": 0.86,
+  "review_object": "Link Archivist Skill v2.5.0 final acceptance",
+  "review_time": "2026-06-22",
+  "model": "gsykj-anthropic/claude-sonnet-4-6",
+  "scores": [
+    {"dimension": "功能符合需求", "score": 4, "comment": "源码侧覆盖 K/M 编号、5 Phase 管线、KB 查询/重建/导出。"},
+    {"dimension": "质量门控全过", "score": 3, "comment": "源码测试 17 passed，但安装态与源码态不一致，门控不可直接代表已安装制品。"},
+    {"dimension": "文档完整", "score": 2, "comment": "缺 DESIGN.md、LEARNING-LOOP.md、SHARE_LOG.jsonl。"},
+    {"dimension": "版本号同步", "score": 1, "comment": "installed=2.5.0，source/project=2.6.1。"},
+    {"dimension": "安装与使用说明可用", "score": 3, "comment": "安装说明存在，但发布/安装闭环未验证。"}
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "severity": "blocker",
+      "category": "版本/制品一致性",
+      "location": "installed skill vs factory source",
+      "description": "已安装验收对象与工厂源码不是同一版本，无法确认上线制品。",
+      "evidence": [
+        "~/.openclaw/skills/link-archivist/SKILL.md:3 version 2.5.0",
+        "~/.openclaw/skills/link-archivist/version.json:3 version 2.5.0",
+        "projects/2604131/link-archivist/SKILL.md:3 version 2.6.1",
+        "projects/2604131/VERSION:1 2.6.1"
+      ],
+      "recommendation": "定义本次上线版本并同步安装目录、工厂源码、VERSION、frontmatter、version.json。"
+    },
+    {
+      "id": "F002",
+      "severity": "blocker",
+      "category": "文档完整性",
+      "location": "projects/2604131/link-archivist/design/",
+      "description": "上线前设计档案缺失。",
+      "evidence": ["未发现 design/DESIGN.md", "未发现 design/LEARNING-LOOP.md", "未发现 design/SHARE_LOG.jsonl"],
+      "recommendation": "补齐 design/ 三件套，并把历史 merge/roadmap 决策收敛到正式设计档案。"
+    },
+    {
+      "id": "F003",
+      "severity": "major",
+      "category": "发布包瘦身/SOP 符合性",
+      "location": "SKILL.md and references/",
+      "description": "已安装 SKILL.md 568 行，源码 SKILL.md 103 行；references 文件数量较多。",
+      "evidence": ["installed SKILL.md 568 lines", "source SKILL.md 103 lines", "source references 18 files", "installed references 14 files"],
+      "recommendation": "同步源码瘦身版到安装目录；references 分核心/进阶/归档。"
+    },
+    {
+      "id": "F004",
+      "severity": "major",
+      "category": "元数据规范",
+      "location": "SKILL.md frontmatter",
+      "description": "frontmatter 含非标准字段 skillcode、github。",
+      "evidence": ["installed SKILL.md:4-5", "source SKILL.md:4-5"],
+      "recommendation": "只保留平台支持字段；GitHub URL 移入正文。"
+    },
+    {
+      "id": "F005",
+      "severity": "minor",
+      "category": "文档归档规范",
+      "location": "docs/",
+      "description": "docs/ 下保留过程文档。",
+      "evidence": ["MERGE_PLAN_v1.md", "MERGE_PLAN_v2.md", "OKF_ALIGNMENT_ROADMAP_v1.md", "V3_WIKI_EVALUATION.md"],
+      "recommendation": "过程文档迁入 docs/archive/；正式设计档案引用最终决策。"
+    }
+  ],
+  "most_important_recommendation": "先停止上线，把发布制品版本收敛为一个事实，并补齐 design/ 三件套后再复验。",
+  "archive": {
+    "markdown": "projects/2604131/reviews/2026-06-22-D-V2.5-BLOCK.md",
+    "json": "projects/2604131/reviews/2026-06-22-D-V2.5-BLOCK.json"
+  }
+}

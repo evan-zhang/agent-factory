@@ -9,7 +9,7 @@ Welcome to the **Agent Factory** v2.0.
 ```
 agent-factory/
 ├── specs/              规范层（只读）
-│   ├── workflows/      SOP 工作流规范
+│   ├── workflows/      只保留 SOP 指针；真实 SOP 在 ~/.openclaw/skills/agent-factory-sop
 │   ├── templates/      项目模板
 │   ├── agents/         Sub-Agent 角色定义
 │   ├── governance/     治理规范文档
@@ -38,6 +38,7 @@ agent-factory/
 - `IDENTITY.md` — 工厂身份（造物）
 - `AGENTS.md` — Sub-Agent 调度规则
 - `CLAWFILE.md` — 入口配置
+- `/Users/evan/.openclaw/skills/agent-factory-sop/SKILL.md` — Factory SOP 唯一真相源
 
 ---
 

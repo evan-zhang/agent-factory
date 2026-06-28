@@ -1,0 +1,139 @@
+{
+  "schema": "ReviewReport.v1",
+  "review_id": "M4e-review-2026-06-24",
+  "review_time": "2026-06-24T23:24:00+08:00",
+  "reviewer": "factory-reviewer",
+  "model": "gsykj-anthropic/claude-opus-4-8",
+  "target": {
+    "project": "stock-picking",
+    "path": "domains/agent-factory/projects/stock-picking/",
+    "change": "M4e production market calendar integration",
+    "files_reviewed": [
+      "src/scripts/market_calendar.py",
+      "src/scripts/dry_run_orchestrator.py",
+      "src/scripts/cron_readiness.py",
+      "tests/test_m4e_market_calendar.py",
+      "src/references/gateway-cron.md",
+      "src/scripts/execution_guard.py",
+      "src/scripts/event_store.py",
+      "src/strategies/registry.yaml"
+    ]
+  },
+  "domain": "code",
+  "mode": "quick",
+  "risk_level": "medium",
+  "verdict": "WARN",
+  "confidence": 0.88,
+  "summary": "M4e code path is functionally safe for the reviewed gate: production_calendar now uses pandas-market-calendars for CN/HK/US, closed/unknown days return calendar_skip with no events written, open days write the normal dry-run event chain, execution guard remains separate and effective, and manual_pilot_override remains compatible. The only release-gating concern is documentation staleness in gateway-cron.md that still describes the old M4c/M4b production_calendar rejection behavior.",
+  "dimension_scores": [
+    {
+      "dimension": "正确性",
+      "score": 4,
+      "comment": "核心流程正确：open/half_day proceed，closed/unknown skip；16项 M4e 测试和 cron_readiness 均通过。"
+    },
+    {
+      "dimension": "安全性",
+      "score": 4,
+      "comment": "未发现绕过 broker execution guard 的路径；production_calendar closed day 不写事件，CLI unknown broker/action flags 仍被 argparse 拒绝。"
+    },
+    {
+      "dimension": "健壮性",
+      "score": 4,
+      "comment": "日历查询异常降级为 unknown 并 skip；覆盖 CN/HK/US 基本交易日、周末、节假日。存在少量非阻塞边界改进空间。"
+    },
+    {
+      "dimension": "可维护性",
+      "score": 4,
+      "comment": "market_calendar 独立封装，orchestrator 集成点清晰；但文档仍混有旧里程碑描述。"
+    },
+    {
+      "dimension": "测试覆盖",
+      "score": 5,
+      "comment": "新增测试覆盖三市场、节假日、closed skip、open write、idempotency、manual override；实测 16/16 通过。"
+    }
+  ],
+  "checks_run": [
+    {
+      "name": "M4e unit/integration tests",
+      "command": "source .venv/bin/activate && PYTHONPATH=src/scripts python3 tests/test_m4e_market_calendar.py",
+      "status": "pass",
+      "evidence": "M4e tests: 16 passed, 0 failed, 16 total"
+    },
+    {
+      "name": "cron readiness",
+      "command": "source .venv/bin/activate && python3 src/scripts/cron_readiness.py --event-root /tmp/m4e-review --registry src/strategies/registry.yaml --custom-refs src/strategies/custom_refs.yaml",
+      "status": "pass",
+      "evidence": "ok=true; checks passed: event_root, registry_policy, cli_allowlist, production_calendar_integration, validation_gate, dry_run_smoke"
+    },
+    {
+      "name": "closed-day no-write probe",
+      "command": "PYTHONPATH=src/scripts run_discovery(... --calendar-source production_calendar --signal-date 2026-01-01)",
+      "status": "pass",
+      "evidence": "calendar_skip=true, calendar_status=closed, written=[], reject=null, event root not created"
+    },
+    {
+      "name": "calendar package coverage probe",
+      "command": "python3 -c 'import pandas_market_calendars as mcal; ...'",
+      "status": "pass",
+      "evidence": "pandas-market-calendars 5.4.0 installed; calendar names include XSHG, XHKG, NYSE"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "severity": "minor",
+      "category": "文档一致性",
+      "location": "src/references/gateway-cron.md:199-206",
+      "description": "Readiness Gate 文档仍保留旧行为：声明 checker 验证 reserved production_calendar is rejected before any event write。这与 M4e 新行为相反，可能误导部署审查或后续维护者。",
+      "evidence": "gateway-cron.md lines 199-206 list checker items including 'reserved `production_calendar` is rejected before any event write', while cron_readiness.py lines 113-194 now checks production_calendar_integration and dry_run_orchestrator.py lines 240-259 returns calendar_skip instead of reject for closed/unknown days.",
+      "recommendation": "将该条更新为：production_calendar uses pandas-market-calendars; open days proceed with production metadata; closed/unknown days return calendar_skip and write no events. 同步将 M4c wording 调整为 M4e readiness wording。",
+      "blocking": false
+    },
+    {
+      "id": "F002",
+      "severity": "minor",
+      "category": "文档一致性",
+      "location": "src/references/gateway-cron.md:35-42",
+      "description": "Initial Schedules 中仍称 HK/CN 需等 fixture 替换为 production calendar/coverage verified；M4e 已接入 XHKG/XSHG 并有测试覆盖 2026-06-24 交易日、周末和 New Year holiday。该段作为保守调度建议可以保留，但措辞已不准确。",
+      "evidence": "market_calendar.py lines 28-32 maps CN->XSHG, HK->XHKG, US->NYSE；tests/test_m4e_market_calendar.py covers CN/HK/US trading day and holiday cases；gateway-cron.md lines 39-41 still describe HK/CN as awaiting fixture replacement or coverage verification.",
+      "recommendation": "改成：HK/CN production calendar source is integrated, but production cron remains manual-pilot/conservative until operator route and market-specific confidence gates are approved。",
+      "blocking": false
+    }
+  ],
+  "positive_evidence": [
+    {
+      "area": "production_calendar closed-day safety",
+      "evidence": "dry_run_orchestrator.py lines 240-259: production_calendar calls get_calendar_status; closed/unknown returns ok=true, calendar_skip=true, written=[], reject=None before store append. Independent probe confirmed event root not created."
+    },
+    {
+      "area": "open-day production metadata",
+      "evidence": "build_run_context lines 75-103 sets calendar_source_version to PMC version for production_calendar and avoids not_production_calendar warning; test_production_calendar_open_day_writes_events verifies atomic_request, run_context, strategy_dispatch, draft_candidates and production metadata."
+    },
+    {
+      "area": "calendar data source coverage",
+      "evidence": "market_calendar.py lines 26-32 pins pmc-5.4.0 and maps CN/HK/US to XSHG/XHKG/NYSE; local package probe confirms pandas-market-calendars 5.4.0 exposes all three calendars."
+    },
+    {
+      "area": "execution guard",
+      "evidence": "execution_guard.py remains separate; evaluate_execution blocks real buy unless run_context.decision=proceed, market matches, approval is approved by Evan, approval unexpired, and pretrade check passes. cron_readiness cli_allowlist still rejects unknown --broker flag."
+    },
+    {
+      "area": "backward compatibility",
+      "evidence": "dry_run_orchestrator.py lines 260-273 preserves manual_pilot_override reason requirement and dry_run_fixture fallback; test_manual_pilot_override_still_works passed."
+    }
+  ],
+  "risk_assessment": {
+    "production_calendar_path_safe": true,
+    "closed_day_writes_events": false,
+    "closed_day_rejects": false,
+    "calendar_source_reliable_for_review_scope": true,
+    "execution_guard_still_effective": true,
+    "manual_pilot_override_compatible": true,
+    "dry_run_fixture_compatible": true,
+    "residual_risks": [
+      "pandas-market-calendars is an embedded library data source; future exchange calendar accuracy still depends on package updates and should be periodically refreshed/verified before live production scheduling.",
+      "gateway-cron.md stale wording should be fixed before using the document as a deployment approval artifact."
+    ]
+  },
+  "recommendation": "放行代码闸门；在发布/交付前修正文档中旧的 production_calendar rejection wording。无需重审，除非修改代码路径或扩大 production cron scope。"
+}

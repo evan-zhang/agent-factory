@@ -1,0 +1,78 @@
+# orchestrator/intent-modes.yaml
+# 意图映射配置
+# 包含意图模式定义、provider 选择策略、query_template 和缓存 TTL
+#
+# query_strategy_config（BATTLE-R4-FIXES.md Fix 2）：
+#   定义三轮递进 query 改写的配置，每轮使用不同的 query_template
+#   达到 min_results 后提前终止后续轮次
+
+DEFAULT:
+  display_name: "通用搜索"
+  description: "通用搜索（默认意图），使用所有可用引擎获取广泛结果"
+  query_strategy: broad
+  cache_ttl: 3600
+  preferred_providers:
+    - open_websearch
+    - web_fetch
+  query_template: "{query}"
+  enable_fallback: true
+  min_results: 3
+
+  # 三轮递进策略：精准→泛搜→兜底
+  # v1.0 采用模板占位符方案，不引入 LLM
+  query_strategy_config:
+    enabled: true
+    rounds:
+      - mode: precise
+        query_template: '"{query}"'
+        count: 5
+        timeout_ms: 8000
+        provider_filter: [minimax]
+      - mode: broaden
+        query_template: "{query}"
+        count: 10
+        timeout_ms: 10000
+        provider_filter: []
+      - mode: fallback
+        query_template: "{query}"
+        count: 15
+        timeout_ms: 12000
+        provider_filter: []
+    round_termination:
+      min_results: 3
+      max_rounds: 3
+
+INFO:
+  display_name: "信息查询"
+  description: "信息查询（如概念、定义、事实），优先使用语义理解强的引擎"
+  query_strategy: broad
+  cache_ttl: 3600
+  preferred_providers:
+    - open_websearch
+    - web_fetch
+  query_template: "{query}"
+  enable_fallback: true
+  min_results: 3
+
+  # 三轮递进策略
+  query_strategy_config:
+    enabled: true
+    rounds:
+      - mode: precise
+        query_template: '"{query}"'
+        count: 5
+        timeout_ms: 8000
+        provider_filter: [minimax]
+      - mode: broaden
+        query_template: "{query}"
+        count: 10
+        timeout_ms: 10000
+        provider_filter: []
+      - mode: fallback
+        query_template: "{query}"
+        count: 15
+        timeout_ms: 12000
+        provider_filter: []
+    round_termination:
+      min_results: 3
+      max_rounds: 3

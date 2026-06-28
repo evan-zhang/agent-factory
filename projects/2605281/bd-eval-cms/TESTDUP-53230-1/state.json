@@ -1,0 +1,46 @@
+{
+  "caseCode": "TESTDUP-53230-1",
+  "name": "ProductA",
+  "displayName": "ProductA (CoA)",
+  "scheme": "B",
+  "businessEntity": "待确认",
+  "routedSkill": "待路由",
+  "routedChain": [],
+  "phase": "opportunity_accepted",
+  "opportunity": {
+    "id": "TESTDUP-53230-1::ProductA::CoA",
+    "product": "ProductA",
+    "company": "CoA",
+    "indication": "",
+    "region": "",
+    "notes": "",
+    "extFiles": [],
+    "submittedAt": "2026-06-14T17:39:55+08:00",
+    "source": "scripts/run-opportunity.sh"
+  },
+  "gateStatus": {
+    "phase-1": "pending",
+    "phase-2": "pending",
+    "one-pager": "pending",
+    "gate-0": "pending",
+    "gate-1": "pending",
+    "gate-2": "pending",
+    "gate-3": "pending",
+    "gate-4": "pending",
+    "gate-5": "pending",
+    "phase-4-battle": "pending",
+    "phase-5-merge": "pending",
+    "phase-5-5-html": "pending"
+  },
+  "lastHeartbeat": "2026-06-14T17:39:55+08:00",
+  "inProgressGate": null,
+  "currentVersion": 1,
+  "gateVersions": {
+    "One-pager": 1, "Gate-0": 1, "Gate-1": 1, "Gate-2": 1,
+    "Gate-3": 1, "Gate-4": 1, "Gate-5": 1
+  },
+  "financialThresholdType": "待判断",
+  "routingDecision": null,
+  "discovery": null,
+  "updateHistory": []
+}

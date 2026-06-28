@@ -1,0 +1,248 @@
+{
+  "review_report": {
+    "verdict": "warn",
+    "confidence": 0.84,
+    "object_type": "B+C",
+    "object_summary": "stock-picking S3 Design baseline + P0 schema freeze + registry baseline + execution-guard skeleton + migration plan (M3.5 review gate)",
+    "subject_files": [
+      "projects/stock-picking/design/DESIGN.md",
+      "projects/stock-picking/design/GRV.md",
+      "projects/stock-picking/REQ-01.md",
+      "projects/stock-picking/src/references/data-schema.md",
+      "projects/stock-picking/src/references/registry-design.md",
+      "projects/stock-picking/src/references/execution-guard.md",
+      "projects/stock-picking/src/references/migration-plan.md",
+      "projects/stock-picking/src/strategies/registry.yaml",
+      "projects/stock-picking/src/strategies/custom_refs.yaml",
+      "projects/stock-picking/design/reviews/GRV-battle-round2-review-2026-06-24.md"
+    ],
+    "reviewed_at": "2026-06-23T23:47:25+08:00",
+    "model": "newapi-openai/MiniMax-M3",
+    "pack": "general",
+    "stage": "M3.5",
+    "mode": "gate_review",
+    "ralph_loop_admission": {
+      "decision": "pass_with_blockers",
+      "blockers_in_m4a": ["M001", "M002", "M003"],
+      "blockers_close_window": "M4a Week 1",
+      "minor_close_window": "M4a/M4b (any 5 of 7 by M4a exit)"
+    },
+    "ralph_loop_entry_conditions": [
+      {"id": 1, "condition": "GRV Battle round 2 has no blocker", "status": "met", "evidence": "design/reviews/GRV-battle-round2-review-2026-06-24.md verdict=WARN, no blocker"},
+      {"id": 2, "condition": "DESIGN.md defines module boundaries, directory structure, call order, failure behavior", "status": "met", "evidence": "DESIGN §1-4 covers all"},
+      {"id": 3, "condition": "data-schema.md freezes P0 schema", "status": "met_with_caveat", "evidence": "16 P0 schema names frozen; 3 silent drifts from REQ-01 (M001-M003) require M4a Week 1 close"},
+      {"id": 4, "condition": "registry.yaml + registry-design.md frozen", "status": "met", "evidence": "registry.yaml has taroc + chokepoint + maturity_gate; registry-design.md has 6-step snapshot atomicity + 14 reject codes + 11 tests"},
+      {"id": 5, "condition": "execution-guard refusal tests written into S3", "status": "met", "evidence": "execution-guard.md has 7 refusal tests (exceeds 5 required by GRV) + observable signals"},
+      {"id": 6, "condition": "M3.5 gate review", "status": "met", "evidence": "this report: WARN with M001-M003 closing in M4a"}
+    ],
+    "battle_round2_absorption": [
+      {"id": "F001", "topic": "Chokepoint exit criteria AND logic + thesis break definition", "status": "absorbed", "evidence": "DESIGN §3.5 AND logic + Major thesis break definition 3 条"},
+      {"id": "F002", "topic": "custom_ref whitelist location, load timing, audit path", "status": "absorbed", "evidence": "DESIGN §3.4 + registry-design.md §Custom Ref Whitelist + custom_refs.yaml + DESIGN Decision Log 2026-06-24"},
+      {"id": "I001", "topic": "futu_tool.py buy fix observable signal", "status": "absorbed", "evidence": "execution-guard.md §Observable Signals 'Broker API call count for rejected paths must be zero or provably blocked'"},
+      {"id": "I002", "topic": "validation idempotency must not depend on mutable signal_date", "status": "absorbed_and_strengthened", "evidence": "data-schema.md validation_event.v1 idempotency key is (draft_id, validation_run_id, calendar_checked_at, validation_session_key) — stronger than R2's either/or suggestion"}
+    ],
+    "dimension_scores": {
+      "design_completeness": 5,
+      "design_internal_consistency": 5,
+      "data_schema_internal_completeness": 4,
+      "data_schema_vs_req01_consistency": 2,
+      "registry_completeness": 5,
+      "execution_guard_completeness": 5,
+      "migration_plan_completeness": 4,
+      "ralph_loop_admission_alignment": 5,
+      "m35_to_m4a_executability": 4
+    },
+    "weighted_score": 4.0,
+    "findings": [
+      {
+        "id": "M001",
+        "severity": "major",
+        "category": "silent_schema_drift",
+        "location": "data-schema.md evidence_ref.v1 evidence_id field",
+        "description": "data-schema simplifies evidence_id to plain uuid, dropping REQ-01's explicit ev_<ulid> type prefix. No Decision Log entry, no migration note. Type prefix is useful for audit/index/grep to distinguish evidence from other uuid entities (candidate_id, draft_id, approval_id).",
+        "evidence": "data-schema.md: 'evidence_id: uuid' / REQ-01 §节点13: 'evidence_id: ev_<ulid>'",
+        "recommendation": "Add ## Schema Changelog section in data-schema.md, decide whether to retain ev_ prefix. If yes, revert data-schema to ev_<ulid> (or string with regex). If no, document the rationale."
+      },
+      {
+        "id": "M002",
+        "severity": "major",
+        "category": "silent_schema_drift",
+        "location": "data-schema.md evidence_ref.v1 source_type enum",
+        "description": "REQ-01 has 5 values (primary/secondary/community/ai_inference/unverified); data-schema extends to 9 values (adds regulatory/broker_data/company_filing/news/analyst/internal_note, removes community/unverified). This is both extension and rename. The community+unverified merge to analyst loses 'unverified' semantics.",
+        "evidence": "REQ-01: 'source_type: primary | secondary | community | ai_inference | unverified' / data-schema: 'source_type: primary | secondary | regulatory | broker_data | company_filing | news | analyst | internal_note | ai_inference'",
+        "recommendation": "In schema changelog: (a) document 5 new values with REQ-01 §节点13 cross-references, (b) explicitly declare community+unverified merge to analyst (preserve 'unverified' as source_quality=unknown), or (c) keep all 11 values."
+      },
+      {
+        "id": "M003",
+        "severity": "major",
+        "category": "silent_schema_drift_with_semantic_loss",
+        "location": "data-schema.md evidence_ref.v1 + claim.v1 field set",
+        "description": "Two irreversible simplifications: (a) publisher_authority+ai_classified_quality+classification_method 3 fields disappear, merged into single source_quality enum — loses dual-track scoring (publisher objective + AI subjective), future weighted quality requires schema change; (b) claim.v1 completely rewritten: REQ-01 has claim_kind+claim_subtype+polarity+valid_until, data-schema has claim_type (4 enum) + thesis_broken boolean — flattens 'two-dimensional' (kind+polarity) into 'four-quadrant enum' (positive/negative/break_condition/inference), downstream tracking/weekly-review cannot distinguish 'known risk in positive thesis' (was polarity=positive + claim_kind=risk).",
+        "evidence": "REQ-01 §节点13 evidence_ref.v1 + claim.v1 (longer field set) / data-schema (much shorter)",
+        "recommendation": "In schema changelog explicitly declare: (a) whether publisher_authority+ai_classified_quality are needed — if yes, restore number fields or use extensions; (b) claim.v1 at minimum restore claim_kind+polarity, or use claim_type+claim_subtype. Must close in M4a Week 1 schema validator phase."
+      },
+      {
+        "id": "m001",
+        "severity": "minor",
+        "category": "implicit_schema_field_addition",
+        "location": "data-schema.md risk_event.v1",
+        "description": "REQ-01 risk_event.v1 source enum has 4 values; data-schema adds strategy_tracking. event_type enum from 5 values adds thesis_broken. thesis_broken is justified by DESIGN §3.5 Chokepoint thesis break definition, but strategy_tracking is undeclared anywhere, and thesis_broken is already expressible in tracking_event.v1 event_type — redundancy.",
+        "evidence": "REQ-01: 'source: position_monitor | reconcile | portfolio_risk | execution_guard' / data-schema: 'source: ... | strategy_tracking' + 'event_type: ... | thesis_broken'",
+        "recommendation": "In schema changelog: (a) strategy_tracking source = tracking_event promoting thesis_broken=true to risk_event, or (b) remove to avoid tracking_event.v1 duplication."
+      },
+      {
+        "id": "m002",
+        "severity": "minor",
+        "category": "cross_doc_reference_break",
+        "location": "data-schema.md Schema Index + migration-plan.md",
+        "description": "data-schema.md lists legacy_csv_projection.v1 in Compatibility section; migration-plan.md does not reference this schema name. Loose coupling.",
+        "evidence": "data-schema.md L5: 'Compatibility: legacy_csv_projection.v1' / migration-plan.md: no reference",
+        "recommendation": "Add 'References: data-schema §legacy_csv_projection.v1' to migration-plan.md top."
+      },
+      {
+        "id": "m003",
+        "severity": "minor",
+        "category": "doc_consistency",
+        "location": "data-schema.md strategy_dispatch.v1.output_schema vs registry.yaml Chokepoint output_schema",
+        "description": "data-schema allows output_schema: draft_candidates.v1 | theme_research.v1. registry.yaml has TAROC output_schema=draft_candidates.v1, Chokepoint output_schema=theme_research.v1. Consistent for static view, but Chokepoint v1 upgrades to draft on evidence threshold (REQ-01 §节点4) — same strategy at different stages has different output_schema. registry field cannot express this runtime multi-schema.",
+        "evidence": "data-schema strategy_dispatch.v1.output_schema 双值 / registry.yaml 单值",
+        "recommendation": "In registry-design.md §Output Schema: Chokepoint output_schema declares 'primary output'; secondary output (draft_candidates.v1) triggered by promotion_status. M4a dispatch output_schema must reflect actual run schema, not registry static field."
+      },
+      {
+        "id": "m004",
+        "severity": "minor",
+        "category": "config_consistency",
+        "location": "custom_refs.yaml",
+        "description": "File exists with refs: [] (empty). Expected for v1, but DESIGN §3.4 custom_ref policy #4 requires whitelist change to be in Decision Log — initial state should be documented in file header.",
+        "evidence": "src/strategies/custom_refs.yaml: 'custom_refs_version: 1\\nrefs: []'",
+        "recommendation": "Add header comment: '# Empty: v1 rejects all custom_refs. Any future entry must be approved via design/DESIGN.md Decision Log and reference a registry-approved strategy record or signed internal reference.'"
+      },
+      {
+        "id": "m005",
+        "severity": "minor",
+        "category": "migration_coverage",
+        "location": "migration-plan.md + evidence_id drift linkage",
+        "description": "migration-plan.md §Audit Fields requires 6 fields per migrated event; does not consider evidence_id format transition between REQ-01 (ev_<ulid>) and data-schema (uuid). If M001 decides to retain ev_ prefix, migration must handle old CSV reason-field evidence_id references (no prefix).",
+        "evidence": "migration-plan.md §Audit Fields / data-schema.md evidence_id drift",
+        "recommendation": "Add sub-step in migration-plan.md §Migration Sequence step 3: 'Normalize evidence_id format and document any id-prefix transition in migration_audit'. Sync with M001."
+      },
+      {
+        "id": "m006",
+        "severity": "minor",
+        "category": "missing_acceptance",
+        "location": "data-schema.md end",
+        "description": "data-schema.md has no §Verification section defining executable acceptance points for M4a schema validator implementation. M4a needs to know what 'schema freeze' means in testable terms.",
+        "evidence": "data-schema.md has no §Verification",
+        "recommendation": "Add §Verification: M4a must produce (a) JSON Schema / Pydantic / Zod as executable validator, (b) validate_schema.py passing positive+negative test cases for all 16 schemas."
+      },
+      {
+        "id": "m007",
+        "severity": "minor",
+        "category": "missing_changelog",
+        "location": "data-schema.md",
+        "description": "Document states P0 schema changes must go through Decision Log after S3 freeze, but data-schema.md has no changelog section, and DESIGN.md Decision Log has 4 non-schema entries. M001-M003 reveal schema changes have already occurred but not logged.",
+        "evidence": "data-schema.md no changelog / DESIGN.md Decision Log all non-schema",
+        "recommendation": "Add ## Schema Changelog section at top of data-schema.md. M4a Week 1: write M001-M003 dispositions there."
+      },
+      {
+        "id": "I001",
+        "severity": "info",
+        "category": "reinforcement",
+        "location": "DESIGN.md §3.7 UX & Error Fallback",
+        "description": "6 UX paths defined (proceed/skip/needs_override/fail/reject/execution_blocked). No distinction between idempotency_key replay (cached result) and new run.",
+        "evidence": "DESIGN §3.7",
+        "recommendation": "Add UX rule: 'idempotency_key replay returns cached result (with warnings), does not re-execute.'"
+      },
+      {
+        "id": "I002",
+        "severity": "info",
+        "category": "reinforcement",
+        "location": "execution-guard.md §Observable Signals",
+        "description": "Specifies broker API call count signal, but no concrete implementation hook. Three paths (decorator/proxy/monkey patch) all workable.",
+        "evidence": "execution-guard.md §Observable Signals",
+        "recommendation": "Add §Implementation Hook: recommend method decorator @execution_guard wrapping futu_tool.buy/longbridge.place_order; guard block raises ExecutionBlockedError; counter accumulated by decorator. M4a scope."
+      },
+      {
+        "id": "I003",
+        "severity": "info",
+        "category": "reinforcement",
+        "location": "migration-plan.md §Acceptance",
+        "description": "4 acceptance criteria include 'idempotent rerun' but no explicit 'cold start vs warm restart behavior consistency' regression test.",
+        "evidence": "migration-plan.md §Acceptance 4 items",
+        "recommendation": "Add acceptance 5: 'Migration can resume from a partially completed batch without duplicating events; restart-after-failure must be idempotent.'"
+      }
+    ],
+    "cross_doc_consistency_matrix": [
+      {"topic": "Entry atomicity (Node 0 reject mixed/full/monitor/dry_run=false)", "req01": true, "grv": true, "design": true, "data_schema": true, "consistent": true},
+      {"topic": "Trading day unification (Node 1 output run_context)", "req01": true, "grv": true, "design": true, "data_schema": true, "consistent": true},
+      {"topic": "Strategy selector (Node 2 = registry, not execution)", "req01": true, "grv": true, "design": true, "data_schema": true, "consistent": true},
+      {"topic": "TAROC output draft_candidates.v1", "req01": true, "grv": true, "design": true, "data_schema": true, "consistent": true},
+      {"topic": "Chokepoint experimental + manual + US", "req01": true, "grv": true, "design": true, "data_schema": null, "registry": true, "consistent": true},
+      {"topic": "Chokepoint exit criteria AND logic", "req01": "ambiguous", "grv": "ambiguous", "design": "AND", "registry": "AND", "consistent": true, "note": "absorbed F001"},
+      {"topic": "Major thesis break definition", "req01": "undefined", "grv": "undefined", "design": "3 explicit conditions", "consistent": true, "note": "absorbed F001"},
+      {"topic": "custom_ref whitelist", "req01": true, "grv": true, "design": true, "registry": true, "consistent": true, "note": "absorbed F002"},
+      {"topic": "custom_refs load timing (same snapshot phase)", "design": true, "registry_design": true, "consistent": true, "note": "absorbed F002"},
+      {"topic": "approval artifact machine-checkable", "req01": true, "grv": true, "design": true, "data_schema": true, "execution_guard": true, "consistent": true},
+      {"topic": "dry_run default true", "req01": true, "grv": true, "design": true, "data_schema": true, "execution_guard": true, "consistent": true},
+      {"topic": "futu_tool.py buy fix observable signal", "design": true, "execution_guard": true, "consistent": true, "note": "absorbed I001"},
+      {"topic": "validation idempotency (not signal_date)", "req01": "uses signal_date", "data_schema": "uses calendar_checked_at+validation_session_key", "consistent": true, "note": "absorbed I002 and strengthened"},
+      {"topic": "evidence_id format", "req01": "ev_<ulid>", "data_schema": "uuid", "consistent": false, "severity": "M001"},
+      {"topic": "source_type enum", "req01": "5 values", "data_schema": "9 values", "consistent": false, "severity": "M002"},
+      {"topic": "source_quality fields", "req01": "publisher_authority+ai_classified_quality+classification_method", "data_schema": "single enum", "consistent": false, "severity": "M003a"},
+      {"topic": "claim.v1 field set", "req01": "claim_kind+polarity+valid_until", "data_schema": "claim_type+thesis_broken", "consistent": false, "severity": "M003b"},
+      {"topic": "risk_event.v1 source/event_type", "req01": "4+5 values", "data_schema": "5+6 values", "consistent": "implicit_extension", "severity": "m001"}
+    ],
+    "consistency_summary": {
+      "total_topics": 18,
+      "fully_consistent": 14,
+      "implicit_extension": 1,
+      "silent_drift": 3
+    },
+    "risks": [
+      {
+        "risk": "double_freeze_self_deception",
+        "description": "DESIGN §3.3 says validator must preserve field names and reject unknown critical enums, but data-schema already silently drifted from REQ-01 §节点13 field set. If validator implements against current data-schema, it freezes REQ-01 §节点13 review conclusions as outdated version.",
+        "mitigation": "M4a schema validator implementation must first do REQ-01 ↔ data-schema reconciliation; M001-M003 close in M4a Week 1"
+      },
+      {
+        "risk": "registry_snapshot_drift_in_v1_implementation",
+        "description": "registry-design.md states 'S4 can implement copy-on-read in single process; no filesystem transaction required for v1 as long as selector never mixes two snapshots' — this is developer discipline, not system constraint. custom_refs.yaml + registry.yaml simultaneous load atomicity also lacks lock.",
+        "mitigation": "M4a use process-level singleton + bytes-after-read hash verification; v1.1 add file lock if concurrency needed"
+      },
+      {
+        "risk": "chokepoint_maturity_gate_evaluator_absent",
+        "description": "registry.yaml maturity_gate is data-complete, but no module is responsible for 'how many manual runs this week / any thesis_broken events this week'. Gate is data, evaluator is missing.",
+        "mitigation": "M4b implement evaluator in position-monitor or new chokepoint-maturity-evaluator module; M3.5 only validates data shape"
+      },
+      {
+        "risk": "execution_guard_fix_bypassable",
+        "description": "futu_tool.py buy fix is code-side; execution-guard.md §Observable Signals gives acceptance signal not implementation mechanism. Decorator/proxy/monkey patch all workable.",
+        "mitigation": "M4a Week 1 decorator pattern first; keep broker client method names unchanged"
+      },
+      {
+        "risk": "legacy_csv_migration_breaks_history",
+        "description": "migration-plan.md only says 'keep legacy CSV read-only during compatibility window', doesn't say 'after reader switches to event store, whether CSV projection is still generated'.",
+        "mitigation": "S5 acceptance explicitly test 'after event store switch, CSV projection still generated and matches new writes'"
+      },
+      {
+        "risk": "evidence_store_p1_delayed",
+        "description": "GRV marks evidence store P1, S3 does not put evidence-store module in §3.6 file structure",
+        "mitigation": "M4b evaluate evidence-store landing timing; if M4b does not touch evidence-store, evidence_ref/claim in data-schema remain dry fields"
+      }
+    ],
+    "acceptance_criteria_for_m4a_exit": [
+      "M001 disposition written in data-schema.md ## Schema Changelog (retain ev_ prefix or backport to plain uuid with rationale)",
+      "M002 disposition written in data-schema.md ## Schema Changelog (9-value extended enum or 11-value full set or merge rationale)",
+      "M003 disposition written in data-schema.md ## Schema Changelog (publisher_authority+ai_classified_quality restore, claim.v1 kind+polarity restore, or simplify rationale)",
+      "validate_schema.py passes positive+negative tests for all 16 P0 schemas",
+      "validate_registry.py passes 11 tests from registry-design.md §Required Tests",
+      "execution-guard decorator pattern implemented; 7 refusal tests pass as executable",
+      "approval-gate skeleton accepts approval.v1 input and emits execution_guard_decision.v1",
+      "migration scaffold produces dry-run batch from one legacy CSV; rerun is idempotent",
+      "broker API call counter wired and reports zero for blocked paths",
+      "data-schema.md ## Schema Changelog section created and M001-M003 dispositions recorded"
+    ],
+    "most_important_recommendation": "M4a Week 1 must do 'REQ-01 ↔ data-schema reconciliation' and close M001-M003 before schema validator implementation. S3 baseline's 'double freeze' is paper freeze — data-schema has already silently drifted from REQ-01 §节点13 evidence/claim field set. If validator implements against current data-schema, it freezes REQ-01 §节点13 review conclusions as outdated version. This is the only real risk at M3.5 gate — other dimensions are engineering effort, this one is 'whether double-freeze principle is self-consistent'.",
+    "rating_rationale": "Not PASS because M001-M003 (REQ-01 vs S3 data-schema silent drift) are about S3 baseline vs S2 node review baseline consistency — the root of double-freeze principle. Schema validator implementation depends on these 3 dispositions. Not FAIL/BLOCK because M001-M003 are schema field adjustments, not factual errors, not security holes, not logical jumps; all 3 can close in M4a Week 1 via 1-2 days 'reconciliation + write changelog'. WARN because double-freeze principle is paper-level, other dimensions are engineering-controllable, battle R2 fully absorbed, registry has 7 refusal tests, migration plan has 6 audit fields — S3 baseline is overall shippable."
+  }
+}

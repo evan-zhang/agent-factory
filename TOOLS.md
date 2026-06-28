@@ -2,7 +2,7 @@
 
 ## 发布 = push 到 GitHub master
 
-版本号三处同步：`projects/{id}/VERSION` / SKILL.md frontmatter `version` / `version.json`。SemVer 格式。
+版本号按目标平台要求维护。OpenClaw Skill 的 `SKILL.md` frontmatter 不写 `version`；如需版本，写入 `VERSION`、正文维护信息或 `version.json`。
 
 ## 安装方式
 
@@ -31,6 +31,7 @@ push 后立即发到当前对话：
 
 ## Skill 规范
 
+Skill 生产流程唯一真相源：`/Users/evan/.openclaw/skills/agent-factory-sop/SKILL.md`。
 SKILL.md 必含「配置与授权」节（必填/可选配置项 + 获取方式）和「问题反馈」节（Issue 地址 + 格式要求）。
 
 ## 外部 API 文档

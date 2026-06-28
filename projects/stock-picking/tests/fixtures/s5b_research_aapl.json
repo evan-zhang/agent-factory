@@ -1,0 +1,27 @@
+{
+  "items": [
+    {
+      "symbol": "AAPL.US",
+      "negative_search_performed": true,
+      "negative_search_query": "AAPL.US risks bear case",
+      "positive": [
+        {
+          "title": "Apple catalyst fixture",
+          "url": "https://example.test/apple-catalyst",
+          "publisher": "Example News",
+          "excerpt": "Positive catalyst fixture for S5b smoke.",
+          "source_type": "news"
+        }
+      ],
+      "negative": [
+        {
+          "title": "Apple risk fixture",
+          "url": "https://example.test/apple-risk",
+          "publisher": "Example News",
+          "excerpt": "Negative risk fixture for S5b smoke.",
+          "source_type": "news"
+        }
+      ]
+    }
+  ]
+}
