@@ -31,11 +31,45 @@
 
 | 优先级 | 方案 | 触发条件 |
 |--------|------|----------|
-| 1st | `python3 scripts/toutiao_fetch.py <url>` | **头条文章专用**（见下方说明） |
-| 2nd | `curl -sL https://r.jina.ai/{url}` | 通用方案，多数网站有效 |
-| 3rd | BeautifulSoup + requests 直接抓取 | jina.ai 返回空内容或不完整时 |
-| 4th | 搜索引擎绕行法（见下方） | 中国平台反爬屏蔽时 |
-| 5th | `web_search` 搜索关键信息补充 | 以上全部失败时 |
+| 1st | `python3 scripts/firecrawl_fetch.py <url>` | **默认方案**（大多数网站，输出最干净） |
+| 2nd | `python3 scripts/toutiao_fetch.py <url>` | **头条文章专用**（见下方说明） |
+| 3rd | `crwl "<url>" -o markdown`（Crawl4AI） | Firecrawl 配额耗尽 / 月底兜底 |
+| 4th | `curl -sL https://r.jina.ai/<url>` | 离线/网络封禁 Jina 环境 |
+| 5th | BeautifulSoup + requests 直接抓取 | 通用方案返回空内容或不完整时 |
+| 6th | 搜索引擎绕行法（见下方） | 中国平台反爬屏蔽时 |
+| 7th | `web_search` 搜索关键信息补充 | 以上全部失败时 |
+
+### Firecrawl 默认抓取（2026-07 升级）
+
+**适用 URL**：所有通用 URL（非头条、非抖音、非 YouTube）
+
+**原理**：Firecrawl v2 API 提供 LLM 友好的精炼 Markdown 输出，自动过滤导航/侧栏/广告，附带 metadata（title/og:description/og:image）。
+
+**使用方法**：
+```bash
+# 推荐：从配置文件读取 firecrawl_api_key
+python3 scripts/firecrawl_fetch.py "<url>"
+
+# 完整 JSON 输出（含 metadata）
+python3 scripts/firecrawl_fetch.py "<url>" --json
+
+# 截断过长内容（默认无限制）
+python3 scripts/firecrawl_fetch.py "<url>" --max-chars 50000
+```
+
+**输出**：
+- 标出模式：返回 `Title: 标题` + 精炼 Markdown 正文
+- JSON 模式：返回 `{ok, markdown, title, metadata, error}`
+- 返回 `{ok: false, error: ...}` 时表示抓取失败，进入降级链下一级
+
+**降级阈值判断**：
+- `ok: false` → 进入 3rd（Crawl4AI）
+- `ok: true` 但 `markdown < 500 字` → 进入 3rd（Crawl4AI）二次验证
+- `ok: true` 且 `markdown ≥ 500 字` → 成功继续
+
+**配额注意**：免费版 1000 页/月，Hobby plan $16/月 5000 页。每月 25-28 号检查用量，避免月底爆配额导致归档失败。
+
+**降级触发频率监控**：建议每月统计 Firecrawl 失败/降级占比；若 Firecrawl 失败率 > 30%，考虑直接关闭降级到 Jina Reader。
 
 ### 今日头条专用抓取（2026-05 新增）
 
@@ -135,14 +169,20 @@ with sync_playwright() as p:
 收到链接 → 是头条文章（m.toutiao.com 或 www.toutiao.com）？
  ├─ YES → python3 toutiao_fetch.py（头条专用提取）
  │         ├─ 成功 → 继续
- │         └─ 失败 → 降级到 jina.ai / 搜索引擎绕行法
- └─ NO → r.jina.ai
-         ├─ 成功 → 继续
-         ├─ 空/不完整 → BeautifulSoup 直接抓取
-         │              ├─ 成功 → 继续
-         │              └─ 失败 → 搜索引擎绕行法
-         └─ 拦截/失败 → 搜索引擎绕行法
-                   └─ 失败 → web_search 补充
+ │         └─ 失败 → 降级到 Firecrawl
+ └─ NO → python3 firecrawl_fetch.py（默认 Firecrawl）
+         ├─ 成功且正文≥500字 → 继续
+         ├─ 成功但正文<500字 → 升级到 Crawl4AI（crwl）验证
+         │                       ├─ 成功 → 继续
+         │                       └─ 失败 → BeautifulSoup 直接抓取
+         │                                    ├─ 成功 → 继续
+         │                                    └─ 失败 → 搜索引擎绕行法
+         └─ 失败/配额耗尽 → crwl（Crawl4AI）
+                          ├─ 成功 → 继续
+                          └─ 失败 → curl r.jina.ai
+                                  ├─ 成功 → 继续
+                                  └─ 失败 → 搜索引擎绕行法
+                                          └─ 失败 → web_search 补充
 
 字幕提取失败？
  ├─ YES → yt-dlp 降级

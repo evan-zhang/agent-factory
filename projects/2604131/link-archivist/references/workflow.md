@@ -20,8 +20,12 @@
    - **今日头条**（`m.toutiao.com` / `www.toutiao.com`）：`python3 scripts/toutiao_fetch.py "<url>"`
    - **抖音**（`v.douyin.com` / `douyin.com`）：`scripts/douyin_process.py`
    - **YouTube**：详见 `references/youtube-workflow.md`
-   - **其他 URL**：`curl -sL https://r.jina.ai/{url}`
-2. 运行 `scripts/decide_mode.py` 判断模式
+   - **其他 URL**（默认 2026-07）：`python3 scripts/firecrawl_fetch.py "<url>"`
+     - 输出标出模式 → 送进 decide_mode.py
+     - 输出 JSON 模式 → 取 `data.markdown` + `data.metadata.title`
+2. 抓取失败 / 输出 < 500 字 → 降级到 `crwl "<url>" -o markdown`（Crawl4AI）
+3. 仍失败 → 降级到 `curl -sL https://r.jina.ai/<url>`
+4. 运行 `scripts/decide_mode.py` 判断模式
    - **full**：GitHub/YouTube，或关键词命中 → 完整调研报告
    - **short**：新闻资讯类 → 2-3 句话摘要
    - **ask**：不确定 → 问用户
